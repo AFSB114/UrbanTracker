@@ -5,7 +5,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       <div className="animate-fade-in">
-        <h1 className="text-3xl font-bold text-white">Bienvenido a TransportPro</h1>
+        <h1 className="text-3xl font-bold text-white">Bienvenido a UrbanTracker</h1>
         <p className="text-gray-400 mt-2">Panel de control para la gestión de tu flota de transporte</p>
       </div>
 
