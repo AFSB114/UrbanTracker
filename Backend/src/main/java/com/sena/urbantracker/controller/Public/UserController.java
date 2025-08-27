@@ -31,6 +31,5 @@ public class UserController {
         ResponseDTO response = userService.deleteUser(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 }
 
