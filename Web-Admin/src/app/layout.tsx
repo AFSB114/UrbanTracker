@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Landing Page",
+  title: "Dashboard UrbanTracker",
   description: "Sistema de gestión de transporte y logística",
   generator: "v0.app",
   icons: {

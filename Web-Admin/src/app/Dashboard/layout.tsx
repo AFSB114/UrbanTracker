@@ -1,9 +1,9 @@
 import type React from "react"
-import { Truck, Users, Route, Car, BarChart3, Settings, Menu, MapPin, FileText } from "lucide-react"
+import { Users, Route, Car, BarChart3, Settings, Menu, FileText } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import "@/styles/globals.css"
-
+import "../globals.css"
 
 export default function DashboardLayout({
   children,
@@ -17,11 +17,15 @@ export default function DashboardLayout({
       <div className="fixed inset-y-0 left-0 z-50 w-72 bg-gray-950 border-r border-gray-800 shadow-2xl">
         <div className="flex h-20 items-center px-8 border-b border-gray-800">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-600 rounded-lg shadow-lg animate-pulse">
-              <Truck className="h-6 w-6 text-white" />
-            </div>
+            <Image
+              src="/white-logo.png"
+              alt="Logo UrbanTracker"
+              width={256}
+              height={256}
+              className="mx-auto h-10 w-10"
+            />
             <div>
-              <h1 className="text-xl font-bold text-white">TransportPro</h1>
+              <h1 className="text-xl font-bold text-white">UrbanTracker</h1>
               <p className="text-sm text-gray-400">Sistema de Gestión</p>
             </div>
           </div>
@@ -31,7 +35,7 @@ export default function DashboardLayout({
           <div className="mb-6">
             <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Principal</h3>
             <Link
-              href="/dashboard"
+              href="/Dashboard"
               className="flex items-center gap-3 rounded-xl px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300 group hover:shadow-lg hover:scale-105 transform"
             >
               <BarChart3 className="h-5 w-5 group-hover:scale-110 transition-transform group-hover:text-emerald-400" />
@@ -43,32 +47,25 @@ export default function DashboardLayout({
             <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Gestión</h3>
             <div className="space-y-1">
               <Link
-                href="/dashboard/conductores"
+                href="/Dashboard/drivers"
                 className="flex items-center gap-3 rounded-xl px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300 group hover:shadow-lg hover:scale-105 transform"
               >
                 <Users className="h-5 w-5 group-hover:scale-110 transition-transform group-hover:text-emerald-400" />
                 <span className="font-medium">Administrar Conductores</span>
               </Link>
               <Link
-                href="/dashboard/rutas"
+                href="/Dashboard/routes"
                 className="flex items-center gap-3 rounded-xl px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300 group hover:shadow-lg hover:scale-105 transform"
               >
                 <Route className="h-5 w-5 group-hover:scale-110 transition-transform group-hover:text-emerald-400" />
                 <span className="font-medium">Administrar Rutas</span>
               </Link>
               <Link
-                href="/dashboard/vehiculos"
+                href="/Dashboard/vehicles"
                 className="flex items-center gap-3 rounded-xl px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300 group hover:shadow-lg hover:scale-105 transform"
               >
                 <Car className="h-5 w-5 group-hover:scale-110 transition-transform group-hover:text-emerald-400" />
                 <span className="font-medium">Administrar Vehículos</span>
-              </Link>
-              <Link
-                href="/dashboard/ubicaciones"
-                className="flex items-center gap-3 rounded-xl px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300 group hover:shadow-lg hover:scale-105 transform"
-              >
-                <MapPin className="h-5 w-5 group-hover:scale-110 transition-transform group-hover:text-emerald-400" />
-                <span className="font-medium">Ubicaciones</span>
               </Link>
             </div>
           </div>
@@ -84,7 +81,7 @@ export default function DashboardLayout({
                 <span className="font-medium">Reportes</span>
               </Link>
               <Link
-                href="/dashboard/configuracion"
+                href="/Dashboard/configuration"
                 className="flex items-center gap-3 rounded-xl px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300 group hover:shadow-lg hover:scale-105 transform"
               >
                 <Settings className="h-5 w-5 group-hover:scale-110 transition-transform group-hover:text-emerald-400" />
@@ -109,18 +106,7 @@ export default function DashboardLayout({
                 <p className="text-sm text-gray-400">Gestiona tu flota de transporte</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                size="sm"
-                className="font-medium bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300"
-              >
-                Mi Perfil
-              </Button>
-              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 transform">
-                Nuevo Registro
-              </Button>
-            </div>
+
           </div>
         </header>
 
