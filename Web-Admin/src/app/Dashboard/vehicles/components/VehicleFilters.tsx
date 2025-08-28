@@ -20,7 +20,7 @@ export function VehicleFilters({
       <div className="relative flex-1 max-w-md">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
         <Input
-          placeholder="Search by license plate, brand, model or driver..."
+          placeholder="Buscar por matrícula, marca, modelo o conductor..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           className="pl-10 bg-gray-900 border-gray-700 text-white placeholder-gray-400"
@@ -32,10 +32,10 @@ export function VehicleFilters({
           <SelectValue />
         </SelectTrigger>
         <SelectContent className="bg-gray-900 border-gray-700">
-          <SelectItem value="all">All statuses</SelectItem>
+          <SelectItem value="all">Todos los estados</SelectItem>
           <SelectItem value="Operational">Operational</SelectItem>
-          <SelectItem value="On Route">On Route</SelectItem>
-          <SelectItem value="Out of Service">Out of Service</SelectItem>
+          <SelectItem value="On Route">En Ruta</SelectItem>
+          <SelectItem value="Out of Service">Fuera de Servicio</SelectItem>
         </SelectContent>
       </Select>
     </div>

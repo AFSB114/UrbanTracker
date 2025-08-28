@@ -14,30 +14,30 @@ interface StatisticsCardsProps {
 export function StatisticsCards({ statistics }: StatisticsCardsProps) {
   const cards = [
     {
-      title: "Total Vehicles",
+      title: "Total Vehiculos",
       value: statistics.total,
-      description: "In fleet",
+      description: "En la flota",
       icon: Car,
       iconColor: "text-emerald-500"
     },
     {
       title: "Operational",
       value: statistics.operational,
-      description: `${statistics.operationalPercentage}% of fleet`,
+      description: `${statistics.operationalPercentage}% de la flota`,
       icon: Car,
       iconColor: "text-green-500"
     },
     {
       title: "En Ruta",
       value: statistics.onRoute,
-      description: "Active",
+      description: "Activo",
       icon: Car,
       iconColor: "text-blue-500"
     },
     {
       title: "Fuera de Servicio",
       value: statistics.outOfService,
-      description: "Need attention",
+      description: "Necesita atención",
       icon: AlertTriangle,
       iconColor: "text-red-500"
     }

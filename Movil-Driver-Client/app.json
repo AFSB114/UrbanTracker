@@ -23,7 +23,24 @@
     "experiments": {
       "tsconfigPaths": true
     },
-    "plugins": [],
+    "permissions": [
+      "ACCESS_COARSE_LOCATION",
+      "ACCESS_FINE_LOCATION"
+    ],
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Esta aplicación necesita acceso a tu ubicación para mostrarte conductores cercanos y calcular rutas."
+        }
+      ],
+      [
+        "expo-router",
+        {
+          "root": "./src/app"
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.UrbanTracker",
@@ -40,17 +57,16 @@
       "package": "com.anonymous.UrbanTracker",
       "adaptiveIcon": {
         "foregroundImage": "./assets/Isotipo.png",
-        "backgroundColor": "#000000",
-        "resizeMode": "contain"
+        "backgroundColor": "#000000"
       },
       "splash": {
         "image": "./assets/Logotipo.png",
         "resizeMode": "contain",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#000"
       },
       "statusBar": {
         "translucent": true,
-        "backgroundColor": "#ffffff",
+        "backgroundColor": "#000000",
         "barStyle": "dark-content"
       }
     }
