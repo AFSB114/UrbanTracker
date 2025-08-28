@@ -32,15 +32,15 @@ export default function VehiclesPage() {
       {/* Header */}
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Vehicle Management</h1>
-          <p className="text-gray-400 mt-2">Control and manage your vehicle fleet</p>
+          <h1 className="text-3xl font-bold text-white">Gestión de vehículos</h1>
+          <p className="text-gray-400 mt-2">Controle y gestione su flota de vehículos</p>
         </div>
         <Button
           onClick={openCreateModal}
           className="bg-emerald-600 hover:bg-emerald-700 text-white transition-all duration-300 hover:scale-105"
         >
           <Plus className="h-4 w-4 mr-2" />
-          New Vehicle
+          Nuevo vehículo
         </Button>
       </header>
 
@@ -71,7 +71,7 @@ export default function VehiclesPage() {
                 className="mt-4 bg-emerald-600 hover:bg-emerald-700 text-white"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Add first vehicle
+                Agregar primer vehículo
               </Button>
             )}
           </div>

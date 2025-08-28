@@ -42,15 +42,9 @@ export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
                 <span className="mx-2">•</span>
                 <span>{vehicle.type}</span>
               </div>
-              <div className="flex gap-6 text-sm text-gray-400">
-                <div className="flex items-center gap-2">
-                  <Car className="h-4 w-4" />
-                  <span>{vehicle.mileage}</span>
-                </div>
-              </div>
               {vehicle.driver && (
                 <div className="text-sm">
-                  <span className="font-medium text-gray-400">Assigned driver: </span>
+                  <span className="font-medium text-gray-400">Conductor Asignado: </span>
                   <span className="text-emerald-500">{vehicle.driver}</span>
                 </div>
               )}
@@ -61,10 +55,10 @@ export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
               variant="outline"
               size="sm"
               onClick={() => onEdit(vehicle)}
-              className="border-gray-700 text-white hover:bg-gray-800"
+              className="flex items-center gap-2 hover:bg-accent/10 hover:text-accent transition-all duration-200"
             >
               <Edit className="h-4 w-4 mr-2" />
-              Edit
+              Editar
             </Button>
             <Button
               variant="outline"
@@ -73,7 +67,7 @@ export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
               className="border-red-700 text-red-500 hover:bg-red-900/20"
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              Delete
+              Eliminar
             </Button>
           </div>
         </div>

@@ -37,7 +37,7 @@ export function VehicleModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-2xl">
+      <DialogContent className="bg-gray-900  text-white max-w-2xl">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Editar Vehiculo" : "Nuevo Vehiculo"}
