@@ -1,5 +1,6 @@
 package com.sena.urbantracker.model;
 
+import com.sena.urbantracker.enums.VehicleStatusType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,25 +15,25 @@ import lombok.NoArgsConstructor;
 public class Vehicle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
-    @Column(nullable = false)
+    @Column(name = "licence_plate", nullable = false)
     private String licencePlate;
 
-    @Column(nullable = false)
+    @Column(name = "brand", nullable = false)
     private String brand;
 
-    @Column(nullable = false)
+    @Column(name = "model", nullable = false)
     private String model;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private VehicleStatus status;
+    @Column(name = "status",nullable = false)
+    @Enumerated(EnumType.STRING)
+    private VehicleStatusType status;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

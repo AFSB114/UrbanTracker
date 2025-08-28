@@ -24,7 +24,7 @@ public class CorsConfig {
         ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        config.setAllowCredentials(true); // Importante si estás usando cookies o Authorization header
+        config.setAllowCredentials(true); // Importante si se está usando cookies o Authorization header
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
