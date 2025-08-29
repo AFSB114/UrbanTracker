@@ -10,13 +10,13 @@ interface StatisticsCardsProps {
 export const StatisticsCards: React.FC<StatisticsCardsProps> = ({ statistics }) => {
   const cards = [
     {
-      title: "Total Drivers",
+      title: "Total Conductores",
       value: statistics.totalDrivers,
       icon: Users,
       color: "text-emerald-600",
     },
     {
-      title: "Active Drivers",
+      title: "Conductores Activos",
       value: statistics.activeDrivers,
       icon: UserCheck,
       color: "text-blue-600",

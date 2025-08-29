@@ -16,11 +16,6 @@ export const DriverCard: React.FC<DriverCardProps> = ({
   onDelete,
 }) => {
   const handleEdit = () => onEdit(driver);
-  const handleDelete = () => {
-    if (window.confirm(`Are you sure you want to delete ${driver.name}?`)) {
-      onDelete(driver.id);
-    }
-  };
 
   return (
     <Card className="bg-gray-900 border-gray-800 hover:bg-gray-800 transition-all duration-300 hover:scale-[1.02]">
@@ -41,12 +36,12 @@ export const DriverCard: React.FC<DriverCardProps> = ({
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <User className="h-4 w-4" />
-                  <span className="font-medium">Name:</span>
+                  <span className="font-medium">Nombre:</span>
                   <span>{driver.name}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <CreditCard className="h-4 w-4" />
-                  <span className="font-medium">ID:</span>
+                  <span className="font-medium">Identificación:</span>
                   <span className="font-mono bg-muted px-2 py-1 rounded text-foreground">
                     {driver.identification}
                   </span>
@@ -63,16 +58,16 @@ export const DriverCard: React.FC<DriverCardProps> = ({
               className="flex items-center gap-2 hover:bg-accent/10 hover:text-accent transition-all duration-200"
             >
               <Edit className="h-4 w-4" />
-              Edit
+              Editar
             </Button>
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={handleDelete}
+              onClick={() => onDelete(driver.id)}
               className="border-red-700 text-red-500 hover:bg-red-900/20 transition-all duration-200"
             >
               <Trash2 className="h-4 w-4" />
-              Delete
+              Eliminar
             </Button>
           </div>
         </div>
