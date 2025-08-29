@@ -37,6 +37,9 @@ public class User implements UserDetails {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
+    @Column(name = "id_driver", nullable = false, unique = true, length = 15)
+    private String idDriver;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Vehicle> vehicles;
@@ -55,7 +58,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // Aquí podrías agregar lógica si lo deseas
+        return true; // logica para indicar si la cuenta está expirada.
     }
 
     @Override
@@ -65,7 +68,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // Lógica de expiración de contraseña, si aplicas
+        return true; // Lógica de expiración de contraseña
     }
 
     @Override

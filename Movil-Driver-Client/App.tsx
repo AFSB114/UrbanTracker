@@ -1,21 +1,4 @@
-import './polyfills'; // Debe ser la primera importación
-import './global.css';
-import AuthProvider from '@/auth/context/provider/AuthProvider';
-import Index from './src';
-import MqttProvider from '@/mqtt/provider/MqttProviderWS';
-import LocationProviderGeolocation from '@/location/provider/LocationProviderGeolocation';
-import { NavigationContainer } from '@react-navigation/native';
+// Esta configuración ahora se maneja en app/_layout.tsx con Expo Router
+// Este archivo ya no es necesario para la configuración principal
 
-export default function App() {
-  return (
-    <AuthProvider>
-      <MqttProvider>
-        <LocationProviderGeolocation>
-          <NavigationContainer>
-            <Index />
-          </NavigationContainer>
-        </LocationProviderGeolocation>
-      </MqttProvider>
-    </AuthProvider>
-  );
-}
+export { default } from 'expo-router/entry';
