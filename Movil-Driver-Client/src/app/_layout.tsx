@@ -1,12 +1,12 @@
 import '../../polyfills'; // Debe ser la primera importación
-import '../../global.css';
+import '@/../global.css';
 import { Slot } from 'expo-router';
-import AuthProvider from '@/auth/context/provider/AuthProvider';
+import AuthProvider from '@Providers/auth/AuthProvider';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'react-native';
-import ConditionalProvidersWrapper from './ConditionalProvidersWrapper';
+import ConditionalProvidersWrapper from '@Providers/ConditionalProvidersWrapper';
 
-export default function RootLayout() {
+export default function Layout() {
   return (
     <AuthProvider>
       <ConditionalProvidersWrapper>

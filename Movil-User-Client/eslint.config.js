@@ -8,14 +8,6 @@ module.exports = defineConfig([
     ignores: ['dist/*'],
   },
   {
-    settings: {
-      'import/resolver': {
-        alias: {
-          map: [['@', './src']],
-          extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
-        },
-      },
-    },
     rules: {
       'react/display-name': 'off',
     },

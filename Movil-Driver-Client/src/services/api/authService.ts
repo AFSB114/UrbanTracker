@@ -15,7 +15,7 @@ export class AuthService {
   static async login(credentials: LoginCredentials): Promise<{ success: boolean; token?: string; user?: User; error?: string }> {
     try {
       // Simular llamada a API
-      await mockDelay(1000);
+      await mockDelay(3000);
       
       // Validación mock - en producción esto sería una llamada real a la API
       if (credentials.identificacion && credentials.password) {

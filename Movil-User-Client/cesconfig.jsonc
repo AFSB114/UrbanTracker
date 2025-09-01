@@ -26,6 +26,6 @@
     "type": "Linux",
     "platform": "linux",
     "arch": "x64",
-    "kernelVersion": "6.16.1-arch1-1"
+    "kernelVersion": "6.16.3-arch1-1"
   }
 }

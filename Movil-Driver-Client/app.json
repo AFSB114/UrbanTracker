@@ -4,6 +4,7 @@
     "slug": "UrbanTracker",
     "version": "1.0.0",
     "orientation": "portrait",
+    "scheme": "urbantracker",
     "userInterfaceStyle": "auto",
     "icon": "./assets/Logotipo.png",
     "splash": {
@@ -56,11 +57,11 @@
     "android": {
       "package": "com.anonymous.UrbanTracker",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/Isotipo.png",
+        "foregroundImage": "./assets/Logotipo.png",
         "backgroundColor": "#000000"
       },
       "splash": {
-        "image": "./assets/Logotipo.png",
+        "image": "./assets/Isotipo.png",
         "resizeMode": "contain",
         "backgroundColor": "#000"
       },
