@@ -1,13 +1,17 @@
-import React, { createContext, useContext, useEffect, useReducer, useMemo } from 'react';
-import { AuthService } from '@/auth/services/authService';
-import { AuthContextType, AuthState, LoginCredentials, User } from '@/types';
+import React, { useEffect, useReducer, useMemo } from 'react';
+import { AuthService } from '@Services/api/authService';
+import { AuthContextType, AuthState, LoginCredentials, User } from '@/types/auth';
+import AuthContext from '@/contexts/auth/authContext';
+import * as ExpoLocation from 'expo-location';
+import * as Linking from 'expo-linking';
+import { Alert, Platform } from 'react-native';
 
 // Estado inicial
 const initialState: AuthState = {
   isAuthenticated: false,
   user: null,
   token: null,
-  isLoading: true,
+  isLoading: false,
 };
 
 // Tipos de acciones
@@ -48,9 +52,6 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
   }
 }
 
-// Crear el contexto
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
 // Provider
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
@@ -60,18 +61,67 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkAuthStatus();
   }, []);
 
+  // Solicitar permisos de ubicación después del login exitoso
+  useEffect(() => {
+    if (state.isAuthenticated && state.user) {
+      requestLocationPermissionsAfterLogin();
+    }
+  }, [state.isAuthenticated, state.user]);
+
+  const requestLocationPermissionsAfterLogin = async () => {
+    try {
+      console.log('🔍 Solicitando permisos de ubicación después del login...');
+
+      // Verificar estado actual de permisos
+      const { status } = await ExpoLocation.getForegroundPermissionsAsync();
+
+      if (status === ExpoLocation.PermissionStatus.GRANTED) {
+        console.log('✅ Permisos de ubicación ya concedidos');
+        return;
+      }
+
+      // Solicitar permisos
+      const { status: newStatus } = await ExpoLocation.requestForegroundPermissionsAsync();
+
+      if (newStatus === ExpoLocation.PermissionStatus.GRANTED) {
+        console.log('✅ Permisos de ubicación concedidos después del login');
+      } else {
+        console.log('❌ Permisos de ubicación denegados después del login');
+        Alert.alert(
+          'Permisos de Ubicación Requeridos',
+          'Para el correcto funcionamiento de la aplicación, necesitas habilitar los permisos de ubicación.',
+          [
+            { text: 'Cancelar', style: 'cancel' },
+            {
+              text: 'Abrir Configuración',
+              onPress: () => {
+                if (Platform.OS === 'android') {
+                  Linking.openSettings();
+                } else {
+                  Linking.openURL('app-settings:');
+                }
+              },
+            },
+          ]
+        );
+      }
+    } catch (error) {
+      console.error('❌ Error solicitando permisos después del login:', error);
+    }
+  };
+
   const checkAuthStatus = async () => {
     try {
       console.log('🔄 Iniciando verificación de estado de autenticación...');
       dispatch({ type: 'SET_LOADING', payload: true });
-      
+
       // Verificar si ya hay una sesión guardada
       const hasSession = await AuthService.hasStoredSession();
       console.log('📁 Sesión almacenada encontrada:', hasSession);
-      
+
       const authStatus = await AuthService.checkAuthStatus();
       console.log('🔍 Resultado de verificación:', authStatus);
-      
+
       if (authStatus.isAuthenticated && authStatus.user && authStatus.token) {
         console.log('✅ Restaurando sesión válida para usuario:', authStatus.user.identificacion);
         dispatch({
@@ -95,7 +145,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
       const result = await AuthService.login(credentials);
-      
+
       if (result.success && result.user && result.token) {
         dispatch({
           type: 'LOGIN_SUCCESS',
@@ -141,20 +191,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [state]
   );
 
-  return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-// Hook personalizado
-export function useAuth(): AuthContextType {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 }
 
 export default AuthProvider;

@@ -1,9 +1,9 @@
-import React from 'react';
-import useAuth from '@/auth/hooks/useAuth';
-import MqttProviderConditional from '@/mqtt/provider/MqttProviderConditional';
-import LocationProviderConditional from '@/location/provider/LocationProviderConditional';
-import TrackingProvider from '@/tracking/provider/TrackingProvider';
-import useTracking from '@/tracking/hooks/useTracking';
+import type { ReactNode } from 'react';
+import { useAuth } from '@Hooks/auth';
+import MqttProvider from '@/providers/mqtt/MqttProvider';
+import LocationProvider from '@/providers/location/LocationProvider';
+import TrackingProvider from '@Providers/tracking/TrackingProvider';
+import { useTracking } from '@Hooks/tracking';
 
 // Componente interno que tiene acceso al contexto de tracking
 function ProvidersWithTracking({ children }: { children: React.ReactNode }) {
@@ -11,17 +11,11 @@ function ProvidersWithTracking({ children }: { children: React.ReactNode }) {
   const { isRecorridoActive } = useTracking();
 
   return (
-    <MqttProviderConditional 
-      shouldConnect={isRecorridoActive} 
-      isAuthenticated={isAuthenticated}
-    >
-      <LocationProviderConditional 
-        shouldTrack={isRecorridoActive} 
-        isAuthenticated={isAuthenticated}
-      >
+    <MqttProvider shouldConnect={isAuthenticated} isAuthenticated={isAuthenticated}>
+      <LocationProvider shouldTrack={isRecorridoActive} isAuthenticated={isAuthenticated}>
         {children}
-      </LocationProviderConditional>
-    </MqttProviderConditional>
+      </LocationProvider>
+    </MqttProvider>
   );
 }
 
@@ -29,9 +23,7 @@ function ProvidersWithTracking({ children }: { children: React.ReactNode }) {
 export default function ConditionalProvidersWrapper({ children }: { children: React.ReactNode }) {
   return (
     <TrackingProvider>
-      <ProvidersWithTracking>
-        {children}
-      </ProvidersWithTracking>
+      <ProvidersWithTracking>{children}</ProvidersWithTracking>
     </TrackingProvider>
   );
 }

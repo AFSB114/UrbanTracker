@@ -1,5 +1,5 @@
 import React, { useReducer, useMemo } from 'react';
-import TrackingContext, { TrackingState, TrackingContextType } from '../context/TrackingContext';
+import TrackingContext, { TrackingState, TrackingContextType } from '@Contexts/tracking/trackingContext';
 
 // Estado inicial
 const initialState: TrackingState = {
@@ -41,7 +41,7 @@ interface TrackingProviderProps {
   children: React.ReactNode;
 }
 
-export function TrackingProvider({ children }: TrackingProviderProps) {
+export default function TrackingProvider({ children }: TrackingProviderProps) {
   const [state, dispatch] = useReducer(trackingReducer, initialState);
 
   const startRecorrido = () => {
@@ -97,5 +97,3 @@ export function TrackingProvider({ children }: TrackingProviderProps) {
     </TrackingContext.Provider>
   );
 }
-
-export default TrackingProvider;

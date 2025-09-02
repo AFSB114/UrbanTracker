@@ -1,13 +1,24 @@
-// Define a location interface compatible with existing code
-interface Location {
+import type React from 'react';
+
+export interface Location {
   latitude: number;
   longitude: number;
   accuracy: number;
   timestamp: number;
 }
 
-interface LocationProviderConditionalProps {
+export interface LocationProviderConditionalProps {
   children: React.ReactNode;
-  shouldTrack: boolean; // Prop para controlar si debe hacer tracking
-  isAuthenticated: boolean; // Prop para verificar autenticación
+  shouldTrack: boolean;
+  isAuthenticated: boolean;
+}
+
+export type LocationPermissionStatus = 'granted' | 'denied' | 'prompt';
+
+export interface LocationContextType {
+  location: Location | null;
+  permissionStatus: LocationPermissionStatus;
+  isTracking: boolean;
+  requestLocation: () => Promise<void>;
+  toggleTracking: () => void;
 }
