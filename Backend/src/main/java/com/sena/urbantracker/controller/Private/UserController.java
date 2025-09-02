@@ -1,4 +1,4 @@
-package com.sena.urbantracker.controller.Public;
+package com.sena.urbantracker.controller.Private;
 
 import com.sena.urbantracker.DTO.ResponseDTO;
 import com.sena.urbantracker.DTO.UserDTO;
@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/public/user")
+@RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -31,5 +31,6 @@ public class UserController {
         ResponseDTO response = userService.deleteUser(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 }
 

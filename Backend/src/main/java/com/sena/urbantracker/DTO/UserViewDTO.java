@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserViewDTO {
 
-    private String id;
-    private String username;
+    private Integer id;
+    private String userName;
     private Integer role;
 
 }

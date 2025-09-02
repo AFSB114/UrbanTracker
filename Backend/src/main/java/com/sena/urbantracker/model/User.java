@@ -30,14 +30,14 @@ public class User implements UserDetails {
     @Column(name = "username", nullable = false, unique = true, length = 50)
     private String userName;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String password;
 
     @ManyToOne()
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @Column(name = "id_driver", nullable = false, unique = true, length = 15)
+    @Column(name = "identification_number", nullable = false, unique = true, length = 15)
     private String idDriver;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -53,7 +53,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userName;
+        return idDriver; // en lugar de userName
     }
 
     @Override
