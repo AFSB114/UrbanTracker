@@ -71,7 +71,7 @@ export const DriverModal: React.FC<DriverModalProps> = ({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    
+      
     if (!validateForm()) return;
 
     setIsLoading(true);
