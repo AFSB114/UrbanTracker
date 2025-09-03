@@ -1,6 +1,6 @@
 package com.sena.urbantracker.routes.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sena.urbantracker.routes.model.enums.DayOfWeekType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,42 +9,43 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "route", schema = "routes")
+@Table(name = "route_schedule", schema = "routes")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class Route {
+public class RouteSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "number_route",nullable = false, unique = true)
-    private Integer numberRoute;
+    @ManyToOne
+    @JoinColumn(name = "route_id", nullable = false)
+    private Route route;
 
-    @Column(name = "description", columnDefinition = "TEXT")
-    private String description;
+    @Column(name = "day_of_week", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DayOfWeekType dayOfWeek;
 
-    @Column(name = "total_distance", nullable = false, precision = 8, scale = 2)
-    private Double totalDistance;
+    @Column(name = "start_time", nullable = false)
+    private Time startTime;
+
+    @Column(name = "end_time", nullable = false)
+    private Time endTime;
 
     @Column(nullable = false)
     @Builder.Default
-    private Boolean active = true;
+    private boolean active = true;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<RouteWaypoint> routeWaypoints;
 }
