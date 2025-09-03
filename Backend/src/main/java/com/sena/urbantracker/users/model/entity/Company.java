@@ -9,7 +9,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
-@Entity(name = "companies", schema = "users")
+@Entity
+@Table(name = "companies", schema = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -18,7 +19,7 @@ public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "company_id", updatable = false, nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "company_name", nullable = false, length = 200 ,unique = true)
     private String name;

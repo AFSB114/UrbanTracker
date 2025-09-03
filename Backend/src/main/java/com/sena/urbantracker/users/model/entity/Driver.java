@@ -10,12 +10,13 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
-@Entity(name = "drivers", schema = "users")
+@Entity
+@Table(name = "drivers", schema = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class Drivers {
+public class Driver {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

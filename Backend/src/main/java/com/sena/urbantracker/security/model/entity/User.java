@@ -7,26 +7,28 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
 import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.enabled;
 
-@Entity(name = "users")
+@Entity
+@Table(name = "user", schema = "security")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
 public class User implements UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "username", nullable = false, unique = true, length = 50)
     private String userName;
@@ -34,18 +36,28 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean active = true;
+
     @ManyToOne()
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @Column(name = "identification_number", nullable = false, unique = true, length = 15)
-    private String idDriver;
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Vehicle> vehicles;
-
-    // --- Métodos obligatorios de UserDetails ---
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -54,7 +66,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return idDriver; // en lugar de userName
+        return userName;
     }
 
     @Override

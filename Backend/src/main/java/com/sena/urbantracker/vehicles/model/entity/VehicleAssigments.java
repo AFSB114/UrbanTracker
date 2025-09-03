@@ -1,17 +1,16 @@
 package com.sena.urbantracker.vehicles.model.entity;
 
 import ch.qos.logback.core.model.NamedModel;
+import com.sena.urbantracker.users.model.entity.Driver;
 import com.sena.urbantracker.vehicles.model.enums.AssigmentStatusType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.extern.java.Log;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.sql.Driver;
 import java.time.LocalDateTime;
 
 @Entity

@@ -2,7 +2,6 @@ package com.sena.urbantracker.vehicles.model.entity;
 
 import com.sena.urbantracker.vehicles.model.enums.VehicleStatusType;
 import com.sena.urbantracker.users.model.entity.Company;
-import com.sena.urbantracker.security.model.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

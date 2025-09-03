@@ -1,6 +1,6 @@
 package com.sena.urbantracker.monitoring.model.entity;
 
-import com.sena.urbantracker.users.model.entity.Drivers;
+import com.sena.urbantracker.users.model.entity.Driver;
 import com.sena.urbantracker.vehicles.model.entity.Vehicle;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
-@Entity(name = "alerts", schema = "monitoring")
+@Entity
+@Table(name = "alerts", schema = "monitoring")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -29,7 +30,7 @@ public class Alert {
 
     @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL)
     @JoinColumn(name = "driver_id", nullable = false)
-    private Drivers driver;
+    private Driver driver;
 
     @Column(name = "alert_type", length = 50, nullable = false)
     private String alertType;

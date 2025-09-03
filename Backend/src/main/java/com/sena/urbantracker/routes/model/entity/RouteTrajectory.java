@@ -13,12 +13,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "route_trajectories", schema = "routes")
+@Table(name = "route_trajectory", schema = "routes")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class RouteTrajectories {
+public class RouteTrajectory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

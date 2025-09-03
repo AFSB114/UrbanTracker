@@ -6,7 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "identification_type", schema = "users")
+@Entity
+@Table(name = "identification_type", schema = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -16,7 +17,7 @@ public class IdentificationType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_type", updatable = false, nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "type_name", length = 50, nullable = false, unique = true)
     private String typeName;
