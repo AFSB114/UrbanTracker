@@ -6,19 +6,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "vehicle_status")
+@Entity
+@Table(name = "vehicle_types")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class VehicleStatus {
-
+public class VehicleType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
+    private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
+    @Column( length = 200)
+    private String description;
+
+    @Column(nullable = false)
+    private Boolean active;
 }

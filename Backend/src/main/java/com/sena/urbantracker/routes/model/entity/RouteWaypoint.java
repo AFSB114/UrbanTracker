@@ -1,6 +1,5 @@
 package com.sena.urbantracker.routes.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,31 +9,30 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "route", schema = "routes")
+@Table(name = "route_waypoint", schema = "routes")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class Route {
+public class RouteWaypoint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "number_route",nullable = false, unique = true)
-    private Integer numberRoute;
-
-    @Column(name = "description", columnDefinition = "TEXT")
-    private String description;
-
-    @Column(name = "total_distance", nullable = false, precision = 8, scale = 2)
-    private Double totalDistance;
+    @ManyToOne
+    @JoinColumn(name = "route_id", nullable = false)
+    private Route route;
 
     @Column(nullable = false)
-    @Builder.Default
-    private Boolean active = true;
+    private Integer sequence;
+
+    @Column(nullable = false, precision = 10, scale = 8)
+    private Double latitude;
+
+    @Column(nullable = false, precision = 11, scale = 8)
+    private Double longitude;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -43,8 +41,4 @@ public class Route {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<RouteWaypoint> routeWaypoints;
 }

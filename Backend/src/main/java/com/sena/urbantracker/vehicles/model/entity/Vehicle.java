@@ -8,8 +8,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-@Entity(name = "vehicle")
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "vehicle", schema = "vehicles")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -17,28 +22,48 @@ import lombok.NoArgsConstructor;
 public class Vehicle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
-    @Column(name = "licence_plate", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "vehicle_type_id", nullable = false)
+    private VehicleType vehicleType;
+
+    @Column(name = "licence_plate", nullable = false, length = 10, unique = true)
     private String licencePlate;
 
-    @Column(name = "brand", nullable = false)
+    @Column(nullable = false, length = 50)
     private String brand;
 
-    @Column(name = "model", nullable = false)
+    @Column(nullable = false, length = 50)
     private String model;
+
+    @Column(nullable = false)
+    private Integer year;
+
+    @Column(length = 30)
+    private String color;
+
+    @Column(name = "passenger_capacity",nullable = false)
+    private Integer passengerCapacity;
 
     @Column(name = "status",nullable = false)
     @Enumerated(EnumType.STRING)
-    private VehicleStatusType status;
+    @Builder.Default
+    private VehicleStatusType status = VehicleStatusType.ACTIVE;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "in_service", nullable = false)
+    @Builder.Default
+    private boolean inService = false;
 
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }
