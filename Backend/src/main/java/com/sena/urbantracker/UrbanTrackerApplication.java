@@ -1,6 +1,5 @@
 package com.sena.urbantracker;
 
-import com.sena.urbantracker.model.Company;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
