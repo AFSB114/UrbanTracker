@@ -3,6 +3,6 @@ package com.sena.urbantracker.users.repository;
 import com.sena.urbantracker.security.model.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface IRole extends JpaRepository<Role, Integer> {
+public interface IRole extends JpaRepository<Role, Long> {
     boolean existsByName(String name);
 }

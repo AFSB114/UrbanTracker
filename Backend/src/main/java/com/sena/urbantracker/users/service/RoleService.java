@@ -71,12 +71,12 @@ public class RoleService {
     }
 
     //busca el rol por el id
-    public Optional<Role> findById(int id) {
+    public Optional<Role> findById(Long id) {
         return data.findById(id);
     }
 
     //borro el rol segun el id
-    public ResponseDTO deleteRole(int id) {
+    public ResponseDTO deleteRole(Long id) {
         Optional<Role> roleOpt = findById(id);
         if (!roleOpt.isPresent()) {
             return new ResponseDTO("El rol no existe", HttpStatus.NOT_FOUND.toString());

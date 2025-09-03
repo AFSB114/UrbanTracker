@@ -37,12 +37,12 @@ public class UserService {
     }
 
     //busca el user por el id
-    public Optional<User> findById(int id) {
+    public Optional<User> findById(Long id) {
         return iUser.findById(id);
     }
 
     //borra el user segun el id
-    public ResponseDTO deleteUser(int id) {
+    public ResponseDTO deleteUser(Long id) {
         Optional<User> userOpt = findById(id);
         if (!userOpt.isPresent()) {
             return new ResponseDTO("El user no existe", HttpStatus.NOT_FOUND.toString());
@@ -154,8 +154,7 @@ public class UserService {
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
-                user.getRole() != null ? user.getRole().getId() : null,
-                user.getIdDriver()
+                user.getRole() != null ? user.getRole().getId() : null
         );
     }
 
@@ -169,7 +168,6 @@ public class UserService {
                 .userName(userDTO.getUserName())
                 .password(userDTO.getPassword())
                 .role(role)
-                .idDriver (userDTO.getIdDriver())
                 .build();
     }
 

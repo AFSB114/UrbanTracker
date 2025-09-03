@@ -11,14 +11,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CompanyDTO {
 
-    private Integer id;
+    private Long id;
     private String name;
-    private String nit;
     private String address;
     private String contactPhone;
     private String contactEmail;
     private boolean active = true;
-    private LocalDateTime createAt;  // solo lectura
-    private LocalDateTime updateAt;  // solo lectura
-
 }

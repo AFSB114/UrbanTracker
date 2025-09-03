@@ -41,7 +41,7 @@ public class User implements UserDetails {
     private Boolean active = true;
 
     @ManyToOne()
-    @JoinColumn(name = "role_id", nullable = false)
+    @JoinColumn(name = "role_id")
     private Role role;
 
     @CreationTimestamp

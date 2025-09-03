@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteUser(@PathVariable int id) {
+    public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
         ResponseDTO response = userService.deleteUser(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

@@ -25,12 +25,12 @@ public class CompanyService {
     }
 
     //busca el user por el id
-    public Optional<Company> findById(int id) {
+    public Optional<Company> findById(Long id) {
         return iCompany.findById(id);
     }
 
     //borra el user segun el id
-    public ResponseDTO deleteCompany(int id) {
+    public ResponseDTO deleteCompany(Long id) {
         Optional<Company> companyOpt = findById(id);
         if (!companyOpt.isPresent()) {
             return new ResponseDTO("La compañia no existe", HttpStatus.NOT_FOUND.toString());
@@ -53,14 +53,14 @@ public class CompanyService {
             }
 
             // 🔹 Validar NIT
-            if (!StringUtils.hasText(companyDTO.getNit())) {
-                return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(),
-                        "El NIT no puede ser nulo o vacío.");
-            }
-            if (!companyDTO.getNit().matches("^[0-9]+$")) {
-                return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(),
-                        "El NIT solo puede contener números.");
-            }
+//            if (!StringUtils.hasText(companyDTO.getNit())) {
+//                return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(),
+//                        "El NIT no puede ser nulo o vacío.");
+//            }
+//            if (!companyDTO.getNit().matches("^[0-9]+$")) {
+//                return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(),
+//                        "El NIT solo puede contener números.");
+//            }
 
             // 🔹 Validar dirección
             if (!StringUtils.hasText(companyDTO.getAddress())) {
@@ -85,11 +85,11 @@ public class CompanyService {
             }
 
             // 🔹 Validar duplicados (si es nuevo)
-            if ((companyDTO.getId() == null || companyDTO.getId() == 0) &&
-                    iCompany.existsByNit(companyDTO.getNit())) {
-                return new ResponseDTO(HttpStatus.CONFLICT.toString(),
-                        "Ya existe una compañía con ese NIT.");
-            }
+//            if ((companyDTO.getId() == null || companyDTO.getId() == 0) &&
+//                    iCompany.existsByNit(companyDTO.getNit())) {
+//                return new ResponseDTO(HttpStatus.CONFLICT.toString(),
+//                        "Ya existe una compañía con ese NIT.");
+//            }
 
             // 🔹 Crear o actualizar
             Company company;
@@ -122,12 +122,9 @@ public class CompanyService {
         return Company.builder()
                 .id(dto.getId())
                 .name(dto.getName())
-                .nit(dto.getNit())
-                .address(dto.getAddress())
-                .contactPhone(dto.getContactPhone())
-                .contactEmail(dto.getContactEmail())
+                .phone(dto.getContactPhone())
+                .email(dto.getContactEmail())
                 .active(dto.isActive())
-                .createAt(dto.getCreateAt() != null ? dto.getCreateAt() : LocalDateTime.now())
                 .build();
     }
 
@@ -136,12 +133,9 @@ public class CompanyService {
         CompanyDTO dto = new CompanyDTO();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
-        dto.setNit(entity.getNit());
-        dto.setAddress(entity.getAddress());
-        dto.setContactPhone(entity.getContactPhone());
-        dto.setContactEmail(entity.getContactEmail());
-        dto.setActive(entity.isActive());
-        dto.setCreateAt(entity.getCreateAt());
+        dto.setContactPhone(entity.getPhone());
+        dto.setContactEmail(entity.getEmail());
+        dto.setActive(entity.getActive());
         return dto;
     }
 

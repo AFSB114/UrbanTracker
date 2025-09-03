@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
-    private Integer id;
+    private Long id;
     private String userName;
     private String password;
-    private Integer role;
-    private String idDriver;
+    private Long role;
 }
