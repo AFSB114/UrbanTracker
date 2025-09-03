@@ -1,5 +1,6 @@
 package com.sena.urbantracker.users.model.entity;
 
+import com.sena.urbantracker.security.model.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,38 +8,33 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 
-@Entity(name = "companies", schema = "users")
-@AllArgsConstructor
+@Entity(name = "user_profile", schema = "users")
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Builder
-public class Company {
+public class UserProfile {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "company_id", updatable = false, nullable = false)
+    @Column(name = "profile_id", updatable = false, nullable = false)
     private Integer id;
 
-    @Column(name = "company_name", nullable = false, length = 200 ,unique = true)
-    private String name;
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
 
-    @Column(name = "tax_id", length = 20, nullable = false, unique = true)
-    private String taxId;
+    @Column(name = "first_name", length = 100, nullable = false)
+    private String firstName;
+
+    @Column(name = "last_name", length = 100, nullable = false)
+    private String lastName;
 
     @Column(length = 20)
     private String phone;
-
-    @Column(length = 100)
-    private String email;
-
-    @Column(length = 50, nullable = false)
-    @Builder.Default
-    private String country = "Colombia";
-
-    @Column(nullable = false)
-    @Builder.Default
-    private Boolean active = true;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -47,5 +43,4 @@ public class Company {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
 }
