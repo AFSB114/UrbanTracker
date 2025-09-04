@@ -15,12 +15,12 @@ public class VehicleController {
 
     private final VehicleService vehicleService;
 
-    @GetMapping("/")
-    public ResponseEntity<?> getAllVehicles() {
-        var vehicles = vehicleService.getAllVehicle();
-        var total = vehicleService.conuntVehicle();
+//@GetMapping("/")
+    //  public ResponseEntity<?> getAllVehicles() {
+    //    var vehicles = vehicleService.getAllVehicle();
+    //    var total = vehicleService.conuntVehicle();
 
-        return ResponseEntity.ok(new VehicleResponseDTO(vehicles, total));
-    }
+    //     return ResponseEntity.ok(new VehicleResponseDTO(vehicles, total));
+    //}
 
 }

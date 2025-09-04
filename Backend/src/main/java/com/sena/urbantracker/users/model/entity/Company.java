@@ -24,8 +24,8 @@ public class Company {
     @Column(name = "company_name", nullable = false, length = 200 ,unique = true)
     private String name;
 
-    @Column(name = "tax_id", length = 20, nullable = false, unique = true)
-    private String taxId;
+    @Column(name = "nit", length = 20, nullable = false, unique = true)
+    private String nit;
 
     @Column(length = 20)
     private String phone;

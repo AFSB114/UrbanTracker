@@ -9,22 +9,7 @@ import java.util.List;
 
 public interface IVehicle extends JpaRepository<Vehicle, Long> {
 
-    @Query("SELECT COUNT(v) FROM vehicle v")
+    @Query("SELECT COUNT(v) FROM Vehicle v")
     Integer countVehicles();
-
-    @Query("""
-        SELECT new com.sena.urbantracker.DTO.PaginateVehicleCountsDTO(
-            v.brand,
-            v.licencePlate,
-            v.model,
-            v.status,
-            c.name,
-            u.userName
-        )
-        FROM vehicle v
-        JOIN v.company c
-        JOIN v.user u
-        """)
-    List<PaginateVehicleCountsDTO> getAllVehicle();
 
 }

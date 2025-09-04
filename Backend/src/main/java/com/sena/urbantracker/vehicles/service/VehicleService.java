@@ -22,12 +22,12 @@ public class VehicleService {
         return iVehicle.findById(id).get();
     }
 
-    public Integer conuntVehicle() {
-        return iVehicle.countVehicles();
-    }
+   // public Integer conuntVehicle() {
+    //    return iVehicle.countVehicles();
+   // }
 
-    public List<PaginateVehicleCountsDTO> getAllVehicle() {
-        return iVehicle.getAllVehicle();
-    }
+  //  public List<PaginateVehicleCountsDTO> getAllVehicle() {
+    //    return iVehicle.getAllVehicle();
+    //}
 
 }
