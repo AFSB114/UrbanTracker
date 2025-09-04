@@ -51,14 +51,15 @@ public class JwtService {
         claims.put("id", user.getId());
         claims.put("role", user.getRole().getName());
         claims.put("userName", user.getUsername());
+        // NO agregues "sub" aquí, déjalo para setSubject()
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(user.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 horas
-                .signWith(getKey(), SignatureAlgorithm.HS256)
-                .compact();
+            .addClaims(claims)  // ← Cambia setClaims() por addClaims()
+            .setSubject(user.getUsername())  // ← Ahora SÍ se establece correctamente
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+            .signWith(getKey(), SignatureAlgorithm.HS256)
+            .compact();
     }
 
     private Key getKey() {
