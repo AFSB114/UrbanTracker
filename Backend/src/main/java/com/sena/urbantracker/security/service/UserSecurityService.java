@@ -5,7 +5,7 @@ import com.sena.urbantracker.security.model.dto.response.ResponseLoginDTO;
 
 import com.sena.urbantracker.security.model.entity.User;
 
-import com.sena.urbantracker.security.repository.IUserSecurity;
+import com.sena.urbantracker.users.repository.IUser;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserSecurityService {
 
-    private final IUserSecurity iUser;
+    private final IUser iUser;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
@@ -26,12 +26,12 @@ public class UserSecurityService {
         // Autenticar credenciales
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        login.getDriverID(),
+                        login.getUserName(),
                         login.getPassword()));
 
-        // Buscar conductor por driverID
-        User user = iUser.findByUserName(login.getDriverID())
-                .orElseThrow(() -> new UsernameNotFoundException("Conductor no encontrado con ID: " + login.getDriverID()));
+        // Buscar conductor por userName
+        User user = iUser.findByUserName(login.getUserName())
+                .orElseThrow(() -> new UsernameNotFoundException("Conductor no encontrado con ID: " + login.getUserName()));
 
         // Generar token
         String token = jwtService.generateToken(user);

@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class RequestLoginDriverDTO {
-    private String driverID;
+    private String userName;
     private String password;
 }
