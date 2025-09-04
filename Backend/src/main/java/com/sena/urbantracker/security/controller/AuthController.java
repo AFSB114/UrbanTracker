@@ -2,7 +2,7 @@ package com.sena.urbantracker.security.controller;
 
 import com.sena.urbantracker.security.model.dto.response.RequestLoginDriverDTO;
 import com.sena.urbantracker.security.model.dto.response.ResponseLoginDTO;
-import com.sena.urbantracker.users.service.UserService;
+import com.sena.urbantracker.security.service.UserSecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UserService userService;
+    private final UserSecurityService userService;
 
     @PostMapping("/login/driver")
     public ResponseEntity<ResponseLoginDTO> login(@RequestBody RequestLoginDriverDTO userDTO) {

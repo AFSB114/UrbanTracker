@@ -1,5 +1,6 @@
 package com.sena.urbantracker.config.security;
 
+import com.sena.urbantracker.security.infrastructure.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -12,8 +13,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
-
-import com.sena.urbantracker.security.infrastructure.security.JwtAuthenticationFilter;
 
 @Slf4j
 @Configuration

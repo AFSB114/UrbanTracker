@@ -130,24 +130,6 @@ public class UserService {
         }
     }
 
-    public ResponseLoginDTO login(RequestLoginDriverDTO login) {
-        // Autenticar credenciales
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        login.getDriverID(),
-                        login.getPassword()));
-
-        // Buscar conductor por driverID
-        User user = iUser.findByIdDriver(login.getDriverID())
-                .orElseThrow(() -> new UsernameNotFoundException("Conductor no encontrado con ID: " + login.getDriverID()));
-
-        // Generar token
-        String token = jwtService.generateToken(user);
-
-        return new ResponseLoginDTO(token);
-    }
-
-
     // Convertir de Entity a DTO
     public UserDTO convertToDTO(User user) {
         return new UserDTO(

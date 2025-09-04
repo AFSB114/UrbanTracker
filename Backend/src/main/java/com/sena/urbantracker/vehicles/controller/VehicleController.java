@@ -1,11 +1,15 @@
 package com.sena.urbantracker.vehicles.controller;
 
+import com.sena.urbantracker.vehicles.model.dto.request.PaginateVehicleCountsDTO;
 import com.sena.urbantracker.vehicles.model.dto.request.VehicleResponseDTO;
+import com.sena.urbantracker.vehicles.model.dto.response.PaginatedVehicleResponseDTO;
+import com.sena.urbantracker.vehicles.model.enums.VehicleStatusType;
 import com.sena.urbantracker.vehicles.service.VehicleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -15,12 +19,12 @@ public class VehicleController {
 
     private final VehicleService vehicleService;
 
-    @GetMapping("/")
-    public ResponseEntity<?> getAllVehicles() {
-        var vehicles = vehicleService.getAllVehicle();
-        var total = vehicleService.conuntVehicle();
+    //@GetMapping("/")
+    //  public ResponseEntity<?> getAllVehicles() {
+    //    var vehicles = vehicleService.getAllVehicle();
+    //    var total = vehicleService.conuntVehicle();
 
-        return ResponseEntity.ok(new VehicleResponseDTO(vehicles, total));
-    }
+    //     return ResponseEntity.ok(new VehicleResponseDTO(vehicles, total));
+    //}
 
 }
