@@ -1,7 +1,7 @@
 package com.sena.urbantracker.routes.controller;
 
 
-import com.sena.urbantracker.routes.service.RoutePointService;
+import com.sena.urbantracker.routes.iservice.IRoutePointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class RoutePointController {
 
-    private final RoutePointService routePointService;
+    private final IRoutePointService routePointService;
 
     @GetMapping("/")
     public ResponseEntity<?> getAllRoutePoints() {

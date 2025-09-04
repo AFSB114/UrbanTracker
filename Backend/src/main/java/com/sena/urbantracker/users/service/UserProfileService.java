@@ -24,7 +24,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserProfileService {
 
     private final IUser iUser;
     private final JwtService jwtService;
