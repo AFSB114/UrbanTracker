@@ -30,48 +30,42 @@ export default function AppNavigator() {
           headerShown: false,
           presentation: 'modal',
           animationTypeForReplace: 'push',
-        }}
-      >
-        <Stack.Screen 
-          name="Main" 
+        }}>
+        <Stack.Screen
+          name="Main"
           component={MapScreen}
           options={{
             presentation: 'card',
           }}
         />
-        <Stack.Screen 
-          name="RouteDetail" 
+        <Stack.Screen
+          name="RouteDetail"
           component={RouteDetailScreen}
           options={{
             presentation: 'modal',
             gestureEnabled: true,
             gestureDirection: 'vertical',
+            animation: 'slide_from_right',
           }}
         />
-        <Stack.Screen 
-          name="Search" 
-          component={SearchScreen}
-          options={{
-            presentation: 'transparentModal',
-            gestureEnabled: true,
-          }}
-        />
-        <Stack.Screen 
-          name="About" 
+        <Stack.Screen
+          name="About"
           component={AboutScreen}
           options={{
             presentation: 'modal',
             gestureEnabled: true,
-            gestureDirection: 'vertical',
+            gestureDirection: 'horizontal',
+            animation: 'slide_from_right',
           }}
         />
-        <Stack.Screen 
-          name="Stops" 
+        <Stack.Screen
+          name="Stops"
           component={StopsScreen}
           options={{
             presentation: 'modal',
             gestureEnabled: true,
-            gestureDirection: 'vertical',
+            gestureDirection: 'horizontal',
+            animation: 'slide_from_right',
           }}
         />
       </Stack.Navigator>

@@ -15,7 +15,7 @@ export const useHome = () => {
   // Estados para la modal
   const [modalVisible, setModalVisible] = useState(false);
   const [asunto, setAsunto] = useState('');
-  const [descripcion, setDescripcion] = useState('');
+  const [description, setDescription] = useState('');
 
   const handleToggleTrayecto = () => {
     if (!isRecorridoActive) {
@@ -81,14 +81,14 @@ export const useHome = () => {
   };
 
   const handleEnviarReporte = () => {
-    if (!asunto || !descripcion) {
+    if (!asunto || !description) {
       Alert.alert('Campos vacíos', 'Por favor, completa todos los campos para enviar el reporte.');
       return;
     }
-    console.log('Reporte Enviado:', { asunto, descripcion });
+    console.log('Reporte Enviado:', { asunto, descripcion: description });
 
     setAsunto('');
-    setDescripcion('');
+    setDescription('');
     setModalVisible(false);
 
     Alert.alert('Reporte Enviado', 'Tu novedad ha sido enviada con éxito.');
@@ -122,7 +122,7 @@ export const useHome = () => {
     // Estados
     modalVisible,
     asunto,
-    descripcion,
+    description,
     isRecorridoActive,
     startTime,
     endTime,
@@ -132,7 +132,7 @@ export const useHome = () => {
     // Setters
     setModalVisible,
     setAsunto,
-    setDescripcion,
+    setDescription,
 
     // Handlers
     handleToggleTrayecto,

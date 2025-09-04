@@ -19,7 +19,7 @@ export default function SearchBar({
 }: SearchBarProps) {
   return (
     <TouchableOpacity 
-      className="absolute top-12 left-5 right-5 z-50"
+      className="z-50 w-full px-5 mb-4"
       onPress={onPress}
       activeOpacity={0.8}
     >

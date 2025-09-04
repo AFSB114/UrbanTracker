@@ -18,7 +18,7 @@ export default function Home() {
   const {
     modalVisible,
     asunto,
-    descripcion,
+    description,
     isRecorridoActive,
     startTime,
     endTime,
@@ -26,7 +26,7 @@ export default function Home() {
     connectionStatus,
     setModalVisible,
     setAsunto,
-    setDescripcion,
+    setDescription,
     handleToggleTrayecto,
     handleLogout,
     handleEnviarReporte,
@@ -200,8 +200,8 @@ export default function Home() {
               placeholderTextColor="#71717a"
               multiline={true}
               textAlignVertical="top"
-              value={descripcion}
-              onChangeText={setDescripcion}
+              value={description}
+              onChangeText={setDescription}
             />
 
             <View className="mt-6 flex-row justify-end">
@@ -209,7 +209,7 @@ export default function Home() {
                 onPress={() => {
                   setModalVisible(false);
                   setAsunto('');
-                  setDescripcion('');
+                  setDescription('');
                 }}
                 className="mr-2 px-4 py-2">
                 <Text className="font-semibold text-zinc-400">Cancelar</Text>
