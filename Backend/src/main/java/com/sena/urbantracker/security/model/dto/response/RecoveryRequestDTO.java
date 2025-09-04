@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class RecoveryRequestDTO {
-    private int id;
+    private Long id;
     private String email;
     private String token;
     private Integer expirationTime;

@@ -1,5 +1,6 @@
 package com.sena.urbantracker.vehicles.model.entity;
 
+import com.sena.urbantracker.security.model.entity.User;
 import com.sena.urbantracker.vehicles.model.enums.VehicleStatusType;
 import com.sena.urbantracker.users.model.entity.Company;
 import jakarta.persistence.*;
@@ -65,4 +66,9 @@ public class Vehicle {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    // @ManyToOne
+    // @JoinColumn(name = "user_id")
+    // private User user;
+
 }

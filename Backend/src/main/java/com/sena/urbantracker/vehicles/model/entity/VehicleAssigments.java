@@ -1,6 +1,5 @@
 package com.sena.urbantracker.vehicles.model.entity;
 
-import ch.qos.logback.core.model.NamedModel;
 import com.sena.urbantracker.users.model.entity.Driver;
 import com.sena.urbantracker.vehicles.model.enums.AssigmentStatusType;
 import jakarta.persistence.*;
@@ -14,7 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "vehicle_assigment", schema = "vehicles")
+@Table(name = "vehicle_assignment", schema = "vehicles")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -33,16 +32,16 @@ public class VehicleAssigments {
     private Driver driver;
 
     @CreationTimestamp
-    @Column(name = "created_at",nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updaet_at")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @Column(length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
-    private AssigmentStatusType assigmenStatus;
+    private AssigmentStatusType assignmentStatus;
 
     @Column(name = "note", columnDefinition = "TEXT")
     private String note;

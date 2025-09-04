@@ -28,10 +28,10 @@ public class RouteWaypoint {
     @Column(nullable = false)
     private Integer sequence;
 
-    @Column(nullable = false, precision = 10, scale = 8)
+    @Column(nullable = false)
     private Double latitude;
 
-    @Column(nullable = false, precision = 11, scale = 8)
+    @Column(nullable = false)
     private Double longitude;
 
     @CreationTimestamp

@@ -33,10 +33,10 @@ public class RealTimeLocation {
     @Column(nullable = false)
     private OffsetDateTime timestamp;
 
-    @Column(nullable = false, precision = 10, scale = 8)
+    @Column(nullable = false)
     private Double latitude;
 
-    @Column(nullable = false, precision = 11, scale = 8)
+    @Column(nullable = false)
     private Double longitude;
 
     @Column(name = "data_source", length = 20)

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "alerts", schema = "monitoring")
@@ -24,13 +25,13 @@ public class Alert {
     @Column(name = "alert_id", updatable = false, nullable = false)
     private Long alertId;
 
-    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
-    @JoinColumn(name = "vehicle_id", nullable = false)
-    private Vehicle vehicle;
-
-    @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id", nullable = false)
     private Driver driver;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id", nullable = false)
+    private Vehicle vehicle;
 
     @Column(name = "alert_type", length = 50, nullable = false)
     private String alertType;

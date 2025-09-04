@@ -1,7 +1,6 @@
 package com.sena.urbantracker.security.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sena.urbantracker.vehicles.model.entity.Vehicle;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,8 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-
-import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.enabled;
 
 @Entity
 @Table(name = "user", schema = "security")
@@ -55,10 +52,6 @@ public class User implements UserDetails {
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Vehicle> vehicles;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.getName()));
@@ -86,6 +79,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return active;
     }
 }

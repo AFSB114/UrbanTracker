@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface IVehicle extends JpaRepository<Vehicle, Integer> {
+public interface IVehicle extends JpaRepository<Vehicle, Long> {
 
     @Query("SELECT COUNT(v) FROM vehicle v")
     Integer countVehicles();

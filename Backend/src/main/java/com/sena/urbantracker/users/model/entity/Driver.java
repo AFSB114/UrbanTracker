@@ -21,9 +21,9 @@ public class Driver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "driver_id", updatable = false, nullable = false)
-    private Integer id;
+    private Long id;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
