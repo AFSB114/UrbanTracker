@@ -1,0 +1,26 @@
+package com.sena.urbantracker.shared.model.enums;
+
+public enum EntityType {
+
+    VEHICLE("Vehicle", "vehicles"),
+    DRIVER("Driver", "drivers"),
+    ROUTE("Route", "routes"),
+    USER("User", "users"),
+    ADMIN("Admin", "admins");
+
+    private final String displayName;
+    private final String pluralName;
+
+    EntityType(String displayName, String pluralName) {
+        this.displayName = displayName;
+        this.pluralName = pluralName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public String getPluralName() {
+        return pluralName;
+    }
+}
