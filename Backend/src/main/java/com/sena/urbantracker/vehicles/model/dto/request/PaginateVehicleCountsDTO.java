@@ -8,5 +8,7 @@ public record PaginateVehicleCountsDTO(
         String model,
         VehicleStatusType status,
         String nameCompany,
-        String userName) {
+        String userName,
+        int page,
+        int size) {
 }
