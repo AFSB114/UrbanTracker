@@ -1,17 +1,16 @@
-// app/drivers/page.tsx
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Plus, Loader2 } from "lucide-react"
-import { useDrivers } from "./hooks/useDrivers"
-import { DriverCard } from "./components/DriverCard"
-import { StatisticsCards } from "./components/StatisticsCards"
-import { DriverFilters } from "./components/DriverFilters"
-import { DriverModal } from "./components/DriverModal"
-import { Pagination } from "./components/Pagination"
-import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal"
-import { Driver } from "./types/driverTypes"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Plus, Loader2 } from "lucide-react";
+import { useDrivers } from "./hooks/useDrivers";
+import { DriverCard } from "./components/DriverCard";
+import { StatisticsCards } from "./components/StatisticsCards";
+import { DriverFilters } from "./components/DriverFilters";
+import { DriverModal } from "./components/DriverModal";
+import { Pagination } from "./components/Pagination";
+import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
+import { Driver } from "./types/driverTypes";
 
 export default function DriversPage() {
   const {
@@ -33,34 +32,35 @@ export default function DriversPage() {
     setItemsPerPage,
     openCreateModal,
     openEditModal,
-    openDeleteModal, 
+    openDeleteModal,
     closeModal,
-    closeDeleteModal, 
+    closeDeleteModal,
     updateFormData,
     saveDriver,
-    confirmDeleteDriver, 
-  } = useDrivers()
+    confirmDeleteDriver,
+  } = useDrivers();
 
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   const handleSaveDriver = async () => {
-    setFormErrors({})
+    setFormErrors({});
     try {
-      await saveDriver()
+      await saveDriver();
     } catch (error) {
       if (error instanceof Error) {
-        setFormErrors({ general: error.message })
+        setFormErrors({ general: error.message });
       }
     }
-  }
+  };
 
   // Handler para el botón de eliminar en DriverCard
   const handleDeleteClick = (id: number) => {
-    openDeleteModal(filteredDrivers.find(driver => driver.id === id) as Driver)
-    
-  }
+    openDeleteModal(
+      filteredDrivers.find((driver) => driver.id === id) as Driver
+    );
+  };
 
-  const isEditing = !!editingDriver
+  const isEditing = !!editingDriver;
 
   if (isLoading) {
     return (
@@ -72,7 +72,7 @@ export default function DriversPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -80,8 +80,12 @@ export default function DriversPage() {
       {/* Header */}
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Gestión de conductores</h1>
-          <p className="text-gray-400 mt-2">Controle y gestione su flota de conductores</p>
+          <h1 className="text-3xl font-bold text-white">
+            Gestión de conductores
+          </h1>
+          <p className="text-gray-400 mt-2">
+            Controle y gestione su flota de conductores
+          </p>
         </div>
         <Button
           onClick={openCreateModal}
@@ -96,20 +100,16 @@ export default function DriversPage() {
       <StatisticsCards statistics={statistics} />
 
       {/* Filters */}
-      <DriverFilters
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-      />
+      <DriverFilters searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
       {/* Driver list */}
       <section className="space-y-6">
         {filteredDrivers.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-400 text-lg">
-              {searchTerm 
-                ? "No se encontraron conductores que coincidan con su búsqueda." 
-                : "No hay conductores disponibles. ¡Agregue su primer conductor!"
-              }
+              {searchTerm
+                ? "No se encontraron conductores que coincidan con su búsqueda."
+                : "No hay conductores disponibles. ¡Agregue su primer conductor!"}
             </div>
             {!searchTerm && (
               <Button
@@ -167,5 +167,5 @@ export default function DriversPage() {
         isDeleting={isDeleting}
       />
     </div>
-  )
+  );
 }

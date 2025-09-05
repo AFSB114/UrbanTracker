@@ -1,31 +1,79 @@
 "use client"
 
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { Plus, Loader2 } from "lucide-react"
 import { useVehicles } from "./hooks/useVehicles"
 import { VehicleCard } from "./components/VehicleCard"
 import { StatisticsCards } from "./components/StatisticsCards"
 import { VehicleFilters } from "./components/VehicleFilters"
 import { VehicleModal } from "./components/VehicleModal"
+import { Pagination } from "./components/Pagination"
+import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal"
+import { Vehicle } from "./types/vehiculeTypes"
 
 export default function VehiclesPage() {
   const {
+    paginatedVehicles,
     filteredVehicles,
-    statusFilter,
+    pagination,
     searchTerm,
-    isDialogOpen,
-    editingVehicle,
-    formData,
     statistics,
+    isDialogOpen,
+    isDeleteModalOpen,
+    openDeleteModal,
+    editingVehicle,
+    vehicleToDelete,
+    formData,
+    isLoading,
+    isDeleting,
+    isSaving,
     setSearchTerm,
     setStatusFilter,
+    setPage,
+    setItemsPerPage,
     openCreateModal,
     openEditModal,
     closeModal,
+    closeDeleteModal,
     updateFormData,
     saveVehicle,
-    deleteVehicle,
+    confirmDeleteVehicle,
   } = useVehicles()
+
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
+
+  const handleSaveDriver = async () => {
+    setFormErrors({})
+    try {
+      await saveVehicle()
+    } catch (error) {
+      if (error instanceof Error) {
+        setFormErrors({ general: error.message })
+      }
+    }
+  }
+
+  // Handler para el botón de eliminar en DriverCard
+  const handleDeleteClick = (id: number) => {
+    openDeleteModal(filteredVehicles.find(vehicle => vehicle.id === id) as Vehicle)
+
+  }
+
+  const isEditing = !!editingVehicle
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="flex items-center gap-3 text-gray-300">
+            <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+            <span className="text-lg">Cargando Conductores...</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8 bg-black min-h-screen p-6">
@@ -48,24 +96,19 @@ export default function VehiclesPage() {
       <StatisticsCards statistics={statistics} />
 
       {/* Filters */}
-      <VehicleFilters
-        searchTerm={searchTerm}
-        statusFilter={statusFilter}
-        onSearchChange={setSearchTerm}
-        onStatusFilterChange={setStatusFilter}
-      />
+      <VehicleFilters searchTerm={searchTerm} onSearchChange={setSearchTerm} statusFilter="all" onStatusFilterChange={setStatusFilter} />
 
       {/* Vehicle list */}
       <section className="space-y-6">
         {filteredVehicles.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-400 text-lg">
-              {searchTerm || statusFilter !== "all" 
-                ? "No vehicles found with the applied filters" 
+              {searchTerm
+                ? "No vehicles found with the applied filters"
                 : "No vehicles registered"
               }
             </div>
-            {(!searchTerm && statusFilter === "all") && (
+            {!searchTerm && (
               <Button
                 onClick={openCreateModal}
                 className="mt-4 bg-emerald-600 hover:bg-emerald-700 text-white"
@@ -76,28 +119,47 @@ export default function VehiclesPage() {
             )}
           </div>
         ) : (
+          <>
           <div className="grid gap-6">
-            {filteredVehicles.map((vehicle) => (
+            {paginatedVehicles.map((vehicle) => (
               <VehicleCard
                 key={vehicle.id}
                 vehicle={vehicle}
                 onEdit={openEditModal}
-                onDelete={deleteVehicle}
+                onDelete={() => handleDeleteClick(vehicle.id)}
               />
             ))}
           </div>
+          {/* Pagination component */}
+        <Pagination
+          pagination={pagination}
+          onPageChange={setPage}
+          onItemsPerPageChange={setItemsPerPage}
+          isLoading={isLoading}
+        />
+      </>
         )}
-      </section>
+    </section>
 
-      {/* Modal */}
-      <VehicleModal
-        isOpen={isDialogOpen}
-        isEditing={!!editingVehicle}
-        formData={formData}
-        onClose={closeModal}
-        onSave={saveVehicle}
-        onFormChange={updateFormData}
-      />
-    </div>
+      {/* Modal */ }
+  <VehicleModal
+    isOpen={isDialogOpen}
+    isEditing={isEditing}
+    formData={formData}
+    onClose={closeModal}
+    onSave={handleSaveDriver}
+    onFormChange={updateFormData }
+    isSaving={isSaving}
+    errors={formErrors}
+  />
+  {/* Delete Confirmation Modal */}
+        <DeleteConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onClose={closeDeleteModal}
+          onConfirm={confirmDeleteVehicle}
+          vehicle={vehicleToDelete}
+          isDeleting={isDeleting}
+        />
+    </div >
   )
 }

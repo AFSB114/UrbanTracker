@@ -3,14 +3,7 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter,  DialogHeader, DialogTitle,} from "@/components/ui/dialog";
 import { Loader2, User, CreditCard } from "lucide-react";
 import type { DriverFormData } from "../types/driverTypes";
 
@@ -146,7 +139,7 @@ export const DriverModal: React.FC<DriverModalProps> = ({
               onClick={onClose}
               disabled={isLoading}
             >
-              Cancel
+              Cancelar
             </Button>
             <Button
               type="submit"

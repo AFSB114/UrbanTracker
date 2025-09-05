@@ -1,47 +1,48 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Car, AlertTriangle } from "lucide-react"
+import { Car } from "lucide-react"
+
+import type { VehiculeStatistics } from "../types/vehiculeTypes";
 
 interface StatisticsCardsProps {
-  statistics: {
-    total: number
-    operational: number
-    onRoute: number
-    outOfService: number
-    operationalPercentage: number
-  }
+  statistics: VehiculeStatistics;
+}
+
+
+interface StatisticsCardsProps {
+  statistics: VehiculeStatistics;
 }
 
 export function StatisticsCards({ statistics }: StatisticsCardsProps) {
   const cards = [
     {
-      title: "Total Vehiculos",
-      value: statistics.total,
+      title: "Total Vehículos",
+      value: statistics.totalVehicules,
       description: "En la flota",
       icon: Car,
       iconColor: "text-emerald-500"
     },
     {
-      title: "Operational",
-      value: statistics.operational,
-      description: `${statistics.operationalPercentage}% de la flota`,
+      title: "Vehículos Activos",
+      value: statistics.activeVehicules,
+      description: "En operación",
       icon: Car,
       iconColor: "text-green-500"
     },
     {
-      title: "En Ruta",
-      value: statistics.onRoute,
-      description: "Activo",
+      title: "Nuevos este mes",
+      value: statistics.newThisMonth,
+      description: "Agregados recientemente",
       icon: Car,
       iconColor: "text-blue-500"
     },
     {
-      title: "Fuera de Servicio",
-      value: statistics.outOfService,
-      description: "Necesita atención",
-      icon: AlertTriangle,
+      title: "vehículos Desactivados",
+      value: statistics.inactiveVehicules,
+      description: "Agregados recientemente",
+      icon: Car,
       iconColor: "text-red-500"
     }
-  ]
+  ];
 
   return (
     <div className="grid gap-6 md:grid-cols-4">

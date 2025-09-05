@@ -47,7 +47,6 @@ export const useDrivers = (): UseDriversReturn => {
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  // Load initial drivers
   useEffect(() => {
     const loadDrivers = async () => {
       try {
