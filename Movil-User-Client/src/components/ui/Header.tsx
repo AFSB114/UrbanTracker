@@ -7,7 +7,7 @@ export default function Header() {
       style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}>
       <View className="ml-2 h-16 w-32">
         <Image
-          source={require('./../../assets/Isotipo.png')}
+          source={require('./../../../assets/Isotipo.png')}
           className="h-full w-full"
           resizeMode="cover"
         />
