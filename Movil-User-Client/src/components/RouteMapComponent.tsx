@@ -1,11 +1,10 @@
 import { MAPBOX_API_TOKEN } from '@Env';
 import { LineLayer, ShapeSource } from '@rnmapbox/maps';
-import { useState, useEffect, useCallback, useId } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { Waypoint } from '~/types/types';
 
 export default function RouteMapComponent({ waypoints, color, id }: { waypoints: Waypoint[], color: string, id: string }) {
   const [route, setRoute] = useState<any>(null);
-  const idUnique = useId();
 
   const getRoute = useCallback(async () => {
     try {
