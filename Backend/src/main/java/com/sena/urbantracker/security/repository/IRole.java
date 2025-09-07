@@ -1,4 +1,4 @@
-package com.sena.urbantracker.users.repository;
+package com.sena.urbantracker.security.repository;
 
 import com.sena.urbantracker.security.model.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;

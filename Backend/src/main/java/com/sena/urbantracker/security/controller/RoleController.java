@@ -1,4 +1,4 @@
-package com.sena.urbantracker.users.controller;
+package com.sena.urbantracker.security.controller;
 
 import com.sena.urbantracker.security.model.dto.response.RoleDTO;
 import com.sena.urbantracker.shared.model.dto.ResponseDTO;

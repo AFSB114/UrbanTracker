@@ -3,7 +3,7 @@ package com.sena.urbantracker.users.service;
 import com.sena.urbantracker.security.model.dto.response.RoleDTO;
 import com.sena.urbantracker.shared.model.dto.ResponseDTO;
 import com.sena.urbantracker.security.model.entity.Role;
-import com.sena.urbantracker.users.repository.IRole;
+import com.sena.urbantracker.security.repository.IRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -47,8 +47,17 @@ public class RoleService {
             return new ResponseDTO(HttpStatus.CONFLICT.toString(),
                     "Ya existe un rol con ese nombre.");
         }
+        // Validar descripción
+        if (!StringUtils.hasText(roleDTO.getDescription())) {
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(),
+                    "La descripción del rol no puede ser nula o vacía.");
+        }
 
-        // Crear o actualizar
+        if (roleDTO.getDescription().length() > 200) {
+            return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(),
+                    "La descripción no puede superar los 200 caracteres.");
+        }
+
         Role role;
         if (roleDTO.getId() == null || roleDTO.getId() == 0) {
             // crear nuevo
@@ -60,7 +69,10 @@ public class RoleService {
                 return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(),
                         "El rol con el ID proporcionado no existe.");
             }
-            role = convertToModel(roleDTO);
+            // Actualizar la entidad existente en lugar de crear una nueva
+            role = existingRole.get();
+            role.setName(roleDTO.getName());
+            role.setDescription(roleDTO.getDescription());
         }
 
         // Guardar
@@ -88,13 +100,15 @@ public class RoleService {
     public RoleDTO convertToDTO(Role rol) {
         return new RoleDTO(
                 rol.getId(),
-                rol.getName());
+                rol.getName(),
+                rol.getDescription());
     }
 
     public Role convertToModel(RoleDTO roleDTO) {
         return Role.builder()
                 .id(roleDTO.getId()) // o null si es nuevo
                 .name(roleDTO.getName())
+                .description(roleDTO.getDescription())
                 .build(); // users quedará vacío automáticamente
     }
 
