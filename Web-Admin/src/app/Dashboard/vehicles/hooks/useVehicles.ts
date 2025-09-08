@@ -63,7 +63,6 @@ export function useVehicles(): UseVehiculesReturn {
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
   const [formData, setFormData] = useState<VehiculeFormData>(INITIAL_FORM_DATA);
 
-  // Pagination state
   const [paginationConfig, setPaginationConfig] = useState<PaginationConfig>({
     page: 1,
     itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
@@ -77,7 +76,6 @@ export function useVehicles(): UseVehiculesReturn {
   useEffect(() => {
     const loadVehicles = async () => {
       try {
-        // Simulate API delay
         await new Promise((resolve) => setTimeout(resolve, 500));
         setVehicles(MOCK_VEHICLES);
       } catch (error) {
@@ -148,7 +146,6 @@ export function useVehicles(): UseVehiculesReturn {
     };
   }, [vehicles.length]);
 
-  // Pagination handlers
   const setPage = useCallback((page: number) => {
     setPaginationConfig((prev) => ({ ...prev, page }));
   }, []);
@@ -157,7 +154,7 @@ export function useVehicles(): UseVehiculesReturn {
     setPaginationConfig((prev) => ({
       ...prev,
       itemsPerPage,
-      page: 1, // Reset to first page when changing items per page
+      page: 1,
     }));
   }, []);
 
@@ -207,13 +204,12 @@ export function useVehicles(): UseVehiculesReturn {
     []
   );
 
-  // Save vehicle (create or update)
   const saveVehicle = useCallback(async () => {
     if (isSaving) return;
 
     setIsSaving(true);
     try {
-      // Validate form
+
       if (
         !formData.licensePlate.trim() ||
         !formData.brand.trim() ||
@@ -223,7 +219,6 @@ export function useVehicles(): UseVehiculesReturn {
         throw new Error("License plate, brand, model and type are required");
       }
 
-      /// Check for duplicate identification
       const isDuplicate = vehicles.some(
         (vehicle) =>
           vehicle.licensePlate === formData.licensePlate.trim() &&
@@ -234,11 +229,9 @@ export function useVehicles(): UseVehiculesReturn {
         throw new Error("A driver with this license plate already exists");
       }
 
-      // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       if (editingVehicle) {
-        // Update existing driver
         setVehicles((prev) =>
           prev.map((vehicle) =>
             vehicle.id === editingVehicle.id
@@ -255,7 +248,6 @@ export function useVehicles(): UseVehiculesReturn {
           )
         );
       } else {
-        // Create new vehicle
         const newId = Math.max(...vehicles.map((v) => v.id), 0) + 1;
         const newVehicule: Vehicle = {
           id: newId,
@@ -273,7 +265,7 @@ export function useVehicles(): UseVehiculesReturn {
       closeModal();
     } catch (error) {
       console.error("Error saving driver:", error);
-      throw error; // Re-throw for component to handle
+      throw error; 
     } finally {
       setIsSaving(false);
     }
@@ -284,7 +276,6 @@ export function useVehicles(): UseVehiculesReturn {
 
     setIsDeleting(true);
     try {
-      // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       setVehicles((prev) =>
@@ -316,19 +307,16 @@ export function useVehicles(): UseVehiculesReturn {
     statistics,
     pagination,
     
-    // Modal states
     isDialogOpen,
     isDeleteModalOpen,
     editingVehicle,
     vehicleToDelete,
     formData,
-    
-    // Loading states
+
     isLoading,
     isDeleting,
     isSaving,
     
-    // Actions
     setStatusFilter,
     setSearchTerm,
     setPage,

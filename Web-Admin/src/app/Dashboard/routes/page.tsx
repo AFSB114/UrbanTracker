@@ -1,153 +1,209 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Route, MapPin, Clock, Plus, Truck } from "lucide-react"
 
-export default function RutasPage() {
-  const rutas = [
+"use client";
+import React, { useState } from 'react';
+import { Edit3, Trash2, Plus, Route } from 'lucide-react';
+import RouteModal from './components/RouteModal';
+import { IRoute, RouteWaypoint } from './types/routeTypes';
+
+const RouteDashboard: React.FC = () => {
+  const [routes, setRoutes] = useState<IRoute[]>([
     {
-      id: 1,
-      nombre: "Ruta Centro-Norte",
-      origen: "Centro Comercial",
-      destino: "Zona Industrial Norte",
-      distancia: "25 km",
-      tiempoEstimado: "45 min",
-      estado: "Activa",
-      conductor: "Carlos Mendoza",
-      vehiculo: "ABC-123",
+      route_id: '1',
+      route_number: 'R001',
+      description: 'Ruta Centro - Norte',
+      total_distance_km: 15.3,
+      active: true,
+      created_at: '2024-01-15T10:30:00Z'
     },
     {
-      id: 2,
-      nombre: "Ruta Sur-Este",
-      origen: "Terminal Sur",
-      destino: "Distrito Este",
-      distancia: "18 km",
-      tiempoEstimado: "35 min",
-      estado: "En Progreso",
-      conductor: "María García",
-      vehiculo: "DEF-456",
+      route_id: '2',
+      route_number: 'R002',
+      description: 'Ruta Sur - Occidente',
+      total_distance_km: 22.1,
+      active: false,
+      created_at: '2024-01-10T14:20:00Z'
     },
     {
-      id: 3,
-      nombre: "Ruta Oeste-Centro",
-      origen: "Zona Oeste",
-      destino: "Centro Ciudad",
-      distancia: "22 km",
-      tiempoEstimado: "40 min",
-      estado: "Programada",
-      conductor: "José Rodríguez",
-      vehiculo: "GHI-789",
-    },
-  ]
+      route_id: '3',
+      route_number: 'R003',
+      description: 'Ruta Expresa Terminal - Aeropuerto',
+      total_distance_km: 35.7,
+      active: true,
+      created_at: '2024-01-08T09:15:00Z'
+    }
+  ]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingRoute, setEditingRoute] = useState<IRoute | null>(null);
+  const [editingWaypoints, setEditingWaypoints] = useState<RouteWaypoint[]>([]);
+
+  // Simular waypoints para rutas existentes
+  const mockWaypoints: { [key: string]: RouteWaypoint[] } = {
+    '1': [
+      { sequence_order: 1, latitude: 4.6097, longitude: -74.0817 },
+      { sequence_order: 2, latitude: 4.6200, longitude: -74.0700 },
+      { sequence_order: 3, latitude: 4.6300, longitude: -74.0600 }
+    ],
+    '2': [
+      { sequence_order: 1, latitude: 4.5897, longitude: -74.0917 },
+      { sequence_order: 2, latitude: 4.5800, longitude: -74.1000 },
+      { sequence_order: 3, latitude: 4.5700, longitude: -74.1100 }
+    ],
+    '3': [
+      { sequence_order: 1, latitude: 4.6097, longitude: -74.0817 },
+      { sequence_order: 2, latitude: 4.5500, longitude: -74.1200 },
+      { sequence_order: 3, latitude: 4.4800, longitude: -74.1500 },
+      { sequence_order: 4, latitude: 4.4200, longitude: -74.1800 }
+    ]
+  };
+
+  const handleCreateRoute = () => {
+    setEditingRoute(null);
+    setEditingWaypoints([]);
+    setIsModalOpen(true);
+  };
+
+  const handleEditRoute = (route: IRoute) => {
+    setEditingRoute(route);
+    setEditingWaypoints(mockWaypoints[route.route_id!] || []);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveRoute = async (data: { route: IRoute; waypoints: RouteWaypoint[] }) => {
+    // Simular guardado
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    if (editingRoute) {
+      setRoutes(prev => prev.map(r => 
+        r.route_id === editingRoute.route_id ? { ...data.route, route_id: editingRoute.route_id } : r
+      ));
+      mockWaypoints[editingRoute.route_id!] = data.waypoints;
+    } else {
+      const newRoute = { ...data.route, route_id: Date.now().toString(), created_at: new Date().toISOString() };
+      setRoutes(prev => [...prev, newRoute]);
+      mockWaypoints[newRoute.route_id!] = data.waypoints;
+    }
+  };
+
+  const handleDeleteRoute = (routeId: string) => {
+    if (confirm('¿Estás seguro de eliminar esta ruta?')) {
+      setRoutes(prev => prev.filter(r => r.route_id !== routeId));
+      delete mockWaypoints[routeId];
+    }
+  };
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
+    <div className="min-h-screen bg-gray-900 text-white p-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Administrar Rutas</h1>
-          <p className="text-muted-foreground mt-2">Gestiona y optimiza las rutas de transporte</p>
+          <h1 className="text-3xl font-bold text-white">Gestión de Rutas</h1>
+          <p className="text-gray-400 mt-2">Administra las rutas de transporte</p>
         </div>
-        <Button className="bg-accent hover:bg-accent/90 text-accent-foreground">
-          <Plus className="h-4 w-4 mr-2" />
+        <button
+          onClick={handleCreateRoute}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center gap-2 font-medium"
+        >
+          <Plus size={20} />
           Nueva Ruta
-        </Button>
-      </div>
-
-      {/* Estadísticas de Rutas */}
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card className="border-0 shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Rutas Activas</CardTitle>
-            <Route className="h-4 w-4 text-accent" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground">12</div>
-            <p className="text-xs text-muted-foreground">+2 desde ayer</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Distancia Total</CardTitle>
-            <MapPin className="h-4 w-4 text-chart-2" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground">285 km</div>
-            <p className="text-xs text-muted-foreground">Hoy</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Tiempo Promedio</CardTitle>
-            <Clock className="h-4 w-4 text-chart-3" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground">42 min</div>
-            <p className="text-xs text-muted-foreground">Por ruta</p>
-          </CardContent>
-        </Card>
+        </button>
       </div>
 
       {/* Lista de Rutas */}
-      <div className="grid gap-6">
-        {rutas.map((ruta) => (
-          <Card key={ruta.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-6">
-                  <div className="p-4 bg-accent/10 rounded-full">
-                    <Route className="h-8 w-8 text-accent" />
+      <div className="bg-gray-800 rounded-lg shadow-lg">
+        <div className="p-6 border-b border-gray-700">
+          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+            <Route size={20} className="mr-2" />
+            Rutas Registradas ({routes.length})
+          </h2>
+        </div>
+
+        <div className="divide-y divide-gray-700">
+          {routes.length === 0 ? (
+            <div className="p-12 text-center">
+              <Route size={48} className="mx-auto text-gray-600 mb-4" />
+              <h3 className="text-lg font-medium text-gray-400 mb-2">No hay rutas registradas</h3>
+              <p className="text-gray-500 mb-6">Crea tu primera ruta para comenzar</p>
+              <button
+                onClick={handleCreateRoute}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center gap-2 mx-auto"
+              >
+                <Plus size={20} />
+                Crear Primera Ruta
+              </button>
+            </div>
+          ) : (
+            routes.map((route) => (
+              <div key={route.route_id} className="p-6 hover:bg-gray-750 transition-colors">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-4 mb-2">
+                      <h3 className="text-xl font-medium text-white">
+                        {route.route_number}
+                      </h3>
+                      <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+                        route.active 
+                          ? 'bg-green-800 text-green-200' 
+                          : 'bg-red-800 text-red-200'
+                      }`}>
+                        {route.active ? 'Activa' : 'Inactiva'}
+                      </span>
+                    </div>
+                    
+                    {route.description && (
+                      <p className="text-gray-400 mb-3 max-w-2xl">{route.description}</p>
+                    )}
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                      <div className="text-gray-500">
+                        <span className="font-medium text-gray-300">Distancia:</span> {route.total_distance_km || 0} km
+                      </div>
+                      <div className="text-gray-500">
+                        <span className="font-medium text-gray-300">Puntos:</span> {mockWaypoints[route.route_id!]?.length || 0}
+                      </div>
+                      <div className="text-gray-500">
+                        <span className="font-medium text-gray-300">Creada:</span> {new Date(route.created_at!).toLocaleDateString('es-ES', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-xl font-bold text-foreground">{ruta.nombre}</h3>
-                      <Badge
-                        variant={
-                          ruta.estado === "Activa" ? "default" : ruta.estado === "En Progreso" ? "secondary" : "outline"
-                        }
-                        className={ruta.estado === "Activa" ? "bg-accent text-accent-foreground" : ""}
-                      >
-                        {ruta.estado}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <MapPin className="h-4 w-4" />
-                      <span className="font-medium">{ruta.origen}</span>
-                      <span>→</span>
-                      <span className="font-medium">{ruta.destino}</span>
-                    </div>
-                    <div className="flex gap-6 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-chart-3" />
-                        <span>{ruta.tiempoEstimado}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-chart-2" />
-                        <span>{ruta.distancia}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Truck className="h-4 w-4 text-accent" />
-                        <span>
-                          {ruta.conductor} - {ruta.vehiculo}
-                        </span>
-                      </div>
-                    </div>
+
+                  <div className="flex gap-2 ml-6">
+                    <button
+                      onClick={() => handleEditRoute(route)}
+                      className="text-blue-400 hover:text-blue-300 px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-900 hover:bg-opacity-20 transition-colors flex items-center gap-2"
+                    >
+                      <Edit3 size={16} />
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDeleteRoute(route.route_id!)}
+                      className="text-red-400 hover:text-red-300 px-4 py-2 text-sm font-medium rounded-md hover:bg-red-900 hover:bg-opacity-20 transition-colors flex items-center gap-2"
+                    >
+                      <Trash2 size={16} />
+                      Eliminar
+                    </button>
                   </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
-                    Ver Mapa
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    Editar
-                  </Button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
+            ))
+          )}
+        </div>
       </div>
+
+      {/* Modal de Ruta */}
+      <RouteModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveRoute}
+        editingRoute={editingRoute}
+        editingWaypoints={editingWaypoints}
+      />
     </div>
-  )
-}
+  );
+};
+
+export default RouteDashboard;
