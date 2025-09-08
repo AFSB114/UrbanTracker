@@ -38,7 +38,7 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-gray-900">
+      <DialogContent className="sm:max-w-md bg-zinc-900">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-red-600">
             <AlertTriangle className="h-5 w-5" />
@@ -50,7 +50,7 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
         </DialogHeader>
 
         {/* Driver info to be deleted */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 space-y-3 ">
+        <div className="bg-zinc-800 border border-zinc-700 rounded-lg p-4 space-y-3 ">
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-white" />
             <span className="font-medium text-white">Name:</span>
@@ -66,9 +66,10 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
         </div>
 
         {/* Warning message */}
-        <div className=" bg-gray-900 border-red-700 rounded-lg p-4">
+        <div className=" bg-zinc-900 border-red-700 rounded-lg p-4">
           <p className="text-sm text-red-800">
-            <strong>advertencia:</strong> Esta acción no se puede deshacer. El controlador se eliminará permanentemente del sistema.
+            <strong>advertencia:</strong> Esta acción no se puede deshacer. El
+            controlador se eliminará permanentemente del sistema.
           </p>
         </div>
 
@@ -88,7 +89,7 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
             disabled={isDeleting}
           >
             {isDeleting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-            {isDeleting ? 'Eliminando...' : 'Eliminar Conductor'}
+            {isDeleting ? "Eliminando..." : "Eliminar Conductor"}
           </Button>
         </DialogFooter>
       </DialogContent>

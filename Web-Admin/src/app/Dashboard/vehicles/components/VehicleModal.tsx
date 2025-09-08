@@ -104,7 +104,7 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-gray-900  text-white max-w-2xl">
+      <DialogContent className="bg-zinc-900  text-white max-w-2xl">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Editar Vehiculo" : "Nuevo Vehiculo"}
@@ -113,36 +113,40 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="licensePlate" className="text-gray-400">
+              <Label htmlFor="licensePlate" className="text-zinc-400">
                 Matrícula *
               </Label>
               <Input
                 id="licensePlate"
                 value={formData.licensePlate}
-                onChange={handleInputChange('licensePlate')}
-                className="bg-gray-800 border-gray-700 text-white"
+                onChange={handleInputChange("licensePlate")}
+                className="bg-zinc-800 border-zinc-700 text-white"
                 placeholder="ABC-123"
                 disabled={isLoading}
               />
               {errors.licensePlate && (
-              <p className="text-sm text-red-500">{errors.licensePlate}</p>
-            )}
+                <p className="text-sm text-red-500">{errors.licensePlate}</p>
+              )}
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="type" className="text-gray-400">
+              <Label htmlFor="type" className="text-zinc-400">
                 Tipo *
               </Label>
-              <Select 
-                value={formData.type} 
-                onValueChange={(value: VehicleType) => onFormChange('type', value)}
+              <Select
+                value={formData.type}
+                onValueChange={(value: VehicleType) =>
+                  onFormChange("type", value)
+                }
               >
-                <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
                   <SelectValue placeholder="Seleccione el tipo" />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-gray-700">
-                  {VEHICLE_TYPES.map(type => (
-                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                <SelectContent className="bg-zinc-800 border-zinc-700">
+                  {VEHICLE_TYPES.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -151,72 +155,76 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="brand" className="text-gray-400">
+              <Label htmlFor="brand" className="text-zinc-400">
                 Marca *
               </Label>
               <Input
                 id="brand"
                 value={formData.brand}
-                onChange={handleInputChange('brand')}
-                className="bg-gray-800 border-gray-700 text-white"
+                onChange={handleInputChange("brand")}
+                className="bg-zinc-800 border-zinc-700 text-white"
                 placeholder="Volvo"
                 disabled={isLoading}
               />
               {errors.brand && (
-              <p className="text-sm text-red-500">{errors.brand}</p>
-            )}
+                <p className="text-sm text-red-500">{errors.brand}</p>
+              )}
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="model" className="text-gray-400">
+              <Label htmlFor="model" className="text-zinc-400">
                 Modelo *
               </Label>
               <Input
                 id="model"
                 value={formData.model}
-                onChange={handleInputChange('model')}
-                className="bg-gray-800 border-gray-700 text-white"
+                onChange={handleInputChange("model")}
+                className="bg-zinc-800 border-zinc-700 text-white"
                 placeholder="FH16"
                 disabled={isLoading}
               />
               {errors.model && (
-              <p className="text-sm text-red-500">{errors.model}</p>
-            )}
+                <p className="text-sm text-red-500">{errors.model}</p>
+              )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="company" className="text-gray-400">
+              <Label htmlFor="company" className="text-zinc-400">
                 Compañia *
               </Label>
               <Input
                 id="company"
                 value={formData.company}
-                onChange={handleInputChange('company')}
-                className="bg-gray-800 border-gray-700 text-white"
+                onChange={handleInputChange("company")}
+                className="bg-zinc-800 border-zinc-700 text-white"
                 placeholder="Transporte SA"
                 disabled={isLoading}
               />
               {errors.company && (
-              <p className="text-sm text-red-500">{errors.company}</p>
-            )}
+                <p className="text-sm text-red-500">{errors.company}</p>
+              )}
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="status" className="text-gray-400">
+              <Label htmlFor="status" className="text-zinc-400">
                 Estado *
               </Label>
               <Select
                 value={formData.status}
-                onValueChange={(value: VehicleStatus) => onFormChange('status', value)}
+                onValueChange={(value: VehicleStatus) =>
+                  onFormChange("status", value)
+                }
               >
-                <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-gray-700">
-                  {VEHICLE_STATUSES.map(status => (
-                    <SelectItem key={status} value={status}>{status}</SelectItem>
+                <SelectContent className="bg-zinc-800 border-zinc-700">
+                  {VEHICLE_STATUSES.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {status}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -225,20 +233,20 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="driver" className="text-gray-400">
+              <Label htmlFor="driver" className="text-zinc-400">
                 Conductor
               </Label>
               <Input
                 id="driver"
                 value={formData.driver}
-                onChange={handleInputChange('driver')}
-                className="bg-gray-800 border-gray-700 text-white"
+                onChange={handleInputChange("driver")}
+                className="bg-zinc-800 border-zinc-700 text-white"
                 placeholder="Nombre del conductor"
                 disabled={isLoading}
               />
               {errors.driver && (
-              <p className="text-sm text-red-500">{errors.driver}</p>
-            )}
+                <p className="text-sm text-red-500">{errors.driver}</p>
+              )}
             </div>
           </div>
 
@@ -247,12 +255,12 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
               type="button"
               variant="outline"
               onClick={onClose}
-              className="border-gray-700 text-white hover:bg-gray-800"
+              className="border-zinc-700 text-white hover:bg-zinc-800"
               disabled={isLoading}
             >
               Cancelar
             </Button>
-            <Button 
+            <Button
               type="submit"
               disabled={isLoading}
               className="bg-emerald-600 hover:bg-emerald-700 text-white"
@@ -264,5 +272,5 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

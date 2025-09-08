@@ -62,7 +62,7 @@ const SimpleMapboxTest: React.FC = () => {
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Test de Mapbox</h2>
-      
+
       {/* Status y Errores */}
       <div className="mb-4 space-y-2">
         <div className="text-blue-600">Estado: {status}</div>
@@ -74,16 +74,21 @@ const SimpleMapboxTest: React.FC = () => {
       </div>
 
       {/* Información de Debug */}
-      <div className="mb-4 text-sm text-gray-600">
-        <div>Token configurado: {process.env.NEXT_PUBLIC_MAPBOX_TOKEN ? '✅' : '❌'}</div>
-        <div>Mapbox GL JS cargado: {typeof mapboxgl !== 'undefined' ? '✅' : '❌'}</div>
+      <div className="mb-4 text-sm text-zinc-600">
+        <div>
+          Token configurado:{" "}
+          {process.env.NEXT_PUBLIC_MAPBOX_TOKEN ? "✅" : "❌"}
+        </div>
+        <div>
+          Mapbox GL JS cargado: {typeof mapboxgl !== "undefined" ? "✅" : "❌"}
+        </div>
       </div>
 
       {/* Contenedor del Mapa */}
-      <div 
-        ref={mapContainer} 
-        className="w-full h-96 bg-gray-200 rounded border"
-        style={{ minHeight: '400px' }}
+      <div
+        ref={mapContainer}
+        className="w-full h-96 bg-zinc-200 rounded border"
+        style={{ minHeight: "400px" }}
       />
     </div>
   );

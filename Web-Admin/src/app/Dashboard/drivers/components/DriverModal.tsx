@@ -80,31 +80,32 @@ export const DriverModal: React.FC<DriverModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-gray-900 text-white">
+      <DialogContent className="sm:max-w-md bg-zinc-900 text-white">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-foreground">
             <User className="h-5 w-5" />
-            {isEditing ? 'Editar conductor' : 'Agregar nuevo conductor'}
+            {isEditing ? "Editar conductor" : "Agregar nuevo conductor"}
           </DialogTitle>
           <DialogDescription>
-            {isEditing 
+            {isEditing
               ? "Actualice la información del conductor a continuación."
-              : "Ingrese la información del nuevo conductor a continuación."
-            }
+              : "Ingrese la información del nuevo conductor a continuación."}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-gray-400">
+            <Label htmlFor="name" className="text-zinc-400">
               Nombre *
             </Label>
             <Input
               id="name"
               value={formData.name}
-              onChange={handleInputChange('name')}
+              onChange={handleInputChange("name")}
               placeholder="Ingrese el nombre completo del conductor"
-              className={` bg-gray-800 border-gray-700 text-white ${errors.name ? "border-red-500 " : ""}`}
+              className={` bg-zinc-800 border-zinc-700 text-white ${
+                errors.name ? "border-red-500 " : ""
+              }`}
               disabled={isLoading}
             />
             {errors.name && (
@@ -121,9 +122,11 @@ export const DriverModal: React.FC<DriverModalProps> = ({
               <Input
                 id="identification"
                 value={formData.identification}
-                onChange={handleInputChange('identification')}
+                onChange={handleInputChange("identification")}
                 placeholder="Introduzca el número de identificación"
-                className={`pl-10 bg-gray-800 border-gray-700 text-white ${errors.identification ? "border-red-500" : ""}`}
+                className={`pl-10 bg-zinc-800 border-zinc-700 text-white ${
+                  errors.identification ? "border-red-500" : ""
+                }`}
                 disabled={isLoading}
               />
             </div>
@@ -147,7 +150,7 @@ export const DriverModal: React.FC<DriverModalProps> = ({
               className="bg-accent hover:bg-accent/90 text-accent-foreground"
             >
               {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              {isEditing ? 'Actualizar conductor' : 'Crear conductor'}
+              {isEditing ? "Actualizar conductor" : "Crear conductor"}
             </Button>
           </DialogFooter>
         </form>

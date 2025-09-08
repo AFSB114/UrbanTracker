@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Edit3, Trash2, Plus, Route } from 'lucide-react';
 import RouteModal from './components/RouteModal';
 import { IRoute, RouteWaypoint } from './types/routeTypes';
+import RouteModal1 from './components/RouteModal1';
 
 const RouteDashboard: React.FC = () => {
   const [routes, setRoutes] = useState<IRoute[]>([
@@ -92,13 +93,21 @@ const RouteDashboard: React.FC = () => {
     }
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingRoute(null);
+    setEditingWaypoints([]);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
+    <div className="min-h-screen bg-zinc-900 text-white p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-white">Gestión de Rutas</h1>
-          <p className="text-gray-400 mt-2">Administra las rutas de transporte</p>
+          <p className="text-zinc-400 mt-2">
+            Administra las rutas de transporte
+          </p>
         </div>
         <button
           onClick={handleCreateRoute}
@@ -110,20 +119,24 @@ const RouteDashboard: React.FC = () => {
       </div>
 
       {/* Lista de Rutas */}
-      <div className="bg-gray-800 rounded-lg shadow-lg">
-        <div className="p-6 border-b border-gray-700">
+      <div className="bg-zinc-800 rounded-lg shadow-lg">
+        <div className="p-6 border-b border-zinc-700">
           <h2 className="text-xl font-semibold text-white flex items-center gap-2">
             <Route size={20} className="mr-2" />
             Rutas Registradas ({routes.length})
           </h2>
         </div>
 
-        <div className="divide-y divide-gray-700">
+        <div className="divide-y divide-zinc-700">
           {routes.length === 0 ? (
             <div className="p-12 text-center">
-              <Route size={48} className="mx-auto text-gray-600 mb-4" />
-              <h3 className="text-lg font-medium text-gray-400 mb-2">No hay rutas registradas</h3>
-              <p className="text-gray-500 mb-6">Crea tu primera ruta para comenzar</p>
+              <Route size={48} className="mx-auto text-zinc-600 mb-4" />
+              <h3 className="text-lg font-medium text-zinc-400 mb-2">
+                No hay rutas registradas
+              </h3>
+              <p className="text-zinc-500 mb-6">
+                Crea tu primera ruta para comenzar
+              </p>
               <button
                 onClick={handleCreateRoute}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center gap-2 mx-auto"
@@ -134,39 +147,58 @@ const RouteDashboard: React.FC = () => {
             </div>
           ) : (
             routes.map((route) => (
-              <div key={route.route_id} className="p-6 hover:bg-gray-750 transition-colors">
+              <div
+                key={route.route_id}
+                className="p-6 hover:bg-zinc-750 transition-colors"
+              >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-4 mb-2">
                       <h3 className="text-xl font-medium text-white">
                         {route.route_number}
                       </h3>
-                      <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-                        route.active 
-                          ? 'bg-green-800 text-green-200' 
-                          : 'bg-red-800 text-red-200'
-                      }`}>
-                        {route.active ? 'Activa' : 'Inactiva'}
+                      <span
+                        className={`px-3 py-1 text-xs font-medium rounded-full ${
+                          route.active
+                            ? "bg-green-800 text-green-200"
+                            : "bg-red-800 text-red-200"
+                        }`}
+                      >
+                        {route.active ? "Activa" : "Inactiva"}
                       </span>
                     </div>
-                    
+
                     {route.description && (
-                      <p className="text-gray-400 mb-3 max-w-2xl">{route.description}</p>
+                      <p className="text-zinc-400 mb-3 max-w-2xl">
+                        {route.description}
+                      </p>
                     )}
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                      <div className="text-gray-500">
-                        <span className="font-medium text-gray-300">Distancia:</span> {route.total_distance_km || 0} km
+                      <div className="text-zinc-500">
+                        <span className="font-medium text-zinc-300">
+                          Distancia:
+                        </span>{" "}
+                        {route.total_distance_km || 0} km
                       </div>
-                      <div className="text-gray-500">
-                        <span className="font-medium text-gray-300">Puntos:</span> {mockWaypoints[route.route_id!]?.length || 0}
+                      <div className="text-zinc-500">
+                        <span className="font-medium text-zinc-300">
+                          Puntos:
+                        </span>{" "}
+                        {mockWaypoints[route.route_id!]?.length || 0}
                       </div>
-                      <div className="text-gray-500">
-                        <span className="font-medium text-gray-300">Creada:</span> {new Date(route.created_at!).toLocaleDateString('es-ES', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        })}
+                      <div className="text-zinc-500">
+                        <span className="font-medium text-zinc-300">
+                          Creada:
+                        </span>{" "}
+                        {new Date(route.created_at!).toLocaleDateString(
+                          "es-ES",
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          }
+                        )}
                       </div>
                     </div>
                   </div>
@@ -195,13 +227,14 @@ const RouteDashboard: React.FC = () => {
       </div>
 
       {/* Modal de Ruta */}
-      <RouteModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveRoute}
-        editingRoute={editingRoute}
-        editingWaypoints={editingWaypoints}
-      />
+      {isModalOpen && (
+        <RouteModal
+          onClose={handleCloseModal}
+          onSave={handleSaveRoute}
+          editingRoute={editingRoute}
+          editingWaypoints={editingWaypoints}
+        />
+      )}
     </div>
   );
 };

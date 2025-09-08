@@ -28,7 +28,10 @@ export const StatisticsCards: React.FC<StatisticsCardsProps> = ({ statistics }) 
       {cards.map((card) => {
         const Icon = card.icon;
         return (
-          <Card key={card.title} className="border-0 shadow-lg bg-gray-900 hover:bg-gray-800 transition-all duration-300 hover:scale-105">
+          <Card
+            key={card.title}
+            className="border-0 shadow-lg bg-zinc-900 hover:bg-zinc-800 transition-all duration-300 hover:scale-105"
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {card.title}

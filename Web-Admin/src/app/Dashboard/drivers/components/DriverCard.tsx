@@ -18,21 +18,21 @@ export const DriverCard: React.FC<DriverCardProps> = ({
   const handleEdit = () => onEdit(driver);
 
   return (
-    <Card className="bg-gray-900 border-gray-800 hover:bg-gray-800 transition-all duration-300 hover:scale-[1.02]">
+    <Card className="bg-zinc-900 border-zinc-800 hover:bg-zinc-800 transition-all duration-300 hover:scale-[1.02]">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             <div className="p-4 bg-accent/10 rounded-full group-hover:bg-accent/20 transition-colors">
               <Users className="h-8 w-8 text-accent" />
             </div>
-            
+
             <div className="space-y-3">
               <div>
                 <h3 className="text-xl font-bold text-foreground group-hover:text-accent transition-colors">
                   {driver.name}
                 </h3>
               </div>
-              
+
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <User className="h-4 w-4" />
@@ -49,20 +49,20 @@ export const DriverCard: React.FC<DriverCardProps> = ({
               </div>
             </div>
           </div>
-          
+
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleEdit}
               className="flex items-center gap-2 hover:bg-accent/10 hover:text-accent transition-all duration-200"
             >
               <Edit className="h-4 w-4" />
               Editar
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => onDelete(driver.id)}
               className="border-red-700 text-red-500 hover:bg-red-900/20 transition-all duration-200"
             >

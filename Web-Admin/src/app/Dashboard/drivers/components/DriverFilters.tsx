@@ -13,7 +13,7 @@ export const DriverFilters: React.FC<DriverFiltersProps> = ({
   onSearchChange,
 }) => {
   return (
-    <Card className="border-0 shadow-lg bg-gray-900">
+    <Card className="border-0 shadow-lg bg-zinc-900">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-foreground">
           <Search className="h-5 w-5" />

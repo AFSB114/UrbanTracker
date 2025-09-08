@@ -66,7 +66,7 @@ export default function DriversPage() {
     return (
       <div className="min-h-screen bg-black p-6">
         <div className="flex items-center justify-center h-64">
-          <div className="flex items-center gap-3 text-gray-300">
+          <div className="flex items-center gap-3 text-zinc-300">
             <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
             <span className="text-lg">Cargando Conductores...</span>
           </div>
@@ -83,7 +83,7 @@ export default function DriversPage() {
           <h1 className="text-3xl font-bold text-white">
             Gestión de conductores
           </h1>
-          <p className="text-gray-400 mt-2">
+          <p className="text-zinc-400 mt-2">
             Controle y gestione su flota de conductores
           </p>
         </div>
@@ -106,7 +106,7 @@ export default function DriversPage() {
       <section className="space-y-6">
         {filteredDrivers.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-400 text-lg">
+            <div className="text-zinc-400 text-lg">
               {searchTerm
                 ? "No se encontraron conductores que coincidan con su búsqueda."
                 : "No hay conductores disponibles. ¡Agregue su primer conductor!"}

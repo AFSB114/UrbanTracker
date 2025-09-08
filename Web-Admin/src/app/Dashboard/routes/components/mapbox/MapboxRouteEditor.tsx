@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import type { RouteWaypointType } from '../../types/routeTypes';
 
 interface RouteWaypoint {
   waypoint_id?: string;
@@ -28,6 +29,7 @@ const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const [waypointsM, setWaypointsM] = useState<RouteWaypointType[]>([]);
   const [currentWaypoints, setCurrentWaypoints] = useState<RouteWaypoint[]>(waypoints);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<string>('');
@@ -79,6 +81,11 @@ const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
       setError(`Error: ${err instanceof Error ? err.message : JSON.stringify(err)}`);
     }
   }, [isVisible, isEditing]);
+
+  useEffect(() => {
+    
+    
+  },[waypointsM])
 
   // Redimensionar mapa cuando cambie la visibilidad
   useEffect(() => {
@@ -176,6 +183,8 @@ const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
   const handleMapClick = useCallback((e: mapboxgl.MapMouseEvent) => {
     if (!isEditing) return;
 
+
+
     const newWaypoint: RouteWaypoint = {
       sequence_order: currentWaypoints.length + 1,
       latitude: e.lngLat.lat,
@@ -272,9 +281,14 @@ const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
   }, [currentWaypoints, onWaypointsChange]);
 
   if (!isVisible) {
-    return <div style={{ height }} className="bg-gray-200 rounded flex items-center justify-center">
-      <span className="text-gray-500">Mapa oculto</span>
-    </div>;
+    return (
+      <div
+        style={{ height }}
+        className="bg-zinc-200 rounded flex items-center justify-center"
+      >
+        <span className="text-zinc-500">Mapa oculto</span>
+      </div>
+    );
   }
 
   return (
@@ -292,14 +306,14 @@ const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
           <button
             onClick={undoLastWaypoint}
             disabled={currentWaypoints.length === 0}
-            className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white px-3 py-2 rounded text-sm font-medium transition-colors"
+            className="bg-red-600 hover:bg-red-700 disabled:bg-zinc-600 text-white px-3 py-2 rounded text-sm font-medium transition-colors"
           >
             Deshacer
           </button>
           <button
             onClick={clearWaypoints}
             disabled={currentWaypoints.length === 0}
-            className="bg-red-800 hover:bg-red-900 disabled:bg-gray-600 text-white px-3 py-2 rounded text-sm font-medium transition-colors"
+            className="bg-red-800 hover:bg-red-900 disabled:bg-zinc-600 text-white px-3 py-2 rounded text-sm font-medium transition-colors"
           >
             Limpiar
           </button>
@@ -308,7 +322,7 @@ const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
 
       {/* Estado del mapa */}
       {!isLoaded && (
-        <div className="absolute inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-10">
+        <div className="absolute inset-0 bg-zinc-900 bg-opacity-75 flex items-center justify-center z-10">
           <div className="text-white text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
             <div>Cargando mapa...</div>
@@ -325,7 +339,7 @@ const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
               <div className="text-green-400">✓ Ruta válida</div>
             )}
             {isEditing && (
-              <div className="text-xs text-gray-300 mt-1">
+              <div className="text-xs text-zinc-300 mt-1">
                 Click en el mapa para agregar puntos
               </div>
             )}
@@ -334,8 +348,8 @@ const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
       )}
 
       {/* Contenedor del mapa */}
-      <div 
-        ref={mapContainer} 
+      <div
+        ref={mapContainer}
         style={{ height }}
         className="w-full rounded-lg overflow-hidden"
       />

@@ -21,7 +21,7 @@ export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
   }
 
   return (
-    <Card className="bg-gray-900 border-gray-800 hover:bg-gray-800 transition-all duration-300 hover:scale-[1.02]">
+    <Card className="bg-zinc-900 border-zinc-800 hover:bg-zinc-800 transition-all duration-300 hover:scale-[1.02]">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
@@ -30,12 +30,14 @@ export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <h3 className="text-xl font-bold text-white">{vehicle.licensePlate}</h3>
+                <h3 className="text-xl font-bold text-white">
+                  {vehicle.licensePlate}
+                </h3>
                 <Badge className={getStatusStyles(vehicle.status)}>
                   {vehicle.status}
                 </Badge>
               </div>
-              <div className="text-gray-400">
+              <div className="text-zinc-400">
                 <span className="font-medium text-white">
                   {vehicle.brand} {vehicle.model}
                 </span>
@@ -44,7 +46,9 @@ export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
               </div>
               {vehicle.driver && (
                 <div className="text-sm">
-                  <span className="font-medium text-gray-400">Conductor Asignado: </span>
+                  <span className="font-medium text-zinc-400">
+                    Conductor Asignado:{" "}
+                  </span>
                   <span className="text-emerald-500">{vehicle.driver}</span>
                 </div>
               )}
@@ -73,5 +77,5 @@ export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

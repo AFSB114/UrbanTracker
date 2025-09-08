@@ -72,35 +72,36 @@ export const Pagination: React.FC<PaginationProps> = ({
       {/* Left side: Results info and items per page selector */}
       <div className="flex flex-col sm:flex-row items-center gap-4">
         {/* Results info */}
-        <div className="text-sm text-gray-400 whitespace-nowrap">
+        <div className="text-sm text-zinc-400 whitespace-nowrap">
           {totalItems === 0 ? (
             "No drivers found"
           ) : (
             <>
-              Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of{' '}
-              <span className="font-medium text-white">{totalItems}</span> drivers
+              Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of{" "}
+              <span className="font-medium text-white">{totalItems}</span>{" "}
+              drivers
             </>
           )}
         </div>
 
         {/* Items per page selector */}
         {showItemsPerPageSelect && onItemsPerPageChange && totalItems > 0 && (
-          <div className="flex items-center gap-2 text-sm text-gray-400">
+          <div className="flex items-center gap-2 text-sm text-zinc-400">
             <span className="whitespace-nowrap">Rows per page:</span>
             <Select
               value={itemsPerPage.toString()}
               onValueChange={handleItemsPerPageChange}
               disabled={isLoading}
             >
-              <SelectTrigger className="w-20 h-8 bg-gray-800 border-gray-700 text-gray-300">
+              <SelectTrigger className="w-20 h-8 bg-zinc-800 border-zinc-700 text-zinc-300">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-gray-700">
+              <SelectContent className="bg-zinc-800 border-zinc-700">
                 {itemsPerPageOptions.map((option) => (
-                  <SelectItem 
-                    key={option} 
+                  <SelectItem
+                    key={option}
                     value={option.toString()}
-                    className="text-gray-300 hover:bg-gray-700 focus:bg-gray-700"
+                    className="text-zinc-300 hover:bg-zinc-700 focus:bg-zinc-700"
                   >
                     {option}
                   </SelectItem>
@@ -120,7 +121,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             size="sm"
             onClick={() => onPageChange(1)}
             disabled={currentPage === 1 || isLoading}
-            className="hidden sm:flex bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
+            className="hidden sm:flex bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white disabled:opacity-50"
             title="First page"
           >
             <ChevronsLeft className="h-4 w-4" />
@@ -132,7 +133,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             size="sm"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1 || isLoading}
-            className="bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
+            className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white disabled:opacity-50"
             title="Previous page"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -147,12 +148,12 @@ export const Pagination: React.FC<PaginationProps> = ({
                 size="sm"
                 onClick={() => onPageChange(1)}
                 disabled={isLoading}
-                className="bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white min-w-[2.5rem]"
+                className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white min-w-[2.5rem]"
               >
                 1
               </Button>
               {visiblePages[0] > 2 && (
-                <span className="text-gray-400 px-2 select-none">...</span>
+                <span className="text-zinc-400 px-2 select-none">...</span>
               )}
             </>
           )}
@@ -168,7 +169,7 @@ export const Pagination: React.FC<PaginationProps> = ({
               className={
                 currentPage === page
                   ? "bg-emerald-600 text-white hover:bg-emerald-700 min-w-[2.5rem] font-medium"
-                  : "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white min-w-[2.5rem]"
+                  : "bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white min-w-[2.5rem]"
               }
             >
               {page}
@@ -179,14 +180,14 @@ export const Pagination: React.FC<PaginationProps> = ({
           {showLastPage && (
             <>
               {visiblePages[visiblePages.length - 1] < totalPages - 1 && (
-                <span className="text-gray-400 px-2 select-none">...</span>
+                <span className="text-zinc-400 px-2 select-none">...</span>
               )}
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => onPageChange(totalPages)}
                 disabled={isLoading}
-                className="bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white min-w-[2.5rem]"
+                className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white min-w-[2.5rem]"
               >
                 {totalPages}
               </Button>
@@ -199,7 +200,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             size="sm"
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages || isLoading}
-            className="bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
+            className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white disabled:opacity-50"
             title="Next page"
           >
             <span className="hidden sm:inline mr-1">Next</span>
@@ -212,7 +213,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             size="sm"
             onClick={() => onPageChange(totalPages)}
             disabled={currentPage === totalPages || isLoading}
-            className="hidden sm:flex bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
+            className="hidden sm:flex bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white disabled:opacity-50"
             title="Last page"
           >
             <ChevronsRight className="h-4 w-4" />

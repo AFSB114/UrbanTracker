@@ -66,13 +66,13 @@ export default function VehiclesPage() {
     return (
       <div className="min-h-screen bg-black p-6">
         <div className="flex items-center justify-center h-64">
-          <div className="flex items-center gap-3 text-gray-300">
+          <div className="flex items-center gap-3 text-zinc-300">
             <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
             <span className="text-lg">Cargando Conductores...</span>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -80,8 +80,12 @@ export default function VehiclesPage() {
       {/* Header */}
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Gestión de vehículos</h1>
-          <p className="text-gray-400 mt-2">Controle y gestione su flota de vehículos</p>
+          <h1 className="text-3xl font-bold text-white">
+            Gestión de vehículos
+          </h1>
+          <p className="text-zinc-400 mt-2">
+            Controle y gestione su flota de vehículos
+          </p>
         </div>
         <Button
           onClick={openCreateModal}
@@ -96,17 +100,21 @@ export default function VehiclesPage() {
       <StatisticsCards statistics={statistics} />
 
       {/* Filters */}
-      <VehicleFilters searchTerm={searchTerm} onSearchChange={setSearchTerm} statusFilter="all" onStatusFilterChange={setStatusFilter} />
+      <VehicleFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        statusFilter="all"
+        onStatusFilterChange={setStatusFilter}
+      />
 
       {/* Vehicle list */}
       <section className="space-y-6">
         {filteredVehicles.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-400 text-lg">
+            <div className="text-zinc-400 text-lg">
               {searchTerm
                 ? "No vehicles found with the applied filters"
-                : "No vehicles registered"
-              }
+                : "No vehicles registered"}
             </div>
             {!searchTerm && (
               <Button
@@ -120,46 +128,46 @@ export default function VehiclesPage() {
           </div>
         ) : (
           <>
-          <div className="grid gap-6">
-            {paginatedVehicles.map((vehicle) => (
-              <VehicleCard
-                key={vehicle.id}
-                vehicle={vehicle}
-                onEdit={openEditModal}
-                onDelete={() => handleDeleteClick(vehicle.id)}
-              />
-            ))}
-          </div>
-          {/* Pagination component */}
-        <Pagination
-          pagination={pagination}
-          onPageChange={setPage}
-          onItemsPerPageChange={setItemsPerPage}
-          isLoading={isLoading}
-        />
-      </>
+            <div className="grid gap-6">
+              {paginatedVehicles.map((vehicle) => (
+                <VehicleCard
+                  key={vehicle.id}
+                  vehicle={vehicle}
+                  onEdit={openEditModal}
+                  onDelete={() => handleDeleteClick(vehicle.id)}
+                />
+              ))}
+            </div>
+            {/* Pagination component */}
+            <Pagination
+              pagination={pagination}
+              onPageChange={setPage}
+              onItemsPerPageChange={setItemsPerPage}
+              isLoading={isLoading}
+            />
+          </>
         )}
-    </section>
+      </section>
 
-      {/* Modal */ }
-  <VehicleModal
-    isOpen={isDialogOpen}
-    isEditing={isEditing}
-    formData={formData}
-    onClose={closeModal}
-    onSave={handleSaveDriver}
-    onFormChange={updateFormData }
-    isSaving={isSaving}
-    errors={formErrors}
-  />
-  {/* Delete Confirmation Modal */}
-        <DeleteConfirmationModal
-          isOpen={isDeleteModalOpen}
-          onClose={closeDeleteModal}
-          onConfirm={confirmDeleteVehicle}
-          vehicle={vehicleToDelete}
-          isDeleting={isDeleting}
-        />
-    </div >
-  )
+      {/* Modal */}
+      <VehicleModal
+        isOpen={isDialogOpen}
+        isEditing={isEditing}
+        formData={formData}
+        onClose={closeModal}
+        onSave={handleSaveDriver}
+        onFormChange={updateFormData}
+        isSaving={isSaving}
+        errors={formErrors}
+      />
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDeleteVehicle}
+        vehicle={vehicleToDelete}
+        isDeleting={isDeleting}
+      />
+    </div>
+  );
 }

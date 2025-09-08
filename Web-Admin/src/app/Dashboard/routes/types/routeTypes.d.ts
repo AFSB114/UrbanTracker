@@ -17,3 +17,15 @@ export interface IRoute {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface RouteType {
+  number: string;
+  description?: string;
+  active: boolean;
+}
+
+export interface RouteWaypointType {
+  sequence: number;
+  lng: number;
+  lat: number;
+}
