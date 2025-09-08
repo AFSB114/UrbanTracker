@@ -1,0 +1,346 @@
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+
+interface RouteWaypoint {
+  waypoint_id?: string;
+  route_id?: number;
+  sequence_order: number;
+  latitude: number;
+  longitude: number;
+  created_at?: string;
+}
+
+interface RouteEditorProps {
+  waypoints?: RouteWaypoint[];
+  onWaypointsChange: (waypoints: RouteWaypoint[]) => void;
+  isEditing?: boolean;
+  height?: string;
+  isVisible?: boolean; //  prop para controlar visibilidad
+}
+
+const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
+  waypoints = [],
+  onWaypointsChange,
+  isEditing = true,
+  height = '500px',
+  isVisible = true
+}) => {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  const [currentWaypoints, setCurrentWaypoints] = useState<RouteWaypoint[]>(waypoints);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<string>('');
+
+  // Limpiar mapa cuando se desmonte
+  useEffect(() => {
+    return () => {
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
+    };
+  }, []);
+
+  // Inicializar mapa cuando se hace visible
+  useEffect(() => {
+    if (!isVisible || map.current || !mapContainer.current) return;
+
+    try {
+      console.log('Inicializando mapa...');
+      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
+
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/dark-v11',
+        center: [-75.28337599253602, 2.9357328464917685], 
+        zoom: 12,
+        pitch: 0
+      });
+
+      map.current.on('load', () => {
+        console.log('Mapa cargado');
+        setIsLoaded(true);
+        setError('');
+        initializeMapLayers();
+        
+        if (isEditing) {
+          map.current?.on('click', handleMapClick);
+        }
+      });
+
+      map.current.on('error', (e) => {
+        console.error('Error del mapa:', e);
+        setError(`Error del mapa: ${e.error?.message || 'Error desconocido'}`);
+      });
+
+    } catch (err: unknown) {
+      console.error('Error inicializando mapa:', err);
+      setError(`Error: ${err instanceof Error ? err.message : JSON.stringify(err)}`);
+    }
+  }, [isVisible, isEditing]);
+
+  // Redimensionar mapa cuando cambie la visibilidad
+  useEffect(() => {
+    if (isVisible && map.current && isLoaded) {
+      // Pequeño delay para que el modal termine de renderizarse
+      setTimeout(() => {
+        map.current?.resize();
+      }, 100);
+    }
+  }, [isVisible, isLoaded]);
+
+  const initializeMapLayers = useCallback(() => {
+    if (!map.current) return;
+
+    try {
+      // Limpiar capas existentes si existen
+      if (map.current.getLayer('route-line')) map.current.removeLayer('route-line');
+      if (map.current.getLayer('waypoints')) map.current.removeLayer('waypoints');
+      if (map.current.getLayer('waypoint-labels')) map.current.removeLayer('waypoint-labels');
+      if (map.current.getSource('route-line')) map.current.removeSource('route-line');
+      if (map.current.getSource('waypoints')) map.current.removeSource('waypoints');
+
+      // Capa para la línea
+      map.current.addSource('route-line', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'LineString',
+            coordinates: []
+          }
+        }
+      });
+
+      map.current.addLayer({
+        id: 'route-line',
+        type: 'line',
+        source: 'route-line',
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        paint: {
+          'line-color': '#00ff88',
+          'line-width': 4,
+          'line-opacity': 0.8
+        }
+      });
+
+      // Capa para los puntos
+      map.current.addSource('waypoints', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: []
+        }
+      });
+
+      map.current.addLayer({
+        id: 'waypoints',
+        type: 'circle',
+        source: 'waypoints',
+        paint: {
+          'circle-radius': 8,
+          'circle-color': '#00ff88',
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#ffffff'
+        }
+      });
+
+      map.current.addLayer({
+        id: 'waypoint-labels',
+        type: 'symbol',
+        source: 'waypoints',
+        layout: {
+          'text-field': ['get', 'sequence'],
+          'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+          'text-size': 12,
+          'text-anchor': 'center'
+        },
+        paint: {
+          'text-color': '#000000',
+          'text-halo-color': '#ffffff',
+          'text-halo-width': 1
+        }
+      });
+
+      console.log('Capas inicializadas correctamente');
+    } catch (err) {
+      console.error('Error inicializando capas:', err);
+    }
+  }, []);
+
+  const handleMapClick = useCallback((e: mapboxgl.MapMouseEvent) => {
+    if (!isEditing) return;
+
+    const newWaypoint: RouteWaypoint = {
+      sequence_order: currentWaypoints.length + 1,
+      latitude: e.lngLat.lat,
+      longitude: e.lngLat.lng
+    };
+
+    const updatedWaypoints = [...currentWaypoints, newWaypoint];
+    setCurrentWaypoints(updatedWaypoints);
+    onWaypointsChange(updatedWaypoints);
+  }, [currentWaypoints, isEditing, onWaypointsChange]);
+
+  const updateMapData = useCallback(() => {
+    if (!map.current || !isLoaded) return;
+
+    try {
+      // Actualizar waypoints
+      const waypointFeatures = currentWaypoints.map((waypoint, index) => ({
+        type: 'Feature' as const,
+        properties: {
+          sequence: waypoint.sequence_order || index + 1,
+          waypoint_id: waypoint.waypoint_id
+        },
+        geometry: {
+          type: 'Point' as const,
+          coordinates: [waypoint.longitude, waypoint.latitude]
+        }
+      }));
+
+      const waypointSource = map.current.getSource('waypoints') as mapboxgl.GeoJSONSource;
+      if (waypointSource) {
+        waypointSource.setData({
+          type: 'FeatureCollection',
+          features: waypointFeatures
+        });
+      }
+
+      // Actualizar línea de ruta
+      const coordinates = currentWaypoints.map(wp => [wp.longitude, wp.latitude]);
+      const routeSource = map.current.getSource('route-line') as mapboxgl.GeoJSONSource;
+      
+      if (routeSource && coordinates.length >= 2) {
+        routeSource.setData({
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'LineString',
+            coordinates: coordinates
+          }
+        });
+      }
+
+      // Ajustar vista
+      if (currentWaypoints.length > 0) {
+        const bounds = new mapboxgl.LngLatBounds();
+        currentWaypoints.forEach(wp => {
+          bounds.extend([wp.longitude, wp.latitude]);
+        });
+        
+        if (currentWaypoints.length === 1) {
+          map.current.flyTo({
+            center: [currentWaypoints[0].longitude, currentWaypoints[0].latitude],
+            zoom: 14
+          });
+        } else {
+          map.current.fitBounds(bounds, { padding: 50 });
+        }
+      }
+    } catch (err) {
+      console.error('Error actualizando datos del mapa:', err);
+    }
+  }, [currentWaypoints, isLoaded]);
+
+  // Actualizar mapa cuando cambien los waypoints
+  useEffect(() => {
+    updateMapData();
+  }, [updateMapData]);
+
+  // Sincronizar waypoints externos
+  useEffect(() => {
+    setCurrentWaypoints(waypoints);
+  }, [waypoints]);
+
+  const clearWaypoints = useCallback(() => {
+    setCurrentWaypoints([]);
+    onWaypointsChange([]);
+  }, [onWaypointsChange]);
+
+  const undoLastWaypoint = useCallback(() => {
+    if (currentWaypoints.length > 0) {
+      const updatedWaypoints = currentWaypoints.slice(0, -1);
+      setCurrentWaypoints(updatedWaypoints);
+      onWaypointsChange(updatedWaypoints);
+    }
+  }, [currentWaypoints, onWaypointsChange]);
+
+  if (!isVisible) {
+    return <div style={{ height }} className="bg-gray-200 rounded flex items-center justify-center">
+      <span className="text-gray-500">Mapa oculto</span>
+    </div>;
+  }
+
+  return (
+    <div className="relative">
+      {/* Mostrar errores */}
+      {error && (
+        <div className="absolute top-0 left-0 right-0 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded z-20">
+          <strong>Error:</strong> {error}
+        </div>
+      )}
+
+      {/* Controles del mapa */}
+      {isEditing && (
+        <div className="absolute top-4 right-4 z-10 flex gap-2">
+          <button
+            onClick={undoLastWaypoint}
+            disabled={currentWaypoints.length === 0}
+            className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white px-3 py-2 rounded text-sm font-medium transition-colors"
+          >
+            Deshacer
+          </button>
+          <button
+            onClick={clearWaypoints}
+            disabled={currentWaypoints.length === 0}
+            className="bg-red-800 hover:bg-red-900 disabled:bg-gray-600 text-white px-3 py-2 rounded text-sm font-medium transition-colors"
+          >
+            Limpiar
+          </button>
+        </div>
+      )}
+
+      {/* Estado del mapa */}
+      {!isLoaded && (
+        <div className="absolute inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-10">
+          <div className="text-white text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
+            <div>Cargando mapa...</div>
+          </div>
+        </div>
+      )}
+
+      {/* Información de la ruta */}
+      {currentWaypoints.length > 0 && (
+        <div className="absolute bottom-4 left-4 z-10 bg-black bg-opacity-70 text-white p-3 rounded">
+          <div className="text-sm">
+            <div>Puntos: {currentWaypoints.length}</div>
+            {currentWaypoints.length >= 2 && (
+              <div className="text-green-400">✓ Ruta válida</div>
+            )}
+            {isEditing && (
+              <div className="text-xs text-gray-300 mt-1">
+                Click en el mapa para agregar puntos
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Contenedor del mapa */}
+      <div 
+        ref={mapContainer} 
+        style={{ height }}
+        className="w-full rounded-lg overflow-hidden"
+      />
+    </div>
+  );
+};
+
+export default FixedMapboxRouteEditor;

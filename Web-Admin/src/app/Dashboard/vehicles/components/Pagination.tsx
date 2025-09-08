@@ -35,10 +35,7 @@ export function Pagination({
   const {
     currentPage,
     totalPages,
-    totalItems,
     itemsPerPage,
-    startIndex,
-    endIndex
   } = pagination;
 
   return (
@@ -62,7 +59,7 @@ export function Pagination({
       </div>
       {showItemsPerPageSelect && (
         <Select value={String(itemsPerPage)} onValueChange={v => onItemsPerPageChange?.(Number(v))}>
-          <SelectTrigger className="w-24">
+          <SelectTrigger className="w-29">
             <SelectValue placeholder="Items" />
           </SelectTrigger>
           <SelectContent>
@@ -72,9 +69,6 @@ export function Pagination({
           </SelectContent>
         </Select>
       )}
-      <span className="text-xs text-muted-foreground">
-        Mostrando {startIndex + 1}-{endIndex} de {totalItems} vehículos
-      </span>
     </div>
   );
 }
