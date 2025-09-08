@@ -1,7 +1,10 @@
 package com.sena.urbantracker.security.controller;
 
+import com.sena.urbantracker.security.model.dto.response.ForgotPassword;
+import com.sena.urbantracker.security.model.dto.response.RecoveryCodeValidationDTO;
 import com.sena.urbantracker.security.model.dto.response.RequestLoginDriverDTO;
 import com.sena.urbantracker.security.model.dto.response.ResponseLoginDTO;
+import com.sena.urbantracker.security.service.RecoveryService;
 import com.sena.urbantracker.security.service.UserSecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,7 @@ import java.util.Map;
 public class AuthController {
 
     private final UserSecurityService userService;
+    private final RecoveryService recoveryService;
 
     @PostMapping("/login/driver")
     public ResponseEntity<?> login(@RequestBody RequestLoginDriverDTO userDTO) {
@@ -40,6 +44,16 @@ public class AuthController {
             error.put("message", "Por favor, intente nuevamente");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgot(@RequestBody ForgotPassword forgot) {
+        return recoveryService.generateRecoveryCode(forgot.getEmail());
+    }
+
+    @PostMapping("/validate-code")
+    public ResponseEntity<?> validateCode(@RequestBody RecoveryCodeValidationDTO dto) {
+        return recoveryService.validateRecoveryCode(dto);
     }
 
 }
