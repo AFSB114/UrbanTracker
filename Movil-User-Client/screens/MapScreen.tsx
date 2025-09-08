@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 // Componentes
 import RouteItem from '../components/ui/RouteItem';
-import Header from '~/components/Header';
+import Header from '~/components/ui/Header';
 
 // Tipos para la navegación interna del BottomSheet
 type BottomSheetScreen = 'home' | 'route-detail' | 'about' | 'stops';
@@ -370,7 +370,7 @@ export default function MapScreen() {
   };
 
   return (
-    <SafeAreaView className="relative flex-1 bg-black h-screen w-screen">
+    <View className="relative flex-1 bg-black">
       <Header />
 
       {/* Mapa - siempre visible */}
@@ -397,6 +397,6 @@ export default function MapScreen() {
         enablePanDownToClose={false}>
         {renderBottomSheetContent()}
       </BottomSheet>
-    </SafeAreaView>
+    </View>
   );
 }
