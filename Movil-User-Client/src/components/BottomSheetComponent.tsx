@@ -1,57 +1,39 @@
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { useMemo, useRef, useState } from 'react';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import SearchBar from './ui/SearchBar';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 export default function BottomSheetComponent() {
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['25%', '50%'], []);
-  const [currentIndex, setCurrentIndex] = useState(-1);
+  const snapPoints = useMemo(() => ['12%','30%'], []); // varias alturas
 
-  const handleSheetChanges = (index: number) => {
-    console.log('Sheet changed to index', index);
-    setCurrentIndex(index);
-  };
+  const [selectedRoute, setSelectedRoute] = useState<any>(null);
 
-  // Función para renderizar contenido según el índice
-  const renderContent = () => {
-    if (currentIndex === 1) {
-      // Al 25%
-      return (
-        <BottomSheetView className="flex-1 items-center justify-center px-4 pb-5 pt-2">
-          <SearchBar />
-          <Text className="mt-2 text-sm text-white">Búsqueda básica - 25%</Text>
-        </BottomSheetView>
-      );
-    } else if (currentIndex === 2) {
-      // Al 50%
-      return (
-        <BottomSheetView className="flex-1 px-4 pb-5 pt-2">
-          <SearchBar />
-          <Text className="mb-2 mt-4 text-lg text-white">Búsqueda avanzada - 50%</Text>
-
-          <View className="mt-4 space-y-2">
-            <Text className="text-sm text-white">🔍 Filtros disponibles</Text>
-            <Text className="text-sm text-white">📍 Búsqueda por ubicación</Text>
-            <Text className="text-sm text-white">⭐ Filtrar por rating</Text>
-            <Text className="text-sm text-white">🏷️ Categorías</Text>
-          </View>
-        </BottomSheetView>
-      );
-    }
-
-    // Cuando está cerrado o en transición
-    return (
-      <BottomSheetView className="flex-1 items-center justify-center px-4 pb-5 pt-2">
-        <SearchBar />
-      </BottomSheetView>
-    );
-  };
+  const rutas = [
+    {
+      id: '1',
+      nombre: 'Ruta 19',
+      distancia: '100m hacia la carrera 7',
+      bg: 'bg-zinc-800',
+    },
+    {
+      id: '2',
+      nombre: 'Ruta 62',
+      distancia: '290m hacia la carrera 2',
+      bg: 'bg-zinc-900',
+    },
+    {
+      id: '3',
+      nombre: 'Ruta 62',
+      distancia: '290m hacia la carrera 2',
+      bg: 'bg-zinc-900',
+    },
+  ];
 
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      onChange={handleSheetChanges}
       snapPoints={snapPoints}
       backgroundStyle={{ backgroundColor: '#000' }}
       handleIndicatorStyle={{
@@ -60,7 +42,91 @@ export default function BottomSheetComponent() {
         width: 50,
         height: 5,
       }}>
-      {renderContent()}
+      <BottomSheetScrollView
+        className="bg-black px-4">
+        {/* Barra de búsqueda (siempre visible arriba) */}
+
+        {/* Si no hay ruta seleccionada */}
+        {!selectedRoute && (
+          <>
+            <SearchBar />
+            <View className="mt-4">
+              <Text className="mb-3 text-lg text-white">Rutas Cercanas</Text>
+              {rutas.map((item) => (
+                <TouchableOpacity
+                  key={item.id}
+                  onPress={() => setSelectedRoute(item)}
+                  className={`flex-row items-center rounded-xl ${item.bg} mb-3 p-4`}>
+                  <View className="mr-2 aspect-square items-center justify-center rounded-full bg-green-700 p-3">
+                    <FontAwesome6 name="bus" size={20} color="white" />
+                  </View>
+                  <View>
+                    <Text className="font-bold text-white">{item.nombre}</Text>
+                    <Text className="text-zinc-300">{item.distancia}</Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </>
+        )}
+
+        {/* Si hay ruta seleccionada */}
+        {selectedRoute && (
+          <ScrollView >
+            {/* Botón de volver */}
+            <TouchableOpacity
+              onPress={() => setSelectedRoute(null)}
+              className="mb-3 flex-row items-center">
+              <FontAwesome6 name="arrow-left" size={18} color="white" />
+              <Text className="ml-2 text-white">Atrás</Text>
+            </TouchableOpacity>
+
+            <Text className="mb-3 text-lg text-zinc-300">Ruta seleccionada</Text>
+
+            {/* Card principal */}
+            <View className="mb-4 rounded-2xl bg-zinc-900 p-4">
+              <Text className="mb-1 text-xs text-zinc-400">ID-{selectedRoute.id}</Text>
+              <Text className="text-xl font-bold text-white">{selectedRoute.nombre}</Text>
+              <Text className="mb-3 text-zinc-400">{selectedRoute.distancia}</Text>
+
+              <View className="mb-4 flex-row justify-between">
+                <View className="flex-1 items-center">
+                  <Text className="font-bold text-green-500">IDA</Text>
+                  <Text className="text-xs text-zinc-300">
+                    Inicia el recorrido en la carrera 7 con 90
+                  </Text>
+                </View>
+                <View className="flex-1 items-center">
+                  <Text className="font-bold text-red-500">VUELTA</Text>
+                  <Text className="text-xs text-zinc-300">Carrera 39</Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Sección Recorrido */}
+            <View className="rounded-2xl bg-zinc-900 p-4">
+              <Text className="mb-1 text-lg font-bold text-white">Recorrido</Text>
+              <Text className="mb-3 text-zinc-400">Lugares por donde pasa</Text>
+
+              <View className="mb-4">
+                <Text className="font-bold text-white">Ida</Text>
+                <Text className="text-sm text-zinc-300">
+                  Sale de la calle 90 toma la carrera 7, barrio Galindo, carrera 26, San Pedro
+                  Plaza, Glorieta de la Cruz Roja, el sector 4to Centenario – María Paula.
+                </Text>
+              </View>
+
+              <View>
+                <Text className="font-bold text-white">Vuelta</Text>
+                <Text className="text-sm text-zinc-300">
+                  Inicia María Paula – 4to Centenario, tomando la Carrera 39, carrera 38 S Sur,
+                  calle 31 B Sur Transversal 36 Sur.
+                </Text>
+              </View>
+            </View>
+          </ScrollView>
+        )}
+      </BottomSheetScrollView>
     </BottomSheet>
   );
 }

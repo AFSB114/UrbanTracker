@@ -40,7 +40,7 @@ export default function MapViewComponent() {
             { long: -75.29445521618774, lat: 2.9540560904185154 },
             { long: -75.287728987026, lat: 2.9622173305886417 },
           ]}
-          color="#FF3B30"
+          color="red"
           id="route2"
         />
         <RouteMapComponent
@@ -49,7 +49,7 @@ export default function MapViewComponent() {
             { long: -75.29768908410126, lat: 2.9548334287639695 },
             { long: -75.30199434256933, lat: 2.9503990887680422 },
           ]}
-          color="#007AFF"
+          color="green"
           id="route1"
         />
       </MapView>

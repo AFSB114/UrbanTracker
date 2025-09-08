@@ -14,7 +14,7 @@ export default function RouteMapComponent({ waypoints, color, id }: { waypoints:
         .then((res) => res.json())
         .then((data) => {
           if (data.routes && data.routes.length > 0) {
-            console.log(data);
+            console.log(data.routes[0].geometry);
             setRoute({
               type: 'Feature',
               geometry: data.routes[0].geometry,
@@ -38,7 +38,7 @@ export default function RouteMapComponent({ waypoints, color, id }: { waypoints:
         id={`routeLayer${id}`}
         style={{
           lineColor: color,
-          lineWidth: 3,
+          lineWidth: 5,
           lineCap: 'round',
           lineJoin: 'round',
         }}
