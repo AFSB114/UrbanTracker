@@ -1,6 +1,6 @@
 package com.sena.urbantracker.config.security;
 
-import com.sena.urbantracker.users.repository.IUser;
+import com.sena.urbantracker.security.repository.IUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

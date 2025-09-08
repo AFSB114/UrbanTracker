@@ -6,7 +6,7 @@ import com.sena.urbantracker.security.model.dto.response.UserViewDTO;
 import com.sena.urbantracker.security.model.entity.Role;
 import com.sena.urbantracker.security.model.entity.User;
 import com.sena.urbantracker.security.repository.IRole;
-import com.sena.urbantracker.users.repository.IUser;
+import com.sena.urbantracker.security.repository.IUser;
 import com.sena.urbantracker.security.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

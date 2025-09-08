@@ -5,7 +5,7 @@ import com.sena.urbantracker.security.model.dto.response.ResponseLoginDTO;
 
 import com.sena.urbantracker.security.model.entity.User;
 
-import com.sena.urbantracker.users.repository.IUser;
+import com.sena.urbantracker.security.repository.IUser;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.authentication.AuthenticationManager;
