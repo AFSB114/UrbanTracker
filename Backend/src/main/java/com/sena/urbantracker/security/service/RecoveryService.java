@@ -10,6 +10,7 @@ import com.sena.urbantracker.users.repository.IUserProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public class RecoveryService {
     private final IRecoveryRequest recoveryRequestRepository;
     private final EmailService emailService;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<?> generateRecoveryCode(String email) {
 
@@ -41,7 +43,7 @@ public class RecoveryService {
 
         // 2. Guardar solicitud
         RecoveryRequest request = new RecoveryRequest();
-        request.setCode(code);
+        request.setCode(passwordEncoder.encode(code));
         request.setExpirationTime(expiration);
         request.setUser(user);
         recoveryRequestRepository.save(request);
@@ -70,8 +72,9 @@ public class RecoveryService {
 
         RecoveryRequest recoveryRequest = recoveryRequestOpt.get();
 
-        if (!recoveryRequest.getCode().equals(dto.getCode())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Código incorrecto.");
+        // Validar que el código ingresado sea correcto (comparando contra el hash)
+        if (!passwordEncoder.matches(dto.getCode(), recoveryRequest.getCode())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("El código es inválido.");
         }
 
         if (recoveryRequest.getExpirationTime().isBefore(LocalDateTime.now())) {
