@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -34,10 +35,10 @@ public class Tracking {
     private OffsetDateTime timestamp;
 
     @Column(nullable = false, precision = 10, scale = 8)
-    private Double latitude;
+    private BigDecimal latitude;
 
     @Column(nullable = false, precision = 11, scale = 8)
-    private Double longitude;
+    private BigDecimal  longitude;
 
     @Column(name = "data_source", length = 20)
     @Enumerated(EnumType.STRING)
