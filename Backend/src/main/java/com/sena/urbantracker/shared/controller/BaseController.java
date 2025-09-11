@@ -4,11 +4,10 @@ import com.sena.urbantracker.shared.exception.ValidationException;
 import com.sena.urbantracker.shared.model.dto.BaseDto;
 import com.sena.urbantracker.shared.model.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.model.enums.EntityType;
-import com.sena.urbantracker.shared.repository.ActivableEntity;
 import com.sena.urbantracker.shared.repository.CrudOperations;
 import com.sena.urbantracker.shared.service.ServiceFactory;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +16,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public abstract class BaseController<T extends BaseDto, ID> {
 
     protected ServiceFactory serviceFactory;
 
     protected abstract EntityType getEntityType();
     protected abstract Class<T> getDtoClass();
+
+    protected CrudOperations<T, ID> getService() {
+        return serviceFactory.getService(getEntityType(), getDtoClass());
+    }
 
     @PostMapping
     public ResponseEntity<CrudResponseDto<T>> create(@Valid @RequestBody T dto) {
@@ -63,37 +67,14 @@ public abstract class BaseController<T extends BaseDto, ID> {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CrudResponseDto<Void>> delete(@PathVariable ID id) {
+    public ResponseEntity<CrudResponseDto<T>> delete(@PathVariable ID id) {
         CrudOperations<T, ID> service = serviceFactory.createCrudService(getEntityType());
-        CrudResponseDto<Void> response = service.deleteById(id);
+        CrudResponseDto<T> response = service.deleteById(id);
 
         return ResponseEntity.ok(response);
     }
 
 
-    @PatchMapping("/{id}/activate")
-    public ResponseEntity<CrudResponseDto<T>> activate(@PathVariable ID id) {
-        ActivableEntity<T> service = serviceFactory.createActivableService(getEntityType());
-        CrudResponseDto<T> response = service.activate();
-
-        return ResponseEntity.ok(response);
-    }
-
-    @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<CrudResponseDto<T>> deactivate(@PathVariable ID id) {
-        ActivableEntity<T> service = serviceFactory.createActivableService(getEntityType());
-        CrudResponseDto<T> response = service.deactivate();
-
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/active")
-    public ResponseEntity<CrudResponseDto<List<T>>> findAllActive() {
-        ActivableEntity<T> service = serviceFactory.createActivableService(getEntityType());
-        CrudResponseDto<List<T>> response = service.findAllActive();
-
-        return ResponseEntity.ok(response);
-    }
 }
 
 
