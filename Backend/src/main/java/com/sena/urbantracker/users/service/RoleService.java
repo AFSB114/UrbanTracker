@@ -1,6 +1,6 @@
 package com.sena.urbantracker.users.service;
 
-import com.sena.urbantracker.security.model.dto.response.RoleDTO;
+import com.sena.urbantracker.security.model.dto.request.RoleDTO;
 import com.sena.urbantracker.shared.model.dto.ResponseDTO;
 import com.sena.urbantracker.security.model.entity.Role;
 import com.sena.urbantracker.security.repository.IRole;

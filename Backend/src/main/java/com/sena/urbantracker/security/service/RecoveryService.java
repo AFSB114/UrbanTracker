@@ -1,6 +1,6 @@
 package com.sena.urbantracker.security.service;
 
-import com.sena.urbantracker.security.model.dto.response.RecoveryCodeValidationDTO;
+import com.sena.urbantracker.security.model.dto.request.RecoveryCodeValidationDTO;
 import com.sena.urbantracker.security.model.dto.response.ResponseLoginDTO;
 import com.sena.urbantracker.security.model.entity.RecoveryRequest;
 import com.sena.urbantracker.security.model.entity.User;

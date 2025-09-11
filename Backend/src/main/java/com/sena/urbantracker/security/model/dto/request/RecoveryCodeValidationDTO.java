@@ -1,4 +1,4 @@
-package com.sena.urbantracker.security.model.dto.response;
+package com.sena.urbantracker.security.model.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ForgotPassword {
+public class RecoveryCodeValidationDTO {
     private String email;
+    private String code;
 }
