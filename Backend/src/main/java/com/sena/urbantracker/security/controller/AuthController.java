@@ -1,8 +1,8 @@
 package com.sena.urbantracker.security.controller;
 
-import com.sena.urbantracker.security.model.dto.response.ForgotPassword;
-import com.sena.urbantracker.security.model.dto.response.RecoveryCodeValidationDTO;
-import com.sena.urbantracker.security.model.dto.response.RequestLoginDriverDTO;
+import com.sena.urbantracker.security.model.dto.request.ForgotPassword;
+import com.sena.urbantracker.security.model.dto.request.RecoveryCodeValidationDTO;
+import com.sena.urbantracker.security.model.dto.request.RequestLoginAdminDTO;
 import com.sena.urbantracker.security.model.dto.response.ResponseLoginDTO;
 import com.sena.urbantracker.security.service.RecoveryService;
 import com.sena.urbantracker.security.service.UserSecurityService;
@@ -27,10 +27,10 @@ public class AuthController {
     private final UserSecurityService userService;
     private final RecoveryService recoveryService;
 
-    @PostMapping("/login/driver")
-    public ResponseEntity<?> login(@RequestBody RequestLoginDriverDTO userDTO) {
+    @PostMapping("/login")
+    public ResponseEntity<?> loginAdmin(@RequestBody RequestLoginAdminDTO userDTO) {
         try {
-            ResponseLoginDTO response = userService.login(userDTO);
+            ResponseLoginDTO response = userService.loginAdmin(userDTO);
             return ResponseEntity.ok(response);
             //tomo las exepciones en caso de que no se encuntre el nombre o alla errores en las crendenciales
         } catch (BadCredentialsException | UsernameNotFoundException e) {

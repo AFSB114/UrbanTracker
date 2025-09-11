@@ -1,4 +1,4 @@
-package com.sena.urbantracker.security.model.dto.response;
+package com.sena.urbantracker.security.model.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
+public class RoleDTO {
     private Long id;
-    private String userName;
-    private String password;
-    private Long role;
+    private String name;
+    private String description;
 }

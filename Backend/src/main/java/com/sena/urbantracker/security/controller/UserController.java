@@ -1,15 +1,17 @@
 package com.sena.urbantracker.security.controller;
 
 import com.sena.urbantracker.shared.model.dto.ResponseDTO;
-import com.sena.urbantracker.security.model.dto.response.UserDTO;
+import com.sena.urbantracker.security.model.dto.request.UserDTO;
 import com.sena.urbantracker.users.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@PreAuthorize("hasRole('ADMIN')")
 @RestController
-@RequestMapping("/api/v1/public/user")
+@RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 public class UserController {
 
