@@ -1,20 +1,17 @@
 package com.sena.urbantracker.users.model.dto.response;
 
+import com.sena.urbantracker.security.model.entity.User;
 import com.sena.urbantracker.shared.model.dto.BaseDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true) // Comparar con todos los campos de la superclase
-public class CompanyDTO extends BaseDto {
+@EqualsAndHashCode(callSuper = true)
+public class DriverDto extends BaseDto {
 
-    private String name;
-    private String address;
-    private String contactPhone;
-    private String contactEmail;
+    private User user;
 }
