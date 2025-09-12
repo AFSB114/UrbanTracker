@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LoginCredentials, User } from '@/types';
+import { LoginCredentials, User } from '@/types/auth';
+import { LOGIN_ENDPOINT } from '@Config/endPoints';
 
 // Constantes para AsyncStorage
 const TOKEN_KEY = 'auth_token';
@@ -14,36 +15,55 @@ export class AuthService {
    */
   static async login(credentials: LoginCredentials): Promise<{ success: boolean; token?: string; user?: User; error?: string }> {
     try {
-      // Simular llamada a API
-      await mockDelay(3000);
-      
-      // Validación mock - en producción esto sería una llamada real a la API
-      if (credentials.identificacion && credentials.password) {
-        // Mock successful login
-        const mockToken = `mock_token_${Date.now()}`;
-        const mockUser: User = {
-          id: '1',
-          identificacion: credentials.identificacion,
-          nombre: 'Conductor de Prueba',
-          email: 'conductor@urbantracker.com',
-          role: 'driver'
-        };
-        
-        // Guardar en AsyncStorage
-        await AsyncStorage.setItem(TOKEN_KEY, mockToken);
-        await AsyncStorage.setItem(USER_KEY, JSON.stringify(mockUser));
-        
-        return {
-          success: true,
-          token: mockToken,
-          user: mockUser
-        };
-      } else {
-        return {
-          success: false,
-          error: 'Credenciales inválidas'
-        };
+
+      // Adaptar payload al backend: userName en lugar de identificacion
+      const payload = { userName: credentials.identificacion, password: credentials.password };
+      console.log('🔐 AuthService.login ->', { endpoint: LOGIN_ENDPOINT, payload: { ...payload, password: '***' } });
+
+      const resp = await fetch(LOGIN_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const isJson = resp.headers.get('content-type')?.includes('application/json');
+      console.log('🔐 AuthService.login <- respuesta', { status: resp.status, ok: resp.ok, isJson });
+
+      if (!resp.ok) {
+
+        let errorMessage = 'Credenciales inválidas';
+
+        if (isJson) {
+          const errorBody = await resp.json().catch(() => null);
+          console.log('🔐 AuthService.login <- errorBody', errorBody);
+          errorMessage = errorBody?.message || errorBody?.error || errorMessage;
+        } else {
+          const text = await resp.text().catch(() => '');
+          console.log('🔐 AuthService.login <- errorText', text);
+          if (text) errorMessage = text;
+        }
+        return { success: false, error: errorMessage };
       }
+
+      const rawData = isJson ? await resp.json() : await resp.text().then(t => JSON.parse(t));
+      console.log('🔐 AuthService.login <- success body keys', rawData ? Object.keys(rawData) : []);
+
+      // Aceptar distintas formas de respuesta
+      const token = rawData?.token;
+      const user = rawData?.user || rawData?.data?.user || null;
+
+      if (!token) {
+        console.warn('⚠️ AuthService.login: no se encontró token en la respuesta');
+        return { success: false, error: 'Respuesta inválida del servidor' };
+      }
+
+      await AsyncStorage.setItem(TOKEN_KEY, String(token));
+      if (user) {
+        await AsyncStorage.setItem(USER_KEY, JSON.stringify(user));
+      }
+
+      return { success: true, token: String(token), user: user || undefined };
+
     } catch (error) {
       console.error('Error en login:', error);
       return {
@@ -96,30 +116,15 @@ export class AuthService {
     try {
       const token = await this.getToken();
       const user = await this.getUser();
-      
+
       console.log('🔍 Verificando estado de autenticación:', {
         tokenExists: !!token,
         userExists: !!user,
         tokenPreview: token ? token.substring(0, 20) + '...' : 'null'
       });
-      
+
       if (token && user) {
-        // Verificar que el token no sea muy antiguo (ej: más de 24 horas)
-        const tokenAge = this.getTokenAge(token);
-        const maxAge = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
-        
-        console.log('🕰️ Edad del token:', {
-          ageInHours: Math.floor(tokenAge / (60 * 60 * 1000)),
-          isExpired: tokenAge > maxAge
-        });
-        
-        if (tokenAge > maxAge) {
-          console.log('⚠️ Token expirado, limpiando sesión...');
-          await this.logout();
-          return { isAuthenticated: false };
-        }
-        
-        // En producción, aquí verificarías la validez del token con la API
+        // Confiar en el backend para la validez del token; aquí solo revisamos existencia
         console.log('✅ Sesión válida encontrada');
         return {
           isAuthenticated: true,
@@ -127,7 +132,7 @@ export class AuthService {
           token
         };
       }
-      
+
       console.log('❌ No se encontró sesión válida');
       return { isAuthenticated: false };
     } catch (error) {

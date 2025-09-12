@@ -20,6 +20,7 @@
     "expo-location": "^18.1.6",
     "expo-router": "~5.1.5",
     "expo-status-bar": "~2.2.3",
+    "i": "^0.3.7",
     "mqtt": "^5.13.3",
     "nativewind": "latest",
     "react": "19.0.0",

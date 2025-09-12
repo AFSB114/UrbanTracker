@@ -26,7 +26,7 @@ export interface AuthContextType {
   isLoading: boolean;
   
   // Métodos
-  login: (credentials: LoginCredentials) => Promise<boolean>;
+  login: (credentials: LoginCredentials) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   checkAuthStatus: () => Promise<void>;
 }
