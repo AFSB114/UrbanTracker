@@ -11,10 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/public/driver")
-@RequiredArgsConstructor
 public class DriverController extends BaseController<DriverDto, Long> {
 
-    private final ServiceFactory serviceFactory;
+    public DriverController(ServiceFactory serviceFactory) {
+        super(serviceFactory, EntityType.DRIVER);
+    }
 
     @Override
     protected EntityType getEntityType() {

@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/public/vehicle")
-@RequiredArgsConstructor
 public class VehicleController extends BaseController<VehicleDto, Long> {
 
-    private final ServiceFactory serviceFactory;
+    public VehicleController(ServiceFactory serviceFactory) {
+        super(serviceFactory, EntityType.VEHICLE);
+    }
 
     @Override
     protected EntityType getEntityType() {
