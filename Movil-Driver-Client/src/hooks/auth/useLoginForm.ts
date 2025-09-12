@@ -10,31 +10,31 @@ export const useLoginForm = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { login, isAuthenticated, isLoading } = useAuth();
 
   const handleChangeCredentials = (field: string) => (value: string) => {
     setLoginCredentials({ ...loginCredential, [field]: value });
+    // Limpiar error cuando el usuario empiece a escribir
+    if (error) setError(null);
   };
 
   const handleLogin = async () => {
     if (!loginCredential.identificacion || !loginCredential.password) {
-      Alert.alert('Campos incompletos', 'Por favor, ingresa tu usuario y contraseña.');
+      setError('Por favor, ingresa tu usuario y contraseña.');
       return;
     }
 
     setIsLoggingIn(true);
+    setError(null);
+    
     try {
-      const success = await login(loginCredential);
-      if (success) {
-        console.log('Login exitoso');
-      } else {
-        Alert.alert(
-          'Error de autenticación',
-          'Credenciales inválidas. Por favor, verifica tu información.'
-        );
+      const result = await login(loginCredential);
+      if (!result.success) {
+        setError(result.error || 'Credenciales inválidas. Por favor, verifica tu información.');
       }
     } catch (error) {
-      Alert.alert('Error', 'Hubo un problema al iniciar sesión. Inténtalo nuevamente.');
+      setError('Hubo un problema al iniciar sesión. Inténtalo nuevamente.');
       console.error('Error en login:', error);
     } finally {
       setIsLoggingIn(false);
@@ -60,6 +60,7 @@ export const useLoginForm = () => {
     isLoggingIn,
     isAuthenticated,
     isLoading,
+    error,
     handleLogin,
     togglePasswordVisibility,
     handleForgotPassword,
