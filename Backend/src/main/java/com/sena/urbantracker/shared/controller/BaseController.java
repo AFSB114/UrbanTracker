@@ -16,10 +16,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
+
 public abstract class BaseController<T extends BaseDto, ID> {
 
-    protected ServiceFactory serviceFactory;
+    protected final ServiceFactory serviceFactory;
+
+    protected final EntityType entityType;
+
+    public BaseController(ServiceFactory serviceFactory, EntityType entityType) {
+        this.serviceFactory = serviceFactory;
+        this.entityType = entityType;
+    }
 
     protected abstract EntityType getEntityType();
     protected abstract Class<T> getDtoClass();

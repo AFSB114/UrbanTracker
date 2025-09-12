@@ -124,7 +124,7 @@ public class CompanyService {
                 .name(dto.getName())
                 .phone(dto.getContactPhone())
                 .email(dto.getContactEmail())
-                .active(dto.isActive())
+                .active(dto.isActiveEntity())
                 .build();
     }
 

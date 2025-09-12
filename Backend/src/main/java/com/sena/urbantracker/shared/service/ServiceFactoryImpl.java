@@ -5,6 +5,7 @@ import com.sena.urbantracker.shared.model.enums.EntityType;
 import com.sena.urbantracker.shared.repository.CrudOperations;
 import com.sena.urbantracker.users.service.DriverService;
 import com.sena.urbantracker.vehicles.service.VehicleService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +16,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ServiceFactoryImpl implements ServiceFactory {
 
+    private final VehicleService vehicleService;
+    private final DriverService driverService;
     private final Map<EntityType, CrudOperations<?, ?>> crudServices = new HashMap<>();
 
-    public ServiceFactoryImpl(VehicleService vehicleService, DriverService driverService) {
-
+    @PostConstruct
+    public void init() {
         crudServices.put(EntityType.VEHICLE, vehicleService);
         crudServices.put(EntityType.DRIVER, driverService);
     }
