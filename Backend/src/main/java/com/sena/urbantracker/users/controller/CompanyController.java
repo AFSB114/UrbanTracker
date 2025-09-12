@@ -1,7 +1,12 @@
 package com.sena.urbantracker.users.controller;
 
+import com.sena.urbantracker.shared.controller.BaseController;
+import com.sena.urbantracker.shared.model.enums.EntityType;
+import com.sena.urbantracker.shared.repository.CrudOperations;
+import com.sena.urbantracker.shared.service.ServiceFactory;
 import com.sena.urbantracker.users.model.dto.response.CompanyDTO;
 import com.sena.urbantracker.shared.model.dto.ResponseDTO;
+import com.sena.urbantracker.users.model.dto.response.DriverDto;
 import com.sena.urbantracker.users.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,26 +17,24 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/v1/company")
-@RequiredArgsConstructor
-public class CompanyController {
+public class CompanyController extends BaseController<CompanyDTO, Long> {
 
-    private final CompanyService companyService;
-
-    @GetMapping("/")
-    public ResponseEntity<?> getAllCompanies() {
-        return ResponseEntity.ok(companyService.getAllCompanies());
+    public CompanyController(ServiceFactory serviceFactory) {
+        super(serviceFactory, EntityType.DRIVER);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteCompany(@PathVariable Long id) {
-        ResponseDTO response = companyService.deleteCompany(id);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    @Override
+    protected EntityType getEntityType() {
+        return EntityType.DRIVER;
     }
 
-    @PostMapping("/")
-    public ResponseEntity<Object> createCompany(@RequestBody CompanyDTO companyDTO) {
-        ResponseDTO response = companyService.save(companyDTO);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    @Override
+    protected Class<CompanyDTO> getDtoClass() {
+        return CompanyDTO.class;
     }
 
+    @Override
+    protected CrudOperations<CompanyDTO, Long> getService() {
+        return serviceFactory.getService(EntityType.DRIVER, CompanyDTO.class);
+    }
 }

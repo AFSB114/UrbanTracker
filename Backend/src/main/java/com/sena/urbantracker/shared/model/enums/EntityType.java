@@ -4,7 +4,11 @@ public enum EntityType {
 
     VEHICLE("Vehicle", "vehicles"),
     VEHICLE_TYPE("Vehicle Type", "vehicleTypes"),
+    VEHICLE_ASSIGMENT("Vehicle Assigment", "vehicleAssigments"),
     DRIVER("Driver", "drivers"),
+    COMPANY("Company", "companies"),
+    IDENTIFICATION_TYPE("Identification Type", "identificationTypes"),
+    USER_IDENTIFICATION("User Identification", "userIdentifications"),
     ROUTE("Route", "routes"),
     USER("User", "users"),
     ADMIN("Admin", "admins");
