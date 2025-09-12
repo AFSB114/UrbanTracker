@@ -16,7 +16,6 @@ public interface CrudOperations<T, ID> {
 
     CrudResponseDto <T> update(T dto);
 
-
     CrudResponseDto<T> deleteById(ID id);
 
     CrudResponseDto <T> activateById(ID id);

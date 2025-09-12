@@ -3,6 +3,7 @@ package com.sena.urbantracker.shared.model.enums;
 public enum EntityType {
 
     VEHICLE("Vehicle", "vehicles"),
+    VEHICLE_TYPE("Vehicle Type", "vehicleTypes"),
     DRIVER("Driver", "drivers"),
     ROUTE("Route", "routes"),
     USER("User", "users"),
