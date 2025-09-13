@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -27,15 +28,20 @@ public class RecoveryService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public ResponseEntity<?> generateRecoveryCode(String email) {
 
         Optional<UserProfile> userOpt = userRepository.findByEmail(email);
+
         if (!userOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("El email no existe");
         }
 
         UserProfile user = userOpt.get();
+
+        // Eliminar cualquier código anterior de ese usuario
+        recoveryRequestRepository.deleteAllByUser(user);
 
         // 1. Generar código
         String code = String.valueOf(new Random().nextInt(900000) + 100000);
@@ -90,7 +96,7 @@ public class RecoveryService {
         User user = userProfile.getUser();
 
         // Generar nuevo token
-        String token = jwtService.getToken(user);
+        String token = jwtService.generateToken(user);
 
         return ResponseEntity.ok(new ResponseLoginDTO(token));
     }
