@@ -1,4 +1,4 @@
-package com.sena.urbantracker.users.service;
+package com.sena.urbantracker.security.service;
 
 import com.sena.urbantracker.security.model.dto.request.RoleDTO;
 import com.sena.urbantracker.shared.model.dto.ResponseDTO;

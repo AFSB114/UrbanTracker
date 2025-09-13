@@ -100,7 +100,7 @@ public class VehicleService implements CrudOperations<VehicleDto, Long>{
     }
 
 
-    public static class VehicleMapper {
+    private static class VehicleMapper {
         public static VehicleDto toDto(Vehicle entity) {
             VehicleDto dto = new VehicleDto();
             dto.setId(entity.getId());

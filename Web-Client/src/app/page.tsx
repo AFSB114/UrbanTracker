@@ -3,8 +3,7 @@
 import { useState } from "react"
 import { Sidebar } from "@/src/components/layout/sidebar"
 import { FixedPanel } from "@/src/components/panels/fixed-panel"
-
-import MapVIew from "@/src/components/mapbox/MapVIew"
+import MapView from "@/src/components/map/map-view"
 import { MapControls } from "@/src/components/map/map-controls"
 
 export default function Home() {
@@ -31,7 +30,7 @@ export default function Home() {
 
       <main className="flex-1 relative overflow-hidden">
         {/* Main Map Component */}
-        <MapVIew />
+        <MapView isPanelCollapsed={isPanelCollapsed} />
         <MapControls />
       </main>
     </div>

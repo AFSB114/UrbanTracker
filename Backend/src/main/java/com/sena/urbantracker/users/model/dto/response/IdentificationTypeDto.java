@@ -6,16 +6,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true) // Comparar con todos los campos de la superclase
-public class CompanyDTO extends BaseDto {
+@EqualsAndHashCode(callSuper = true)
+public class IdentificationTypeDto extends BaseDto {
 
-    private String name;
-    private String nit;
-    private String phone;
-    private String email;
+    private String typeName;
+    private String description;
     private String country;
 }

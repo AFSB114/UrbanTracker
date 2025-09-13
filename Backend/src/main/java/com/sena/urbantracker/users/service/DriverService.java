@@ -69,15 +69,17 @@ public class DriverService implements CrudOperations<DriverDto, Long> {
 
     @Override
     public CrudResponseDto<Boolean> existsById(Long id) {
-        Driver driver = driverRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Conductor no encontrado."));
-        return CrudResponseDto.success(driverRepository.existsById(id), "Conductor encontrado");
+        if (driverRepository.existsById(id)) {
+            return CrudResponseDto.success(true, "Conductor existe");
+        }
+        return CrudResponseDto.success(false, "Conductor no existe");
     }
 
     @Override
     public CrudResponseDto<DriverDto> activateById(Long id) {
         Driver driver = driverRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Conductor no encontrado."));
+
         driver.setActive(true);
         driverRepository.save(driver);
         return CrudResponseDto.success(DriverMapper.toDto(driver), "Conductor activado");
@@ -92,7 +94,7 @@ public class DriverService implements CrudOperations<DriverDto, Long> {
         return CrudResponseDto.success(DriverMapper.toDto(driver), "Conductor desactivado");
     }
 
-    public static class DriverMapper {
+    private static class DriverMapper {
         public static DriverDto toDto(Driver entity) {
             DriverDto dto = new DriverDto();
             dto.setId(entity.getId());

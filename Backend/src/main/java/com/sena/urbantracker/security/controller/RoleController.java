@@ -2,7 +2,7 @@ package com.sena.urbantracker.security.controller;
 
 import com.sena.urbantracker.security.model.dto.request.RoleDTO;
 import com.sena.urbantracker.shared.model.dto.ResponseDTO;
-import com.sena.urbantracker.users.service.RoleService;
+import com.sena.urbantracker.security.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
