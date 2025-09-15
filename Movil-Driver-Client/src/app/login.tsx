@@ -8,12 +8,14 @@ export default function Login() {
     handleChangeCredentials,
     showPassword,
     isLoading,
+    isAuthenticated,
+    error,
     handleLogin,
     togglePasswordVisibility,
     handleForgotPassword,
   } = useLoginForm();
 
-  if (isLoading) {
+  if (isAuthenticated) {
     return <Redirect href="/(protected)/" />;
   }
 
@@ -64,9 +66,22 @@ export default function Login() {
         <Text className="text-sm text-blue-500">¿Necesitas ayuda?</Text>
       </TouchableOpacity>
 
+      {/* Mensaje de Error */}
+      {error && (
+        <View className="mb-4 w-full rounded-lg bg-red-900/50 p-3">
+          <Text className="text-center text-red-300">{error}</Text>
+        </View>
+      )}
+
       {/* Botón de Iniciar Sesión */}
-      <TouchableOpacity onPress={handleLogin} className="mb-4 rounded-full bg-gray-200 px-16 py-4">
-        <Text className="text-center text-lg font-bold text-black">Iniciar Sesión</Text>
+      <TouchableOpacity 
+        onPress={handleLogin} 
+        disabled={isLoading}
+        className={`mb-4 rounded-full px-16 py-4 ${isLoading ? 'bg-gray-400' : 'bg-gray-200'}`}
+      >
+        <Text className="text-center text-lg font-bold text-black">
+          {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+        </Text>
       </TouchableOpacity>
     </View>
   );

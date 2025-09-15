@@ -1,20 +1,21 @@
 package com.sena.urbantracker.users.model.dto.response;
 
+import com.sena.urbantracker.shared.model.dto.BaseDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompanyDTO {
+@EqualsAndHashCode(callSuper = true) // Comparar con todos los campos de la superclase
+public class CompanyDTO extends BaseDto {
 
-    private Long id;
     private String name;
-    private String address;
-    private String contactPhone;
-    private String contactEmail;
-    private boolean active = true;
+    private String nit;
+    private String phone;
+    private String email;
+    private String country;
 }

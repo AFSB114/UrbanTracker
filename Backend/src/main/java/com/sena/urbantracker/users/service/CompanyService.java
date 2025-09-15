@@ -1,142 +1,131 @@
 package com.sena.urbantracker.users.service;
 
 
+import com.sena.urbantracker.shared.exception.EntityAlreadyExistsException;
+import com.sena.urbantracker.shared.exception.EntityNotFoundException;
+import com.sena.urbantracker.shared.model.dto.CrudResponseDto;
+import com.sena.urbantracker.shared.repository.CrudOperations;
 import com.sena.urbantracker.users.model.dto.response.CompanyDTO;
-import com.sena.urbantracker.shared.model.dto.ResponseDTO;
 import com.sena.urbantracker.users.repository.ICompany;
 import com.sena.urbantracker.users.model.entity.Company;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CompanyService {
+public class CompanyService implements CrudOperations<CompanyDTO, Long> {
 
-    private final ICompany iCompany;
+    private final ICompany companyRepository;
 
-    public List<Company> getAllCompanies() {
-        return iCompany.findAll();
+    @Override
+    public CrudResponseDto<CompanyDTO> create(CompanyDTO dto) {
+       if (companyRepository.existsById(dto.getId())) {
+           throw new EntityAlreadyExistsException("La empresa con id " + dto.getId() + " ya existe.");
+       }
+
+       Company entity = CompanyMapper.toEntity(dto);
+       entity.setActive(true);
+
+       Company saved = companyRepository.save(entity);
+       return CrudResponseDto.success(CompanyMapper.toDto(saved), "Empresa creada correctamente");
     }
 
-    //busca el user por el id
-    public Optional<Company> findById(Long id) {
-        return iCompany.findById(id);
+    @Override
+    public CrudResponseDto<Optional<CompanyDTO>> findById(Long aLong) {
+        Company company = companyRepository.findById(aLong)
+                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + aLong + " no encontrada."));
+
+        return CrudResponseDto.success(Optional.of(CompanyMapper.toDto(company)), "Empresa encontrada");
     }
 
-    //borra el user segun el id
-    public ResponseDTO deleteCompany(Long id) {
-        Optional<Company> companyOpt = findById(id);
-        if (!companyOpt.isPresent()) {
-            return new ResponseDTO("La compañia no existe", HttpStatus.NOT_FOUND.toString());
+    @Override
+    public CrudResponseDto<List<CompanyDTO>> findAll() {
+        List<Company> companies = companyRepository.findAll();
+        return CrudResponseDto.success(companies.stream().map(CompanyMapper::toDto).toList(), "Empresas encontradas");
+    }
+
+    @Override
+    public CrudResponseDto<CompanyDTO> update(CompanyDTO dto) {
+        Company company = companyRepository.findById(dto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + dto.getId() + " no encontrada."));
+
+        company.setName(dto.getName());
+        company.setNit(dto.getNit());
+        company.setPhone(dto.getPhone());
+        company.setEmail(dto.getEmail());
+        company.setCountry(dto.getCountry());
+        company.setActive(dto.getActive());
+
+        Company updated = companyRepository.save(company);
+        return CrudResponseDto.success(CompanyMapper.toDto(updated), "Empresa actualizada correctamente");
+    }
+
+    @Override
+    public CrudResponseDto<CompanyDTO> deleteById(Long aLong) {
+        if (!companyRepository.existsById(aLong)) {
+            throw new EntityNotFoundException("Empresa con id " + aLong + " no encontrada.");
         }
-        iCompany.deleteById(id);
-        return new ResponseDTO("La compañia ha sido eliminada correctamente", HttpStatus.OK.toString());
+
+        companyRepository.deleteById(aLong);
+        return CrudResponseDto.success(CompanyMapper.toDto(null), "Empresa eliminada correctamente");
     }
 
-    // Guarda si el id es null/0, si es mayor lo actualiza
-    public ResponseDTO save(CompanyDTO companyDTO) {
-        try {
-            // 🔹 Validar nombre
-            if (!StringUtils.hasText(companyDTO.getName())) {
-                return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(),
-                        "El nombre no puede ser nulo o vacío.");
-            }
-            if (companyDTO.getName().length() > 255) {
-                return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(),
-                        "El nombre no puede superar los 255 caracteres.");
-            }
+    @Override
+    public CrudResponseDto<CompanyDTO> activateById(Long aLong) {
+        Company company = companyRepository.findById(aLong)
+                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + aLong + " no encontrada."));
 
-            // 🔹 Validar NIT
-//            if (!StringUtils.hasText(companyDTO.getNit())) {
-//                return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(),
-//                        "El NIT no puede ser nulo o vacío.");
-//            }
-//            if (!companyDTO.getNit().matches("^[0-9]+$")) {
-//                return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(),
-//                        "El NIT solo puede contener números.");
-//            }
+        company.setActive(true);
+        companyRepository.save(company);
+        return CrudResponseDto.success(CompanyMapper.toDto(company), "Empresa activada correctamente");
+    }
 
-            // 🔹 Validar dirección
-            if (!StringUtils.hasText(companyDTO.getAddress())) {
-                return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(),
-                        "La dirección no puede ser nula o vacía.");
-            }
+    @Override
+    public CrudResponseDto<CompanyDTO> deactivateById(Long aLong) {
+        Company company = companyRepository.findById(aLong)
+                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + aLong + " no encontrada."));
 
-            // 🔹 Validar teléfono de contacto
-            if (StringUtils.hasText(companyDTO.getContactPhone())) {
-                if (!companyDTO.getContactPhone().matches("^[0-9\\-+\\s]+$")) {
-                    return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(),
-                            "El teléfono solo puede contener números, espacios, + o -.");
-                }
-            }
+        company.setActive(false);
+        companyRepository.save(company);
+        return CrudResponseDto.success(CompanyMapper.toDto(company), "Empresa desactivada correctamente");
+    }
 
-            // 🔹 Validar email de contacto
-            if (StringUtils.hasText(companyDTO.getContactEmail())) {
-                if (!companyDTO.getContactEmail().matches("^[\\w.%+-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")) {
-                    return new ResponseDTO(HttpStatus.BAD_REQUEST.toString(),
-                            "El email de contacto no es válido.");
-                }
-            }
-
-            // 🔹 Validar duplicados (si es nuevo)
-//            if ((companyDTO.getId() == null || companyDTO.getId() == 0) &&
-//                    iCompany.existsByNit(companyDTO.getNit())) {
-//                return new ResponseDTO(HttpStatus.CONFLICT.toString(),
-//                        "Ya existe una compañía con ese NIT.");
-//            }
-
-            // 🔹 Crear o actualizar
-            Company company;
-            if (companyDTO.getId() == null || companyDTO.getId() == 0) {
-                // Nuevo
-                company = convertToModel(companyDTO);
-            } else {
-                // Actualización
-                Optional<Company> existingCompany = iCompany.findById(companyDTO.getId());
-                if (!existingCompany.isPresent()) {
-                    return new ResponseDTO(HttpStatus.NOT_FOUND.toString(),
-                            "La compañía con el ID proporcionado no existe.");
-                }
-                company = convertToModel(companyDTO);
-            }
-
-            // 🔹 Guardar
-            iCompany.save(company);
-
-            return new ResponseDTO(HttpStatus.OK.toString(),
-                    "La compañía se guardó correctamente.");
-        } catch (Exception e) {
-            return new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
-                    "Error al guardar: " + e.getMessage());
+    @Override
+    public CrudResponseDto<Boolean> existsById(Long aLong) {
+        if (companyRepository.existsById(aLong)) {
+            return CrudResponseDto.success(true, "Empresa con id " + aLong + " existe.");
         }
+        return CrudResponseDto.success(false, "Empresa con id " + aLong + " no existe.");
     }
 
-    // Convierte de DTO a Entidad (para guardar en BD)
-    private Company convertToModel(CompanyDTO dto) {
-        return Company.builder()
-                .id(dto.getId())
-                .name(dto.getName())
-                .phone(dto.getContactPhone())
-                .email(dto.getContactEmail())
-                .active(dto.isActive())
-                .build();
-    }
 
-    // Convierte de Entidad a DTO (para responder en la API)
-    private CompanyDTO convertToDTO(Company entity) {
-        CompanyDTO dto = new CompanyDTO();
-        dto.setId(entity.getId());
-        dto.setName(entity.getName());
-        dto.setContactPhone(entity.getPhone());
-        dto.setContactEmail(entity.getEmail());
-        dto.setActive(entity.getActive());
-        return dto;
+    private static class CompanyMapper {
+
+        private static CompanyDTO toDto(Company entity) {
+            CompanyDTO dto = new CompanyDTO();
+            dto.setId(entity.getId());
+            dto.setName(entity.getName());
+            dto.setNit(entity.getNit());
+            dto.setEmail(entity.getEmail());
+            dto.setPhone(entity.getPhone());
+            dto.setCountry(entity.getCountry());
+            dto.setActive(entity.getActive());
+            return dto;
+        }
+
+        private static Company toEntity(CompanyDTO dto) {
+            Company entity = new Company();
+            entity.setId(dto.getId());
+            entity.setName(dto.getName());
+            entity.setNit(dto.getNit());
+            entity.setPhone(dto.getPhone());
+            entity.setEmail(dto.getEmail());
+            entity.setCountry(dto.getCountry());
+            entity.setActive(dto.getActive());
+            return entity;
+        }
     }
 
 }

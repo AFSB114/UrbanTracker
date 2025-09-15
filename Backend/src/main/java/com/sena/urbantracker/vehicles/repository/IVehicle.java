@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface IVehicle extends JpaRepository<Vehicle, Long> {
 
+    boolean existsByLicencePlate(String licencePlate);
 }

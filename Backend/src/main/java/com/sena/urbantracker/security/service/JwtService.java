@@ -31,19 +31,8 @@ public class JwtService {
      * firma del token y encriptación del token
      */
 
-    public String getToken(UserDetails user) {
-        return getToken(new HashMap<>(), user);
-    }
-
-    private String getToken(Map<String, Object> extraClaims, UserDetails user) {
-        return Jwts
-                .builder()
-                .setClaims(extraClaims)
-                .setSubject(user.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-                .signWith(getKey(), SignatureAlgorithm.HS256)
-                .compact();
+    public String getRoleFromToken(String token) {
+        return getAllClaims(token).get("role", String.class);
     }
 
     public String generateToken(User user) {
@@ -51,11 +40,10 @@ public class JwtService {
         claims.put("id", user.getId());
         claims.put("role", user.getRole().getName());
         claims.put("userName", user.getUsername());
-        // NO agregues "sub" aquí, déjalo para setSubject()
 
         return Jwts.builder()
-            .addClaims(claims)  // ← Cambia setClaims() por addClaims()
-            .setSubject(user.getUsername())  // ← Ahora SÍ se establece correctamente
+            .addClaims(claims)
+            .setSubject(user.getUsername())
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
             .signWith(getKey(), SignatureAlgorithm.HS256)

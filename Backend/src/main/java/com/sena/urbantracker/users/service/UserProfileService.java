@@ -1,7 +1,7 @@
 package com.sena.urbantracker.users.service;
 
 import com.sena.urbantracker.shared.model.dto.ResponseDTO;
-import com.sena.urbantracker.security.model.dto.response.UserDTO;
+import com.sena.urbantracker.security.model.dto.request.UserDTO;
 import com.sena.urbantracker.security.model.dto.response.UserViewDTO;
 import com.sena.urbantracker.security.model.entity.Role;
 import com.sena.urbantracker.security.model.entity.User;

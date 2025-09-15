@@ -141,29 +141,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async (credentials: LoginCredentials): Promise<boolean> => {
+  const login = async (credentials: LoginCredentials): Promise<{ success: boolean; error?: string }> => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
       const result = await AuthService.login(credentials);
 
-      if (result.success && result.user && result.token) {
+      if (result.success && result.token) {
+        const normalizedUser: User = result.user ?? {
+          id: 'self',
+          identificacion: credentials.identificacion,
+        };
         dispatch({
           type: 'LOGIN_SUCCESS',
           payload: {
-            user: result.user,
+            user: normalizedUser,
             token: result.token,
           },
         });
-        return true;
+        return { success: true };
       } else {
         dispatch({ type: 'SET_LOADING', payload: false });
         console.error('Login failed:', result.error);
-        return false;
+        return { success: false, error: result.error };
       }
     } catch (error) {
       dispatch({ type: 'SET_LOADING', payload: false });
       console.error('Login error:', error);
-      return false;
+      return { success: false, error: 'Error de conexión' };
     }
   };
 
