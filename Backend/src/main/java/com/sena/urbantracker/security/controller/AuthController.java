@@ -28,7 +28,7 @@ public class AuthController {
     private final RecoveryService recoveryService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginAdmin(@RequestBody RequestLoginAdminDTO userDTO) {
+    public ResponseEntity<?> login(@RequestBody RequestLoginAdminDTO userDTO) {
         try {
             ResponseLoginDTO response = userService.loginAdmin(userDTO);
             return ResponseEntity.ok(response);
