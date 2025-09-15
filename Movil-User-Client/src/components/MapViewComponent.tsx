@@ -1,12 +1,15 @@
 import { View } from 'react-native';
-import Mapbox, { Camera, MapView, UserLocation } from '@rnmapbox/maps';
+import Mapbox, { Camera, MapView, Style, UserLocation } from '@rnmapbox/maps';
 import { useEffect, useRef, useState } from 'react';
 import { MAPBOX_API_TOKEN } from '@Env';
 import RouteMapComponent from './RouteMapComponent';
+import StyleDebugMapView from './StyleDebugMapVIew';
+import MapboxWebView from './MapboxWebView';
 
 Mapbox.setAccessToken(MAPBOX_API_TOKEN);
 
 export default function MapViewComponent() {
+  const mapRef = useRef(null);
   const camera = useRef<Camera>(null);
   const [isStyleLoaded, setIsStyleLoaded] = useState(false);
 
@@ -26,10 +29,19 @@ export default function MapViewComponent() {
     <View className="p- h-full w-full flex-1">
       <MapView
         style={{ flex: 1 }}
-        styleURL={Mapbox.StyleURL.Dark}
+        styleURL="mapbox://styles/afsb114/cmf7eaden003301s563d81iss"
         scaleBarEnabled={false}
         logoEnabled={false}
-        onDidFinishLoadingStyle={() => setIsStyleLoaded(true)}
+        onDidFinishLoadingStyle={() => {
+          console.log('Style loaded successfully');
+          setIsStyleLoaded(true);
+        }}
+        onMapLoadingError={() => {
+          console.error('Map failed to load:');
+        }}
+        onDidFinishLoadingMap={() => {
+          console.log('Map finished loading');
+        }}
         attributionEnabled={false}>
         <Camera ref={camera} />
         <UserLocation visible={true} androidRenderMode="normal" animated />
@@ -53,6 +65,14 @@ export default function MapViewComponent() {
           id="route1"
         />
       </MapView>
+      {/* <StyleDebugMapView /> */}
+      {/* <MapboxWebView
+        ref={mapRef}
+        accessToken={MAPBOX_API_TOKEN}
+        style="https://api.mapbox.com/styles/v1/afsb114/cmf7eaden003301s563d81iss.html?title=copy&access_token=pk.eyJ1IjoiYWZzYjExNCIsImEiOiJjbWI1bmN2OGYxanloMmlvbjd0dndtb3g5In0.2ON4hP04tvToiU_p_IsHbg&zoomwheel=true&fresh=true#2/38/-34"
+        center={[-75.2810060736973, 2.9342900126616227]}
+        zoom={12}
+      /> */}
     </View>
   );
 }

@@ -14,7 +14,6 @@ export default function RouteMapComponent({ waypoints, color, id }: { waypoints:
         .then((res) => res.json())
         .then((data) => {
           if (data.routes && data.routes.length > 0) {
-            console.log(data.routes[0].geometry);
             setRoute({
               type: 'Feature',
               geometry: data.routes[0].geometry,
