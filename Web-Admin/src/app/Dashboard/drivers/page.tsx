@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, AlertTriangle, RefreshCw } from "lucide-react";
 import { useDrivers } from "./hooks/useDrivers";
 import { DriverCard } from "./components/DriverCard";
 import { StatisticsCards } from "./components/StatisticsCards";
@@ -38,9 +38,13 @@ export default function DriversPage() {
     updateFormData,
     saveDriver,
     confirmDeleteDriver,
+    apiError,
+    clearApiError,
+    refetchDrivers,
   } = useDrivers();
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleSaveDriver = async () => {
     setFormErrors({});
@@ -53,14 +57,27 @@ export default function DriversPage() {
     }
   };
 
-  // Handler para el botón de eliminar en DriverCard
   const handleDeleteClick = (id: number) => {
-    openDeleteModal(
-      filteredDrivers.find((driver) => driver.id === id) as Driver
-    );
+    const driver = filteredDrivers.find((driver) => driver.id === id);
+    if (driver) {
+      openDeleteModal(driver);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await refetchDrivers();
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const isEditing = !!editingDriver;
+  const hasError = !!apiError;
+  const hasData = filteredDrivers.length > 0;
+  const isEmpty = !isLoading && !hasError && !hasData && !searchTerm;
+  const noResults = !isLoading && !hasError && !hasData && !!searchTerm;
 
   if (isLoading) {
     return (
@@ -87,43 +104,112 @@ export default function DriversPage() {
             Controle y gestione su flota de conductores
           </p>
         </div>
-        <Button
-          onClick={openCreateModal}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white transition-all duration-300 hover:scale-105"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Nuevo conductor
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            variant="outline"
+            className="border-zinc-600 text-zinc-300 hover:bg-zinc-800"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Actualizar
+          </Button>
+          <Button
+            onClick={openCreateModal}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white transition-all duration-300 hover:scale-105"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Nuevo conductor
+          </Button>
+        </div>
       </header>
 
-      {/* Statistics */}
-      <StatisticsCards statistics={statistics} />
-
-      {/* Filters */}
-      <DriverFilters searchTerm={searchTerm} onSearchChange={setSearchTerm} />
-
-      {/* Driver list */}
-      <section className="space-y-6">
-        {filteredDrivers.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-zinc-400 text-lg">
-              {searchTerm
-                ? "No se encontraron conductores que coincidan con su búsqueda."
-                : "No hay conductores disponibles. ¡Agregue su primer conductor!"}
+      {/* Error Alert - Simple y directo */}
+      {hasError && (
+        <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+          <div className="flex items-start justify-between">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0" />
+              <div>
+                <h4 className="text-red-300 font-medium mb-1">
+                  {apiError.status === 0 ? "Error de Conexión" : "Error"}
+                </h4>
+                <p className="text-red-200/80 text-sm">
+                  {apiError.message}
+                </p>
+              </div>
             </div>
-            {!searchTerm && (
+            <div className="flex items-center gap-2">
+              {(apiError.status === 0 || apiError.status >= 500) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleRefresh}
+                  className="text-red-300 hover:text-red-200 hover:bg-red-900/30"
+                >
+                  <RefreshCw className="h-3 w-3 mr-1" />
+                  Reintentar
+                </Button>
+              )}
               <Button
-                onClick={openCreateModal}
-                className="mt-4 bg-emerald-600 hover:bg-emerald-700 text-white"
+                variant="ghost"
+                size="sm"
+                onClick={clearApiError}
+                className="text-red-300 hover:text-red-200 hover:bg-red-900/30"
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Agregar conductor
+                ✕
               </Button>
-            )}
+            </div>
           </div>
-        ) : (
+        </div>
+      )}
+
+      {/* Statistics - Solo mostrar si no hay errores críticos */}
+      {!hasError && <StatisticsCards statistics={statistics} />}
+
+      {/* Filters - Solo mostrar si no hay errores críticos */}
+      {!hasError && (
+        <DriverFilters 
+          searchTerm={searchTerm} 
+          onSearchChange={setSearchTerm} 
+        />
+      )}
+
+      {/* Content Section */}
+      <section className="space-y-6">
+        {isEmpty && (
+          <div className="text-center py-12">
+            <div className="text-zinc-400 text-lg mb-4">
+              No hay conductores disponibles. ¡Agregue su primer conductor!
+            </div>
+            <Button
+              onClick={openCreateModal}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Agregar conductor
+            </Button>
+          </div>
+        )}
+
+        {noResults && (
+          <div className="text-center py-12">
+            <div className="text-zinc-400 text-lg mb-4">
+              No se encontraron conductores que coincidan con su búsqueda.
+            </div>
+            <Button
+              onClick={() => setSearchTerm('')}
+              variant="outline"
+              className="border-zinc-600 text-zinc-300 hover:bg-zinc-800"
+            >
+              Limpiar búsqueda
+            </Button>
+          </div>
+        )}
+
+        {hasData && (
           <>
-            {/* Drivers grid - ahora usa paginatedDrivers */}
+            {/* Drivers grid */}
             <div className="grid gap-6">
               {paginatedDrivers.map((driver) => (
                 <DriverCard
@@ -140,7 +226,7 @@ export default function DriversPage() {
               pagination={pagination}
               onPageChange={setPage}
               onItemsPerPageChange={setItemsPerPage}
-              isLoading={isLoading}
+              isLoading={isRefreshing}
             />
           </>
         )}
@@ -156,6 +242,7 @@ export default function DriversPage() {
         onFormChange={updateFormData}
         isSaving={isSaving}
         errors={formErrors}
+        apiError={apiError} // Pasamos el error de API al modal
       />
 
       {/* Delete Confirmation Modal */}
@@ -165,6 +252,7 @@ export default function DriversPage() {
         onConfirm={confirmDeleteDriver}
         driver={driverToDelete}
         isDeleting={isDeleting}
+        apiError={apiError} // Pasamos el error de API al modal
       />
     </div>
   );

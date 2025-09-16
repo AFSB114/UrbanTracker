@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { AlertTriangle, Loader2, User, CreditCard } from "lucide-react";
 import type { Driver } from "../types/driverTypes";
+import type { ApiError } from "../services/api/types";
 
 interface DeleteConfirmationModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ interface DeleteConfirmationModalProps {
   onConfirm: () => Promise<void>;
   driver: Driver | null;
   isDeleting: boolean;
+  apiError?: ApiError | null;
 }
 
 export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
@@ -25,6 +27,7 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
   onConfirm,
   driver,
   isDeleting,
+  apiError,
 }) => {
   if (!driver) return null;
 
@@ -48,6 +51,20 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
             ¿Está seguro de que desea eliminar permanentemente este controlador?
           </DialogDescription>
         </DialogHeader>
+
+        {/* API Error Display */}
+        {apiError && (
+          <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-3 mb-4">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-red-200/80 text-sm">
+                  {apiError.message}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Driver info to be deleted */}
         <div className="bg-zinc-800 border border-zinc-700 rounded-lg p-4 space-y-3 ">

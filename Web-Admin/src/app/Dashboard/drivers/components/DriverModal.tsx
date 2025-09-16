@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogFooter,  DialogHeader, DialogTitle,} from "@/components/ui/dialog";
-import { Loader2, User, CreditCard } from "lucide-react";
+import { Loader2, User, CreditCard, AlertTriangle } from "lucide-react";
 import type { DriverFormData } from "../types/driverTypes";
+import type { ApiError } from "../services/api/types";
 
 interface DriverModalProps {
   isOpen: boolean;
@@ -16,7 +17,7 @@ interface DriverModalProps {
   onFormChange: (field: keyof DriverFormData, value: string) => void;
   isSaving: boolean;
   errors: Record<string, string>;
-  
+  apiError?: ApiError | null;
 }
 
 export const DriverModal: React.FC<DriverModalProps> = ({
@@ -26,6 +27,7 @@ export const DriverModal: React.FC<DriverModalProps> = ({
   onClose,
   onSave,
   onFormChange,
+  apiError,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<DriverFormData>>({});
@@ -56,7 +58,6 @@ export const DriverModal: React.FC<DriverModalProps> = ({
       const value = event.target.value;
       onFormChange(field, value);
       
-      // Clear error when user starts typing
       if (errors[field]) {
         setErrors(prev => ({ ...prev, [field]: undefined }));
       }
@@ -92,6 +93,31 @@ export const DriverModal: React.FC<DriverModalProps> = ({
               : "Ingrese la información del nuevo conductor a continuación."}
           </DialogDescription>
         </DialogHeader>
+
+        {/* API Error Display */}
+        {apiError && (
+          <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-3 mb-4">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-red-200/80 text-sm">
+                  {apiError.message}
+                </p>
+                {/* Mostrar errores de validación del servidor si existen */}
+                {apiError.errors && Object.keys(apiError.errors).length > 0 && (
+                  <div className="mt-2 space-y-1">
+                    {Object.entries(apiError.errors).map(([field, messages]) => (
+                      <div key={field} className="text-red-200/70 text-xs">
+                        <strong className="capitalize">{field}:</strong>{" "}
+                        {Array.isArray(messages) ? messages.join(", ") : messages}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
