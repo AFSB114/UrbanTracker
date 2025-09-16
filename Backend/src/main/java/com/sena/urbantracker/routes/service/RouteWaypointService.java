@@ -43,6 +43,7 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointDto, Lo
 
         RouteWaypoint entity = RouteWaypointMapper.toEntity(dto, route);
         RouteWaypoint saved = routePointRepository.save(entity);
+        System.out.println("Punto de ruta creado");
         return CrudResponseDto.success(RouteWaypointMapper.toDto(saved), "Punto de ruta creado correctamente");
     }
 
