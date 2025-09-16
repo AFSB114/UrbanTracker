@@ -5,7 +5,10 @@ import Map, {
   Marker,
 } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
-import type { RouteWaypointType } from "../../types/routeTypes";
+import type {  RouteWaypointType, ShowRouteType } from "../../types/routeTypes";
+import type { MapMouseEvent } from "mapbox-gl";
+import type { FeatureCollection } from "geojson";
+import type { features } from "process";
 
 export default function MapVIew() {
   const mapRef = useRef(null);
@@ -13,8 +16,21 @@ export default function MapVIew() {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
   const [waypointList, setWaypointList] = useState<RouteWaypointType[]>([]);
-  const [route, setRoute] = useState<any>();
-  const handleClickMap = (e: any) => {
+  const [route, setRoute] = useState<FeatureCollection>({
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        geometry: {
+          type: "Polygon",
+          coordinates: [],
+        },
+        properties: {},
+      },
+    ],
+  });
+
+  const handleClickMap = (e: MapMouseEvent) => {
     const { lng, lat } = e.lngLat;
     setWaypointList([
       ...waypointList,
@@ -34,11 +50,8 @@ export default function MapVIew() {
         .then((res) => res.json())
         .then((data) => {
           if (data.routes && data.routes.length > 0) {
-            console.log(data);
-            setRoute({
-              type: "Feature",
-              geometry: data.routes[0].geometry,
-            });
+            console.log("Route data:", data.routes[0].geometry);
+            setRoute({...route, ...route.features[0].geometry = data.routes[0].geometry});
           }
         });
     } catch (error) {
@@ -85,13 +98,18 @@ export default function MapVIew() {
           zoom: 15,
         }}
         style={{ width: "100%", height: "100%" }}
-        mapStyle="mapbox://styles/mapbox/streets-v12"
+        mapStyle="mapbox://styles/afsb114/cmf7eaden003301s563d81iss"
         onLoad={getRoute}
         onClick={handleClickMap}
       >
         {route && (
           <Source id="route-source" type="geojson" data={route}>
-            <Layer {...routeLayerStyle} />
+            <Layer
+              id="route"
+              type="line"
+              paint={routeLayerStyle.paint}
+              layout={{ "line-join": "round", "line-cap": "round" }}
+            />
           </Source>
         )}
 

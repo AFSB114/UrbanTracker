@@ -1,3 +1,4 @@
+import type { MapMouseEvent } from "mapbox-gl";
 
 export interface RouteWaypoint {
   waypoint_id?: string;
@@ -28,4 +29,21 @@ export interface RouteWaypointType {
   sequence: number;
   lng: number;
   lat: number;
+}
+
+interface GeometryType {
+  coordinates: GeoJSON.Feature<GeoJSON.LineString>;
+  type: string;
+  properties?: Object;
+}
+
+export interface ShowRouteType {
+  type: string;
+  geometry: GeometryType;
+}
+
+export interface MapboxContextType { 
+  waypointList: RouteWaypointType[];
+  handleAddWaypoint: (e: MapMouseEvent) => void;
+
 }
