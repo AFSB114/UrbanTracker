@@ -3,6 +3,7 @@ package com.sena.urbantracker.shared.service;
 import com.sena.urbantracker.shared.exception.FactoryException;
 import com.sena.urbantracker.shared.model.enums.EntityType;
 import com.sena.urbantracker.shared.repository.CrudOperations;
+import com.sena.urbantracker.security.service.RoleService;
 import com.sena.urbantracker.users.service.CompanyService;
 import com.sena.urbantracker.users.service.DriverService;
 import com.sena.urbantracker.users.service.IdentificationTypeService;
@@ -28,6 +29,7 @@ public class ServiceFactoryImpl implements ServiceFactory {
     private final CompanyService companyService;
     private final IdentificationTypeService identificationTypeService;
     private final UserIdentificationService userIdentificationService;
+    private final RoleService roleService;
     private final Map<EntityType, CrudOperations<?, ?>> crudServices = new HashMap<>();
 
     @PostConstruct
@@ -39,6 +41,7 @@ public class ServiceFactoryImpl implements ServiceFactory {
         crudServices.put(EntityType.COMPANY, companyService);
         crudServices.put(EntityType.IDENTIFICATION_TYPE, identificationTypeService);
         crudServices.put(EntityType.USER_IDENTIFICATION, userIdentificationService);
+        crudServices.put(EntityType.ROLE, roleService);
     }
 
     @SuppressWarnings("unchecked")
@@ -66,9 +69,14 @@ public class ServiceFactoryImpl implements ServiceFactory {
         return (T) service;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T, ID> CrudOperations<T, ID> getService(EntityType type, Class<T> dtoClass) {
-        return null;
+        CrudOperations<?, ?> service = crudServices.get(type);
+        if (service == null) {
+            throw new FactoryException("No CRUD service registered for entity: " + type);
+        }
+        return (CrudOperations<T, ID>) service;
     }
 
     @Override

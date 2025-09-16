@@ -11,7 +11,8 @@ public enum EntityType {
     USER_IDENTIFICATION("User Identification", "userIdentifications"),
     ROUTE("Route", "routes"),
     USER("User", "users"),
-    ADMIN("Admin", "admins");
+    ADMIN("Admin", "admins"),
+    ROLE("Role", "roles");
 
     private final String displayName;
     private final String pluralName;
