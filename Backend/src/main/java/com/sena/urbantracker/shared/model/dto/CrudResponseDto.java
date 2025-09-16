@@ -1,7 +1,7 @@
 package com.sena.urbantracker.shared.model.dto;
 
 import com.sena.urbantracker.shared.model.enums.OperationType;
-import com.sena.urbantracker.vehicles.model.dto.response.VehicleDto;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,12 +17,17 @@ import java.util.Optional;
 @Builder
 public class CrudResponseDto<T> {
 
+    @NotNull(message = "El campo success no puede ser nulo")
     private boolean success;
+
     private String message;
     private T data;
     private OperationType operation;
     private String entityType;
+
+    @NotNull(message = "El timestamp no puede ser nulo")
     private LocalDateTime timestamp;
+
     private List<String> validationErrors;
 
     /* ========= FACTORY METHODS ========= */

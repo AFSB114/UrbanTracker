@@ -16,7 +16,6 @@ public class UserIdentificationTypeController extends BaseController<UserIdentif
         super(serviceFactory, EntityType.USER_IDENTIFICATION);
     }
 
-    @Override
     protected EntityType getEntityType() {
         return EntityType.USER_IDENTIFICATION;
     }

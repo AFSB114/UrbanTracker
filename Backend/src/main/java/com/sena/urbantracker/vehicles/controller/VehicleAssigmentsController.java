@@ -16,7 +16,6 @@ public class VehicleAssigmentsController extends BaseController<VehicleAssigment
         super(serviceFactory, EntityType.VEHICLE_ASSIGMENT);
     }
 
-    @Override
     protected EntityType getEntityType() {
         return EntityType.VEHICLE_ASSIGMENT;
     }

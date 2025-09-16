@@ -16,7 +16,6 @@ public class RoleController extends BaseController<RoleDto, Long> {
         super(serviceFactory, EntityType.ROLE);
     }
 
-    @Override
     protected EntityType getEntityType() {
         return EntityType.ROLE;
     }

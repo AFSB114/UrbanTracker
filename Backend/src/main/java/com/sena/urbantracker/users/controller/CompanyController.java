@@ -23,7 +23,6 @@ public class CompanyController extends BaseController<CompanyDTO, Long> {
         super(serviceFactory, EntityType.DRIVER);
     }
 
-    @Override
     protected EntityType getEntityType() {
         return EntityType.DRIVER;
     }
