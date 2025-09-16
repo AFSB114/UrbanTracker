@@ -115,8 +115,6 @@ public class RoleService implements CrudOperations<RoleDto, Long> {
             dto.setName(entity.getName());
             dto.setDescription(entity.getDescription());
             dto.setActive(entity.getActive());
-            dto.setCreatedAt(entity.getCreatedAt());
-            dto.setUpdatedAt(entity.getUpdatedAt());
             return dto;
         }
 
