@@ -10,6 +10,7 @@ public enum EntityType {
     IDENTIFICATION_TYPE("Identification Type", "identificationTypes"),
     USER_IDENTIFICATION("User Identification", "userIdentifications"),
     ROUTE("Route", "routes"),
+    ROUTE_WAYPOINT("Route Waypoint", "routeWaypoints"),
     USER("User", "users"),
     ADMIN("Admin", "admins"),
     ROLE("Role", "roles");

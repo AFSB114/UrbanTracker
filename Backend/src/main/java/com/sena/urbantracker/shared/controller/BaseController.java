@@ -83,8 +83,7 @@ public abstract class BaseController<T extends BaseDto, ID> {
         }
 
         // Asumimos que el DTO tiene un método setId que acepta Long
-        BaseDto baseDto = (BaseDto) dto;
-        baseDto.setId((Long) id);
+        (dto).setId((Long) id);
 
         CrudOperations<T, ID> service = getService();
         CrudResponseDto<T> response = service.update(dto);

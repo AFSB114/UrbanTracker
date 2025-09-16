@@ -29,7 +29,7 @@ public class Route {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "total_distance", nullable = false)
+    @Column(name = "total_distance")
     private Double totalDistance;
 
     @Column(nullable = false)

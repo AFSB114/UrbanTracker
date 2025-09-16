@@ -11,6 +11,8 @@ import com.sena.urbantracker.users.service.UserIdentificationService;
 import com.sena.urbantracker.vehicles.service.VehicleAssigmentsService;
 import com.sena.urbantracker.vehicles.service.VehicleService;
 import com.sena.urbantracker.vehicles.service.VehicleTypeService;
+import com.sena.urbantracker.routes.service.RouteService;
+import com.sena.urbantracker.routes.service.RouteWaypointService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ public class ServiceFactoryImpl implements ServiceFactory {
     private final IdentificationTypeService identificationTypeService;
     private final UserIdentificationService userIdentificationService;
     private final RoleService roleService;
+    private final RouteService routeService;
+    private final RouteWaypointService routeWaypointService;
 
     /**
      * Mapa que registra los servicios CRUD por tipo de entidad.
@@ -56,6 +60,8 @@ public class ServiceFactoryImpl implements ServiceFactory {
         crudServices.put(EntityType.IDENTIFICATION_TYPE, identificationTypeService);
         crudServices.put(EntityType.USER_IDENTIFICATION, userIdentificationService);
         crudServices.put(EntityType.ROLE, roleService);
+        crudServices.put(EntityType.ROUTE, routeService);
+        crudServices.put(EntityType.ROUTE_WAYPOINT, routeWaypointService);
     }
 
     /**

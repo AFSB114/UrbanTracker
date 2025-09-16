@@ -4,4 +4,6 @@ import com.sena.urbantracker.routes.model.entity.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface IRoute extends JpaRepository<Route, Long> {
+
+    boolean existsByNumberRoute(Integer numberRoute);
 }
