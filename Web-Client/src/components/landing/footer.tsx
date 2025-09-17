@@ -9,7 +9,7 @@ export default function Footer() {
           <div className="md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-8 h-8 bg-primary-foreground rounded-lg flex items-center justify-center">
-                <span className="text-primary font-bold text-lg"><img src="/urban-tracker-logo.jpg" alt="Logo UrbanTracker" className="w-6 h-6" /></span>
+                <span className="text-primary font-bold text-lg"><img src="/logo.svg" alt="Logo UrbanTracker" className="w-6 h-6" /></span>
               </div>
               <span className="text-xl font-bold">UrbanTracker</span>
             </div>

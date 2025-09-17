@@ -103,7 +103,7 @@ export default function Contact() {
           <div className="text-center mt-8">
             <div className="inline-flex items-center space-x-2 text-muted-foreground">
               <Mail className="h-4 w-4" />
-              <span className="text-sm">También puedes escribirnos a: urbantracker@sena.edu.co</span>
+              <span className="text-sm">También puedes escribirnos a: urbantracker751@gmail.com</span>
             </div>
           </div>
         </div>

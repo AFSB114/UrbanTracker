@@ -20,7 +20,7 @@ export function Sidebar({ activePanel, onPanelChange }: SidebarProps) {
     <div className="w-24 bg-white border-r border-gray-200 flex flex-col items-center py-4 space-y-4">
       <div className="flex flex-col items-center space-y-2 mb-4">
         <div className="w-16 h-16 flex items-center justify-center">
-          <img src="/urban-tracker-logo.jpg" alt="UrbanTracker Logo" className="w-14 h-14 object-contain" />
+          <img src="/logo.svg" alt="UrbanTracker Logo" className="w-14 h-14 object-contain" />
         </div>
         <span className="text-xs font-medium text-gray-700 text-center leading-tight px-1">UrbanTracker</span>
       </div>

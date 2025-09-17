@@ -17,13 +17,10 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50">
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-4 py-4 ">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">U</span>
-            </div>
-            <span className="text-xl font-bold text-primary">UrbanTracker</span>
+            <img src="/Logo-completo-UrbanTracker.svg" alt="" className="w-auto h-15" />
           </div>
 
           {/* Desktop Navigation */}

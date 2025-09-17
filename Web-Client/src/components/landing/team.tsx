@@ -6,25 +6,25 @@ const teamMembers = [
     name: "Brayan Estiven Carvajal Padilla",
     role: "Desarrollador Full Stack",
     initials: "BC",
-    image: "/public/foto-profesional-desarrollador-joven.jpg",
+    image: "/foto-profesional.jpg",
   },
   {
     name: "Andres Felipe Suaza Bustos",
     role: "Desarrollador Frontend",
     initials: "AS",
-    image: "/public/foto-profesional-desarrollador-joven.jpg",
+    image: "/foto-profesional.jpg",
   },
   {
     name: "Diego Fernando Cuellar Hernandez",
     role: "Desarrollador Backend",
     initials: "DC",
-    image: "/public/foto-profesional-desarrollador-joven.jpg",
+    image: "/foto-profesional.jpg",
   },
   {
     name: "Carlos Javier Rodriguez Manchola",
     role: "Analista de Sistemas",
     initials: "CR",
-    image: "/foto-profesional-desarrollador-joven.jpg",
+    image: "/foto-profesional.jpg",
   },
 ]
 
