@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 
 export default function Hero() {
   const router = useRouter();
- 
+
   return (
     <section id="inicio" className="pt-32 pb-16 bg-gradient-to-br from-primary/5 to-accent/5">
       <div className="container mx-auto px-4">
