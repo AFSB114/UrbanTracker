@@ -1,44 +1,31 @@
 {
   "expo": {
-    "name": "UrbanTrackerUser",
-    "slug": "UrbanTrackerUser",
+    "name": "UrbanTracker-Clean",
+    "slug": "UrbanTracker-Clean",
     "version": "1.0.0",
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "experiments": {
-      "tsconfigPaths": true
-    },
-    "plugins": [
-      [
-        "@rnmapbox/maps",
-        {
-          "RNMapboxMapsDownloadToken": "pk.eyJ1IjoiYWZzYjExNCIsImEiOiJjbWI1bmN2OGYxanloMmlvbjd0dndtb3g5In0.2ON4hP04tvToiU_p_IsHbg",
-          "RNMapboxMapsVersion": "11.0.0"
-        }
-      ]
-    ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.UrbanTrackerUser"
+      "supportsTablet": true
     },
     "android": {
-      "package": "com.anonymous.UrbanTrackerUser",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.UrbanTrackerClean"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
     }
   }
 }

@@ -1,14 +1,44 @@
-import { TextInput, View } from "react-native";
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import React from 'react';
+import { View, TextInput, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function SearchBar() {
+interface SearchBarProps {
+  placeholder?: string;
+  value: string;
+  onChangeText: (text: string) => void;
+  onPress?: () => void;
+  editable?: boolean;
+}
+
+export default function SearchBar({
+  placeholder = "Buscar",
+  value,
+  onChangeText,
+  onPress,
+  editable = true
+}: SearchBarProps) {
   return (
-    <View className="relative flex w-full flex-row items-center justify-stretch overflow-hidden rounded-lg border border-gray-300 bg-white px-2 my-4">
-      <FontAwesome5 name="search-location" size={24} color="gray" />
-      <TextInput
-        className="text-black text-lg placeholder:font-bold placeholder:text-zinc-600"
-        placeholder="Buscar rutas, destinos..."
-      />
-    </View>
+    <TouchableOpacity
+      className="z-50 w-full px-5 mb-4"
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
+      <View className="flex-row items-center bg-gray-800 rounded-full px-4 py-3 shadow-lg">
+        <Ionicons name="search" size={20} color="#999999" className="mr-2.5" />
+        <TextInput
+          className="flex-1 text-white text-base py-0"
+          placeholder={placeholder}
+          placeholderTextColor="#999999"
+          value={value}
+          onChangeText={onChangeText}
+          editable={editable}
+        />
+        {value.length > 0 && (
+          <TouchableOpacity onPress={() => onChangeText('')} className="ml-2.5">
+            <Ionicons name="close-circle" size={20} color="#999999" />
+          </TouchableOpacity>
+        )}
+      </View>
+    </TouchableOpacity>
   );
 }

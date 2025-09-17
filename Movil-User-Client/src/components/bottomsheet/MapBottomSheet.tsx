@@ -1,144 +1,43 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, Keyboard, Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from 'react';
 import BottomSheet, {
   BottomSheetView,
   BottomSheetScrollView,
   BottomSheetTextInput,
 } from '@gorhom/bottom-sheet';
+import { View, Text, TouchableOpacity, Keyboard } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRef } from 'react';
 
-// Componentes
-import RouteItem from '../components/ui/RouteItem';
-import Header from '~/components/ui/Header';
+// Hooks
+import { useRoutes } from '../../hooks/useRoutes';
+import { useBottomSheet } from '../../hooks/useBottomSheet';
 
-// Tipos para la navegación interna del BottomSheet
-type BottomSheetScreen = 'home' | 'route-detail' | 'about' | 'stops';
+// Components
+import RouteItem from '../ui/RouteItem';
 
-interface RouteDetailData {
-  routeId: string;
-  routeName: string;
+interface MapBottomSheetProps {
+  snapPoints: number[];
+  onViewRouteOnMap?: (routeId: number, routeNumber: string) => void;
 }
 
-// Datos de ejemplo
-const mockRoutes = [
-  {
-    id: '1',
-    number: '999',
-    name: 'Ruta Principal',
-    destination: 'Alberto Galindo - Conj. María Paula',
-    distance: '150m hacia la carrera 15',
-    isActive: true,
-  },
-  {
-    id: '2',
-    number: '888',
-    name: 'Ruta Norte',
-    destination: 'Centro Comercial - Universidad',
-    distance: '300m hacia la calle 45',
-    isActive: true,
-  },
-  {
-    id: '3',
-    number: '777',
-    name: 'Ruta Sur',
-    destination: 'Terminal - Hospital',
-    distance: '500m hacia la avenida 30',
-    isActive: false,
-  },
-  {
-    id: '4',
-    number: '666',
-    name: 'Ruta Este',
-    destination: 'Parque Central - Estación',
-    distance: '200m hacia la diagonal 25',
-    isActive: true,
-  },
-];
-
-export default function MapScreen() {
+export default function MapBottomSheet({ snapPoints, onViewRouteOnMap }: MapBottomSheetProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const searchInputRef = useRef<any>(null);
-  const [searchText, setSearchText] = useState('');
-  const [bottomSheetIndex, setBottomSheetIndex] = useState(0);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  // Estado de navegación interno del BottomSheet
-  const [currentScreen, setCurrentScreen] = useState<BottomSheetScreen>('home');
-  const [routeDetailData, setRouteDetailData] = useState<RouteDetailData | null>(null);
-
-  // Solo dos estados: colapsado y expandido
-  const { height } = Dimensions.get('window');
-  const snapPoints = useMemo(
-    () => [
-      Math.max(120, height * 0.15), // Colapsado - solo barra visible
-      height * 0.9, // Expandido - casi toda la pantalla
-    ],
-    [height]
-  );
-
-  const handleSheetChanges = useCallback(
-    (index: number) => {
-      setBottomSheetIndex(index);
-
-      // Si se colapsa, regresar al home y quitar el foco
-      if (index === 0) {
-        setCurrentScreen('home');
-        if (isSearchFocused) {
-          searchInputRef.current?.blur();
-          Keyboard.dismiss();
-        }
-      }
-    },
-    [isSearchFocused]
-  );
-
-  const handleSearchFocus = useCallback(() => {
-    setIsSearchFocused(true);
-    // Expandir completamente cuando se enfoque la búsqueda
-    if (bottomSheetIndex === 0) {
-      bottomSheetRef.current?.snapToIndex(1);
-    }
-  }, [bottomSheetIndex]);
-
-  const handleSearchBlur = useCallback(() => {
-    setIsSearchFocused(false);
-  }, []);
-
-  // Navegación interna del BottomSheet
-  const navigateToRouteDetail = (routeId: string, routeName: string) => {
-    setRouteDetailData({ routeId, routeName });
-    setCurrentScreen('route-detail');
-    // Asegurar que esté expandido
-    bottomSheetRef.current?.snapToIndex(1);
-  };
-
-  const navigateToAbout = () => {
-    setCurrentScreen('about');
-    bottomSheetRef.current?.snapToIndex(1);
-  };
-
-  const navigateToStops = () => {
-    setCurrentScreen('stops');
-    bottomSheetRef.current?.snapToIndex(1);
-  };
-
-  const navigateBack = () => {
-    setCurrentScreen('home');
-    setRouteDetailData(null);
-  };
-
-  // Filtrar rutas basado en la búsqueda
-  const filteredRoutes = useMemo(() => {
-    if (!searchText) return mockRoutes;
-
-    return mockRoutes.filter(
-      (route) =>
-        route.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        route.number.includes(searchText) ||
-        route.destination.toLowerCase().includes(searchText.toLowerCase())
-    );
-  }, [searchText]);
+  const { routes, searchText, setSearchText } = useRoutes();
+  const {
+    bottomSheetIndex,
+    isSearchFocused,
+    currentScreen,
+    routeDetailData,
+    handleSheetChanges,
+    handleSearchFocus,
+    handleSearchBlur,
+    navigateToRouteDetail,
+    navigateToAbout,
+    navigateToStops,
+    navigateBack,
+  } = useBottomSheet();
 
   const renderSearchBar = () => (
     <View className="mx-5 mb-4 mt-2">
@@ -187,19 +86,19 @@ export default function MapScreen() {
           {searchText ? 'Resultados de Búsqueda' : 'Todas las Rutas'}
         </Text>
 
-        {filteredRoutes.map((route) => (
+        {routes.map((route) => (
           <RouteItem
             key={route.id}
-            routeNumber={route.number}
-            routeName={route.name}
-            destination={route.destination}
-            distance={route.distance}
-            isActive={route.isActive}
-            onPress={() => navigateToRouteDetail(route.id, route.name)}
+            routeNumber={route.numberRoute}
+            routeName={route.description}
+            destination={route.description}
+            distance={route.totalDistance.toString()}
+            isActive={route.active}
+            onPress={() => navigateToRouteDetail(route.id.toString(), route.description)}
           />
         ))}
 
-        {filteredRoutes.length === 0 && (
+        {routes.length === 0 && (
           <View className="items-center py-8">
             <Ionicons name="search" size={48} color="#666666" />
             <Text className="mt-2 px-5 text-center text-gray-400">
@@ -233,25 +132,25 @@ export default function MapScreen() {
 
   // Pantalla de detalle de ruta
   const renderRouteDetailScreen = () => {
-    const route = mockRoutes.find((r) => r.id === routeDetailData?.routeId);
+    const route = routes.find((r) => r.id === parseInt(routeDetailData?.routeId || '0'));
 
     return (
       <BottomSheetScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="p-5">
-          {renderHeader(`Ruta ${route?.number}`, true)}
+          {renderHeader(`Ruta ${route?.numberRoute}`, true)}
 
           <View className="mt-6">
             <View className="mb-4 rounded-xl bg-gray-800 p-4">
               <View className="mb-3 flex-row items-center">
                 <View className="mr-3 h-12 w-12 items-center justify-center rounded-full bg-blue-600">
-                  <Text className="text-lg font-bold text-white">{route?.number}</Text>
+                  <Text className="text-lg font-bold text-white">{route?.numberRoute}</Text>
                 </View>
                 <View className="flex-1">
-                  <Text className="text-lg font-semibold text-white">{route?.name}</Text>
-                  <Text className="text-gray-400">{route?.destination}</Text>
+                  <Text className="text-lg font-semibold text-white">{route?.description}</Text>
+                  <Text className="text-gray-400">{route?.description}</Text>
                 </View>
                 <View
-                  className={`h-3 w-3 rounded-full ${route?.isActive ? 'bg-green-500' : 'bg-red-500'}`}
+                  className={`h-3 w-3 rounded-full ${route?.active ? 'bg-green-500' : 'bg-red-500'}`}
                 />
               </View>
             </View>
@@ -260,17 +159,20 @@ export default function MapScreen() {
               <Text className="mb-3 text-lg font-semibold text-white">Información</Text>
               <View className="mb-2 flex-row items-center">
                 <Ionicons name="location" size={16} color="#666666" />
-                <Text className="ml-2 text-gray-300">Distancia: {route?.distance}</Text>
+                <Text className="ml-2 text-gray-300">Distancia: {route?.totalDistance}</Text>
               </View>
               <View className="mb-2 flex-row items-center">
                 <Ionicons name="time" size={16} color="#666666" />
                 <Text className="ml-2 text-gray-300">
-                  Estado: {route?.isActive ? 'Activa' : 'Inactiva'}
+                  Estado: {route?.active ? 'Activa' : 'Inactiva'}
                 </Text>
               </View>
             </View>
 
-            <TouchableOpacity className="mb-4 rounded-xl bg-blue-600 p-4">
+            <TouchableOpacity
+              className="mb-4 rounded-xl bg-blue-600 p-4"
+              onPress={() => route && onViewRouteOnMap && onViewRouteOnMap(route.id, route.numberRoute)}
+            >
               <Text className="text-center text-lg font-semibold text-white">Ver en Mapa</Text>
             </TouchableOpacity>
 
@@ -292,7 +194,7 @@ export default function MapScreen() {
         <View className="mt-6">
           <View className="mb-6 items-center">
             <Ionicons name="bus" size={64} color="#007AFF" />
-            <Text className="mt-3 text-2xl font-bold text-white">Mi App de Rutas</Text>
+            <Text className="mt-3 text-2xl font-bold text-white">UrbanTracker</Text>
             <Text className="mt-2 text-center text-gray-400">
               Tu compañero para navegar por la ciudad
             </Text>
@@ -305,12 +207,12 @@ export default function MapScreen() {
 
           <View className="mb-4 rounded-xl bg-gray-800 p-4">
             <Text className="mb-3 text-lg font-semibold text-white">Desarrollado por</Text>
-            <Text className="text-gray-300">Tu Nombre</Text>
+            <Text className="text-gray-300">UrbanTracker Team</Text>
           </View>
 
           <View className="rounded-xl bg-gray-800 p-4">
             <Text className="mb-3 text-lg font-semibold text-white">Contacto</Text>
-            <Text className="text-gray-300">contacto@miapp.com</Text>
+            <Text className="text-gray-300">contacto@urbantracker.com</Text>
           </View>
         </View>
       </View>
@@ -370,33 +272,17 @@ export default function MapScreen() {
   };
 
   return (
-    <View className="relative flex-1 bg-black">
-      <Header />
-
-      {/* Mapa - siempre visible */}
-      <View className="flex-1">
-        <View className="flex-1 items-center justify-center bg-zinc-800">
-          <Ionicons name="map" size={64} color="#666666" />
-          <Text className="mt-2 text-lg text-gray-400">Mapa Interactivo</Text>
-          <Text className="mt-1 text-sm text-gray-500">
-            {currentScreen !== 'home' ? `Viendo: ${currentScreen}` : 'Pantalla principal'}
-          </Text>
-        </View>
-      </View>
-
-      {/* Bottom Sheet con navegación interna */}
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={0}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        backgroundStyle={{ backgroundColor: '#1a1a1a' }}
-        handleIndicatorStyle={{ backgroundColor: '#666666' }}
-        keyboardBehavior="fillParent"
-        android_keyboardInputMode="adjustResize"
-        enablePanDownToClose={false}>
-        {renderBottomSheetContent()}
-      </BottomSheet>
-    </View>
+    <BottomSheet
+      ref={bottomSheetRef}
+      index={bottomSheetIndex}
+      snapPoints={snapPoints}
+      onChange={handleSheetChanges}
+      backgroundStyle={{ backgroundColor: '#1a1a1a' }}
+      handleIndicatorStyle={{ backgroundColor: '#666666' }}
+      keyboardBehavior="fillParent"
+      android_keyboardInputMode="adjustResize"
+      enablePanDownToClose={false}>
+      {renderBottomSheetContent()}
+    </BottomSheet>
   );
 }
