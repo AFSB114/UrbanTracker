@@ -1,7 +1,7 @@
 "use client"
 
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { SearchBar } from "@/src/components/shared/search-bar"
+import { SearchBar } from "components/shared/search-bar"
 import { RoutesPanel } from "./routes-panel"
 import { LocationPanel } from "./location-panel"
 import { MessagesPanel } from "./messages-panel"

@@ -1,4 +1,4 @@
-import { Card } from "@/src/components/ui/card"
+import { Card } from "components/ui/card"
 import { MapPin, Navigation } from "lucide-react"
 
 export function LocationPanel() {

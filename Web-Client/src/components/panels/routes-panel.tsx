@@ -1,4 +1,4 @@
-import { Card } from "@/src/components/ui/card"
+import { Card } from "components/ui/card"
 
 export function RoutesPanel() {
   const routes = [
