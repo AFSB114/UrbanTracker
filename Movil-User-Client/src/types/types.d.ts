@@ -1,1 +1,0 @@
-export type Waypoint = {long: number, lat: number};
