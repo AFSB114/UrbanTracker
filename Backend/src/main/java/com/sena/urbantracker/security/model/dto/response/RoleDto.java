@@ -10,7 +10,6 @@ import lombok.experimental.SuperBuilder;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class RoleDto extends BaseDto {
 

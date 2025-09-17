@@ -9,11 +9,13 @@ import com.sena.urbantracker.shared.model.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.model.enums.OperationType;
 import com.sena.urbantracker.shared.repository.CrudOperations;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RoleService implements CrudOperations<RoleDto, Long> {
@@ -43,6 +45,7 @@ public class RoleService implements CrudOperations<RoleDto, Long> {
 
     @Override
     public CrudResponseDto<List<RoleDto>> findAll() {
+        log.info("Entrando a findAll de RoleService...");
         List<RoleDto> dtos = roleRepository.findAll()
                 .stream()
                 .map(RoleMapper::toDto)
@@ -50,6 +53,7 @@ public class RoleService implements CrudOperations<RoleDto, Long> {
 
         return CrudResponseDto.success(dtos, OperationType.READ, "Role");
     }
+
 
     @Override
     public CrudResponseDto<RoleDto> update(RoleDto dto) {

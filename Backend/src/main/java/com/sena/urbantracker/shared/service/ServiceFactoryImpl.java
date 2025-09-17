@@ -15,6 +15,7 @@ import com.sena.urbantracker.routes.service.RouteService;
 import com.sena.urbantracker.routes.service.RouteWaypointService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import java.util.Map;
  * Centraliza la creación y gestión de servicios basados en EntityType.
  * Mantiene un registro de servicios para evitar acoplamiento directo entre controladores y servicios específicos.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ServiceFactoryImpl implements ServiceFactory {
@@ -40,16 +42,8 @@ public class ServiceFactoryImpl implements ServiceFactory {
     private final RouteService routeService;
     private final RouteWaypointService routeWaypointService;
 
-    /**
-     * Mapa que registra los servicios CRUD por tipo de entidad.
-     * Se inicializa en el método init() después de la construcción del bean.
-     */
     private final Map<EntityType, CrudOperations<?, ?>> crudServices = new HashMap<>();
 
-    /**
-     * Inicializa el registro de servicios después de la construcción del bean.
-     * Registra todos los servicios CRUD disponibles en el mapa por su EntityType correspondiente.
-     */
     @PostConstruct
     public void init() {
         crudServices.put(EntityType.VEHICLE, vehicleService);
@@ -60,47 +54,47 @@ public class ServiceFactoryImpl implements ServiceFactory {
         crudServices.put(EntityType.IDENTIFICATION_TYPE, identificationTypeService);
         crudServices.put(EntityType.USER_IDENTIFICATION, userIdentificationService);
         crudServices.put(EntityType.ROLE, roleService);
+        log.info("✔️ RoleService registrado en la fábrica");
         crudServices.put(EntityType.ROUTE, routeService);
         crudServices.put(EntityType.ROUTE_WAYPOINT, routeWaypointService);
+
+        // opcional: imprimir todos los services registrados
+        crudServices.forEach((key, value) ->
+                log.info("Service registrado: {} -> {}", key, value.getClass().getSimpleName()));
     }
 
-    /**
-     * Crea y retorna un servicio CRUD para el tipo de entidad especificado.
-     *
-     * @param entityType El tipo de entidad para el cual se requiere el servicio
-     * @param <T> El tipo del DTO
-     * @return El servicio CRUD correspondiente
-     * @throws FactoryException si no hay servicio registrado para el entityType
-     */
     @SuppressWarnings("unchecked")
     @Override
     public <T, ID> CrudOperations<T, ID> createCrudService(EntityType entityType) {
         CrudOperations<?, ?> service = crudServices.get(entityType);
         if (service == null) {
-            throw new FactoryException("No CRUD service registered for entity: " + entityType);
+            throw new FactoryException(
+                    "No CRUD service registered for entity: " + entityType,
+                    entityType,
+                    "CRUD_CREATE"
+            );
         }
         return (CrudOperations<T, ID>) service;
     }
 
-    /**
-     * Crea y retorna un servicio especializado que implementa la interfaz especificada.
-     *
-     * @param entityType El tipo de entidad
-     * @param serviceInterface La interfaz que debe implementar el servicio
-     * @param <T> El tipo de la interfaz del servicio
-     * @return El servicio que implementa la interfaz especificada
-     * @throws FactoryException si no hay servicio registrado o no implementa la interfaz
-     */
     @SuppressWarnings("unchecked")
     @Override
     public <T> T createSpecializedService(EntityType entityType, Class<T> serviceInterface) {
         CrudOperations<?, ?> service = crudServices.get(entityType);
         if (service == null) {
-            throw new FactoryException("No service registered for entity: " + entityType);
+            throw new FactoryException(
+                    "No service registered for entity: " + entityType,
+                    entityType,
+                    "SPECIALIZED"
+            );
         }
 
         if (!serviceInterface.isInstance(service)) {
-            throw new FactoryException("Service " + entityType + " does not implement " + serviceInterface.getSimpleName());
+            throw new FactoryException(
+                    "Service " + entityType + " does not implement " + serviceInterface.getSimpleName(),
+                    entityType,
+                    "SPECIALIZED"
+            );
         }
 
         return (T) service;
@@ -111,12 +105,6 @@ public class ServiceFactoryImpl implements ServiceFactory {
         return createCrudService(type);
     }
 
-    /**
-     * Verifica si hay un servicio registrado para el tipo de entidad especificado.
-     *
-     * @param entityType El tipo de entidad a verificar
-     * @return true si hay un servicio registrado, false en caso contrario
-     */
     @Override
     public boolean supports(EntityType entityType) {
         return crudServices.containsKey(entityType);
