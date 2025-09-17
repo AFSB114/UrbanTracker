@@ -4,11 +4,13 @@ import com.sena.urbantracker.routes.model.dto.request.RouteReqDto;
 import com.sena.urbantracker.routes.model.dto.request.RouteWithWaypointsReqDto;
 import com.sena.urbantracker.routes.model.dto.response.RouteDto;
 import com.sena.urbantracker.routes.model.entity.Route;
+import com.sena.urbantracker.routes.service.RouteService;
 import com.sena.urbantracker.shared.controller.BaseController;
 import com.sena.urbantracker.shared.model.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.model.enums.EntityType;
 import com.sena.urbantracker.shared.service.ServiceFactory;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +20,11 @@ import java.util.List;
 @RequestMapping("/api/v1/public/routes")
 public class RouteController extends BaseController<RouteDto, Long> {
 
-    public RouteController(ServiceFactory serviceFactory) {
+    private final RouteService routeService;
+
+    public RouteController(ServiceFactory serviceFactory, RouteService routeService) {
         super(serviceFactory, EntityType.ROUTE);
+        this.routeService = routeService;
     }
 
     @Override
@@ -31,24 +36,10 @@ public class RouteController extends BaseController<RouteDto, Long> {
      * Método personalizado para crear una ruta con waypoints
      */
     @PostMapping("/with-waypoints")
-    public ResponseEntity<CrudResponseDto<RouteDto>> createRouteWithWaypoints(@Valid @RequestBody RouteWithWaypointsReqDto request) {
-        // Lógica específica para manejar rutas con waypoints
-        // Aquí podrías validar waypoints, calcular distancias, etc.
+    public ResponseEntity<CrudResponseDto<Void>> createRouteWithWaypoints(@Valid @RequestBody RouteWithWaypointsReqDto request) {
+        // Usar el método personalizado addRoute del servicio
+        routeService.addRoute(request);
 
-        RouteDto dto = new RouteDto();
-        dto.setNumberRoute(request.getNumberRoute());
-        dto.setDescription(request.getDescription());
-        dto.setTotalDistance(request.getTotalDistance());
-
-        // Crear la ruta primero
-        CrudResponseDto<RouteDto> routeResponse = getService().create(dto);
-
-        if (routeResponse.isSuccess()) {
-            // Aquí podrías crear los waypoints usando el RoutePointService
-            // Por simplicidad, retornamos la ruta creada
-            return ResponseEntity.status(201).body(routeResponse);
-        }
-
-        return ResponseEntity.badRequest().body(routeResponse);
+        return ResponseEntity.status(201).body(CrudResponseDto.success(null, "Ruta con waypoints creada exitosamente"));
     }
 }

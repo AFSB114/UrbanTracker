@@ -30,6 +30,7 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
 
         Route route = RouteMapper.toEntity(dto);
         routeRepository.save(route);
+        System.out.println("Ruta creada");
         for (RouteWaypointForRouteReqDto waypointDto : dto.getWaypoints()) {
             routeWaypointService.create(routeWaypointService.toDtoNew(waypointDto, route));
         }
@@ -129,8 +130,6 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
             entity.setDescription(dto.getDescription());
             entity.setTotalDistance(dto.getTotalDistance());
             entity.setActive(dto.getActive());
-            entity.setCreatedAt(dto.getCreatedAt());
-            entity.setUpdatedAt(dto.getUpdatedAt());
             return entity;
         }
 
