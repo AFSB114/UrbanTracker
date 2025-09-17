@@ -6,7 +6,7 @@ export default function Hero() {
   const router = useRouter();
  
   return (
-    <section id="inicio" className="pt-20 pb-16 bg-gradient-to-br from-primary/5 to-accent/5">
+    <section id="inicio" className="pt-32 pb-16 bg-gradient-to-br from-primary/5 to-accent/5">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
           <div className="mb-8">
