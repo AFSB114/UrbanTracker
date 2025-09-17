@@ -1,8 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { Button } from "ui/button"
 import { Menu, X } from "lucide-react"
+import { DownloadAppMenu } from "components/landing/downloadAppMenu";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -20,7 +21,7 @@ export default function Header() {
       <div className="container mx-auto px-4 py-4 ">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <img src="/Logo-completo-UrbanTracker.svg" alt="" className="w-auto h-15" />
+            <img src="/Logo-completo-UrbanTracker.svg" alt="" className="w-auto h-12" />
           </div>
 
           {/* Desktop Navigation */}
