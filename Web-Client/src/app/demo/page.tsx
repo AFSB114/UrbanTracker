@@ -1,38 +1,21 @@
 "use client"
 
-import { useState } from "react"
-import { Sidebar } from "components/layout/sidebar"
+import { Sidebar } from "components/sidebar/sidebar"
 import { FixedPanel } from "components/panels/fixed-panel"
 import MapView from "components/map/map-view"
 import { MapControls } from "components/map/map-controls"
 
-export default function Home() {
-  const [activePanel, setActivePanel] = useState<string>("routes")
-  const [isPanelCollapsed, setIsPanelCollapsed] = useState<boolean>(false)
-
-  const handlePanelChange = (panel: string) => {
-    setActivePanel(panel)
-    if (isPanelCollapsed) {
-      setIsPanelCollapsed(false)
-    }
-  }
-
+export default function DemoPage() {
   return (
-    <div className="flex h-screen bg-gray-100">
+    <main className="flex h-screen bg-gray-100">
       <div className="flex relative">
-        <Sidebar activePanel={activePanel} onPanelChange={handlePanelChange} />
-        <FixedPanel
-          activePanel={activePanel}
-          isCollapsed={isPanelCollapsed}
-          onToggleCollapse={() => setIsPanelCollapsed(!isPanelCollapsed)}
-        />
+        <Sidebar />
+        <FixedPanel />
       </div>
-
-      <main className="flex-1 relative overflow-hidden">
-        {/* Main Map Component */}
-        <MapView isPanelCollapsed={isPanelCollapsed} />
+      <div className="flex-1 relative overflow-hidden">
+        <MapView />
         <MapControls />
-      </main>
-    </div>
+      </div>
+    </main>
   )
 }

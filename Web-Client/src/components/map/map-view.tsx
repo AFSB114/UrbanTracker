@@ -1,12 +1,10 @@
 import { useRef, useEffect } from "react";
 import Map, { MapRef } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { usePanelContext } from "components/panels/panel-context"
 
-interface MapViewProps {
-  isPanelCollapsed: boolean;
-}
-
-export default function MapView({ isPanelCollapsed }: MapViewProps) {
+export default function MapView() {
+  const { isPanelCollapsed } = usePanelContext()
   const mapRef = useRef<MapRef | null>(null);
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
