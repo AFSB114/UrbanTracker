@@ -130,8 +130,6 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
             entity.setDescription(dto.getDescription());
             entity.setTotalDistance(dto.getTotalDistance());
             entity.setActive(dto.getActive());
-            entity.setCreatedAt(dto.getCreatedAt());
-            entity.setUpdatedAt(dto.getUpdatedAt());
             return entity;
         }
 

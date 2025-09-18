@@ -95,13 +95,14 @@ public class GlobalExceptionHandler {
         log.error("Factory error: {}", ex.getMessage(), ex);
 
         CrudResponseDto<Object> response = CrudResponseDto.error(
-                "Internal server error occurred",
-                null,
-                "System"
+                ex.getMessage(),  // mensaje real
+                ex.getOperation() != null ? OperationType.valueOf(ex.getOperation()) : null,
+                ex.getEntityType() != null ? ex.getEntityType().name() : "System"
         );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
 
     /**
      * Maneja UnauthorizedException - 401 Unauthorized

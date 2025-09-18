@@ -12,15 +12,4 @@ module.exports = defineConfig([
       'react/display-name': 'off',
     },
   },
-  {
-    settings: {
-      'import/resolver': {
-        alias: {
-          map: [
-            ['@Env', './src/types/env.d.ts'],
-          ]
-        }
-      }
-    }
-  }
 ]);

@@ -12,7 +12,6 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @SuperBuilder
 public abstract class BaseDto {
@@ -20,13 +19,13 @@ public abstract class BaseDto {
     @Positive(message = "El ID debe ser un número positivo")
     private Long id;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
-    @PastOrPresent(message = "La fecha de creación no puede ser futura")
-    private LocalDateTime createdAt;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
-    @PastOrPresent(message = "La fecha de actualización no puede ser futura")
-    private LocalDateTime updatedAt;
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
+//    @PastOrPresent(message = "La fecha de creación no puede ser futura")
+//    private LocalDateTime createdAt;
+//
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
+//    @PastOrPresent(message = "La fecha de actualización no puede ser futura")
+//    private LocalDateTime updatedAt;
 
     @NotNull(message = "Active status is required")
     private Boolean active = true;

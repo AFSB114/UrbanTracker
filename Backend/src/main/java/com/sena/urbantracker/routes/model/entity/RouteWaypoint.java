@@ -11,7 +11,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "route_waypoint", schema = "routes", uniqueConstraints = @UniqueConstraint(columnNames = {"route_id", "sequence"}))
+@Table(
+        name = "route_waypoint",
+        schema = "routes",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"route_id", "sequence"}),
+        indexes = @Index(columnList = "route_id"))
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

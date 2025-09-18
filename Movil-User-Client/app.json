@@ -1,26 +1,29 @@
 {
   "expo": {
-    "name": "UrbanTrackerUser",
-    "slug": "UrbanTrackerUser",
+    "name": "Movil-User-Client",
+    "slug": "Movil-User-Client",
     "version": "1.0.0",
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "experiments": {
-      "tsconfigPaths": true
-    },
-    "plugins": [
-      [
-        "@rnmapbox/maps",
-        {
-          "RNMapboxMapsDownloadToken": "pk.eyJ1IjoiYWZzYjExNCIsImEiOiJjbWI1bmN2OGYxanloMmlvbjd0dndtb3g5In0.2ON4hP04tvToiU_p_IsHbg",
-          "RNMapboxMapsVersion": "11.0.0"
-        }
-      ]
-    ],
+    
+    
+      "web": {
+        "favicon": "./assets/favicon.png"
+      },
+      
+        "experiments": {
+          "tsconfigPaths": true
+        },
+      
+      "plugins": [
+        
+        
+        
+      ],
+    
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    
+     "userInterfaceStyle": "light",
+    
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -30,11 +33,9 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.UrbanTrackerUser"
+      "supportsTablet": true
     },
     "android": {
-      "package": "com.anonymous.UrbanTrackerUser",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"

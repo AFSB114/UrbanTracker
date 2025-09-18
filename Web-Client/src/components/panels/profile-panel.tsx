@@ -1,6 +1,6 @@
-import { Card } from "@/src/components/ui/card"
+import { Card } from "components/ui/card"
 import { User, Settings, CreditCard, HelpCircle } from "lucide-react"
-import { Button } from "@/src/components/ui/button"
+import { Button } from "components/ui/button"
 
 export function ProfilePanel() {
   return (

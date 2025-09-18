@@ -50,7 +50,7 @@ export default function MapVIew() {
         .then((res) => res.json())
         .then((data) => {
           if (data.routes && data.routes.length > 0) {
-            console.log("Route data:", data.routes[0].geometry);
+            console.log("Route data:", data);
             setRoute({...route, ...route.features[0].geometry = data.routes[0].geometry});
           }
         });
