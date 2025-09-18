@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Car, Edit, Trash2 } from "lucide-react"
-import { Vehicle } from "../hooks/useVehicles"
+import { Vehicle } from "../types/vehiculeTypes"
 
 interface VehicleCardProps {
   vehicle: Vehicle

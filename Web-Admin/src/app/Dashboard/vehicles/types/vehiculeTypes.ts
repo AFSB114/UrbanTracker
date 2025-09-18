@@ -8,6 +8,8 @@ export interface Vehicle {
     status: string;
     driver: string;
     company: string;
+    capacity: number;
+    year: number;
 }
 
 export interface VehiculeFormData {
@@ -18,6 +20,8 @@ export interface VehiculeFormData {
     status: string;
     driver: string;
     company: string;
+    capacity: number;
+    year: number;
 }
 
 

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { vehicleService } from "../services/vehicleService";
 import type {
   Vehicle,
   VehiculeFormData,
@@ -8,53 +9,24 @@ import type {
   VehiculeStatistics,
 } from "../types/vehiculeTypes";
 
-const MOCK_VEHICLES: Vehicle[] = [
-  {
-    id: 1,
-    licensePlate: "ABC-123",
-    brand: "Volvo",
-    model: "FH16",
-    type: "Camion",
-    status: "Operational",
-    driver: "Carlos Mendoza",
-    company: "Transporte SA",
-  },
-  {
-    id: 2,
-    licensePlate: "DEF-456",
-    brand: "Mercedes",
-    model: "Sprinter",
-    type: "Van",
-    status: "En Ruta",
-    driver: "María García",
-    company: "Transporte SA",
-  },
-  {
-    id: 3,
-    licensePlate: "GHI-789",
-    brand: "Scania",
-    model: "R450",
-    type: "Camion",
-    status: "Fuera de Servicio",
-    driver: "José Rodríguez",
-    company: "Transporte SA",
-  },
-];
+
+const DEFAULT_ITEMS_PER_PAGE = 5;
 
 const INITIAL_FORM_DATA: VehiculeFormData = {
   licensePlate: "",
   brand: "",
   model: "",
   type: "",
-  status: "Operational",
+  status: "En Ruta",
   driver: "",
-  company: "",
+  company: "Transporte SA",
+  capacity: 10,
+  year: 2023,
 };
 
-const DEFAULT_ITEMS_PER_PAGE = 5;
-
 export function useVehicles(): UseVehiculesReturn {
-  const [vehicles, setVehicles] = useState<Vehicle[]>(MOCK_VEHICLES);
+  
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
@@ -75,9 +47,10 @@ export function useVehicles(): UseVehiculesReturn {
 
   useEffect(() => {
     const loadVehicles = async () => {
+      setIsLoading(true);
       try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        setVehicles(MOCK_VEHICLES);
+        const data = await vehicleService.getAll();
+        setVehicles(data);
       } catch (error) {
         console.error("Failed to load vehicles:", error);
       } finally {
@@ -90,8 +63,10 @@ export function useVehicles(): UseVehiculesReturn {
 
   // Filter vehicles based on search term
   const filteredVehicles = useMemo(() => {
+    const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
+
     if (!searchTerm.trim()) {
-      return vehicles;
+      return safeVehicles;
     }
 
     const searchLower = searchTerm.toLowerCase().trim();
@@ -175,6 +150,8 @@ export function useVehicles(): UseVehiculesReturn {
       status: vehicle.status,
       driver: vehicle.driver || "",
       company: vehicle.company || "",
+      capacity: vehicle.capacity,
+      year: vehicle.year,
     });
     setIsDialogOpen(true);
   }, []);
@@ -205,71 +182,62 @@ export function useVehicles(): UseVehiculesReturn {
   );
 
   const saveVehicle = useCallback(async () => {
-    if (isSaving) return;
+  if (isSaving) return;
 
-    setIsSaving(true);
-    try {
-
-      if (
-        !formData.licensePlate.trim() ||
-        !formData.brand.trim() ||
-        !formData.model.trim() ||
-        !formData.type
-      ) {
-        throw new Error("License plate, brand, model and type are required");
-      }
-
-      const isDuplicate = vehicles.some(
-        (vehicle) =>
-          vehicle.licensePlate === formData.licensePlate.trim() &&
-          vehicle.id !== editingVehicle?.id
-      );
-
-      if (isDuplicate) {
-        throw new Error("A driver with this license plate already exists");
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      if (editingVehicle) {
-        setVehicles((prev) =>
-          prev.map((vehicle) =>
-            vehicle.id === editingVehicle.id
-              ? {
-                ...vehicle,
-                licensePlate: formData.licensePlate.trim(),
-                brand: formData.brand.trim(),
-                model: formData.model.trim(),
-                type: formData.type.trim(),
-                status: formData.status.trim(),
-                driver: formData.driver.trim(),
-              }
-              : vehicle
-          )
-        );
-      } else {
-        const newId = Math.max(...vehicles.map((v) => v.id), 0) + 1;
-        const newVehicule: Vehicle = {
-          id: newId,
-          licensePlate: formData.licensePlate.trim(),
-          brand: formData.brand.trim(),
-          model: formData.model.trim(),
-          type: formData.type.trim(),
-          status: formData.status.trim(),
-          driver: formData.driver.trim(),
-          company: formData.company.trim(),
-        };
-        setVehicles((prev) => [...prev, newVehicule]);
-      }
-
-      closeModal();
-    } catch (error) {
-      console.error("Error saving driver:", error);
-      throw error; 
-    } finally {
-      setIsSaving(false);
+  setIsSaving(true);
+  try {
+    if (
+      !formData.licensePlate.trim() ||
+      !formData.brand.trim() ||
+      !formData.model.trim() ||
+      !formData.type
+    ) {
+      throw new Error("License plate, brand, model and type are required");
     }
-  }, [vehicles, editingVehicle, formData, closeModal, isSaving]);
+
+    const isDuplicate = vehicles.some(
+      (vehicle) =>
+        vehicle.licensePlate === formData.licensePlate.trim() &&
+        vehicle.id !== editingVehicle?.id
+    );
+
+    if (isDuplicate) {
+      throw new Error("A vehicle with this license plate already exists");
+    }
+
+    let savedVehicle: Vehicle;
+
+    if (editingVehicle) {
+      console.log("Actualizando vehículo:", formData);
+      savedVehicle = await vehicleService.update(editingVehicle.id, formData);
+      console.log("Vehículo actualizado:", savedVehicle);
+
+      setVehicles((prev) =>
+        prev.map((vehicle) =>
+          vehicle.id === editingVehicle.id ? savedVehicle : vehicle
+        )
+      );
+    } else {
+      console.log("Creando vehículo:", formData);
+      savedVehicle = await vehicleService.create(formData);
+      console.log("Vehículo creado:", savedVehicle);
+
+      if (!savedVehicle || !savedVehicle.id) {
+        console.warn("El backend no devolvió un vehículo válido:", savedVehicle);
+      }
+
+      setVehicles((prev) => [...prev, savedVehicle]);
+    }
+
+    closeModal();
+  } catch (error) {
+    console.error("Error guardando vehículo:", error);
+    throw error;
+  } finally {
+    setIsSaving(false);
+  }
+}, [vehicles, editingVehicle, formData, closeModal, isSaving]);
+
 
   const confirmDeleteVehicle = useCallback(async () => {
     if (isDeleting || !vehicleToDelete) return;

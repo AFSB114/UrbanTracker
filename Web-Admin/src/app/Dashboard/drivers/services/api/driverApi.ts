@@ -3,7 +3,7 @@ import { ApiClient } from './client';
 import { API_ENDPOINTS } from './config';
 import type { ApiResponse, PaginatedResponse } from './types';
 
-const apiClient = new ApiClient(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api');
+const apiClient = new ApiClient('http://localhost:8085');
 export interface GetDriversParams {
   page?: number;
   limit?: number;

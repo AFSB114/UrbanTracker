@@ -7,11 +7,6 @@ interface StatisticsCardsProps {
   statistics: VehiculeStatistics;
 }
 
-
-interface StatisticsCardsProps {
-  statistics: VehiculeStatistics;
-}
-
 export function StatisticsCards({ statistics }: StatisticsCardsProps) {
   const cards = [
     {
