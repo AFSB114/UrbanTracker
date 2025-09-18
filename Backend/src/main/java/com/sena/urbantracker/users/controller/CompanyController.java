@@ -14,18 +14,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-@PreAuthorize("hasRole('ADMIN')")
+
 @RestController
-@RequestMapping("/api/v1/company")
+@RequestMapping("/api/v1/public/company")
 public class CompanyController extends BaseController<CompanyDTO, Long> {
 
     public CompanyController(ServiceFactory serviceFactory) {
         super(serviceFactory, EntityType.DRIVER);
     }
 
-    protected EntityType getEntityType() {
-        return EntityType.DRIVER;
-    }
 
     @Override
     protected Class<CompanyDTO> getDtoClass() {

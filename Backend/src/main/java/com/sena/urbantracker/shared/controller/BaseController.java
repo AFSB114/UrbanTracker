@@ -7,6 +7,7 @@ import com.sena.urbantracker.shared.model.enums.EntityType;
 import com.sena.urbantracker.shared.repository.CrudOperations;
 import com.sena.urbantracker.shared.service.ServiceFactory;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import java.util.Optional;
  * @param <T> El tipo del DTO que extiende BaseDto
  * @param <ID> El tipo del identificador (generalmente Long)
  */
+@Slf4j
 public abstract class BaseController<T extends BaseDto, ID> {
 
     protected final ServiceFactory serviceFactory;
@@ -56,6 +58,7 @@ public abstract class BaseController<T extends BaseDto, ID> {
     public ResponseEntity<CrudResponseDto<T>> create(@Valid @RequestBody T dto) {
         CrudOperations<T, ID> service = getService();
         CrudResponseDto<T> response = service.create(dto);
+        log.info("Response: {}", response);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

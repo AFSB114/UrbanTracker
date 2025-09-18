@@ -106,6 +106,12 @@ public class VehicleService implements CrudOperations<VehicleDto, Long>{
             dto.setId(entity.getId());
             dto.setLicencePlate(entity.getLicencePlate());
             dto.setModel(entity.getModel());
+            dto.setColor(entity.getColor());
+            dto.setYear(entity.getYear());
+            dto.setBrand(entity.getBrand());
+            dto.setCompany(entity.getCompany());
+            dto.setPassengerCapacity(entity.getPassengerCapacity());
+            dto.setVehicleType(entity.getVehicleType());
             dto.setActive(entity.getStatus().equals(VehicleStatusType.ACTIVE));
             return dto;
         }
@@ -115,7 +121,13 @@ public class VehicleService implements CrudOperations<VehicleDto, Long>{
             entity.setId(dto.getId());
             entity.setLicencePlate(dto.getLicencePlate());
             entity.setModel(dto.getModel());
-            entity.setStatus(VehicleStatusType.valueOf(dto.getStatus()));
+            entity.setColor(dto.getColor());
+            entity.setYear(dto.getYear());
+            entity.setBrand(dto.getBrand());
+            entity.setCompany(dto.getCompany());
+            entity.setPassengerCapacity(dto.getPassengerCapacity());
+            entity.setVehicleType(dto.getVehicleType());
+            entity.setStatus(dto.getActive() ? VehicleStatusType.ACTIVE : VehicleStatusType.INACTIVE);
             return entity;
         }
     }
