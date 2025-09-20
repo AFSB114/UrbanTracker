@@ -18,14 +18,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Implementación del patrón Factory para servicios CRUD.
- * Centraliza la creación y gestión de servicios basados en EntityType.
- * Mantiene un registro de servicios para evitar acoplamiento directo entre controladores y servicios específicos.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -42,25 +39,29 @@ public class ServiceFactoryImpl implements ServiceFactory {
     private final RouteService routeService;
     private final RouteWaypointService routeWaypointService;
 
-    private final Map<EntityType, CrudOperations<?, ?>> crudServices = new HashMap<>();
+    private Map<EntityType, CrudOperations<?, ?>> crudServices;
 
     @PostConstruct
     public void init() {
-        crudServices.put(EntityType.VEHICLE, vehicleService);
-        crudServices.put(EntityType.VEHICLE_TYPE, vehicleTypeService);
-        crudServices.put(EntityType.VEHICLE_ASSIGMENT, vehicleAssigmentService);
-        crudServices.put(EntityType.DRIVER, driverService);
-        crudServices.put(EntityType.COMPANY, companyService);
-        crudServices.put(EntityType.IDENTIFICATION_TYPE, identificationTypeService);
-        crudServices.put(EntityType.USER_IDENTIFICATION, userIdentificationService);
-        crudServices.put(EntityType.ROLE, roleService);
-        log.info("✔️ RoleService registrado en la fábrica");
-        crudServices.put(EntityType.ROUTE, routeService);
-        crudServices.put(EntityType.ROUTE_WAYPOINT, routeWaypointService);
+        Map<EntityType, CrudOperations<?, ?>> map = new EnumMap<>(EntityType.class);
 
-        // opcional: imprimir todos los services registrados
+        map.put(EntityType.VEHICLE, vehicleService);
+        map.put(EntityType.VEHICLE_TYPE, vehicleTypeService);
+        map.put(EntityType.VEHICLE_ASSIGMENT, vehicleAssigmentService);
+        map.put(EntityType.DRIVER, driverService);
+        map.put(EntityType.COMPANY, companyService);
+        map.put(EntityType.IDENTIFICATION_TYPE, identificationTypeService);
+        map.put(EntityType.USER_IDENTIFICATION, userIdentificationService);
+        map.put(EntityType.ROLE, roleService);
+        map.put(EntityType.ROUTE, routeService);
+        map.put(EntityType.ROUTE_WAYPOINT, routeWaypointService);
+
+        // Hacemos el mapa inmutable para evitar modificaciones en runtime
+        crudServices = Collections.unmodifiableMap(map);
+
+        log.info("Servicios CRUD registrados en ServiceFactory:");
         crudServices.forEach((key, value) ->
-                log.info("Service registrado: {} -> {}", key, value.getClass().getSimpleName()));
+                log.info("   - {} -> {}", key, value.getClass().getSimpleName()));
     }
 
     @SuppressWarnings("unchecked")
@@ -74,7 +75,20 @@ public class ServiceFactoryImpl implements ServiceFactory {
                     "CRUD_CREATE"
             );
         }
-        return (CrudOperations<T, ID>) service;
+        try {
+            @SuppressWarnings("unchecked")
+            CrudOperations<T, ID> typedService = (CrudOperations<T, ID>) service;
+            log.debug("[Factory] Servicio CRUD obtenido para {} -> {}",
+                    entityType, typedService.getClass().getSimpleName());
+            return typedService;
+        } catch (ClassCastException e) {
+            log.error("Error de tipo al transmitir el servicio para {}: {}", entityType, e.getMessage());
+            throw new FactoryException(
+                    "Type mismatch for entity: " + entityType,
+                    entityType,
+                    "CRUD_CREATE"
+            );
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -102,11 +116,15 @@ public class ServiceFactoryImpl implements ServiceFactory {
 
     @Override
     public <T, ID> CrudOperations<T, ID> getService(EntityType type, Class<T> dtoClass) {
+        log.trace("[Factory] getService llamado con EntityType={}, DTO={}",  //logTrace: capturar información extremadamente detallada sobre la ejecución
+                type, dtoClass.getSimpleName());
         return createCrudService(type);
     }
 
     @Override
     public boolean supports(EntityType entityType) {
-        return crudServices.containsKey(entityType);
+        boolean supported = crudServices.containsKey(entityType);
+        log.trace("[Factory] supports({}) -> {}", entityType, supported);
+        return supported;
     }
 }

@@ -24,7 +24,7 @@ public class CompanyService implements CrudOperations<CompanyDTO, Long> {
        if (companyRepository.existsById(dto.getId())) {
            throw new EntityAlreadyExistsException("La empresa con id " + dto.getId() + " ya existe.");
        }
-        System.out.println("se guardo en base de datos");
+       System.out.println("se guardo en base de datos");
        Company entity = CompanyMapper.toEntity(dto);
        entity.setActive(true);
 

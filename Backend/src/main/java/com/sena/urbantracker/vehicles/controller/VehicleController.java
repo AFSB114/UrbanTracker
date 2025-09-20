@@ -18,19 +18,9 @@ public class VehicleController extends BaseController<VehicleDto, Long> {
         super(serviceFactory, EntityType.VEHICLE);
     }
 
-    protected EntityType getEntityType() {
-        return EntityType.VEHICLE;
-    }
-
     @Override
     protected Class<VehicleDto> getDtoClass() {
         return VehicleDto.class;
     }
-
-    @Override
-    protected CrudOperations<VehicleDto, Long> getService() {
-        return serviceFactory.getService(EntityType.VEHICLE, VehicleDto.class);
-    }
-
 
 }

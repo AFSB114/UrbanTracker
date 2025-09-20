@@ -15,9 +15,6 @@ public class IdentificationTypeController extends BaseController<IdentificationT
     public IdentificationTypeController(ServiceFactory serviceFactory) {
         super(serviceFactory, EntityType.IDENTIFICATION_TYPE);
     }
-    protected EntityType getEntityType() {
-        return EntityType.IDENTIFICATION_TYPE;
-    }
 
     @Override
     protected Class<IdentificationTypeDto> getDtoClass() {

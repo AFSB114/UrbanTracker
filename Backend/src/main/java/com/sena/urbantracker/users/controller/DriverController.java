@@ -17,10 +17,6 @@ public class DriverController extends BaseController<DriverDto, Long> {
         super(serviceFactory, EntityType.DRIVER);
     }
 
-    protected EntityType getEntityType() {
-        return EntityType.DRIVER;
-    }
-
     @Override
     protected Class<DriverDto> getDtoClass() {
         return DriverDto.class;

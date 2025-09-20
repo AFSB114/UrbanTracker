@@ -20,17 +20,12 @@ import org.springframework.web.bind.annotation.*;
 public class CompanyController extends BaseController<CompanyDTO, Long> {
 
     public CompanyController(ServiceFactory serviceFactory) {
-        super(serviceFactory, EntityType.DRIVER);
+        super(serviceFactory, EntityType.COMPANY);
     }
-
 
     @Override
     protected Class<CompanyDTO> getDtoClass() {
         return CompanyDTO.class;
     }
 
-    @Override
-    protected CrudOperations<CompanyDTO, Long> getService() {
-        return serviceFactory.getService(EntityType.DRIVER, CompanyDTO.class);
-    }
 }
