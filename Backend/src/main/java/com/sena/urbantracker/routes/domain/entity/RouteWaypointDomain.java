@@ -1,5 +1,6 @@
 package com.sena.urbantracker.routes.domain.entity;
 
+import com.sena.urbantracker.routes.domain.valueobject.WaypointDestineType;
 import com.sena.urbantracker.routes.domain.valueobject.WaypointType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,7 @@ public class RouteWaypointDomain {
     private Double latitude;
     private Double longitude;
     private WaypointType type;
+    private WaypointDestineType destine;
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

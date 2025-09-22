@@ -11,16 +11,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.DecimalMax;
 
-/**
- * Abstract base class for route waypoint request DTOs.
- * Provides common validation and structure for waypoint request objects.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public abstract class BaseRouteWaypointReqDto {
-
+public class RouteWaypointReqDto {
     @NotNull(message = "La secuencia es obligatoria")
     private Integer sequence;
 

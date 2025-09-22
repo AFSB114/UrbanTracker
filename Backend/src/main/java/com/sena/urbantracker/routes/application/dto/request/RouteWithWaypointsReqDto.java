@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-public class RouteWithWaypointsReqDto extends BaseRouteReqDto {
+public class RouteWithWaypointsReqDto extends RouteReqDto {
 
     @NotNull(message = "La distancia total es obligatoria")
     private Double totalDistance;

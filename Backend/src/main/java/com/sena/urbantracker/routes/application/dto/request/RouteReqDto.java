@@ -8,16 +8,12 @@ import lombok.experimental.SuperBuilder;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-/**
- * Abstract base class for route-related request DTOs.
- * Provides common validation and structure for route request objects.
- */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public abstract class BaseRouteReqDto {
-
+public class RouteReqDto {
     @NotBlank(message = "El número de ruta es obligatorio")
     @Size(min = 1, max = 50, message = "El número de ruta debe tener entre 1 y 50 caracteres")
     private String numberRoute;
@@ -29,5 +25,5 @@ public abstract class BaseRouteReqDto {
     private Double totalDistance;
 
     @NotBlank(message = "Los puntos de ruta son obligatorios")
-    private BaseRouteWaypointReqDto waypoint;
+    private RouteWaypointReqDto waypoint;
 }

@@ -6,6 +6,7 @@ import com.sena.urbantracker.routes.domain.repository.IRouteWaypoint;
 import com.sena.urbantracker.routes.infrastructure.persistence.mapper.RoutePersistenceMapper;
 import com.sena.urbantracker.routes.infrastructure.persistence.mapper.RouteWaypointPersistenceMapper;
 import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteModel;
+import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteWaypointModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

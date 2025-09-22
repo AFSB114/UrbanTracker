@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-public class RouteWaypointForRouteReqDto extends BaseRouteWaypointReqDto {
+public class RouteWaypointForRouteReqDto extends RouteWaypointReqDto {
 
     // Inherits sequence, latitude, longitude from BaseRouteWaypointReqDto
     // No route reference to avoid circular dependency in RouteWithWaypointsReqDto

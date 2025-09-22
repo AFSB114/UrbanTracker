@@ -5,21 +5,21 @@ import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
 import java.util.List;
 import java.util.Optional;
 
-public interface CrudOperations<T, ID> {
+public interface CrudOperations<DReq, DRes, ID> {
 
-    CrudResponseDto<T> create(T dto);
+    CrudResponseDto<DRes> create(DReq dto);
 
-    CrudResponseDto <Optional<T>> findById(ID id);
+    CrudResponseDto <Optional<DRes>> findById(ID id);
 
-    CrudResponseDto <List<T>> findAll();
+    CrudResponseDto <List<DRes>> findAll();
 
-    CrudResponseDto <T> update(T dto);
+    CrudResponseDto <DRes> update(DReq dto);
 
-    CrudResponseDto<T> deleteById(ID id);
+    CrudResponseDto<DRes> deleteById(ID id);
 
-    CrudResponseDto <T> activateById(ID id);
+    CrudResponseDto <DRes> activateById(ID id);
 
-    CrudResponseDto <T> deactivateById(ID id);
+    CrudResponseDto <DRes> deactivateById(ID id);
 
     CrudResponseDto <Boolean> existsById(ID id);
 }
