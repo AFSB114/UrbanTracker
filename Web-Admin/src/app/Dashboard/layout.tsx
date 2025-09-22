@@ -1,5 +1,5 @@
 import type React from "react"
-import { Users, Route, Car, BarChart3, Settings, Menu, FileText, Building } from "lucide-react"
+import { Users, Route, Car, BarChart3, Menu, Building } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -77,28 +77,6 @@ export default function DashboardLayout({
               >
                 <Building className="h-5 w-5 group-hover:scale-110 transition-transform group-hover:text-emerald-400" />
                 <span className="font-medium">Administrar Empresas</span>
-              </Link>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">
-              Sistema
-            </h3>
-            <div className="space-y-1">
-              <Link
-                href="/dashboard/reportes"
-                className="flex items-center gap-3 rounded-xl px-4 py-3 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all duration-300 group hover:shadow-lg hover:scale-105 transform"
-              >
-                <FileText className="h-5 w-5 group-hover:scale-110 transition-transform group-hover:text-emerald-400" />
-                <span className="font-medium">Reportes</span>
-              </Link>
-              <Link
-                href="/Dashboard/configuration"
-                className="flex items-center gap-3 rounded-xl px-4 py-3 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all duration-300 group hover:shadow-lg hover:scale-105 transform"
-              >
-                <Settings className="h-5 w-5 group-hover:scale-110 transition-transform group-hover:text-emerald-400" />
-                <span className="font-medium">Configuración</span>
               </Link>
             </div>
           </div>
