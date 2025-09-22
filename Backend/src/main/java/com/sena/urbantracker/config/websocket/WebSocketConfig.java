@@ -1,6 +1,6 @@
 package com.sena.urbantracker.config.websocket;
 
-import com.sena.urbantracker.monitoring.model.util.SimpleWebSocketHandler;
+import com.sena.urbantracker.monitoring.infrastructure.util.SimpleWebSocketHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;

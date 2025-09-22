@@ -1,12 +1,12 @@
 package com.sena.urbantracker.config.init;
 
 
-import com.sena.urbantracker.security.model.entity.Role;
-import com.sena.urbantracker.security.model.entity.User;
-import com.sena.urbantracker.security.repository.IRole;
-import com.sena.urbantracker.security.repository.IUser;
-import com.sena.urbantracker.users.model.entity.UserProfile;
-import com.sena.urbantracker.users.repository.IUserProfile;
+import com.sena.urbantracker.security.domain.entity.Role;
+import com.sena.urbantracker.security.domain.entity.User;
+import com.sena.urbantracker.security.domain.repository.RoleRepository;
+import com.sena.urbantracker.security.domain.repository.UserRepository;
+import com.sena.urbantracker.users.domain.entity.UserProfile;
+import com.sena.urbantracker.users.domain.repository.IUserProfile;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataInitializer implements CommandLineRunner {
 
-    private final IRole Irole;
-    private final IUser Iuser;
+    private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final IUserProfile IuserProfile;
 
@@ -27,8 +27,8 @@ public class DataInitializer implements CommandLineRunner {
 
         // Verifico si el rol ADMIN existe en la base de datos,
         // si no existe, lo creo y lo guardo
-        Role adminRole = Irole.findByName("ROLE_ADMIN")
-                .orElseGet(() -> Irole.save(
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+                .orElseGet(() -> roleRepository.save(
                         Role.builder()
                                 .name("ROLE_ADMIN")
                                 .description("Tiene acceso completo al sistema")
@@ -37,8 +37,8 @@ public class DataInitializer implements CommandLineRunner {
 
         // Verifico si el rol DRIVER existe en la base de datos,
         // si no existe, lo creo y lo guardo
-        Irole.findByName("ROLE_DRIVER")
-                .orElseGet(() -> Irole.save(
+        roleRepository.findByName("ROLE_DRIVER")
+                .orElseGet(() -> roleRepository.save(
                         Role.builder()
                                 .name("ROLE_DRIVER")
                                 .description("Usuario con permisos limitados a las funcionalidades de conductor")
@@ -48,7 +48,7 @@ public class DataInitializer implements CommandLineRunner {
         // Crear usuario ADMIN si no existe
         String adminUsername = "admin";
         // Si no existe un usuario con username = "admin" creo uno
-        if (Iuser.findByUserName(adminUsername).isEmpty()) {
+        if (userRepository.findByUserName(adminUsername).isEmpty()) {
 
             //Datos de User
             User adminUser = new User();
@@ -65,7 +65,7 @@ public class DataInitializer implements CommandLineRunner {
             // le asigno el User admin creado arriba
             adminUserProfile.setUser(adminUser);
 
-            Iuser.save(adminUser);
+            userRepository.save(adminUser);
             IuserProfile.save(adminUserProfile);
 
             System.out.println("✅ Usuario ADMIN creado (user:" + adminUsername + "/ pass: admin123)");

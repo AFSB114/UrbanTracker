@@ -1,6 +1,6 @@
 package com.sena.urbantracker.security.infrastructure.security;
 
-import com.sena.urbantracker.security.service.JwtService;
+import com.sena.urbantracker.security.application.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
