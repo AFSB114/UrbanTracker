@@ -5,13 +5,16 @@ import com.sena.urbantracker.routes.application.dto.request.RouteWithWaypointsRe
 import com.sena.urbantracker.routes.application.dto.response.RouteDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteWaypointDto;
 import com.sena.urbantracker.routes.application.mapper.RouteMapper;
-import com.sena.urbantracker.routes.domain.entity.Route;
+import com.sena.urbantracker.routes.domain.entity.RouteDomain;
 import com.sena.urbantracker.routes.domain.repository.IRoute;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
+import com.sena.urbantracker.shared.domain.enums.EntityType;
+import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,18 +25,31 @@ import java.util.Optional;
 public class RouteService implements CrudOperations<RouteDto, Long> {
 
     private final IRoute routeRepository;
-    private final RouteWaypointService routeWaypointService;
+    @Lazy
+    private final ServiceFactory serviceFactory;
+
+    public RouteWaypointDto toDtoNew(RouteWaypointForRouteReqDto dto, RouteDomain route) {
+        return RouteWaypointDto.builder()
+                .routeId(route.getId())
+                .sequence(dto.getSequence())
+                .latitude(dto.getLatitude())
+                .longitude(dto.getLongitude())
+                .type(dto.getType())
+                .build();
+    }
 
     public void addRoute(RouteWithWaypointsReqDto dto) {
         Integer numberRouteInt = Integer.valueOf(dto.getNumberRoute());
         if (routeRepository.existsByNumberRoute(numberRouteInt))
             throw new EntityAlreadyExistsException("Ya existe una ruta con número: " + dto.getNumberRoute());
 
-        Route route = RouteMapper.toEntity(dto);
+        RouteDomain route = RouteMapper.toEntity(dto);
         routeRepository.save(route);
         System.out.println("Ruta creada");
+        CrudOperations<RouteWaypointDto, Long> routeWaypointService = serviceFactory.createCrudService(EntityType.ROUTE_WAYPOINT);
         for (RouteWaypointForRouteReqDto waypointDto : dto.getWaypoints()) {
-            routeWaypointService.create(routeWaypointService.toDtoNew(waypointDto, route));
+            RouteWaypointDto waypointDtoToCreate = toDtoNew(waypointDto, route);
+            routeWaypointService.create(waypointDtoToCreate);
         }
     }
 
