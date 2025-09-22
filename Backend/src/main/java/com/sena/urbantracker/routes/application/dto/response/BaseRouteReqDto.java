@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class RouteDto extends BaseDto {
+public class BaseRouteReqDto extends BaseDto {
 
     private String numberRoute;
     private String description;

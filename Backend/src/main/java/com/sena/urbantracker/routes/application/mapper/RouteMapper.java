@@ -2,11 +2,11 @@ package com.sena.urbantracker.routes.application.mapper;
 
 import com.sena.urbantracker.routes.application.dto.request.RouteWithWaypointsReqDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteDto;
-import com.sena.urbantracker.routes.domain.entity.Route;
+import com.sena.urbantracker.routes.domain.entity.RouteDomain;
 
 public class RouteMapper {
 
-    public static RouteDto toDto(Route entity) {
+    public static RouteDto toDto(RouteDomain entity) {
         if (entity == null) return null;
         RouteDto dto = new RouteDto();
         dto.setId(entity.getId());
@@ -17,8 +17,8 @@ public class RouteMapper {
         return dto;
     }
 
-    public static Route toEntity(RouteDto dto) {
-        Route entity = new Route();
+    public static RouteDomain toEntity(RouteDto dto) {
+        RouteDomain entity = new RouteDomain();
         entity.setId(dto.getId());
         entity.setNumberRoute(Integer.valueOf(dto.getNumberRoute()));
         entity.setDescription(dto.getDescription());
@@ -27,8 +27,8 @@ public class RouteMapper {
         return entity;
     }
 
-    public static Route toEntity(RouteWithWaypointsReqDto dto) {
-        return Route.builder()
+    public static RouteDomain toEntity(RouteWithWaypointsReqDto dto) {
+        return RouteDomain.builder()
                 .numberRoute(Integer.valueOf(dto.getNumberRoute()))
                 .description(dto.getDescription())
                 .totalDistance(dto.getTotalDistance())
