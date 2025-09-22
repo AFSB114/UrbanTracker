@@ -26,7 +26,6 @@ import java.util.Optional;
  * @param <ID> El tipo del identificador (generalmente Long)
  */
 @Slf4j
-@PreAuthorize("hasRole('ADMIN')")
 public abstract class BaseController<T extends BaseDto, ID> {
 
     protected final ServiceFactory serviceFactory;

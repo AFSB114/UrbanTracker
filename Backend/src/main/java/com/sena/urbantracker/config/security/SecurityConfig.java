@@ -5,10 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -17,7 +18,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Slf4j
 @Configuration
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -28,7 +29,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         return http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
