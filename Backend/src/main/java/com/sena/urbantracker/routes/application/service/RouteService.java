@@ -31,7 +31,7 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
     private final RepositoryFactory repositoryFactory;
 
     private IRoute getRouteRepository() {
-        return repositoryFactory.createRepository(EntityType.ROUTE, IRoute.class);
+        return (IRoute) repositoryFactory.createRepository(EntityType.ROUTE, RouteDomain.class);
     }
 
     public RouteWaypointDto toDtoNew(RouteWaypointForRouteReqDto dto, RouteDomain route) {

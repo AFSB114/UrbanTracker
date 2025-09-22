@@ -31,7 +31,7 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointDto, Lo
     private final RepositoryFactory repositoryFactory;
 
     private IRouteWaypoint getRouteWaypointRepository() {
-        return repositoryFactory.createRepository(EntityType.ROUTE_WAYPOINT, IRouteWaypoint.class);
+        return (IRouteWaypoint) repositoryFactory.createRepository(EntityType.ROUTE_WAYPOINT, RouteWaypointDomain.class);
     }
 
     private IRoute getRouteRepository() {

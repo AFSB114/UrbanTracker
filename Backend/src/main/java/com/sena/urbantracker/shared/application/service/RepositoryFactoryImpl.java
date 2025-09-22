@@ -5,7 +5,7 @@ import com.sena.urbantracker.routes.domain.repository.IRouteWaypoint;
 import com.sena.urbantracker.routes.infrastructure.repository.RouteRepositoryImpl;
 import com.sena.urbantracker.routes.infrastructure.repository.RouteWaypointRepositoryImpl;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
-import com.sena.urbantracker.shared.domain.repository.CrudOperations;
+import com.sena.urbantracker.shared.domain.repository.RepositoryOperations;
 import com.sena.urbantracker.shared.infrastructure.exception.FactoryException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class RepositoryFactoryImpl implements RepositoryFactory {
     private final RouteRepositoryImpl routeRepository;
     private final RouteWaypointRepositoryImpl routeWaypointRepository;
 
-    private final Map<EntityType, CrudOperations<?, ?>> repositoryMap = new HashMap<>();
+    private final Map<EntityType, RepositoryOperations<?, ?>> repositoryMap = new HashMap<>();
 
     @PostConstruct
     private void init() {
@@ -30,9 +30,14 @@ public class RepositoryFactoryImpl implements RepositoryFactory {
     }
 
     @Override
-    public <T, ID> CrudOperations<T, ID> createRepository(EntityType entityType, Class<T> dtoClass) {
+    public <T, ID> RepositoryOperations<T, ID> createRepository(EntityType entityType, Class<T> domainEntityClass) {
+        // Validate that the class is a domain entity
+        if (!isDomainEntity(domainEntityClass)) {
+            throw new FactoryException("Class " + domainEntityClass.getSimpleName() + " is not a valid domain entity");
+        }
+
         @SuppressWarnings("unchecked")
-        CrudOperations<T, ID> repository = (CrudOperations<T, ID>) repositoryMap.get(entityType);
+        RepositoryOperations<T, ID> repository = (RepositoryOperations<T, ID>) repositoryMap.get(entityType);
         if (repository == null) {
             throw new FactoryException("No repository found for entity type: " + entityType);
         }
@@ -53,5 +58,10 @@ public class RepositoryFactoryImpl implements RepositoryFactory {
     @Override
     public boolean supports(EntityType entityType) {
         return repositoryMap.containsKey(entityType);
+    }
+
+    private boolean isDomainEntity(Class<?> clazz) {
+        // Simple validation: check if class name ends with "Domain"
+        return clazz.getSimpleName().endsWith("Domain");
     }
 }
