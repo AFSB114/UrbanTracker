@@ -1,5 +1,6 @@
 package com.sena.urbantracker.routes.model.entity;
 
+import com.sena.urbantracker.routes.model.enums.WaypointType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,6 +38,10 @@ public class RouteWaypoint {
 
     @Column(nullable = false)
     private Double longitude;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private WaypointType type;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -1,5 +1,6 @@
 package com.sena.urbantracker.routes.model.dto.request;
 
+import com.sena.urbantracker.routes.model.enums.WaypointType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -31,4 +32,7 @@ public abstract class BaseRouteWaypointReqDto {
     @DecimalMin(value = "-180.0", message = "La longitud debe estar entre -180 y 180")
     @DecimalMax(value = "180.0", message = "La longitud debe estar entre -180 y 180")
     private Double longitude;
+
+    @NotNull(message = "El tipo es obligatorio")
+    private WaypointType type;
 }

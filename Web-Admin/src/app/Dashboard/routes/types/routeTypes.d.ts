@@ -1,49 +1,59 @@
-import type { MapMouseEvent } from "mapbox-gl";
-
-export interface RouteWaypoint {
-  waypoint_id?: string;
-  route_id?: number;
-  sequence_order: number;
+export interface RouteWaypointRequest {
+  sequence: number;
   latitude: number;
   longitude: number;
-  created_at?: string;
+  type: string; // e.g. 'WAYPOINT' | 'GEOMETRY' | 'COMPLETE' | 'SELECTED'
+  // Destination for the waypoint: OUTBOUND (ida) or RETURN (vuelta)
+  destination?: "OUTBOUND" | "RETURN";
 }
 
-export interface IRoute {
-  route_id?: string;
-  route_number: string;
-  description?: string;
-  total_distance_km?: number;
-  active?: boolean;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface RouteType {
+export interface RouteRequest {
   number: string;
   description?: string;
+  totalDistance: number;
+}
+
+export interface RouteWithWaypointsRequest extends RouteRequest {
+  waypoints: RouteWaypointRequest[];
+  active?: boolean;
+}
+
+export interface RouteWaypointResponse {
+  id?: number;
   active: boolean;
-}
-
-export interface RouteWaypointType {
+  routeId: number;
   sequence: number;
-  lng: number;
-  lat: number;
+  latitude: number;
+  longitude: number;
+  destination?: "OUTBOUND" | "RETURN";
 }
 
-interface GeometryType {
-  coordinates: GeoJSON.Feature<GeoJSON.LineString>;
-  type: string;
-  properties?: Object;
+export interface RouteResponse {
+  id?: number;
+  active: boolean;
+  numberRoute: string;
+  description?: string;
+  totalDistance: number;
+  routeWaypoints: RouteWaypointResponse[];
 }
 
-export interface ShowRouteType {
-  type: string;
-  geometry: GeometryType;
+export interface CrudResponse<T> {
+  success: boolean;
+  message?: string;
+  data?: T;
+  operation?: string;
+  entityType?: string;
+  timestamp: string;
+  validationErrors?: string[];
 }
 
-export interface MapboxContextType { 
-  waypointList: RouteWaypointType[];
-  handleAddWaypoint: (e: MapMouseEvent) => void;
-
+export interface ResponseDTO<T> {
+  message: string;
+  status: string;
+  data?: T;
 }
+
+// Type aliases for backward compatibility
+export type Route = RouteResponse;
+export type RouteWaypoint = RouteWaypointResponse;
+export type RouteWithWaypoints = RouteResponse;

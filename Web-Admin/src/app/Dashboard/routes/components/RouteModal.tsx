@@ -1,49 +1,80 @@
-import React, { use, useEffect, useState } from "react";
-import { Route, Trash2, Plus, X, Save } from "lucide-react";
-import { useRouteEditor } from "../hooks/useRouteEditor";
-import { IRoute, RouteWaypoint } from "../types/routeTypes";
-import MapboxRouteEditor from "../components/mapbox/MapboxRouteEditor";
-import { RouteType } from "../types/routeTypes";
-import MapView from "./mapbox/MapVIew";
+import React, { useEffect, useState, useCallback } from "react";
+import { Trash2, X, Save } from "lucide-react";
+import {
+  RouteResponse,
+  RouteWaypoint,
+  type RouteWaypointRequest,
+  type RouteWithWaypointsRequest,
+} from "../types/routeTypes";
+import MapView from "./mapbox/MapView";
+import {
+  RouteEditorProvider,
+  useRouteEditor,
+} from "../context/RouteEditorContext";
+
 const RouteModal: React.FC<{
   onClose: () => void;
   onSave: (routeData: {
-    route: IRoute;
+    route: RouteResponse;
     waypoints: RouteWaypoint[];
   }) => Promise<void>;
-  editingRoute?: IRoute | null;
+  editingRoute?: RouteResponse | null;
+  editingWaypoints?: RouteWaypoint[];
+}> = (props) => {
+  return (
+    <RouteEditorProvider>
+      <RouteModalContent {...props} />
+    </RouteEditorProvider>
+  );
+};
+
+const RouteModalContent: React.FC<{
+  onClose: () => void;
+  onSave: (routeData: {
+    route: RouteResponse;
+    waypoints: RouteWaypoint[];
+  }) => Promise<void>;
+  editingRoute?: RouteResponse | null;
   editingWaypoints?: RouteWaypoint[];
 }> = ({ onClose, onSave, editingRoute, editingWaypoints = [] }) => {
+  const DEST_OUTBOUND = "OUTBOUND" as const;
+  const DEST_RETURN = "RETURN" as const;
+
   const {
-    route,
-    waypoints,
-    totalDistance,
-    isValid,
-    isLoading,
-    errors,
-    updateRoute,
-    updateWaypoints,
-    addWaypointByCoords,
+    waypointList,
+    setWaypointList,
     removeWaypoint,
-    prepareRouteData,
-    resetEditor,
-    loadRouteData,
-    setIsLoading,
-  } = useRouteEditor(editingRoute as IRoute, editingWaypoints);
-
+    routeGeometry,
+    isReturnMode,
+    startReturn,
+    finishReturn,
+    routeGeometryReturn,
+  } = useRouteEditor();
   const [isVisible, setIsVisible] = useState(false);
-  const [routeFormData, setRouteFormData] = useState<RouteType>({
-    number: "",
-    description: "",
-    active: true,
-  });
+  const [routeFormData, setRouteFormData] = useState<RouteWithWaypointsRequest>(
+    {
+      number: "",
+      description: "",
+      totalDistance: 0,
+      waypoints: waypointList,
+    }
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  // coordsInput removed (unused)
 
-  const handleChageFormData = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    if (id === "active") {
+  useEffect(() => {
+    setRouteFormData((prev) => ({ ...prev, waypoints: waypointList }));
+  }, [waypointList]);
+
+  const handleChangeFormData = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { id, value, type } = e.target;
+    if (type === "checkbox") {
+      const checked = (e.target as HTMLInputElement).checked;
       setRouteFormData({
         ...routeFormData,
-        active: !routeFormData.active,
+        [id]: checked,
       });
     } else {
       setRouteFormData({
@@ -53,21 +84,177 @@ const RouteModal: React.FC<{
     }
   };
 
+  // Requerimos que la vuelta haya sido registrada (routeGeometryReturn) antes de habilitar guardar
+  const isValid =
+    waypointList.length >= 2 &&
+    routeFormData.number.trim() !== "" &&
+    !!routeGeometryReturn;
+  const errors: string[] = [];
+
+  if (waypointList.length < 2) {
+    errors.push("Se requieren al menos 2 puntos para la ruta");
+  }
+  if (!routeFormData.number.trim()) {
+    errors.push("El número de ruta es obligatorio");
+  }
+
+  const prepareRouteData = () => {
+    if (!isValid) return null;
+
+    // Empezamos con los waypoints explícitos (los seleccionados por el usuario)
+    const explicitWaypoints: RouteWaypoint[] = waypointList.map((wp) => ({
+      id: undefined,
+      active: true,
+      routeId: editingRoute?.id || 0,
+      sequence: wp.sequence,
+      latitude: wp.latitude,
+      longitude: wp.longitude,
+    }));
+
+    // Si existe una geometría (LineString) obtenida del servicio de rutas,
+    // extraemos sus coordenadas y las convertimos en waypoints COMPLETO
+    const geometryWaypoints: RouteWaypoint[] = [];
+    try {
+      if (routeGeometry && routeGeometry.type === "LineString") {
+        const coords = (routeGeometry as GeoJSON.LineString).coordinates;
+        // Las coordenadas vienen [lng, lat]
+        coords.forEach((c, i) => {
+          geometryWaypoints.push({
+            id: undefined,
+            active: true,
+            routeId: editingRoute?.id || 0,
+            sequence: explicitWaypoints.length + i + 1,
+            latitude: c[1],
+            longitude: c[0],
+          });
+        });
+      }
+      // Añadir geometría de vuelta si existe
+      if (routeGeometryReturn && routeGeometryReturn.type === "LineString") {
+        const coordsR = (routeGeometryReturn as GeoJSON.LineString).coordinates;
+        coordsR.forEach((c, i) => {
+          geometryWaypoints.push({
+            id: undefined,
+            active: true,
+            routeId: editingRoute?.id || 0,
+            sequence: explicitWaypoints.length + i + 1,
+            latitude: c[1],
+            longitude: c[0],
+          });
+        });
+      }
+    } catch (err) {
+      console.warn("No se pudieron extraer coordenadas de la geometría:", err);
+    }
+
+    const routeWaypoints: RouteWaypoint[] = [
+      ...explicitWaypoints,
+      ...geometryWaypoints,
+    ];
+
+    // Construir el objeto request que espera el backend: waypoints con 'type'
+    // Crear requestWaypoints incluyendo destination (OUTBOUND/RETURN)
+    const requestWaypoints: RouteWaypointRequest[] = [
+      ...waypointList.map((wp) => ({
+        sequence: wp.sequence,
+        latitude: wp.latitude,
+        longitude: wp.longitude,
+        type: "WAYPOINT",
+        destination: (wp.destination as "OUTBOUND" | "RETURN") || DEST_OUTBOUND,
+      })),
+      ...(routeGeometry && routeGeometry.type === "LineString"
+        ? (routeGeometry as GeoJSON.LineString).coordinates.map((c, i) => ({
+            sequence: waypointList.length + i + 1,
+            latitude: c[1],
+            longitude: c[0],
+            type: "GEOMETRY",
+            destination: DEST_OUTBOUND,
+          }))
+        : []),
+      ...(routeGeometryReturn && routeGeometryReturn.type === "LineString"
+        ? (routeGeometryReturn as GeoJSON.LineString).coordinates.map(
+            (c, i) => ({
+              sequence:
+                waypointList.length +
+                (routeGeometry
+                  ? (routeGeometry as GeoJSON.LineString).coordinates.length
+                  : 0) +
+                i +
+                1,
+              latitude: c[1],
+              longitude: c[0],
+              type: "GEOMETRY",
+              destination: DEST_RETURN,
+            })
+          )
+        : []),
+    ];
+
+    const route: RouteResponse = {
+      id: editingRoute?.id,
+      active: routeFormData.active || true,
+      numberRoute: routeFormData.number,
+      description: routeFormData.description || undefined,
+      totalDistance: routeFormData.totalDistance,
+      routeWaypoints,
+    };
+
+    const request: RouteWithWaypointsRequest = {
+      number: routeFormData.number,
+      description: routeFormData.description || undefined,
+      totalDistance: routeFormData.totalDistance,
+      waypoints: requestWaypoints,
+      active: routeFormData.active || true,
+    };
+
+    return { route, waypoints: routeWaypoints, request };
+  };
+
+  const resetEditor = () => {
+    setRouteFormData({
+      number: "",
+      description: "",
+      totalDistance: 0,
+      waypoints: [],
+    });
+    setWaypointList([]);
+    // coords input cleared
+  };
+
+  const loadRouteData = useCallback(
+    (route: RouteResponse, waypointsData: RouteWaypoint[]) => {
+      const waypointRequests: RouteWaypointRequest[] = waypointsData.map(
+        (wp) => ({
+          sequence: wp.sequence,
+          latitude: wp.latitude,
+          longitude: wp.longitude,
+          type: "SELECTED",
+        })
+      );
+
+      setRouteFormData({
+        number: route.numberRoute,
+        description: route.description || "",
+        totalDistance: route.totalDistance,
+        waypoints: waypointRequests,
+      });
+
+      setWaypointList(waypointRequests);
+    },
+    [setWaypointList]
+  );
+
   useEffect(() => {
     setTimeout(() => {
       setIsVisible(true);
     }, 100);
-  }, [setIsVisible]);
-  
+  }, []);
+
   useEffect(() => {
     if (editingRoute) {
       loadRouteData(editingRoute, editingWaypoints);
-    } else if (!editingRoute) {
-      resetEditor();
     }
-  }, [editingRoute, editingWaypoints, loadRouteData, resetEditor]);
-
-  const [coordsInput, setCoordsInput] = useState({ lat: "", lng: "" });
+  }, [editingRoute, editingWaypoints, loadRouteData]);
 
   const handleSave = async () => {
     const data = prepareRouteData();
@@ -77,7 +264,6 @@ const RouteModal: React.FC<{
     try {
       await onSave(data);
       onClose();
-      resetEditor();
     } catch (error) {
       console.error("Error al guardar ruta:", error);
     } finally {
@@ -92,16 +278,6 @@ const RouteModal: React.FC<{
       setTimeout(() => {
         onClose();
       }, 300);
-    }
-  };
-
-  const handleAddCoords = () => {
-    const lat = parseFloat(coordsInput.lat);
-    const lng = parseFloat(coordsInput.lng);
-
-    if (!isNaN(lat) && !isNaN(lng)) {
-      addWaypointByCoords(lat, lng);
-      setCoordsInput({ lat: "", lng: "" });
     }
   };
 
@@ -138,6 +314,19 @@ const RouteModal: React.FC<{
           {/* Formulario */}
           <div className="lg:w-1/3 p-6 border-r border-zinc-700 overflow-y-auto">
             <div className="space-y-6">
+              {/* Instrucciones */}
+              <div className="bg-blue-900 bg-opacity-50 border border-blue-600 rounded-md p-3">
+                <h4 className="text-sm font-medium text-blue-100 mb-1">
+                  Instrucciones:
+                </h4>
+                <ul className="text-sm text-blue-200 space-y-1">
+                  <li>• Haz clic en el mapa para agregar puntos</li>
+                  <li>• Se requieren mínimo 2 puntos</li>
+                  <li>• Puedes colocar un maximo de 25 puntos</li>
+                  <li>• Los puntos se conectarán automáticamente</li>
+                </ul>
+              </div>
+
               {/* Información básica */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-white">
@@ -149,12 +338,12 @@ const RouteModal: React.FC<{
                     Número de Ruta *
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     value={routeFormData.number || ""}
                     id="number"
-                    onChange={handleChageFormData}
-                    placeholder="Ej: R001, RUTA-CENTRO"
-                    className="w-full px-3 py-2 border border-zinc-600 bg-zinc-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={handleChangeFormData}
+                    placeholder="Ej: 001, 092"
+                    className="w-full px-3 py-2 border border-zinc-600 bg-zinc-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [moz-appearance:textfield]"
                     maxLength={20}
                   />
                 </div>
@@ -166,7 +355,7 @@ const RouteModal: React.FC<{
                   <textarea
                     id="description"
                     value={routeFormData.description || ""}
-                    onChange={handleChageFormData}
+                    onChange={handleChangeFormData}
                     placeholder="Descripción de la ruta..."
                     rows={3}
                     className="w-full px-3 py-2 border border-zinc-600 bg-zinc-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -177,8 +366,8 @@ const RouteModal: React.FC<{
                   <input
                     type="checkbox"
                     id="active"
-                    checked={routeFormData.active}
-                    onChange={handleChageFormData}
+                    checked={routeFormData.active || false}
+                    onChange={handleChangeFormData}
                     className="mr-3 h-4 w-4"
                   />
                   <label
@@ -191,23 +380,21 @@ const RouteModal: React.FC<{
               </div>
 
               {/* Lista de waypoints */}
-              {waypoints.length > 0 && (
+              {waypointList.length > 0 && (
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-white">
-                    Puntos de la Ruta ({waypoints.length})
+                    Puntos de la Ruta ({waypointList.length})
                   </h3>
                   <div className="max-h-48 overflow-y-auto space-y-2">
-                    {waypoints.map((wp, index) => (
+                    {waypointList.map((wp, index) => (
                       <div
                         key={index}
                         className="bg-zinc-700 p-3 rounded-md flex justify-between items-center"
                       >
                         <div className="text-sm text-white">
-                          <div className="font-medium">
-                            Punto {wp.sequence_order}
-                          </div>
+                          <div className="font-medium">Punto {wp.sequence}</div>
                           <div className="text-zinc-400">
-                            {wp.latitude.toFixed(6)}, {wp.longitude.toFixed(6)}
+                            {wp.latitude}, {wp.longitude}
                           </div>
                         </div>
                         <button
@@ -231,14 +418,39 @@ const RouteModal: React.FC<{
                   <div>
                     Puntos:{" "}
                     <span className="font-medium text-white">
-                      {waypoints.length}
+                      {waypointList.length}
                     </span>
                   </div>
                   <div>
                     Distancia:{" "}
                     <span className="font-medium text-white">
-                      {totalDistance} km
+                      {routeFormData.totalDistance} km
                     </span>
+                  </div>
+                  <div>
+                    Modo:{" "}
+                    <span className="font-medium text-white">
+                      {isReturnMode
+                        ? "RETURN (capturando vuelta)"
+                        : "OUTBOUND (capturando ida)"}
+                    </span>
+                  </div>
+                  <div className="flex gap-2 mt-2">
+                    {!isReturnMode ? (
+                      <button
+                        onClick={() => startReturn()}
+                        className="px-3 py-1 bg-yellow-600 text-white rounded"
+                      >
+                        Iniciar Vuelta
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => finishReturn()}
+                        className="px-3 py-1 bg-green-600 text-white rounded"
+                      >
+                        Finalizar Vuelta
+                      </button>
+                    )}
                   </div>
                   <div>
                     Estado:
@@ -256,41 +468,21 @@ const RouteModal: React.FC<{
               {/* Errores */}
               {errors.length > 0 && (
                 <div className="bg-red-900 bg-opacity-50 border border-red-600 rounded-md p-3">
-                  <h4 className="text-sm font-medium text-red-300 mb-1">
+                  <h4 className="text-sm font-medium text-red-100 mb-1">
                     Errores:
                   </h4>
-                  <ul className="text-sm text-red-400 space-y-1">
+                  <ul className="text-sm text-red-200 space-y-1">
                     {errors.map((error, index) => (
                       <li key={index}>• {error}</li>
                     ))}
                   </ul>
                 </div>
               )}
-
-              {/* Instrucciones */}
-              <div className="bg-blue-900 bg-opacity-50 border border-blue-600 rounded-md p-3">
-                <h4 className="text-sm font-medium text-blue-300 mb-1">
-                  Instrucciones:
-                </h4>
-                <ul className="text-sm text-blue-400 space-y-1">
-                  <li>• Haz clic en el mapa para agregar puntos</li>
-                  <li>• O ingresa coordenadas manualmente</li>
-                  <li>• Se requieren mínimo 2 puntos</li>
-                  <li>• Los puntos se conectarán automáticamente</li>
-                </ul>
-              </div>
             </div>
           </div>
 
           {/* Mapa*/}
           <div className="lg:w-2/3 p-6">
-            {/* <MapboxRouteEditor
-              waypoints={waypoints}
-              onWaypointsChange={updateWaypoints}
-              isEditing={true}
-              height="700px"
-              isVisible={true}
-            /> */}
             <MapView />
           </div>
         </div>
@@ -298,10 +490,10 @@ const RouteModal: React.FC<{
         {/* Footer */}
         <div className="flex justify-between items-center p-6 border-t border-zinc-700 bg-zinc-800">
           <div className="text-sm text-zinc-400">
-            {waypoints.length > 0 && (
+            {waypointList.length > 0 && (
               <span>
-                Ruta con {waypoints.length} puntos y {totalDistance} km
-                aproximados
+                Ruta con {waypointList.length} puntos y{" "}
+                {routeFormData.totalDistance} km aproximados
               </span>
             )}
           </div>

@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -25,6 +26,7 @@ import java.util.Optional;
  * @param <ID> El tipo del identificador (generalmente Long)
  */
 @Slf4j
+@PreAuthorize("hasRole('ADMIN')")
 public abstract class BaseController<T extends BaseDto, ID> {
 
     protected final ServiceFactory serviceFactory;
@@ -42,6 +44,7 @@ public abstract class BaseController<T extends BaseDto, ID> {
      *
      * @return La clase del DTO
      */
+
     protected abstract Class<T> getDtoClass();
 
     /**
@@ -55,6 +58,7 @@ public abstract class BaseController<T extends BaseDto, ID> {
      }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CrudResponseDto<T>> create(@Valid @RequestBody T dto) {
         CrudOperations<T, ID> service = getService();
         CrudResponseDto<T> response = service.create(dto);

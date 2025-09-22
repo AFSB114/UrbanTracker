@@ -1,5 +1,6 @@
 package com.sena.urbantracker.routes.model.dto.response;
 
+import com.sena.urbantracker.routes.model.enums.WaypointType;
 import com.sena.urbantracker.shared.model.dto.BaseDto;
 import lombok.*;
 
@@ -14,5 +15,6 @@ public class RouteWaypointDto extends BaseDto {
     private Integer sequence;
     private Double latitude;
     private Double longitude;
+    private WaypointType type;
 
 }

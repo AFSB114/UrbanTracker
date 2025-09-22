@@ -29,6 +29,7 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointDto, Lo
                 .sequence(dto.getSequence())
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
+                .type(dto.getType())
                 .build();
     }
 
@@ -155,6 +156,7 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointDto, Lo
             dto.setSequence(entity.getSequence());
             dto.setLatitude(entity.getLatitude());
             dto.setLongitude(entity.getLongitude());
+            dto.setType(entity.getType());
             return dto;
         }
 
@@ -164,6 +166,7 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointDto, Lo
             entity.setSequence(dto.getSequence());
             entity.setLatitude(dto.getLatitude());
             entity.setLongitude(dto.getLongitude());
+            entity.setType(dto.getType());
             return entity;
         }
     }

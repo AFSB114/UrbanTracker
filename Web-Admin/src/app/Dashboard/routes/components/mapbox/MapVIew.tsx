@@ -5,24 +5,39 @@ import Map, {
   Marker,
 } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
-import type {  RouteWaypointType, ShowRouteType } from "../../types/routeTypes";
+import type { RouteWaypointRequest } from "../../types/routeTypes";
 import type { MapMouseEvent } from "mapbox-gl";
 import type { FeatureCollection } from "geojson";
-import type { features } from "process";
+import { useRouteEditor } from "../../context/RouteEditorContext";
 
-export default function MapVIew() {
+export default function MapView() {
+  const {
+    waypointList,
+    addWaypoint,
+    setRouteGeometry,
+    setRouteGeometryReturn,
+    setRouteDistance,
+    displayMode,
+  } = useRouteEditor();
   const mapRef = useRef(null);
 
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
-  const [waypointList, setWaypointList] = useState<RouteWaypointType[]>([]);
   const [route, setRoute] = useState<FeatureCollection>({
     type: "FeatureCollection",
     features: [
       {
         type: "Feature",
         geometry: {
-          type: "Polygon",
+          type: "LineString",
+          coordinates: [],
+        },
+        properties: {},
+      },
+      {
+        type: "Feature",
+        geometry: {
+          type: "LineString",
           coordinates: [],
         },
         properties: {},
@@ -32,36 +47,117 @@ export default function MapVIew() {
 
   const handleClickMap = (e: MapMouseEvent) => {
     const { lng, lat } = e.lngLat;
-    setWaypointList([
-      ...waypointList,
-      { sequence: waypointList.length, lng, lat },
-    ]);
+    addWaypoint(lat, lng);
   };
 
   const getRoute = useCallback(async () => {
     try {
-      await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/driving/${waypointList
-          .map((wp: RouteWaypointType) => `${wp.lng},${wp.lat}`)
-          .join(
-            ";"
-          )}?geometries=geojson&access_token=${accessToken}&overview=full`
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.routes && data.routes.length > 0) {
-            console.log("Route data:", data);
-            setRoute({...route, ...route.features[0].geometry = data.routes[0].geometry});
-          }
+      if (!waypointList || waypointList.length < 2) {
+        setRoute({
+          type: "FeatureCollection",
+          features: [
+            {
+              type: "Feature",
+              geometry: { type: "LineString", coordinates: [] },
+              properties: {},
+            },
+            {
+              type: "Feature",
+              geometry: { type: "LineString", coordinates: [] },
+              properties: {},
+            }
+          ]
         });
+        setRouteGeometry(null);
+        setRouteGeometryReturn(null);
+        return;
+      }
+
+      // Separar puntos por destination: OUTBOUND vs RETURN
+      const outbound = waypointList.filter(
+        (w) => !w.destination || w.destination === "OUTBOUND"
+      );
+      const ret = waypointList.filter((w) => w.destination === "RETURN");
+
+      const fetchRouteFor = async (points: RouteWaypointRequest[]) => {
+        if (!points || points.length < 2) return null;
+        const coords = points
+          .map((wp) => `${wp.longitude},${wp.latitude}`)
+          .join(";");
+        const res = await fetch(
+          `https://api.mapbox.com/directions/v5/mapbox/driving/${coords}?geometries=geojson&access_token=${accessToken}&overview=full`
+        );
+        const data = await res.json();
+        if (data.routes && data.routes.length > 0) return data.routes[0];
+        return null;
+      };
+
+      const outboundRoute = await fetchRouteFor(
+        outbound as RouteWaypointRequest[]
+      );
+      const returnRoute = await fetchRouteFor(ret as RouteWaypointRequest[]);
+
+      const features: GeoJSON.Feature[] = [
+        {
+          type: "Feature",
+          geometry: outboundRoute
+            ? (outboundRoute.geometry as GeoJSON.Geometry)
+            : { type: "LineString", coordinates: [] },
+          properties: {},
+        },
+        {
+          type: "Feature",
+          geometry: returnRoute
+            ? (returnRoute.geometry as GeoJSON.Geometry)
+            : { type: "LineString", coordinates: [] },
+          properties: {},
+        },
+      ];
+
+      setRoute({ type: "FeatureCollection", features });
+
+      if (outboundRoute) {
+        setRouteGeometry(outboundRoute.geometry as GeoJSON.Geometry);
+        setRouteDistance(outboundRoute.distance);
+      } else {
+        setRouteGeometry(null);
+      }
+
+      if (returnRoute) {
+        setRouteGeometryReturn(returnRoute.geometry as GeoJSON.Geometry);
+      } else {
+        setRouteGeometryReturn(null);
+      }
     } catch (error) {
       console.error("Error fetching route:", error);
     }
-  }, [waypointList, accessToken]);
+  }, [
+    waypointList,
+    accessToken,
+    setRouteGeometry,
+    setRouteGeometryReturn,
+    setRouteDistance,
+  ]);
 
   useEffect(() => {
     getRoute();
   }, [waypointList, getRoute]);
+
+  // Comprueba si una geometría GeoJSON tiene un campo 'coordinates' con elementos
+  const geometryHasCoordinates = (
+    geometry: GeoJSON.Geometry | undefined | null
+  ): geometry is
+    | GeoJSON.LineString
+    | GeoJSON.MultiLineString
+    | GeoJSON.Polygon
+    | GeoJSON.MultiPolygon
+    | GeoJSON.MultiPoint
+    | GeoJSON.Point => {
+    if (!geometry) return false;
+    const maybeCoords = (geometry as unknown as { coordinates?: unknown })
+      .coordinates;
+    return Array.isArray(maybeCoords) && maybeCoords.length > 0;
+  };
 
   // Estilos de capas
   const routeLayerStyle = {
@@ -95,49 +191,92 @@ export default function MapVIew() {
         initialViewState={{
           longitude: -75.2810060736973,
           latitude: 2.9342900126616227,
-          zoom: 15,
+          zoom: 12.5,
         }}
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/afsb114/cmf7eaden003301s563d81iss"
         onLoad={getRoute}
         onClick={handleClickMap}
       >
-        {route && (
-          <Source id="route-source" type="geojson" data={route}>
-            <Layer
-              id="route"
-              type="line"
-              paint={routeLayerStyle.paint}
-              layout={{ "line-join": "round", "line-cap": "round" }}
-            />
-          </Source>
-        )}
-
-        {waypointList.map((waypoint, index) => (
-          <Marker
-            key={index}
-            longitude={waypoint.lng}
-            latitude={waypoint.lat}
-            anchor="bottom"
-          >
-            <div
-              style={{
-                backgroundColor: "blue",
-                width: "30px",
-                height: "30px",
-                borderRadius: "50%",
-                border: "3px solid white",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "16px",
+        {/* Mostrar outbound (ida) si displayMode permite */}
+        {displayMode !== "RETURN" &&
+          route &&
+          route.features &&
+          route.features[0] &&
+          geometryHasCoordinates(route.features[0].geometry) && (
+            <Source
+              id="route-source-outbound"
+              type="geojson"
+              data={{
+                type: "FeatureCollection",
+                features: [route.features[0]],
               }}
             >
-              {index + 1}
-            </div>
-          </Marker>
-        ))}
+              <Layer
+                id="route-outbound"
+                type="line"
+                paint={{ ...routeLayerStyle.paint, "line-color": "#3b82f6" }}
+                layout={{ "line-join": "round", "line-cap": "round" }}
+              />
+            </Source>
+          )}
+
+        {/* Mostrar return (vuelta) si displayMode permite */}
+        {displayMode !== "OUTBOUND" &&
+          route &&
+          route.features &&
+          route.features[1] &&
+          geometryHasCoordinates(route.features[1].geometry) && (
+            <Source
+              id="route-source-return"
+              type="geojson"
+              data={{
+                type: "FeatureCollection",
+                features: [route.features[1]],
+              }}
+            >
+              <Layer
+                id="route-return"
+                type="line"
+                paint={{ ...routeLayerStyle.paint, "line-color": "#ef4444" }}
+                layout={{ "line-join": "round", "line-cap": "round" }}
+              />
+            </Source>
+          )}
+
+        {waypointList
+          .filter((wp) => {
+            if (displayMode === "BOTH") return true;
+            if (displayMode === "OUTBOUND")
+              return !wp.destination || wp.destination === "OUTBOUND";
+            return wp.destination === "RETURN";
+          })
+          .map((waypoint, idx) => (
+            <Marker
+              key={idx}
+              longitude={waypoint.longitude}
+              latitude={waypoint.latitude}
+              anchor="bottom"
+            >
+              <div
+                style={{
+                  backgroundColor:
+                    waypoint.destination === "RETURN" ? "red" : "blue",
+                  width: "30px",
+                  height: "30px",
+                  borderRadius: "50%",
+                  border: "3px solid white",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "16px",
+                }}
+              >
+                {waypoint.sequence}
+              </div>
+            </Marker>
+          ))}
       </Map>
     </div>
   );

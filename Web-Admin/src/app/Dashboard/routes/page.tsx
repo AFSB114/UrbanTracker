@@ -1,103 +1,54 @@
-
 "use client";
-import React, { useState } from 'react';
+
+import React from 'react';
 import { Edit3, Trash2, Plus, Route } from 'lucide-react';
-import RouteModal from './components/RouteModal';
-import { IRoute, RouteWaypoint } from './types/routeTypes';
-import RouteModal1 from './components/RouteModal1';
+import { RouteResponse } from './types/routeTypes';
+import { useRouteContext } from './context/RouteContext';
+import { useRouter } from 'next/navigation';
 
-const RouteDashboard: React.FC = () => {
-  const [routes, setRoutes] = useState<IRoute[]>([
-    {
-      route_id: '1',
-      route_number: 'R001',
-      description: 'Ruta Centro - Norte',
-      total_distance_km: 15.3,
-      active: true,
-      created_at: '2024-01-15T10:30:00Z'
-    },
-    {
-      route_id: '2',
-      route_number: 'R002',
-      description: 'Ruta Sur - Occidente',
-      total_distance_km: 22.1,
-      active: false,
-      created_at: '2024-01-10T14:20:00Z'
-    },
-    {
-      route_id: '3',
-      route_number: 'R003',
-      description: 'Ruta Expresa Terminal - Aeropuerto',
-      total_distance_km: 35.7,
-      active: true,
-      created_at: '2024-01-08T09:15:00Z'
-    }
-  ]);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingRoute, setEditingRoute] = useState<IRoute | null>(null);
-  const [editingWaypoints, setEditingWaypoints] = useState<RouteWaypoint[]>([]);
-
-  // Simular waypoints para rutas existentes
-  const mockWaypoints: { [key: string]: RouteWaypoint[] } = {
-    '1': [
-      { sequence_order: 1, latitude: 4.6097, longitude: -74.0817 },
-      { sequence_order: 2, latitude: 4.6200, longitude: -74.0700 },
-      { sequence_order: 3, latitude: 4.6300, longitude: -74.0600 }
-    ],
-    '2': [
-      { sequence_order: 1, latitude: 4.5897, longitude: -74.0917 },
-      { sequence_order: 2, latitude: 4.5800, longitude: -74.1000 },
-      { sequence_order: 3, latitude: 4.5700, longitude: -74.1100 }
-    ],
-    '3': [
-      { sequence_order: 1, latitude: 4.6097, longitude: -74.0817 },
-      { sequence_order: 2, latitude: 4.5500, longitude: -74.1200 },
-      { sequence_order: 3, latitude: 4.4800, longitude: -74.1500 },
-      { sequence_order: 4, latitude: 4.4200, longitude: -74.1800 }
-    ]
-  };
+export default function RouteDashboard() {
+  const { routes, loading, error } = useRouteContext();
+  const router = useRouter();
 
   const handleCreateRoute = () => {
-    setEditingRoute(null);
-    setEditingWaypoints([]);
-    setIsModalOpen(true);
+    router.push('/Dashboard/routes/new');
   };
 
-  const handleEditRoute = (route: IRoute) => {
-    setEditingRoute(route);
-    setEditingWaypoints(mockWaypoints[route.route_id!] || []);
-    setIsModalOpen(true);
+  const handleEditRoute = (route: RouteResponse) => {
+    router.push(`/Dashboard/routes/edit/${route.id}`);
   };
 
-  const handleSaveRoute = async (data: { route: IRoute; waypoints: RouteWaypoint[] }) => {
-    // Simular guardado
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    if (editingRoute) {
-      setRoutes(prev => prev.map(r => 
-        r.route_id === editingRoute.route_id ? { ...data.route, route_id: editingRoute.route_id } : r
-      ));
-      mockWaypoints[editingRoute.route_id!] = data.waypoints;
-    } else {
-      const newRoute = { ...data.route, route_id: Date.now().toString(), created_at: new Date().toISOString() };
-      setRoutes(prev => [...prev, newRoute]);
-      mockWaypoints[newRoute.route_id!] = data.waypoints;
-    }
+  const handleDeleteRoute = (routeId: number) => {
+    console.log('Eliminar ruta:', routeId);
+    // TODO: Implementar lógica para eliminar ruta
   };
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-zinc-900 text-white p-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p>Cargando rutas...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const handleDeleteRoute = (routeId: string) => {
-    if (confirm('¿Estás seguro de eliminar esta ruta?')) {
-      setRoutes(prev => prev.filter(r => r.route_id !== routeId));
-      delete mockWaypoints[routeId];
-    }
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setEditingRoute(null);
-    setEditingWaypoints([]);
-  };
+  if (error) {
+    return (
+      <div className="min-h-screen bg-zinc-900 text-white p-6 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-400 mb-4">Error al cargar rutas: {error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-zinc-900 text-white p-6">
@@ -148,14 +99,14 @@ const RouteDashboard: React.FC = () => {
           ) : (
             routes.map((route) => (
               <div
-                key={route.route_id}
+                key={route.id}
                 className="p-6 hover:bg-zinc-750 transition-colors"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-4 mb-2">
                       <h3 className="text-xl font-medium text-white">
-                        {route.route_number}
+                        {route.numberRoute}
                       </h3>
                       <span
                         className={`px-3 py-1 text-xs font-medium rounded-full ${
@@ -174,31 +125,18 @@ const RouteDashboard: React.FC = () => {
                       </p>
                     )}
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       <div className="text-zinc-500">
                         <span className="font-medium text-zinc-300">
                           Distancia:
                         </span>{" "}
-                        {route.total_distance_km || 0} km
+                        {route.totalDistance || 0} km
                       </div>
                       <div className="text-zinc-500">
                         <span className="font-medium text-zinc-300">
                           Puntos:
                         </span>{" "}
-                        {mockWaypoints[route.route_id!]?.length || 0}
-                      </div>
-                      <div className="text-zinc-500">
-                        <span className="font-medium text-zinc-300">
-                          Creada:
-                        </span>{" "}
-                        {new Date(route.created_at!).toLocaleDateString(
-                          "es-ES",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          }
-                        )}
+                        {route.routeWaypoints?.length || 0}
                       </div>
                     </div>
                   </div>
@@ -212,7 +150,7 @@ const RouteDashboard: React.FC = () => {
                       Editar
                     </button>
                     <button
-                      onClick={() => handleDeleteRoute(route.route_id!)}
+                      onClick={() => handleDeleteRoute(route.id!)}
                       className="text-red-400 hover:text-red-300 px-4 py-2 text-sm font-medium rounded-md hover:bg-red-900 hover:bg-opacity-20 transition-colors flex items-center gap-2"
                     >
                       <Trash2 size={16} />
@@ -225,18 +163,6 @@ const RouteDashboard: React.FC = () => {
           )}
         </div>
       </div>
-
-      {/* Modal de Ruta */}
-      {isModalOpen && (
-        <RouteModal
-          onClose={handleCloseModal}
-          onSave={handleSaveRoute}
-          editingRoute={editingRoute}
-          editingWaypoints={editingWaypoints}
-        />
-      )}
     </div>
   );
 };
-
-export default RouteDashboard;

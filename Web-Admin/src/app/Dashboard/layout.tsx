@@ -108,7 +108,7 @@ export default function DashboardLayout({
       {/* Main content */}
       <div className="pl-72">
         {/* Header */}
-        <header className="h-20 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur-sm">
+        <header className="h-20 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur-sm overflow-hidden">
           <div className="flex h-20 items-center justify-between px-8">
             <div className="flex items-center gap-4">
               <Button
@@ -131,7 +131,7 @@ export default function DashboardLayout({
         </header>
 
         {/* Page content */}
-        <main className="p-8 bg-zinc-900 min-h-[calc(100vh-5rem)]">
+        <main className="p-8 bg-zinc-900 min-h-[calc(100vh-5rem)] relative overflow-y-auto">
           {children}
         </main>
       </div>
