@@ -1,5 +1,6 @@
 package com.sena.urbantracker.routes.application.dto.request;
 
+import com.sena.urbantracker.routes.domain.valueobject.WaypointDestineType;
 import com.sena.urbantracker.routes.domain.valueobject.WaypointType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,4 +36,7 @@ public abstract class BaseRouteWaypointReqDto {
 
     @NotNull(message = "El tipo es obligatorio")
     private WaypointType type;
+
+    @NotNull(message = "El destino es obligatorio")
+    private WaypointDestineType destine;
 }

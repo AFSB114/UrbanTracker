@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // convertir el rol en una autoridad reconocida por Spring Security
                 List<GrantedAuthority> authorities =
-                        Collections.singletonList(new SimpleGrantedAuthority(role));
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
 
                 // Crear el authToken con el rol del JWT
                 UsernamePasswordAuthenticationToken authToken =

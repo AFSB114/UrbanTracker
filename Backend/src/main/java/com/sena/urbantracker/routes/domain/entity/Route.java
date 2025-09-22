@@ -45,6 +45,5 @@ public class Route {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
-    @JsonIgnore
     private List<RouteWaypoint> routeWaypoints;
 }

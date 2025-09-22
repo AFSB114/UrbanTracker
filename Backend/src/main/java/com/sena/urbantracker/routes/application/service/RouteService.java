@@ -4,6 +4,7 @@ import com.sena.urbantracker.routes.application.dto.request.RouteWaypointForRout
 import com.sena.urbantracker.routes.application.dto.request.RouteWithWaypointsReqDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteWaypointDto;
+import com.sena.urbantracker.routes.application.mapper.RouteMapper;
 import com.sena.urbantracker.routes.domain.entity.Route;
 import com.sena.urbantracker.routes.domain.repository.IRoute;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
@@ -112,33 +113,4 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
         return CrudResponseDto.success(routeRepository.existsById(id), "Verificación de existencia completada");
     }
 
-    private static class RouteMapper {
-        public static RouteDto toDto(Route entity) {
-            if (entity == null) return null;
-            RouteDto dto = new RouteDto();
-            dto.setId(entity.getId());
-            dto.setNumberRoute(entity.getNumberRoute().toString());
-            dto.setDescription(entity.getDescription());
-            dto.setTotalDistance(entity.getTotalDistance());
-            return dto;
-        }
-
-        public static Route toEntity(RouteDto dto) {
-            Route entity = new Route();
-            entity.setId(dto.getId());
-            entity.setNumberRoute(Integer.valueOf(dto.getNumberRoute()));
-            entity.setDescription(dto.getDescription());
-            entity.setTotalDistance(dto.getTotalDistance());
-            entity.setActive(dto.getActive());
-            return entity;
-        }
-
-        public static Route toEntity(RouteWithWaypointsReqDto dto) {
-            return Route.builder()
-                    .numberRoute(Integer.valueOf(dto.getNumberRoute()))
-                    .description(dto.getDescription())
-                    .totalDistance(dto.getTotalDistance())
-                    .build();
-        }
-    }
 }
