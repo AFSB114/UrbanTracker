@@ -18,11 +18,11 @@ export default function DashboardLayout({
         <div className="flex h-20 items-center px-8 border-b border-zinc-800">
           <div className="flex items-center gap-3">
             <Image
-              src="/white-logo.png"
+              src="/white-logo.svg"
               alt="Logo UrbanTracker"
-              width={256}
-              height={256}
-              className="mx-auto h-10 w-10"
+              width={280}
+              height={280}
+              className="mx-auto h-11 w-11"
             />
             <div>
               <h1 className="text-xl font-bold text-white">UrbanTracker</h1>

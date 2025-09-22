@@ -8,7 +8,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center space-y-6 max-w-md">
         <Image
-          src="/white-logo.png"
+          src="/white-logo.svg"
           alt="Logo UrbanTracker"
           width={256}
           height={256}
