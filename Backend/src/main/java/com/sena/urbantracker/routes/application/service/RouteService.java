@@ -13,6 +13,7 @@ import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
+import com.sena.urbantracker.shared.application.service.RepositoryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -24,9 +25,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RouteService implements CrudOperations<RouteDto, Long> {
 
-    private final IRoute routeRepository;
     @Lazy
     private final ServiceFactory serviceFactory;
+    @Lazy
+    private final RepositoryFactory repositoryFactory;
+
+    private IRoute getRouteRepository() {
+        return repositoryFactory.createRepository(EntityType.ROUTE, IRoute.class);
+    }
 
     public RouteWaypointDto toDtoNew(RouteWaypointForRouteReqDto dto, RouteDomain route) {
         return RouteWaypointDto.builder()
@@ -40,11 +46,11 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
 
     public void addRoute(RouteWithWaypointsReqDto dto) {
         Integer numberRouteInt = Integer.valueOf(dto.getNumberRoute());
-        if (routeRepository.existsByNumberRoute(numberRouteInt))
+        if (getRouteRepository().existsByNumberRoute(numberRouteInt))
             throw new EntityAlreadyExistsException("Ya existe una ruta con número: " + dto.getNumberRoute());
 
         RouteDomain route = RouteMapper.toEntity(dto);
-        routeRepository.save(route);
+        getRouteRepository().save(route);
         System.out.println("Ruta creada");
         CrudOperations<RouteWaypointDto, Long> routeWaypointService = serviceFactory.createCrudService(EntityType.ROUTE_WAYPOINT);
         for (RouteWaypointForRouteReqDto waypointDto : dto.getWaypoints()) {
@@ -56,18 +62,18 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
     @Override
     public CrudResponseDto<RouteDto> create(RouteDto dto) {
         Integer numberRouteInt = Integer.valueOf(dto.getNumberRoute());
-        if (routeRepository.existsByNumberRoute(numberRouteInt)) {
+        if (getRouteRepository().existsByNumberRoute(numberRouteInt)) {
             throw new EntityAlreadyExistsException("Ya existe una ruta con número: " + dto.getNumberRoute());
         }
 
-        Route entity = RouteMapper.toEntity(dto);
-        Route saved = routeRepository.save(entity);
+        RouteDomain entity = RouteMapper.toEntity(dto);
+        RouteDomain saved = getRouteRepository().save(entity);
         return CrudResponseDto.success(RouteMapper.toDto(saved), "Ruta creada correctamente");
     }
 
     @Override
     public CrudResponseDto<Optional<RouteDto>> findById(Long id) {
-        Route route = routeRepository.findById(id)
+        RouteDomain route = getRouteRepository().findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ruta con id " + id + " no encontrada."));
 
         return CrudResponseDto.success(Optional.of(RouteMapper.toDto(route)), "Ruta encontrada");
@@ -75,7 +81,7 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
 
     @Override
     public CrudResponseDto<List<RouteDto>> findAll() {
-        List<RouteDto> dtos = routeRepository.findAll()
+        List<RouteDto> dtos = getRouteRepository().findAll()
                 .stream()
                 .map(RouteMapper::toDto)
                 .toList();
@@ -85,48 +91,48 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
 
     @Override
     public CrudResponseDto<RouteDto> update(RouteDto dto) {
-        Route route = routeRepository.findById(dto.getId())
+        RouteDomain route = getRouteRepository().findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Ruta no encontrada."));
 
         route.setNumberRoute(Integer.valueOf(dto.getNumberRoute()));
         route.setDescription(dto.getDescription());
         route.setTotalDistance(dto.getTotalDistance());
 
-        Route updated = routeRepository.save(route);
+        RouteDomain updated = getRouteRepository().save(route);
         return CrudResponseDto.success(RouteMapper.toDto(updated), "Ruta actualizada correctamente");
     }
 
     @Override
     public CrudResponseDto<RouteDto> deleteById(Long id) {
-        if (!routeRepository.existsById(id)) {
+        if (!getRouteRepository().existsById(id)) {
             throw new EntityNotFoundException("Ruta no encontrada.");
         }
 
-        routeRepository.deleteById(id);
+        getRouteRepository().deleteById(id);
         return CrudResponseDto.success(RouteMapper.toDto(null), "Ruta eliminada correctamente");
     }
 
     @Override
     public CrudResponseDto<RouteDto> activateById(Long id) {
-        Route route = routeRepository.findById(id)
+        RouteDomain route = getRouteRepository().findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ruta no encontrada."));
         route.setActive(true);
-        routeRepository.save(route);
+        getRouteRepository().save(route);
         return CrudResponseDto.success(RouteMapper.toDto(route), "Ruta activada");
     }
 
     @Override
     public CrudResponseDto<RouteDto> deactivateById(Long id) {
-        Route route = routeRepository.findById(id)
+        RouteDomain route = getRouteRepository().findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ruta no encontrada."));
         route.setActive(false);
-        routeRepository.save(route);
+        getRouteRepository().save(route);
         return CrudResponseDto.success(RouteMapper.toDto(route), "Ruta desactivada");
     }
 
     @Override
     public CrudResponseDto<Boolean> existsById(Long id) {
-        return CrudResponseDto.success(routeRepository.existsById(id), "Verificación de existencia completada");
+        return CrudResponseDto.success(getRouteRepository().existsById(id), "Verificación de existencia completada");
     }
 
 }

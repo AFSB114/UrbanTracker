@@ -34,6 +34,7 @@ public class ServiceFactoryImpl implements ServiceFactory {
     private final RoleService roleService;
     private final RouteService routeService;
     private final RouteWaypointService routeWaypointService;
+    private final RepositoryFactory repositoryFactory;
 
     private Map<EntityType, CrudOperations<?, ?>> crudServices;
 
