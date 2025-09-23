@@ -8,13 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/public/drivers")
-public class DriverController extends BaseController<DriverDto, Long> {
+public class DriverController extends BaseController<DriverDto, DriverDto, Long> {
 
     public DriverController(ServiceFactory serviceFactory) {
-        super(serviceFactory, EntityType.DRIVER);
+        super(serviceFactory, EntityType.DRIVER, DriverDto.class, DriverDto.class);
     }
 
-    @Override
     protected Class<DriverDto> getDtoClass() {
         return DriverDto.class;
     }

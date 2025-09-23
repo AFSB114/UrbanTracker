@@ -15,13 +15,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/user-profiles")
-public class UserProfileController extends BaseController<UserProfileDto, Long> {
+public class UserProfileController extends BaseController<UserProfileDto, UserProfileDto, Long> {
 
     public UserProfileController(ServiceFactory serviceFactory) {
-        super(serviceFactory, EntityType.USER_PROFILE);
+        super(serviceFactory, EntityType.USER_PROFILE, UserProfileDto.class, UserProfileDto.class);
     }
 
-    @Override
     protected Class<UserProfileDto> getDtoClass() {
         return UserProfileDto.class;
     }

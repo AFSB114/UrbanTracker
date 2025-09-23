@@ -50,8 +50,8 @@ public class VehicleTypeService implements CrudOperations<VehicleTypeDto, Vehicl
     }
 
     @Override
-    public CrudResponseDto<VehicleTypeDto> update(VehicleTypeDto dto) {
-        VehicleType vehicleType = vehicleTypeRepository.findById(dto.getId())
+    public CrudResponseDto<VehicleTypeDto> update(VehicleTypeDto dto, Long id) {
+        VehicleType vehicleType = vehicleTypeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Tipo de vehículo no encontrado."));
 
         vehicleType.setName(dto.getName());

@@ -15,13 +15,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/vehicle-assigment")
-public class VehicleAssigmentController extends BaseController<VehicleAssigmentDto, Long> {
+public class VehicleAssigmentController extends BaseController<VehicleAssigmentDto, VehicleAssigmentDto, Long> {
 
     public VehicleAssigmentController(ServiceFactory serviceFactory) {
-        super(serviceFactory, EntityType.VEHICLE_ASSIGMENT);
+        super(serviceFactory, EntityType.VEHICLE_ASSIGMENT, VehicleAssigmentDto.class, VehicleAssigmentDto.class);
     }
 
-    @Override
     protected Class<VehicleAssigmentDto> getDtoClass() {
         return VehicleAssigmentDto.class;
     }

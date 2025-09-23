@@ -53,8 +53,8 @@ public class UserProfileService implements CrudOperations<UserProfileDto, UserPr
     }
 
     @Override
-    public CrudResponseDto<UserProfileDto> update(UserProfileDto dto) {
-        UserProfile userProfile = userProfileRepository.findById(dto.getId())
+    public CrudResponseDto<UserProfileDto> update(UserProfileDto dto, Long id) {
+        UserProfile userProfile = userProfileRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario con id " + dto.getId() + " no encontrado."));
         userProfile.setFirstName(dto.getFirstName());
         userProfile.setLastName(dto.getLastName());

@@ -17,10 +17,9 @@ import java.util.Optional;
 public class RoleController extends BaseController<RoleDto, RoleDto, Long> {
 
     public RoleController(ServiceFactory serviceFactory) {
-        super(serviceFactory, EntityType.ROLE, RoleDto, RoleDto);
+        super(serviceFactory, EntityType.ROLE, RoleDto.class, RoleDto.class);
     }
 
-    @Override
     protected Class<RoleDto> getDtoClass() {
         return RoleDto.class;
     }

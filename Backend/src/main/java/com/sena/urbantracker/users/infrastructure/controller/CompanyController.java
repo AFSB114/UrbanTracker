@@ -15,7 +15,6 @@ public class CompanyController extends BaseController<CompanyReqDto, CompanyDTO,
         super(serviceFactory, EntityType.COMPANY, CompanyReqDto.class, CompanyDTO.class);
     }
 
-    @Override
     protected Class<CompanyDTO> getDtoClass() {
         return CompanyDTO.class;
     }

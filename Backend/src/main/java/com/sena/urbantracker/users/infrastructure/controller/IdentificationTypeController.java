@@ -8,13 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/public/identification-types")
-public class IdentificationTypeController extends BaseController<IdentificationTypeDto, Long> {
+public class IdentificationTypeController extends BaseController<IdentificationTypeDto, IdentificationTypeDto, Long> {
 
     public IdentificationTypeController(ServiceFactory serviceFactory) {
-        super(serviceFactory, EntityType.IDENTIFICATION_TYPE);
+        super(serviceFactory, EntityType.IDENTIFICATION_TYPE, IdentificationTypeDto.class, IdentificationTypeDto.class);
     }
 
-    @Override
     protected Class<IdentificationTypeDto> getDtoClass() {
         return IdentificationTypeDto.class;
     }

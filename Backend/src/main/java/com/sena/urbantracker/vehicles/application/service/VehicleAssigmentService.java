@@ -45,7 +45,7 @@ public class VehicleAssigmentService implements CrudOperations<VehicleAssigmentD
     }
 
     @Override
-    public CrudResponseDto<VehicleAssigmentDto> update(VehicleAssigmentDto dto) {
+    public CrudResponseDto<VehicleAssigmentDto> update(VehicleAssigmentDto dto, Long id) {
         VehicleAssigments vehicleAssigment = vehicleAssigmentRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Asignación de vehículo no encontrada."));
 

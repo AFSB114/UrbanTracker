@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -28,6 +29,7 @@ public abstract class BaseDto {
 //    private LocalDateTime updatedAt;
 
     @NotNull(message = "Active status is required")
+    @Builder.Default
     private Boolean active = true;
 
     public boolean isNew() {

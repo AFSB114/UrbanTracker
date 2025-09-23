@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/public/user-identifications")
-public class UserIdentificationController extends BaseController<UserIdentificationDto, Long> {
+public class UserIdentificationController extends BaseController<UserIdentificationDto, UserIdentificationDto, Long> {
 
     public UserIdentificationController(ServiceFactory serviceFactory) {
-        super(serviceFactory, EntityType.USER_IDENTIFICATION);
+        super(serviceFactory, EntityType.USER_IDENTIFICATION, UserIdentificationDto.class, UserIdentificationDto.class);
     }
 
-    @Override
+
     protected Class<UserIdentificationDto> getDtoClass() {
         return UserIdentificationDto.class;
     }

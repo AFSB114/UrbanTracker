@@ -56,7 +56,7 @@ public class CompanyService implements CrudOperations<CompanyReqDto, CompanyDTO,
         company.setPhone(dto.getPhone());
         company.setEmail(dto.getEmail());
         company.setCountry(dto.getCountry());
-        company.setActive(dto.getActive());
+//        company.setActive(dto.getActive());
 
         Company updated = companyRepository.save(company);
         return CrudResponseDto.success(CompanyMapper.toDto(updated), "Empresa actualizada correctamente");

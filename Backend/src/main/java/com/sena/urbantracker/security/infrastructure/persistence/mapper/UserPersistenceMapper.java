@@ -23,7 +23,7 @@ public class UserPersistenceMapper {
         if (model == null) return null;
         return UserDomain.builder()
                 .id(model.getId())
-                .userName(model.getUserName())
+                .userName(model.getUsername())
                 .password(model.getPassword())
                 .active(model.getActive())
                 .role(RolePersistenceMapper.toDomain(model.getRole()))

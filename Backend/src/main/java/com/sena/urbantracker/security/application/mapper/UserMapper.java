@@ -11,7 +11,7 @@ public class UserMapper {
         return UserViewDTO.builder()
                 .id(entity.getId())
                 .userName(entity.getUserName())
-                .roleId(entity.getRole().getId())
+                .role(entity.getRole().getId())
                 .build();
     }
 
