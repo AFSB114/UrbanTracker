@@ -14,10 +14,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/roles")
-public class RoleController extends BaseController<RoleDto, Long> {
+public class RoleController extends BaseController<RoleDto, RoleDto, Long> {
 
     public RoleController(ServiceFactory serviceFactory) {
-        super(serviceFactory, EntityType.ROLE);
+        super(serviceFactory, EntityType.ROLE, RoleDto, RoleDto);
     }
 
     @Override

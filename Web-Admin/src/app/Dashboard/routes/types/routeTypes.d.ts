@@ -4,7 +4,7 @@ export interface RouteWaypointRequest {
   longitude: number;
   type: string; // e.g. 'WAYPOINT' | 'GEOMETRY' | 'COMPLETE' | 'SELECTED'
   // Destination for the waypoint: OUTBOUND (ida) or RETURN (vuelta)
-  destination?: "OUTBOUND" | "RETURN";
+  destine?: "OUTBOUND" | "RETURN";
 }
 
 export interface RouteRequest {

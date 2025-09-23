@@ -18,6 +18,7 @@ export default function MapView() {
     setRouteGeometryReturn,
     setRouteDistance,
     displayMode,
+    isReturnMode
   } = useRouteEditor();
   const mapRef = useRef(null);
 
@@ -73,11 +74,11 @@ export default function MapView() {
         return;
       }
 
-      // Separar puntos por destination: OUTBOUND vs RETURN
+      // Separar puntos por destine: OUTBOUND vs RETURN
       const outbound = waypointList.filter(
-        (w) => !w.destination || w.destination === "OUTBOUND"
+        (w) => !w.destine || w.destine === "OUTBOUND"
       );
-      const ret = waypointList.filter((w) => w.destination === "RETURN");
+      const ret = waypointList.filter((w) => w.destine === "RETURN");
 
       const fetchRouteFor = async (points: RouteWaypointRequest[]) => {
         if (!points || points.length < 2) return null;
@@ -168,7 +169,7 @@ export default function MapView() {
       "line-cap": "round",
     },
     paint: {
-      "line-color": "#3b82f6",
+      "line-color": "green",
       "line-width": 6,
       "line-opacity": 0.8,
     },
@@ -199,7 +200,7 @@ export default function MapView() {
         onClick={handleClickMap}
       >
         {/* Mostrar outbound (ida) si displayMode permite */}
-        {displayMode !== "RETURN" &&
+        {(displayMode === "OUTBOUND" || displayMode === "BOTH") &&
           route &&
           route.features &&
           route.features[0] &&
@@ -215,14 +216,14 @@ export default function MapView() {
               <Layer
                 id="route-outbound"
                 type="line"
-                paint={{ ...routeLayerStyle.paint, "line-color": "#3b82f6" }}
+                paint={{ ...routeLayerStyle.paint, "line-color": "green" }}
                 layout={{ "line-join": "round", "line-cap": "round" }}
               />
             </Source>
           )}
 
         {/* Mostrar return (vuelta) si displayMode permite */}
-        {displayMode !== "OUTBOUND" &&
+        {(displayMode === "RETURN" || displayMode === "BOTH") &&
           route &&
           route.features &&
           route.features[1] &&
@@ -246,10 +247,10 @@ export default function MapView() {
 
         {waypointList
           .filter((wp) => {
-            if (displayMode === "BOTH") return true;
             if (displayMode === "OUTBOUND")
-              return !wp.destination || wp.destination === "OUTBOUND";
-            return wp.destination === "RETURN";
+              return !wp.destine || wp.destine === "OUTBOUND";
+            if (displayMode === "RETURN") return wp.destine === "RETURN";
+            return true; // for BOTH
           })
           .map((waypoint, idx) => (
             <Marker
@@ -261,7 +262,7 @@ export default function MapView() {
               <div
                 style={{
                   backgroundColor:
-                    waypoint.destination === "RETURN" ? "red" : "blue",
+                    waypoint.destine === "RETURN" ? "red" : "blue",
                   width: "30px",
                   height: "30px",
                   borderRadius: "50%",

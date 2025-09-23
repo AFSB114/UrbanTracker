@@ -5,6 +5,7 @@ import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExists
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
+import com.sena.urbantracker.users.application.dto.request.CompanyReqDto;
 import com.sena.urbantracker.users.application.dto.response.CompanyDTO;
 import com.sena.urbantracker.users.domain.repository.ICompany;
 import com.sena.urbantracker.users.domain.entity.Company;
@@ -15,12 +16,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CompanyService implements CrudOperations<CompanyDTO, CompanyDTO, Long> {
+public class CompanyService implements CrudOperations<CompanyReqDto, CompanyDTO, Long> {
 
     private final ICompany companyRepository;
 
     @Override
-    public CrudResponseDto<CompanyDTO> create(CompanyDTO dto) {
+    public CrudResponseDto<CompanyDTO> create(CompanyReqDto dto) {
        if (companyRepository.existsByNit(dto.getNit())) {
            throw new EntityAlreadyExistsException("La empresa con NIT " + dto.getNit() + " ya existe.");
        }
@@ -46,7 +47,7 @@ public class CompanyService implements CrudOperations<CompanyDTO, CompanyDTO, Lo
     }
 
     @Override
-    public CrudResponseDto<CompanyDTO> update(CompanyDTO dto, Long id) {
+    public CrudResponseDto<CompanyDTO> update(CompanyReqDto dto, Long id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + id + " no encontrada."));
 
@@ -112,16 +113,14 @@ public class CompanyService implements CrudOperations<CompanyDTO, CompanyDTO, Lo
             return dto;
         }
 
-        private static Company toEntity(CompanyDTO dto) {
+        private static Company toEntity(CompanyReqDto dto) {
             if (dto == null) return null;
             Company entity = new Company();
-            entity.setId(dto.getId());
             entity.setName(dto.getName());
             entity.setNit(dto.getNit());
             entity.setPhone(dto.getPhone());
             entity.setEmail(dto.getEmail());
             entity.setCountry(dto.getCountry());
-            entity.setActive(dto.getActive());
             return entity;
         }
     }

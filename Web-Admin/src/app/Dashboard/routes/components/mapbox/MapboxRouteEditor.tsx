@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import type { RouteWaypointType } from '../../types/routeTypes';
+// import type { RouteWaypoint } from '../../types/routeTypes';
 
 interface RouteWaypoint {
   waypoint_id?: string;
@@ -10,6 +10,7 @@ interface RouteWaypoint {
   latitude: number;
   longitude: number;
   created_at?: string;
+  destine?: 'OUTBOUND' | 'RETURN';
 }
 
 interface RouteEditorProps {
@@ -18,6 +19,7 @@ interface RouteEditorProps {
   isEditing?: boolean;
   height?: string;
   isVisible?: boolean; //  prop para controlar visibilidad
+  routeType?: 'return' | 'outbound' | 'both';
 }
 
 const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
@@ -25,11 +27,12 @@ const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
   onWaypointsChange,
   isEditing = true,
   height = '500px',
-  isVisible = true
+  isVisible = true,
+  routeType = 'both'
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [waypointsM, setWaypointsM] = useState<RouteWaypointType[]>([]);
+  const [waypointsM, setWaypointsM] = useState<RouteWaypoint[]>([]);
   const [currentWaypoints, setCurrentWaypoints] = useState<RouteWaypoint[]>(waypoints);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<string>('');
@@ -102,14 +105,16 @@ const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
 
     try {
       // Limpiar capas existentes si existen
-      if (map.current.getLayer('route-line')) map.current.removeLayer('route-line');
+      if (map.current.getLayer('route-line-outbound')) map.current.removeLayer('route-line-outbound');
+      if (map.current.getLayer('route-line-return')) map.current.removeLayer('route-line-return');
       if (map.current.getLayer('waypoints')) map.current.removeLayer('waypoints');
       if (map.current.getLayer('waypoint-labels')) map.current.removeLayer('waypoint-labels');
-      if (map.current.getSource('route-line')) map.current.removeSource('route-line');
+      if (map.current.getSource('route-line-outbound')) map.current.removeSource('route-line-outbound');
+      if (map.current.getSource('route-line-return')) map.current.removeSource('route-line-return');
       if (map.current.getSource('waypoints')) map.current.removeSource('waypoints');
 
-      // Capa para la línea
-      map.current.addSource('route-line', {
+      // Capa para la línea outbound
+      map.current.addSource('route-line-outbound', {
         type: 'geojson',
         data: {
           type: 'Feature',
@@ -122,15 +127,43 @@ const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
       });
 
       map.current.addLayer({
-        id: 'route-line',
+        id: 'route-line-outbound',
         type: 'line',
-        source: 'route-line',
+        source: 'route-line-outbound',
         layout: {
           'line-join': 'round',
           'line-cap': 'round'
         },
         paint: {
           'line-color': '#00ff88',
+          'line-width': 4,
+          'line-opacity': 0.8
+        }
+      });
+
+      // Capa para la línea return
+      map.current.addSource('route-line-return', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'LineString',
+            coordinates: []
+          }
+        }
+      });
+
+      map.current.addLayer({
+        id: 'route-line-return',
+        type: 'line',
+        source: 'route-line-return',
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        paint: {
+          'line-color': '#ff0088',
           'line-width': 4,
           'line-opacity': 0.8
         }
@@ -221,19 +254,58 @@ const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
         });
       }
 
-      // Actualizar línea de ruta
-      const coordinates = currentWaypoints.map(wp => [wp.longitude, wp.latitude]);
-      const routeSource = map.current.getSource('route-line') as mapboxgl.GeoJSONSource;
-      
-      if (routeSource && coordinates.length >= 2) {
-        routeSource.setData({
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'LineString',
-            coordinates: coordinates
-          }
-        });
+      // Actualizar línea outbound
+      const outboundWaypoints = currentWaypoints.filter(wp => wp.destine === 'OUTBOUND');
+      const outboundCoordinates = outboundWaypoints.map(wp => [wp.longitude, wp.latitude]);
+      const outboundSource = map.current.getSource('route-line-outbound') as mapboxgl.GeoJSONSource;
+
+      if (outboundSource) {
+        if (outboundCoordinates.length >= 2) {
+          outboundSource.setData({
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: outboundCoordinates
+            }
+          });
+        } else {
+          outboundSource.setData({
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: []
+            }
+          });
+        }
+      }
+
+      // Actualizar línea return
+      const returnWaypoints = currentWaypoints.filter(wp => wp.destine === 'RETURN');
+      const returnCoordinates = returnWaypoints.map(wp => [wp.longitude, wp.latitude]);
+      const returnSource = map.current.getSource('route-line-return') as mapboxgl.GeoJSONSource;
+
+      if (returnSource) {
+        if (returnCoordinates.length >= 2) {
+          returnSource.setData({
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: returnCoordinates
+            }
+          });
+        } else {
+          returnSource.setData({
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: []
+            }
+          });
+        }
       }
 
       // Ajustar vista
@@ -252,10 +324,22 @@ const FixedMapboxRouteEditor: React.FC<RouteEditorProps> = ({
           map.current.fitBounds(bounds, { padding: 50 });
         }
       }
+
+      // Mostrar/ocultar capas basadas en routeType
+      if (routeType === 'outbound') {
+        map.current.setLayoutProperty('route-line-outbound', 'visibility', 'visible');
+        map.current.setLayoutProperty('route-line-return', 'visibility', 'none');
+      } else if (routeType === 'return') {
+        map.current.setLayoutProperty('route-line-outbound', 'visibility', 'none');
+        map.current.setLayoutProperty('route-line-return', 'visibility', 'visible');
+      } else { // both
+        map.current.setLayoutProperty('route-line-outbound', 'visibility', 'visible');
+        map.current.setLayoutProperty('route-line-return', 'visibility', 'visible');
+      }
     } catch (err) {
       console.error('Error actualizando datos del mapa:', err);
     }
-  }, [currentWaypoints, isLoaded]);
+  }, [currentWaypoints, isLoaded, routeType]);
 
   // Actualizar mapa cuando cambien los waypoints
   useEffect(() => {

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import type { GeoJSON } from 'geojson';
-import { RouteWaypointRequest } from '../types/routeTypes';
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import type { GeoJSON } from "geojson";
+import { RouteWaypointRequest } from "../types/routeTypes";
 
 interface RouteEditorContextType {
   waypointList: RouteWaypointRequest[];
@@ -24,16 +24,18 @@ interface RouteEditorContextType {
   startReturn: () => void;
   finishReturn: () => void;
   // Modo de visualización en el mapa: OUTBOUND | RETURN | BOTH
-  displayMode: 'OUTBOUND' | 'RETURN' | 'BOTH';
-  setDisplayMode: (m: 'OUTBOUND' | 'RETURN' | 'BOTH') => void;
+  displayMode: "OUTBOUND" | "RETURN" | "BOTH";
+  setDisplayMode: (m: "OUTBOUND" | "RETURN" | "BOTH") => void;
 }
 
-const RouteEditorContext = createContext<RouteEditorContextType | undefined>(undefined);
+const RouteEditorContext = createContext<RouteEditorContextType | undefined>(
+  undefined
+);
 
 export const useRouteEditor = () => {
   const context = useContext(RouteEditorContext);
   if (!context) {
-    throw new Error('useRouteEditor must be used within a RouteEditorProvider');
+    throw new Error("useRouteEditor must be used within a RouteEditorProvider");
   }
   return context;
 };
@@ -42,28 +44,39 @@ interface RouteEditorProviderProps {
   children: ReactNode;
 }
 
-export const RouteEditorProvider: React.FC<RouteEditorProviderProps> = ({ children }) => {
+export const RouteEditorProvider: React.FC<RouteEditorProviderProps> = ({
+  children,
+}) => {
   const [waypointList, setWaypointList] = useState<RouteWaypointRequest[]>([]);
-  const [routeGeometry, setRouteGeometry] = useState<GeoJSON.Geometry | null>(null);
+  const [routeGeometry, setRouteGeometry] = useState<GeoJSON.Geometry | null>(
+    null
+  );
   const [routeDistanceKm, setRouteDistanceKm] = useState<number | null>(null);
-  const [routeGeometryReturn, setRouteGeometryReturn] = useState<GeoJSON.Geometry | null>(null);
+  const [routeGeometryReturn, setRouteGeometryReturn] =
+    useState<GeoJSON.Geometry | null>(null);
   const [isReturnMode, setIsReturnMode] = useState<boolean>(false);
-  const [displayMode, setDisplayMode] = useState<'OUTBOUND' | 'RETURN' | 'BOTH'>('BOTH');
+  const [displayMode, setDisplayMode] = useState<"OUTBOUND" | "RETURN" | "BOTH">(
+    "OUTBOUND"
+  );
 
   const addWaypoint = (lat: number, lng: number) => {
     const newWaypoint: RouteWaypointRequest = {
       sequence: waypointList.length + 1,
       latitude: lat,
       longitude: lng,
-      type: 'WAYPOINT',
-      destine: isReturnMode ? 'RETURN' : 'OUTBOUND',
+      type: "WAYPOINT",
+      destine: isReturnMode ? "RETURN" : "OUTBOUND",
     };
     setWaypointList([...waypointList, newWaypoint]);
+    console.log("Añadiendo waypoint:", waypointList);
   };
 
   const removeWaypoint = (index: number) => {
     const updatedWaypoints = waypointList.filter((_, i) => i !== index);
-    const reordered = updatedWaypoints.map((wp, i) => ({ ...wp, sequence: i + 1 }));
+    const reordered = updatedWaypoints.map((wp, i) => ({
+      ...wp,
+      sequence: i + 1,
+    }));
     setWaypointList(reordered);
   };
 
@@ -74,16 +87,25 @@ export const RouteEditorProvider: React.FC<RouteEditorProviderProps> = ({ childr
     if (!waypointList || waypointList.length === 0) return;
 
     // Comprobar si la secuencia actual es 1..n
-    const isConsecutive = waypointList.every((wp, idx) => wp.sequence === idx + 1);
+    const isConsecutive = waypointList.every(
+      (wp, idx) => wp.sequence === idx + 1
+    );
     if (!isConsecutive) {
-      const reindexed = waypointList.map((wp, idx) => ({ ...wp, sequence: idx + 1 }));
+      const reindexed = waypointList.map((wp, idx) => ({
+        ...wp,
+        sequence: idx + 1,
+      }));
       setWaypointList(reindexed);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [waypointList.length]);
 
   const setRouteDistance = (meters: number | null) => {
-    if (meters === null || meters === undefined || Number.isNaN(Number(meters))) {
+    if (
+      meters === null ||
+      meters === undefined ||
+      Number.isNaN(Number(meters))
+    ) {
       setRouteDistanceKm(null);
       return;
     }
@@ -93,10 +115,12 @@ export const RouteEditorProvider: React.FC<RouteEditorProviderProps> = ({ childr
   };
 
   const startReturn = () => {
+    setDisplayMode("RETURN");
     setIsReturnMode(true);
   };
 
-  const finishReturn = () => {
+  const finishReturn = () =>{
+    setDisplayMode("BOTH");
     setIsReturnMode(false);
   };
 
