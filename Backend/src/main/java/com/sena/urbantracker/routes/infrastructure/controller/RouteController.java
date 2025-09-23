@@ -1,5 +1,6 @@
 package com.sena.urbantracker.routes.infrastructure.controller;
 
+import com.sena.urbantracker.routes.application.dto.response.RouteDto;
 import com.sena.urbantracker.routes.application.service.RouteService;
 import com.sena.urbantracker.shared.infrastructure.controller.BaseController;
 import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/public/routes")
-public class RouteController extends BaseController<BaseRouteReqDto, Long> {
+public class RouteController extends BaseController<BaseRouteReqDto, RouteDto, Long> {
 
     private final RouteService routeService;
 
@@ -21,8 +22,13 @@ public class RouteController extends BaseController<BaseRouteReqDto, Long> {
     }
 
     @Override
-    protected Class<BaseRouteReqDto> getDtoClass() {
+    protected Class<BaseRouteReqDto> getRequestDtoClass() {
         return BaseRouteReqDto.class;
+    }
+
+    @Override
+    protected Class<RouteDto> getResponseDtoClass() {
+        return RouteDto.class;
     }
 
     /**

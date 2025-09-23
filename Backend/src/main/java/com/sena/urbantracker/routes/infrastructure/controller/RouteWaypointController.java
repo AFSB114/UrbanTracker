@@ -1,5 +1,6 @@
 package com.sena.urbantracker.routes.infrastructure.controller;
 
+import com.sena.urbantracker.routes.application.dto.request.BaseRouteWaypointReqDto;
 import com.sena.urbantracker.routes.application.service.RouteWaypointService;
 import com.sena.urbantracker.shared.infrastructure.controller.BaseController;
 import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/public/route-waypoints")
-public class RouteWaypointController extends BaseController<RouteWaypointDto, Long> {
+public class RouteWaypointController extends BaseController<BaseRouteWaypointReqDto, RouteWaypointDto, Long> {
 
     private final RouteWaypointService routeWaypointService;
 
@@ -25,7 +26,12 @@ public class RouteWaypointController extends BaseController<RouteWaypointDto, Lo
     }
 
     @Override
-    protected Class<RouteWaypointDto> getDtoClass() {
+    protected Class<BaseRouteWaypointReqDto> getRequestDtoClass() {
+        return BaseRouteWaypointReqDto.class;
+    }
+
+    @Override
+    protected Class<RouteWaypointDto> getResponseDtoClass() {
         return RouteWaypointDto.class;
     }
 
