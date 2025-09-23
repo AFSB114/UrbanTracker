@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CompanyService implements CrudOperations<CompanyDTO, Long> {
+public class CompanyService implements CrudOperations<CompanyDTO, CompanyDTO, Long> {
 
     private final ICompany companyRepository;
 

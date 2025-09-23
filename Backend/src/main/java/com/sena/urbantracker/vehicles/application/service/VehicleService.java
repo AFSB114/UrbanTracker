@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class VehicleService implements CrudOperations<VehicleDto, Long>{
+public class VehicleService implements CrudOperations<VehicleDto, VehicleDto, Long>{
 
     private final IVehicle vehicleRepository;
 
@@ -53,7 +53,7 @@ public class VehicleService implements CrudOperations<VehicleDto, Long>{
 
 
     @Override
-    public CrudResponseDto<VehicleDto> update(VehicleDto dto, Object id) {
+    public CrudResponseDto<VehicleDto> update(VehicleDto dto, Long id) {
         Vehicle vehicle = vehicleRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Vehículo no encontrado."));
 

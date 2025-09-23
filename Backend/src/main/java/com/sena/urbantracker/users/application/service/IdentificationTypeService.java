@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class IdentificationTypeService implements CrudOperations<IdentificationTypeDto, Long> {
+public class IdentificationTypeService implements CrudOperations<IdentificationTypeDto, IdentificationTypeDto, Long> {
 
     private final IIdentificationType identificationTypeRepository;
 
@@ -44,7 +44,7 @@ public class IdentificationTypeService implements CrudOperations<IdentificationT
     }
 
     @Override
-    public CrudResponseDto<IdentificationTypeDto> update(IdentificationTypeDto dto, Object id) {
+    public CrudResponseDto<IdentificationTypeDto> update(IdentificationTypeDto dto, Long id) {
         IdentificationType identificationType = identificationTypeRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de identificación con id " + dto.getId() + " no encontrado."));
 
