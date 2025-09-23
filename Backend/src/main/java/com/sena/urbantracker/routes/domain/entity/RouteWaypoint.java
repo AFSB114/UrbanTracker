@@ -1,5 +1,6 @@
 package com.sena.urbantracker.routes.domain.entity;
 
+import com.sena.urbantracker.routes.domain.valueobject.WaypointDestineType;
 import com.sena.urbantracker.routes.domain.valueobject.WaypointType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @Table(
         name = "route_waypoint",
         schema = "routes",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"route_id", "sequence"}),
+        uniqueConstraints = @UniqueConstraint(columnNames = {"route_id", "sequence", "type", "destine"}),
         indexes = @Index(columnList = "route_id"))
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,6 +43,10 @@ public class RouteWaypoint {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private WaypointType type;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private WaypointDestineType destine;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

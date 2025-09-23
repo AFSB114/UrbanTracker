@@ -15,49 +15,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/vehicle")
-public class VehicleController extends BaseController<VehicleDto, Long> {
+@PreAuthorize("hasRole('DRIVER')")
+public class VehicleController extends BaseController<VehicleDto, VehicleDto, Long> {
 
     public VehicleController(ServiceFactory serviceFactory) {
-        super(serviceFactory, EntityType.VEHICLE);
+        super(serviceFactory, EntityType.VEHICLE, VehicleDto.class, VehicleDto.class);
     }
 
-    @Override
-    protected Class<VehicleDto> getDtoClass() {
-        return VehicleDto.class;
-    }
-
-    @Override
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<VehicleDto>> create(@Valid @RequestBody VehicleDto dto) {
-        return super.create(dto);
-    }
-
-    @Override
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<Optional<VehicleDto>>> findById(@PathVariable Long id) {
-        return super.findById(id);
-    }
-
-    @Override
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<List<VehicleDto>>> findAll() {
-        return super.findAll();
-    }
-
-    @Override
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<VehicleDto>> update(@PathVariable Long id, @Valid @RequestBody VehicleDto dto) {
-        return super.update(id, dto);
-    }
-
-    @Override
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<VehicleDto>> delete(@PathVariable Long id) {
-        return super.delete(id);
-    }
 }

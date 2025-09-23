@@ -1,18 +1,24 @@
 package com.sena.urbantracker.routes.domain.repository;
 
-import com.sena.urbantracker.routes.domain.entity.Route;
-import com.sena.urbantracker.routes.domain.entity.RouteWaypoint;
-import org.springframework.data.domain.Limit;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.sena.urbantracker.routes.domain.entity.RouteDomain;
+import com.sena.urbantracker.routes.domain.entity.RouteWaypointDomain;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface IRouteWaypoint extends JpaRepository<RouteWaypoint, Long> {
+public interface IRouteWaypoint {
 
-    boolean existsByRouteAndSequence(Route route, Integer sequence);
+    List<RouteWaypointDomain> findAll();
 
-    List<RouteWaypoint> findByRoute_Id(Long routeId);
+    Optional<RouteWaypointDomain> findById(Long id);
 
-    List<RouteWaypoint> findByRoute_Id(Long routeId, Sort sort, Limit limit);
+    RouteWaypointDomain save(RouteWaypointDomain routeWaypoint);
+
+    void deleteById(Long id);
+
+    boolean existsById(Long id);
+
+    boolean existsByRouteAndSequence(RouteDomain route, Integer sequence);
+
+    List<RouteWaypointDomain> findByRouteId(Long routeId);
 }

@@ -1,24 +1,24 @@
-package com.sena.urbantracker.routes.application.dto.request;
+package com.sena.urbantracker.routes.application.dto;
 
+import com.sena.urbantracker.routes.application.dto.request.RouteReqDto;
+import com.sena.urbantracker.routes.domain.valueobject.WaypointDestineType;
 import com.sena.urbantracker.routes.domain.valueobject.WaypointType;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.DecimalMax;
-
-/**
- * Abstract base class for route waypoint request DTOs.
- * Provides common validation and structure for waypoint request objects.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public abstract class BaseRouteWaypointReqDto {
+public abstract class BaseRouteWaypointDto {
+
+    private Long routeId;
 
     @NotNull(message = "La secuencia es obligatoria")
     private Integer sequence;
@@ -35,4 +35,7 @@ public abstract class BaseRouteWaypointReqDto {
 
     @NotNull(message = "El tipo es obligatorio")
     private WaypointType type;
+
+    @NotNull(message = "El destino es obligatorio")
+    private WaypointDestineType destine;
 }

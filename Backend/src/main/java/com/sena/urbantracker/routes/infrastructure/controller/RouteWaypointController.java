@@ -1,12 +1,12 @@
 package com.sena.urbantracker.routes.infrastructure.controller;
 
-import com.sena.urbantracker.routes.application.dto.response.RouteWaypointDto;
+import com.sena.urbantracker.routes.application.dto.request.RouteWaypointReqDto;
+import com.sena.urbantracker.routes.application.dto.response.RouteWaypointResDto;
 import com.sena.urbantracker.routes.application.service.RouteWaypointService;
 import com.sena.urbantracker.shared.infrastructure.controller.BaseController;
 import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,23 +17,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/public/route-waypoints")
-public class RouteWaypointController extends BaseController<RouteWaypointDto, Long> {
+public class RouteWaypointController extends BaseController<RouteWaypointReqDto, RouteWaypointResDto, Long> {
 
     private final RouteWaypointService routeWaypointService;
 
     public RouteWaypointController(ServiceFactory serviceFactory, RouteWaypointService routeWaypointService) {
-        super(serviceFactory, EntityType.ROUTE_WAYPOINT);
+        super(serviceFactory, EntityType.ROUTE_WAYPOINT, RouteWaypointReqDto.class, RouteWaypointResDto.class);
         this.routeWaypointService = routeWaypointService;
     }
 
-    @Override
-    protected Class<RouteWaypointDto> getDtoClass() {
-        return RouteWaypointDto.class;
-    }
-
     @GetMapping("/route/{routeId}")
-    public ResponseEntity<CrudResponseDto<List<RouteWaypointDto>>> findByRouteId(@PathVariable Long routeId) {
-        CrudResponseDto<List<RouteWaypointDto>> response = routeWaypointService.findByRouteId(routeId);
+    public ResponseEntity<CrudResponseDto<List<RouteWaypointReqDto>>> findByRouteId(@PathVariable Long routeId) {
+        CrudResponseDto<List<RouteWaypointReqDto>> response = routeWaypointService.findByRouteId(routeId);
         return ResponseEntity.ok(response);
     }
 }

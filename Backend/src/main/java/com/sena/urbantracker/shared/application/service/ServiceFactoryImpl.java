@@ -69,7 +69,8 @@ public class ServiceFactoryImpl implements ServiceFactory {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T, ID> CrudOperations<T, T, ID> createCrudService(EntityType entityType) {
+    public <DReq, DRes, ID> CrudOperations<DReq, DRes, ID> createCrudService(EntityType entityType) {
+
         CrudOperations<?, ?, ?> service = crudServices.get(entityType);
         if (service == null) {
             throw new FactoryException(
@@ -80,7 +81,7 @@ public class ServiceFactoryImpl implements ServiceFactory {
         }
         try {
             @SuppressWarnings("unchecked")
-            CrudOperations<T, T, ID> typedService = (CrudOperations<T, T, ID>) service;
+            CrudOperations<DReq, DRes, ID> typedService = (CrudOperations<DReq, DRes, ID>) service;
             log.debug("[Factory] Servicio CRUD obtenido para {} -> {}",
                     entityType, typedService.getClass().getSimpleName());
             return typedService;
@@ -118,7 +119,7 @@ public class ServiceFactoryImpl implements ServiceFactory {
     }
 
     @Override
-    public <T, ID> CrudOperations<T, T, ID> getService(EntityType type, Class<T> dtoClass) {
+    public <DReq, DRes, ID> CrudOperations<DReq, DRes, ID> getService(EntityType type, Class<DReq> dtoClass) {
         log.trace("[Factory] getService llamado con EntityType={}, DTO={}",  //logTrace: capturar información extremadamente detallada sobre la ejecución
                 type, dtoClass.getSimpleName());
         return createCrudService(type);

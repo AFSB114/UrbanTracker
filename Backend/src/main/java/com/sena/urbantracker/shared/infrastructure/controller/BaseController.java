@@ -20,31 +20,27 @@ import java.util.Optional;
 /**
  * Controlador base genérico que proporciona operaciones CRUD comunes.
  * Utiliza el patrón Factory para obtener servicios específicos basados en EntityType.
- * Las subclases deben proporcionar el tipo de DTO y la lógica específica.
+ * Las subclases deben proporcionar los tipos de DTO de request/response en el constructor.
  *
- * @param <T> El tipo del DTO que extiende BaseDto
+ * @param <DReq> El tipo del DTO de request que extiende BaseDto
+ * @param <DRes> El tipo del DTO de response que extiende BaseDto
  * @param <ID> El tipo del identificador (generalmente Long)
  */
 @Slf4j
-public abstract class BaseController<T extends BaseDto, ID> {
+public abstract class BaseController<DReq , DRes , ID> {
 
     protected final ServiceFactory serviceFactory;
-
     protected final EntityType entityType;
+    protected final Class<DReq> requestDtoClass;
+    protected final Class<DRes> responseDtoClass;
 
-    public BaseController(ServiceFactory serviceFactory, EntityType entityType) {
+    public BaseController(ServiceFactory serviceFactory, EntityType entityType,
+                         Class<DReq> requestDtoClass, Class<DRes> responseDtoClass) {
         this.serviceFactory = serviceFactory;
         this.entityType = entityType;
+        this.requestDtoClass = requestDtoClass;
+        this.responseDtoClass = responseDtoClass;
     }
-
-    /**
-     * Retorna la clase del DTO utilizado por este controlador.
-     * Las subclases deben implementar este método para especificar su tipo de DTO.
-     *
-     * @return La clase del DTO
-     */
-
-    protected abstract Class<T> getDtoClass();
 
     /**
      * Obtiene el servicio CRUD correspondiente al entityType de este controlador.
@@ -52,55 +48,55 @@ public abstract class BaseController<T extends BaseDto, ID> {
      *
      * @return El servicio CRUD para este controlador
      */
-     protected CrudOperations<T, T, ID> getService() {
-         return serviceFactory.getService(entityType, getDtoClass());
+     protected CrudOperations<DReq, DRes, ID> getService() {
+         return serviceFactory.getService(entityType, requestDtoClass);
      }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<T>> create(@Valid @RequestBody T dto) {
-        CrudOperations<T, T, ID> service = getService();
-        CrudResponseDto<T> response = service.create(dto);
+    public ResponseEntity<CrudResponseDto<DRes>> create(@Valid @RequestBody DReq dto) {
+        CrudOperations<DReq, DRes, ID> service = getService();
+        CrudResponseDto<DRes> response = service.create(dto);
         log.info("Response: {}", response);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CrudResponseDto<Optional<T>>> findById(@PathVariable ID id) {
-        CrudOperations<T, T, ID> service = getService();
-        CrudResponseDto<Optional<T>> response = service.findById(id);
+    public ResponseEntity<CrudResponseDto<Optional<DRes>>> findById(@PathVariable ID id) {
+        CrudOperations<DReq, DRes, ID> service = getService();
+        CrudResponseDto<Optional<DRes>> response = service.findById(id);
 
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<CrudResponseDto<List<T>>> findAll() {
-        CrudOperations<T, T, ID> service = getService();
-        CrudResponseDto<List<T>> response = service.findAll();
+    public ResponseEntity<CrudResponseDto<List<DRes>>> findAll() {
+        CrudOperations<DReq, DRes, ID> service = getService();
+        CrudResponseDto<List<DRes>> response = service.findAll();
 
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CrudResponseDto<T>> update(@PathVariable ID id, @Valid @RequestBody T dto) {
+    public ResponseEntity<CrudResponseDto<DRes>> update(@PathVariable ID id, @Valid @RequestBody DReq dto) {
         if (id == null) {
             throw new ValidationException("ID cannot be null");
         }
 
         // Asumimos que el DTO tiene un método setId que acepta Long
-        (dto).setId((Long) id);
+//        (dto).setId((Long) id);
 
-        CrudOperations<T, T, ID> service = getService();
-        CrudResponseDto<T> response = service.update(dto);
+        CrudOperations<DReq, DRes, ID> service = getService();
+        CrudResponseDto<DRes> response = service.update(dto, id);
 
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CrudResponseDto<T>> delete(@PathVariable ID id) {
-        CrudOperations<T, T, ID> service = getService();
-        CrudResponseDto<T> response = service.deleteById(id);
+    public ResponseEntity<CrudResponseDto<DRes>> delete(@PathVariable ID id) {
+        CrudOperations<DReq, DRes, ID> service = getService();
+        CrudResponseDto<DRes> response = service.deleteById(id);
 
         return ResponseEntity.ok(response);
     }

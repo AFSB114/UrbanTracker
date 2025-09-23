@@ -25,9 +25,9 @@ export default function NewRoutePage() {
         alert('Datos inválidos para guardar la ruta');
         return;
       }
-      await createRouteWithWaypoints(req);
+      // await createRouteWithWaypoints(req);
       alert('Ruta creada correctamente');
-      router.push("/Dashboard/routes");
+      // router.push("/Dashboard/routes");
     } catch (err) {
       console.error('Error creando ruta', err);
       alert('Error al crear la ruta');
