@@ -20,7 +20,7 @@ import java.util.Optional;
 /**
  * Controlador base genérico que proporciona operaciones CRUD comunes.
  * Utiliza el patrón Factory para obtener servicios específicos basados en EntityType.
- * Las subclases deben proporcionar los tipos de DTO de request/response y la lógica específica.
+ * Las subclases deben proporcionar los tipos de DTO de request/response en el constructor.
  *
  * @param <DReq> El tipo del DTO de request que extiende BaseDto
  * @param <DRes> El tipo del DTO de response que extiende BaseDto
@@ -30,29 +30,17 @@ import java.util.Optional;
 public abstract class BaseController<DReq extends BaseDto, DRes extends BaseDto, ID> {
 
     protected final ServiceFactory serviceFactory;
-
     protected final EntityType entityType;
+    protected final Class<DReq> requestDtoClass;
+    protected final Class<DRes> responseDtoClass;
 
-    public BaseController(ServiceFactory serviceFactory, EntityType entityType) {
+    public BaseController(ServiceFactory serviceFactory, EntityType entityType,
+                         Class<DReq> requestDtoClass, Class<DRes> responseDtoClass) {
         this.serviceFactory = serviceFactory;
         this.entityType = entityType;
+        this.requestDtoClass = requestDtoClass;
+        this.responseDtoClass = responseDtoClass;
     }
-
-    /**
-     * Retorna la clase del DTO de request utilizado por este controlador.
-     * Las subclases deben implementar este método para especificar su tipo de DTO de request.
-     *
-     * @return La clase del DTO de request
-     */
-    protected abstract Class<DReq> getRequestDtoClass();
-
-    /**
-     * Retorna la clase del DTO de response utilizado por este controlador.
-     * Las subclases deben implementar este método para especificar su tipo de DTO de response.
-     *
-     * @return La clase del DTO de response
-     */
-    protected abstract Class<DRes> getResponseDtoClass();
 
     /**
      * Obtiene el servicio CRUD correspondiente al entityType de este controlador.
@@ -61,7 +49,7 @@ public abstract class BaseController<DReq extends BaseDto, DRes extends BaseDto,
      * @return El servicio CRUD para este controlador
      */
      protected CrudOperations<DReq, DRes, ID> getService() {
-         return serviceFactory.getService(entityType, getRequestDtoClass());
+         return serviceFactory.getService(entityType, requestDtoClass);
      }
 
     @PostMapping

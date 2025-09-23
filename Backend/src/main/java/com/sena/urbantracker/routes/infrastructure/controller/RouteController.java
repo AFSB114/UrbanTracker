@@ -17,18 +17,8 @@ public class RouteController extends BaseController<BaseRouteReqDto, RouteDto, L
     private final RouteService routeService;
 
     public RouteController(ServiceFactory serviceFactory, RouteService routeService) {
-        super(serviceFactory, EntityType.ROUTE);
+        super(serviceFactory, EntityType.ROUTE, BaseRouteReqDto.class, RouteDto.class);
         this.routeService = routeService;
-    }
-
-    @Override
-    protected Class<BaseRouteReqDto> getRequestDtoClass() {
-        return BaseRouteReqDto.class;
-    }
-
-    @Override
-    protected Class<RouteDto> getResponseDtoClass() {
-        return RouteDto.class;
     }
 
     /**

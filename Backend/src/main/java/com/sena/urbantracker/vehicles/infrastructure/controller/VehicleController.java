@@ -14,17 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class VehicleController extends BaseController<VehicleDto, VehicleDto, Long> {
 
     public VehicleController(ServiceFactory serviceFactory) {
-        super(serviceFactory, EntityType.VEHICLE);
-    }
-
-    @Override
-    protected Class<VehicleDto> getRequestDtoClass() {
-        return VehicleDto.class;
-    }
-
-    @Override
-    protected Class<VehicleDto> getResponseDtoClass() {
-        return VehicleDto.class;
+        super(serviceFactory, EntityType.VEHICLE, VehicleDto.class, VehicleDto.class);
     }
 
 }

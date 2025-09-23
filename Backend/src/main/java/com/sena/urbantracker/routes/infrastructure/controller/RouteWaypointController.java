@@ -21,18 +21,8 @@ public class RouteWaypointController extends BaseController<BaseRouteWaypointReq
     private final RouteWaypointService routeWaypointService;
 
     public RouteWaypointController(ServiceFactory serviceFactory, RouteWaypointService routeWaypointService) {
-        super(serviceFactory, EntityType.ROUTE_WAYPOINT);
+        super(serviceFactory, EntityType.ROUTE_WAYPOINT, BaseRouteWaypointReqDto.class, RouteWaypointDto.class);
         this.routeWaypointService = routeWaypointService;
-    }
-
-    @Override
-    protected Class<BaseRouteWaypointReqDto> getRequestDtoClass() {
-        return BaseRouteWaypointReqDto.class;
-    }
-
-    @Override
-    protected Class<RouteWaypointDto> getResponseDtoClass() {
-        return RouteWaypointDto.class;
     }
 
     @GetMapping("/route/{routeId}")
