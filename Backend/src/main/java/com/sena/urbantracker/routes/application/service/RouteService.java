@@ -33,8 +33,9 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
         return (IRoute) repositoryFactory.createRepository(EntityType.ROUTE, RouteDomain.class);
     }
 
-    private RouteWaypointService getRouteWaypointService() {
-        return serviceFactory.createCrudService(EntityType.ROUTE_WAYPOINT);
+    @SuppressWarnings("unchecked")
+    private CrudOperations<RouteWaypointReqDto, RouteWaypointResDto, Long> getRouteWaypointService() {
+        return (CrudOperations<RouteWaypointReqDto, RouteWaypointResDto, Long>) serviceFactory.createCrudService(EntityType.ROUTE_WAYPOINT);
     }
 
     @Override
