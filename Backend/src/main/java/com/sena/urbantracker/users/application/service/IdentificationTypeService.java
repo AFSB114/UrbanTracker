@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class IdentificationTypeService implements CrudOperations<IdentificationTypeDto, Long> {
+public class IdentificationTypeService implements CrudOperations<IdentificationTypeDto, IdentificationTypeDto, Long> {
 
     private final IIdentificationType identificationTypeRepository;
 

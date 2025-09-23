@@ -9,6 +9,7 @@ public enum EntityType {
     COMPANY("Company", "companies"),
     IDENTIFICATION_TYPE("Identification Type", "identificationTypes"),
     USER_IDENTIFICATION("User Identification", "userIdentifications"),
+    USER_PROFILE("User Profile", "userProfiles"),
     ROUTE("Route", "routes"),
     ROUTE_WAYPOINT("Route Waypoint", "routeWaypoints"),
     USER("User", "users"),

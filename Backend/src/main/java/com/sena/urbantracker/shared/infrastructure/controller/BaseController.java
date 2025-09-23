@@ -52,14 +52,14 @@ public abstract class BaseController<T extends BaseDto, ID> {
      *
      * @return El servicio CRUD para este controlador
      */
-     protected CrudOperations<T, ID> getService() {
+     protected CrudOperations<T, T, ID> getService() {
          return serviceFactory.getService(entityType, getDtoClass());
      }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CrudResponseDto<T>> create(@Valid @RequestBody T dto) {
-        CrudOperations<T, ID> service = getService();
+        CrudOperations<T, T, ID> service = getService();
         CrudResponseDto<T> response = service.create(dto);
         log.info("Response: {}", response);
 
@@ -68,7 +68,7 @@ public abstract class BaseController<T extends BaseDto, ID> {
 
     @GetMapping("/{id}")
     public ResponseEntity<CrudResponseDto<Optional<T>>> findById(@PathVariable ID id) {
-        CrudOperations<T, ID> service = getService();
+        CrudOperations<T, T, ID> service = getService();
         CrudResponseDto<Optional<T>> response = service.findById(id);
 
         return ResponseEntity.ok(response);
@@ -76,7 +76,7 @@ public abstract class BaseController<T extends BaseDto, ID> {
 
     @GetMapping
     public ResponseEntity<CrudResponseDto<List<T>>> findAll() {
-        CrudOperations<T, ID> service = getService();
+        CrudOperations<T, T, ID> service = getService();
         CrudResponseDto<List<T>> response = service.findAll();
 
         return ResponseEntity.ok(response);
@@ -91,7 +91,7 @@ public abstract class BaseController<T extends BaseDto, ID> {
         // Asumimos que el DTO tiene un método setId que acepta Long
         (dto).setId((Long) id);
 
-        CrudOperations<T, ID> service = getService();
+        CrudOperations<T, T, ID> service = getService();
         CrudResponseDto<T> response = service.update(dto);
 
         return ResponseEntity.ok(response);
@@ -99,7 +99,7 @@ public abstract class BaseController<T extends BaseDto, ID> {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<CrudResponseDto<T>> delete(@PathVariable ID id) {
-        CrudOperations<T, ID> service = getService();
+        CrudOperations<T, T, ID> service = getService();
         CrudResponseDto<T> response = service.deleteById(id);
 
         return ResponseEntity.ok(response);

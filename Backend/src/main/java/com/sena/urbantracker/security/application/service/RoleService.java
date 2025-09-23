@@ -18,7 +18,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RoleService implements CrudOperations<RoleDto, Long> {
+public class RoleService implements CrudOperations<RoleDto, RoleDto, Long> {
 
     private final RoleRepository roleRepository;
 

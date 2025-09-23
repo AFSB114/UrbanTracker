@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class VehicleService implements CrudOperations<VehicleDto, Long>{
+public class VehicleService implements CrudOperations<VehicleDto, VehicleDto, Long>{
 
     private final IVehicle vehicleRepository;
 

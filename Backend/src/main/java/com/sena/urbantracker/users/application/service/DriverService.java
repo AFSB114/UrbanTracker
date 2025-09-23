@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class DriverService implements CrudOperations<DriverDto, Long> {
+public class DriverService implements CrudOperations<DriverDto, DriverDto, Long> {
 
     private final IDriver driverRepository;
 

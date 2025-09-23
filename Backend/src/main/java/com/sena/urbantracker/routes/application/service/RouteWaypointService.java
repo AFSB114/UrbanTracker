@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class RouteWaypointService implements CrudOperations<RouteWaypointDto, Long> {
+public class RouteWaypointService implements CrudOperations<RouteWaypointDto, RouteWaypointDto, Long> {
 
     private final IRouteWaypoint routeWaypointRepository;
     private final IRoute routeRepository;
