@@ -47,7 +47,7 @@ public class CompanyService implements CrudOperations<CompanyDTO, Long> {
     }
 
     @Override
-    public CrudResponseDto<CompanyDTO> update(CompanyDTO dto) {
+    public CrudResponseDto<CompanyDTO> update(CompanyDTO dto, Object id) {
         Company company = companyRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + dto.getId() + " no encontrada."));
 

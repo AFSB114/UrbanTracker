@@ -13,7 +13,7 @@ public interface CrudOperations<DReq, DRes, ID> {
 
     CrudResponseDto <List<DRes>> findAll();
 
-    CrudResponseDto <DRes> update(DReq request);
+    CrudResponseDto <DRes> update(DReq request, ID id);
 
     CrudResponseDto<DRes> deleteById(ID id);
 

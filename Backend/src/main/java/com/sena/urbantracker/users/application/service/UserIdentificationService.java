@@ -45,7 +45,7 @@ public class UserIdentificationService implements CrudOperations<UserIdentificat
     }
 
     @Override
-    public CrudResponseDto<UserIdentificationDto> update(UserIdentificationDto dto) {
+    public CrudResponseDto<UserIdentificationDto> update(UserIdentificationDto dto, Object id) {
         UserIdentification userIdentification = userIdentificationRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Identificación de usuario con id " + dto.getId() + " no encontrada."));
 

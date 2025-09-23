@@ -1,8 +1,7 @@
 package com.sena.urbantracker.routes.application.service;
 
-import com.sena.urbantracker.routes.application.dto.BaseRouteDto;
 import com.sena.urbantracker.routes.application.dto.request.RouteReqDto;
-import com.sena.urbantracker.routes.application.dto.response.RouteDto;
+import com.sena.urbantracker.routes.application.dto.response.RouteResDto;
 import com.sena.urbantracker.routes.application.mapper.RouteMapper;
 import com.sena.urbantracker.routes.domain.entity.RouteDomain;
 import com.sena.urbantracker.routes.domain.repository.IRoute;
@@ -33,6 +32,10 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
         return (IRoute) repositoryFactory.createRepository(EntityType.ROUTE, RouteDomain.class);
     }
 
+    private RouteWaypointService getRouteWaypointService() {
+        return (RouteWaypointService) serviceFactory.createService(EntityType.ROUTE_WAYPOINT);
+    }
+
     @Override
     public CrudResponseDto<RouteResDto> create(RouteReqDto request) {
         Integer numberRouteInt = Integer.valueOf(request.getNumberRoute());
@@ -42,6 +45,13 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
 
         RouteDomain entity = RouteMapper.toEntity(request);
         RouteDomain saved = getRouteRepository().save(entity);
+
+        // Create waypoints for the route
+        for (RouteWaypointReqDto waypointDto : request.getWaypoints()) {
+            waypointDto.setRouteId(saved.getId());
+            getRouteWaypointService().create(waypointDto);
+        }
+
         return CrudResponseDto.success(RouteMapper.toDto(saved), "Ruta creada correctamente");
     }
 
@@ -55,7 +65,7 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
 
     @Override
     public CrudResponseDto<List<RouteResDto>> findAll() {
-        List<BaseRouteDto> dtos = getRouteRepository().findAll()
+        List<RouteResDto> dtos = getRouteRepository().findAll()
                 .stream()
                 .map(RouteMapper::toDto)
                 .toList();
@@ -64,13 +74,13 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
     }
 
     @Override
-    public CrudResponseDto<RouteResDto> update(RouteReqDto request) {
-        RouteDomain route = getRouteRepository().findById(dto.getId())
+    public CrudResponseDto<RouteResDto> update(RouteReqDto request, Long id) {
+        RouteDomain route = getRouteRepository().findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Ruta no encontrada."));
 
-        route.setNumberRoute(Integer.valueOf(dto.getNumberRoute()));
-        route.setDescription(dto.getDescription());
-        route.setTotalDistance(dto.getTotalDistance());
+        route.setNumberRoute(Integer.valueOf(request.getNumberRoute()));
+        route.setDescription(request.getDescription());
+        route.setTotalDistance(request.getTotalDistance());
 
         RouteDomain updated = getRouteRepository().save(route);
         return CrudResponseDto.success(RouteMapper.toDto(updated), "Ruta actualizada correctamente");

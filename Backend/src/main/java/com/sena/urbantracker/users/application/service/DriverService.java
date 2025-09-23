@@ -45,7 +45,7 @@ public class DriverService implements CrudOperations<DriverDto, Long> {
     }
 
     @Override
-    public CrudResponseDto<DriverDto> update(DriverDto dto) {
+    public CrudResponseDto<DriverDto> update(DriverDto dto, Object id) {
         Driver driver = driverRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Conductor con id " + dto.getId() + " no encontrado."));
 

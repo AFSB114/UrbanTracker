@@ -44,7 +44,7 @@ public class IdentificationTypeService implements CrudOperations<IdentificationT
     }
 
     @Override
-    public CrudResponseDto<IdentificationTypeDto> update(IdentificationTypeDto dto) {
+    public CrudResponseDto<IdentificationTypeDto> update(IdentificationTypeDto dto, Object id) {
         IdentificationType identificationType = identificationTypeRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de identificación con id " + dto.getId() + " no encontrado."));
 

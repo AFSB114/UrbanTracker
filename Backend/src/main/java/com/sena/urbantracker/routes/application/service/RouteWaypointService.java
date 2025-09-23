@@ -38,16 +38,6 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto,
         return (IRoute) repositoryFactory.createRepository(EntityType.ROUTE, RouteDomain.class);
     }
 
-    public RouteWaypointDto toDtoNew(RouteWaypointForRouteReqDto dto, RouteDomain route) {
-        return RouteWaypointDto.builder()
-                .routeId(route.getId())
-                .sequence(dto.getSequence())
-                .latitude(dto.getLatitude())
-                .longitude(dto.getLongitude())
-                .type(dto.getType())
-                .build();
-    }
-
     @Override
     public CrudResponseDto<RouteWaypointResDto> create(RouteWaypointReqDto dto) {
         RouteDomain route = getRouteRepository().findById(dto.getRouteId())
@@ -64,7 +54,7 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto,
     }
 
     @Override
-    public CrudResponseDto<Optional<RouteWaypointDto>> findById(Long id) {
+    public CrudResponseDto<Optional<RouteWaypointResDto>> findById(Long id) {
         RouteWaypointDomain waypoint = getRouteWaypointRepository().findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Punto de ruta con id " + id + " no encontrado."));
 
@@ -72,8 +62,8 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto,
     }
 
     @Override
-    public CrudResponseDto<List<RouteWaypointDto>> findAll() {
-        List<RouteWaypointDto> dtos = getRouteWaypointRepository().findAll()
+    public CrudResponseDto<List<RouteWaypointResDto>> findAll() {
+        List<RouteWaypointResDto> dtos = getRouteWaypointRepository().findAll()
                 .stream()
                 .map(RouteWaypointMapper::toDto)
                 .toList();
@@ -82,8 +72,8 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto,
     }
 
     @Override
-    public CrudResponseDto<RouteWaypointDto> update(RouteWaypointReqDto dto) {
-        RouteWaypointDomain waypoint = getRouteWaypointRepository().findById(dto.getId())
+    public CrudResponseDto<RouteWaypointResDto> update(RouteWaypointReqDto dto, Long id) {
+        RouteWaypointDomain waypoint = getRouteWaypointRepository().findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Punto de ruta no encontrado."));
 
         RouteDomain route = getRouteRepository().findById(dto.getRouteId())
@@ -99,7 +89,7 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto,
     }
 
     @Override
-    public CrudResponseDto<RouteWaypointDto> deleteById(Long id) {
+    public CrudResponseDto<RouteWaypointResDto> deleteById(Long id) {
         if (!getRouteWaypointRepository().existsById(id)) {
             throw new EntityNotFoundException("Punto de ruta no encontrado.");
         }
@@ -109,38 +99,18 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto,
     }
 
     @Override
-    public CrudResponseDto<RouteWaypointDto> activateById(Long id) {
+    public CrudResponseDto<RouteWaypointResDto> activateById(Long id) {
         throw new UnsupportedOperationException("RouteWaypoint does not support activation/deactivation");
     }
 
     @Override
-    public CrudResponseDto<RouteWaypointDto> deactivateById(Long id) {
+    public CrudResponseDto<RouteWaypointResDto> deactivateById(Long id) {
         throw new UnsupportedOperationException("RouteWaypoint does not support activation/deactivation");
     }
 
     @Override
     public CrudResponseDto<Boolean> existsById(Long id) {
         return CrudResponseDto.success(getRouteWaypointRepository().existsById(id), "Verificación de existencia completada");
-    }
-
-    public CrudResponseDto<List<RouteWaypointDto>> findByRouteId(Long routeId) {
-        List<RouteWaypointDomain> waypoints = getRouteWaypointRepository().findByRouteId(routeId);
-        List<RouteWaypointDto> dtos = convertToDtoList(waypoints);
-        return CrudResponseDto.success(dtos, "Puntos de ruta encontrados para la ruta: " + routeId);
-    }
-
-    public List<RouteWaypointDto> convertToDtoList(List<RouteWaypointDomain> entities) {
-        return entities.stream()
-                .map(RouteWaypointMapper::toDto)
-                .toList();
-    }
-
-    public List<RouteWaypointDto> findByRoute(Long routeId) {
-        RouteDomain route = getRouteRepository().findById(routeId)
-                .orElseThrow(() -> new EntityNotFoundException("Ruta no encontrada."));
-
-        List<RouteWaypointDomain> entities = getRouteWaypointRepository().findByRouteId(routeId);
-        return convertToDtoList(entities);
     }
 
 }

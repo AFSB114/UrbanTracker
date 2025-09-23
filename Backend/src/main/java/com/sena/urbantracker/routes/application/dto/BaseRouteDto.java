@@ -24,6 +24,6 @@ public abstract class BaseRouteDto {
     private Double totalDistance;
 
     @NotBlank(message = "Los puntos de ruta son obligatorios")
-    private RouteWaypointReqDto waypoint;
+    private List<RouteWaypointReqDto> waypoints;
 }
 

@@ -53,7 +53,7 @@ public class VehicleService implements CrudOperations<VehicleDto, Long>{
 
 
     @Override
-    public CrudResponseDto<VehicleDto> update(VehicleDto dto) {
+    public CrudResponseDto<VehicleDto> update(VehicleDto dto, Object id) {
         Vehicle vehicle = vehicleRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Vehículo no encontrado."));
 

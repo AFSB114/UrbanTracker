@@ -92,7 +92,7 @@ public abstract class BaseController<T extends BaseDto, ID> {
         (dto).setId((Long) id);
 
         CrudOperations<T, ID> service = getService();
-        CrudResponseDto<T> response = service.update(dto);
+        CrudResponseDto<T> response = service.update(dto, 0);
 
         return ResponseEntity.ok(response);
     }

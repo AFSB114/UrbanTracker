@@ -56,7 +56,7 @@ public class RoleService implements CrudOperations<RoleDto, Long> {
 
 
     @Override
-    public CrudResponseDto<RoleDto> update(RoleDto dto) {
+    public CrudResponseDto<RoleDto> update(RoleDto dto, Object id) {
         Role role = roleRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Rol con id " + dto.getId() + " no encontrado."));
 
