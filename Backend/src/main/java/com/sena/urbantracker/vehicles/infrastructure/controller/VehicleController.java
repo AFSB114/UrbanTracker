@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/vehicle")
+@RequestMapping("/api/v1/public/vehicle")
 @PreAuthorize("hasRole('DRIVER')")
 public class VehicleController extends BaseController<VehicleDto, VehicleDto, Long> {
 
