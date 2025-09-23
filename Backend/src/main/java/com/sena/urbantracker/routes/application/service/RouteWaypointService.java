@@ -12,7 +12,6 @@ import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundExcep
 import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
-import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.shared.application.service.RepositoryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
@@ -25,8 +24,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto, RouteWaypointResDto, Long> {
 
-    @Lazy
-    private final ServiceFactory serviceFactory;
     @Lazy
     private final RepositoryFactory repositoryFactory;
 

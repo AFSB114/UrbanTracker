@@ -3,16 +3,17 @@ package com.sena.urbantracker.routes.application.service;
 import com.sena.urbantracker.routes.application.dto.request.RouteReqDto;
 import com.sena.urbantracker.routes.application.dto.request.RouteWaypointReqDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteResDto;
-import com.sena.urbantracker.routes.application.dto.response.RouteWaypointResDto;
 import com.sena.urbantracker.routes.application.mapper.RouteMapper;
+import com.sena.urbantracker.routes.application.mapper.RouteWaypointMapper;
 import com.sena.urbantracker.routes.domain.entity.RouteDomain;
+import com.sena.urbantracker.routes.domain.entity.RouteWaypointDomain;
 import com.sena.urbantracker.routes.domain.repository.IRoute;
+import com.sena.urbantracker.routes.domain.repository.IRouteWaypoint;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
-import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.shared.application.service.RepositoryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
@@ -26,17 +27,14 @@ import java.util.Optional;
 public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Long> {
 
     @Lazy
-    private final ServiceFactory serviceFactory;
-    @Lazy
     private final RepositoryFactory repositoryFactory;
 
     private IRoute getRouteRepository() {
         return (IRoute) repositoryFactory.createRepository(EntityType.ROUTE, RouteDomain.class);
     }
 
-    @SuppressWarnings("unchecked")
-    private CrudOperations<RouteWaypointReqDto, RouteWaypointResDto, Long> getRouteWaypointService() {
-        return serviceFactory.createCrudService(EntityType.ROUTE_WAYPOINT);
+    private IRouteWaypoint getRouteWaypointRepository() {
+        return (IRouteWaypoint) repositoryFactory.createRepository(EntityType.ROUTE_WAYPOINT, RouteWaypointDomain.class);
     }
 
     @Override
@@ -51,8 +49,8 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
 
         // Create waypoints for the route
         for (RouteWaypointReqDto waypointDto : request.getWaypoints()) {
-            waypointDto.setRouteId(saved.getId());
-            getRouteWaypointService().create(waypointDto);
+            RouteWaypointDomain waypointDomain = RouteWaypointMapper.toEntity(waypointDto, saved);
+            getRouteWaypointRepository().save(waypointDomain);
         }
 
         return CrudResponseDto.success(RouteMapper.toDto(saved), "Ruta creada correctamente");
