@@ -34,7 +34,7 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
     }
 
     private RouteWaypointService getRouteWaypointService() {
-        return (RouteWaypointService) serviceFactory.createCrudService(EntityType.ROUTE_WAYPOINT);
+        return serviceFactory.createCrudService(EntityType.ROUTE_WAYPOINT);
     }
 
     @Override
@@ -47,6 +47,7 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
         RouteDomain entity = RouteMapper.toEntity(request);
         RouteDomain saved = getRouteRepository().save(entity);
 
+        // Create waypoints for the route
         for (RouteWaypointReqDto waypointDto : request.getWaypoints()) {
             waypointDto.setRouteId(saved.getId());
             getRouteWaypointService().create(waypointDto);

@@ -25,15 +25,16 @@ public class RouteWaypointPersistenceMapper {
         if (model == null) return null;
         return RouteWaypointDomain.builder()
                 .id(model.getId())
-                .routeId(model.getRoute().getId())
+                .routeId(model.getRoute() != null ? model.getRoute().getId() : null)
                 .sequence(model.getSequence())
                 .latitude(model.getLatitude())
                 .longitude(model.getLongitude())
                 .type(model.getType())
-                .active(true) // Assuming active
+                .destine(model.getDestine())
+                .active(true) // Assuming active, or map from model if available
                 .createdAt(model.getCreatedAt())
                 .updatedAt(model.getUpdatedAt())
-                .route(RoutePersistenceMapper.toDomain(model.getRoute()))
+                .route(model.getRoute() != null ? RoutePersistenceMapper.toDomain(model.getRoute()) : null)
                 .build();
     }
 }

@@ -20,12 +20,7 @@ public class RouteWaypointMapper {
     }
 
     public static RouteWaypointDomain toEntity(RouteWaypointReqDto dto, RouteDomain route) {
-        RouteWaypointDomain entity = new RouteWaypointDomain();
-        entity.setRoute(route);
-        entity.setSequence(dto.getSequence());
-        entity.setLatitude(dto.getLatitude());
-        entity.setLongitude(dto.getLongitude());
-        entity.setType(dto.getType());
+        if (dto == null) return null;
         return RouteWaypointDomain.builder()
                 .route(route)
                 .sequence(dto.getSequence())
@@ -33,6 +28,7 @@ public class RouteWaypointMapper {
                 .longitude(dto.getLongitude())
                 .type(dto.getType())
                 .destine(dto.getDestine())
+                .active(true)
                 .build();
     }
 }
