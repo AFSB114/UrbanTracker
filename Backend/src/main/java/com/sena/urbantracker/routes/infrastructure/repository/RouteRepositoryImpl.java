@@ -4,6 +4,7 @@ import com.sena.urbantracker.routes.domain.entity.RouteDomain;
 import com.sena.urbantracker.routes.domain.repository.IRoute;
 import com.sena.urbantracker.routes.infrastructure.persistence.mapper.RoutePersistenceMapper;
 import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteModel;
+import com.sena.urbantracker.shared.domain.repository.RepositoryOperations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class RouteRepositoryImpl implements IRoute {
+public class RouteRepositoryImpl implements IRoute, RepositoryOperations<RouteDomain, Long> {
 
     private final RouteJpaRepository jpaRepository;
 

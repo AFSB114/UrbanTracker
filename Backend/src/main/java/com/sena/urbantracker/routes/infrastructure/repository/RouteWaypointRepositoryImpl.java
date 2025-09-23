@@ -7,6 +7,7 @@ import com.sena.urbantracker.routes.infrastructure.persistence.mapper.RoutePersi
 import com.sena.urbantracker.routes.infrastructure.persistence.mapper.RouteWaypointPersistenceMapper;
 import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteModel;
 import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteWaypointModel;
+import com.sena.urbantracker.shared.domain.repository.RepositoryOperations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class RouteWaypointRepositoryImpl implements IRouteWaypoint {
+public class RouteWaypointRepositoryImpl implements IRouteWaypoint, RepositoryOperations<RouteWaypointDomain, Long> {
 
     private final RouteWaypointJpaRepository jpaRepository;
 

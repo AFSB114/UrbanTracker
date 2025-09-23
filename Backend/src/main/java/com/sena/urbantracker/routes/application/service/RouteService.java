@@ -3,6 +3,7 @@ package com.sena.urbantracker.routes.application.service;
 import com.sena.urbantracker.routes.application.dto.request.RouteReqDto;
 import com.sena.urbantracker.routes.application.dto.request.RouteWaypointReqDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteResDto;
+import com.sena.urbantracker.routes.application.dto.response.RouteWaypointResDto;
 import com.sena.urbantracker.routes.application.mapper.RouteMapper;
 import com.sena.urbantracker.routes.domain.entity.RouteDomain;
 import com.sena.urbantracker.routes.domain.repository.IRoute;
@@ -35,7 +36,7 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
 
     @SuppressWarnings("unchecked")
     private CrudOperations<RouteWaypointReqDto, RouteWaypointResDto, Long> getRouteWaypointService() {
-        return (CrudOperations<RouteWaypointReqDto, RouteWaypointResDto, Long>) serviceFactory.createCrudService(EntityType.ROUTE_WAYPOINT);
+        return serviceFactory.createCrudService(EntityType.ROUTE_WAYPOINT);
     }
 
     @Override
