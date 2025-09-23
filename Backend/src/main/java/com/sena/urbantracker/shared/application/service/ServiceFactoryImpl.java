@@ -8,7 +8,10 @@ import com.sena.urbantracker.users.application.service.CompanyService;
 import com.sena.urbantracker.users.application.service.DriverService;
 import com.sena.urbantracker.users.application.service.IdentificationTypeService;
 import com.sena.urbantracker.users.application.service.UserIdentificationService;
+import com.sena.urbantracker.users.application.service.UserProfileService;
 import com.sena.urbantracker.vehicles.application.service.VehicleService;
+import com.sena.urbantracker.vehicles.application.service.VehicleTypeService;
+import com.sena.urbantracker.vehicles.application.service.VehicleAssigmentService;
 import com.sena.urbantracker.routes.application.service.RouteService;
 import com.sena.urbantracker.routes.application.service.RouteWaypointService;
 import jakarta.annotation.PostConstruct;
@@ -27,6 +30,8 @@ import java.util.Map;
 public class ServiceFactoryImpl implements ServiceFactory {
 
     private final VehicleService vehicleService;
+    private final VehicleTypeService vehicleTypeService;
+    private final VehicleAssigmentService vehicleAssigmentService;
     private final DriverService driverService;
     private final CompanyService companyService;
     private final IdentificationTypeService identificationTypeService;
@@ -42,11 +47,18 @@ public class ServiceFactoryImpl implements ServiceFactory {
         Map<EntityType, CrudOperations<?, ?, ?>> map = new EnumMap<>(EntityType.class);
 
         map.put(EntityType.VEHICLE, vehicleService);
+        map.put(EntityType.VEHICLE_TYPE, vehicleTypeService);
+        map.put(EntityType.VEHICLE_ASSIGMENT, vehicleAssigmentService);
         map.put(EntityType.DRIVER, driverService);
         map.put(EntityType.COMPANY, companyService);
         map.put(EntityType.IDENTIFICATION_TYPE, identificationTypeService);
         map.put(EntityType.USER_IDENTIFICATION, userIdentificationService);
+<<<<<<< HEAD
 //        map.put(EntityType.ROLE, roleService);
+=======
+        map.put(EntityType.USER_PROFILE, userProfileService);
+        map.put(EntityType.ROLE, roleService);
+>>>>>>> f252bb3a6785026041a2d2e63fe8ac835006ca26
         map.put(EntityType.ROUTE, routeService);
         map.put(EntityType.ROUTE_WAYPOINT, routeWaypointService);
 
@@ -60,7 +72,11 @@ public class ServiceFactoryImpl implements ServiceFactory {
 
     @SuppressWarnings("unchecked")
     @Override
+<<<<<<< HEAD
     public <DReq, DRes, ID> CrudOperations<DReq, DRes, ID> createCrudService(EntityType entityType) {
+=======
+    public <T, ID> CrudOperations<T, T, ID> createCrudService(EntityType entityType) {
+>>>>>>> f252bb3a6785026041a2d2e63fe8ac835006ca26
         CrudOperations<?, ?, ?> service = crudServices.get(entityType);
         if (service == null) {
             throw new FactoryException(
@@ -71,7 +87,11 @@ public class ServiceFactoryImpl implements ServiceFactory {
         }
         try {
             @SuppressWarnings("unchecked")
+<<<<<<< HEAD
             CrudOperations<DReq, DRes, ID> typedService = (CrudOperations<DReq, DRes, ID>) service;
+=======
+            CrudOperations<T, T, ID> typedService = (CrudOperations<T, T, ID>) service;
+>>>>>>> f252bb3a6785026041a2d2e63fe8ac835006ca26
             log.debug("[Factory] Servicio CRUD obtenido para {} -> {}",
                     entityType, typedService.getClass().getSimpleName());
             return typedService;
@@ -109,7 +129,11 @@ public class ServiceFactoryImpl implements ServiceFactory {
     }
 
     @Override
+<<<<<<< HEAD
     public <DReq, DRes, ID> CrudOperations<DReq, DRes, ID> getService(EntityType type, Class<DReq> dtoClass) {
+=======
+    public <T, ID> CrudOperations<T, T, ID> getService(EntityType type, Class<T> dtoClass) {
+>>>>>>> f252bb3a6785026041a2d2e63fe8ac835006ca26
         log.trace("[Factory] getService llamado con EntityType={}, DTO={}",  //logTrace: capturar información extremadamente detallada sobre la ejecución
                 type, dtoClass.getSimpleName());
         return createCrudService(type);

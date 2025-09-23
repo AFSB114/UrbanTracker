@@ -48,32 +48,55 @@ public abstract class BaseController<DReq , DRes , ID> {
      *
      * @return El servicio CRUD para este controlador
      */
+<<<<<<< HEAD
      protected CrudOperations<DReq, DRes, ID> getService() {
          return serviceFactory.getService(entityType, requestDtoClass);
+=======
+     protected CrudOperations<T, T, ID> getService() {
+         return serviceFactory.getService(entityType, getDtoClass());
+>>>>>>> f252bb3a6785026041a2d2e63fe8ac835006ca26
      }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+<<<<<<< HEAD
     public ResponseEntity<CrudResponseDto<DRes>> create(@Valid @RequestBody DReq dto) {
         CrudOperations<DReq, DRes, ID> service = getService();
         CrudResponseDto<DRes> response = service.create(dto);
+=======
+    public ResponseEntity<CrudResponseDto<T>> create(@Valid @RequestBody T dto) {
+        CrudOperations<T, T, ID> service = getService();
+        CrudResponseDto<T> response = service.create(dto);
+>>>>>>> f252bb3a6785026041a2d2e63fe8ac835006ca26
         log.info("Response: {}", response);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/{id}")
+<<<<<<< HEAD
     public ResponseEntity<CrudResponseDto<Optional<DRes>>> findById(@PathVariable ID id) {
         CrudOperations<DReq, DRes, ID> service = getService();
         CrudResponseDto<Optional<DRes>> response = service.findById(id);
+=======
+    public ResponseEntity<CrudResponseDto<Optional<T>>> findById(@PathVariable ID id) {
+        CrudOperations<T, T, ID> service = getService();
+        CrudResponseDto<Optional<T>> response = service.findById(id);
+>>>>>>> f252bb3a6785026041a2d2e63fe8ac835006ca26
 
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
+<<<<<<< HEAD
     public ResponseEntity<CrudResponseDto<List<DRes>>> findAll() {
         CrudOperations<DReq, DRes, ID> service = getService();
         CrudResponseDto<List<DRes>> response = service.findAll();
+=======
+    public ResponseEntity<CrudResponseDto<List<T>>> findAll() {
+        CrudOperations<T, T, ID> service = getService();
+        CrudResponseDto<List<T>> response = service.findAll();
+>>>>>>> f252bb3a6785026041a2d2e63fe8ac835006ca26
 
         return ResponseEntity.ok(response);
     }
@@ -87,16 +110,27 @@ public abstract class BaseController<DReq , DRes , ID> {
         // Asumimos que el DTO tiene un método setId que acepta Long
 //        (dto).setId((Long) id);
 
+<<<<<<< HEAD
         CrudOperations<DReq, DRes, ID> service = getService();
         CrudResponseDto<DRes> response = service.update(dto, id);
+=======
+        CrudOperations<T, T, ID> service = getService();
+        CrudResponseDto<T> response = service.update(dto);
+>>>>>>> f252bb3a6785026041a2d2e63fe8ac835006ca26
 
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
+<<<<<<< HEAD
     public ResponseEntity<CrudResponseDto<DRes>> delete(@PathVariable ID id) {
         CrudOperations<DReq, DRes, ID> service = getService();
         CrudResponseDto<DRes> response = service.deleteById(id);
+=======
+    public ResponseEntity<CrudResponseDto<T>> delete(@PathVariable ID id) {
+        CrudOperations<T, T, ID> service = getService();
+        CrudResponseDto<T> response = service.deleteById(id);
+>>>>>>> f252bb3a6785026041a2d2e63fe8ac835006ca26
 
         return ResponseEntity.ok(response);
     }
