@@ -1,9 +1,8 @@
 package com.sena.urbantracker.routes.application.service;
 
-import com.sena.urbantracker.routes.application.dto.request.RouteWaypointForRouteReqDto;
-import com.sena.urbantracker.routes.application.dto.request.RouteWithWaypointsReqDto;
+import com.sena.urbantracker.routes.application.dto.BaseRouteDto;
+import com.sena.urbantracker.routes.application.dto.request.RouteReqDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteDto;
-import com.sena.urbantracker.routes.application.dto.response.RouteWaypointDto;
 import com.sena.urbantracker.routes.application.mapper.RouteMapper;
 import com.sena.urbantracker.routes.domain.entity.RouteDomain;
 import com.sena.urbantracker.routes.domain.repository.IRoute;
@@ -23,7 +22,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class RouteService implements CrudOperations<RouteDto, Long> {
+public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Long> {
 
     @Lazy
     private final ServiceFactory serviceFactory;
@@ -34,45 +33,20 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
         return (IRoute) repositoryFactory.createRepository(EntityType.ROUTE, RouteDomain.class);
     }
 
-    public RouteWaypointDto toDtoNew(RouteWaypointForRouteReqDto dto, RouteDomain route) {
-        return RouteWaypointDto.builder()
-                .routeId(route.getId())
-                .sequence(dto.getSequence())
-                .latitude(dto.getLatitude())
-                .longitude(dto.getLongitude())
-                .type(dto.getType())
-                .build();
-    }
-
-    public void addRoute(RouteWithWaypointsReqDto dto) {
-        Integer numberRouteInt = Integer.valueOf(dto.getNumberRoute());
-        if (getRouteRepository().existsByNumberRoute(numberRouteInt))
-            throw new EntityAlreadyExistsException("Ya existe una ruta con número: " + dto.getNumberRoute());
-
-        RouteDomain route = RouteMapper.toEntity(dto);
-        getRouteRepository().save(route);
-        System.out.println("Ruta creada");
-        CrudOperations<RouteWaypointDto, Long> routeWaypointService = serviceFactory.createCrudService(EntityType.ROUTE_WAYPOINT);
-        for (RouteWaypointForRouteReqDto waypointDto : dto.getWaypoints()) {
-            RouteWaypointDto waypointDtoToCreate = toDtoNew(waypointDto, route);
-            routeWaypointService.create(waypointDtoToCreate);
-        }
-    }
-
     @Override
-    public CrudResponseDto<RouteDto> create(RouteDto dto) {
-        Integer numberRouteInt = Integer.valueOf(dto.getNumberRoute());
+    public CrudResponseDto<RouteResDto> create(RouteReqDto request) {
+        Integer numberRouteInt = Integer.valueOf(request.getNumberRoute());
         if (getRouteRepository().existsByNumberRoute(numberRouteInt)) {
-            throw new EntityAlreadyExistsException("Ya existe una ruta con número: " + dto.getNumberRoute());
+            throw new EntityAlreadyExistsException("Ya existe una ruta con número: " + request.getNumberRoute());
         }
 
-        RouteDomain entity = RouteMapper.toEntity(dto);
+        RouteDomain entity = RouteMapper.toEntity(request);
         RouteDomain saved = getRouteRepository().save(entity);
         return CrudResponseDto.success(RouteMapper.toDto(saved), "Ruta creada correctamente");
     }
 
     @Override
-    public CrudResponseDto<Optional<RouteDto>> findById(Long id) {
+    public CrudResponseDto<Optional<RouteResDto>> findById(Long id) {
         RouteDomain route = getRouteRepository().findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ruta con id " + id + " no encontrada."));
 
@@ -80,8 +54,8 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
     }
 
     @Override
-    public CrudResponseDto<List<RouteDto>> findAll() {
-        List<RouteDto> dtos = getRouteRepository().findAll()
+    public CrudResponseDto<List<RouteResDto>> findAll() {
+        List<BaseRouteDto> dtos = getRouteRepository().findAll()
                 .stream()
                 .map(RouteMapper::toDto)
                 .toList();
@@ -90,7 +64,7 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
     }
 
     @Override
-    public CrudResponseDto<RouteDto> update(RouteDto dto) {
+    public CrudResponseDto<RouteResDto> update(RouteReqDto request) {
         RouteDomain route = getRouteRepository().findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Ruta no encontrada."));
 
@@ -103,7 +77,7 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
     }
 
     @Override
-    public CrudResponseDto<RouteDto> deleteById(Long id) {
+    public CrudResponseDto<RouteResDto> deleteById(Long id) {
         if (!getRouteRepository().existsById(id)) {
             throw new EntityNotFoundException("Ruta no encontrada.");
         }
@@ -113,7 +87,7 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
     }
 
     @Override
-    public CrudResponseDto<RouteDto> activateById(Long id) {
+    public CrudResponseDto<RouteResDto> activateById(Long id) {
         RouteDomain route = getRouteRepository().findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ruta no encontrada."));
         route.setActive(true);
@@ -122,7 +96,7 @@ public class RouteService implements CrudOperations<RouteDto, Long> {
     }
 
     @Override
-    public CrudResponseDto<RouteDto> deactivateById(Long id) {
+    public CrudResponseDto<RouteResDto> deactivateById(Long id) {
         RouteDomain route = getRouteRepository().findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ruta no encontrada."));
         route.setActive(false);

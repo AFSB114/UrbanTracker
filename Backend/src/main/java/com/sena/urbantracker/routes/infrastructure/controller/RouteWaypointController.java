@@ -1,12 +1,10 @@
 package com.sena.urbantracker.routes.infrastructure.controller;
 
-import com.sena.urbantracker.routes.application.dto.response.RouteWaypointDto;
 import com.sena.urbantracker.routes.application.service.RouteWaypointService;
 import com.sena.urbantracker.shared.infrastructure.controller.BaseController;
 import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

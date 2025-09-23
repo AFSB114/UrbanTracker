@@ -7,13 +7,13 @@ import java.util.Optional;
 
 public interface CrudOperations<DReq, DRes, ID> {
 
-    CrudResponseDto<DRes> create(DReq dto);
+    CrudResponseDto<DRes> create(DReq request);
 
     CrudResponseDto <Optional<DRes>> findById(ID id);
 
     CrudResponseDto <List<DRes>> findAll();
 
-    CrudResponseDto <DRes> update(DReq dto);
+    CrudResponseDto <DRes> update(DReq request);
 
     CrudResponseDto<DRes> deleteById(ID id);
 

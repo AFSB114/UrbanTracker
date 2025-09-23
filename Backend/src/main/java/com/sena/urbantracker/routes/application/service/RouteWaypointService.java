@@ -1,8 +1,6 @@
 package com.sena.urbantracker.routes.application.service;
 
-import com.sena.urbantracker.routes.application.dto.request.RouteWaypointForRouteReqDto;
 import com.sena.urbantracker.routes.application.dto.request.RouteWaypointReqDto;
-import com.sena.urbantracker.routes.application.dto.response.RouteWaypointDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteWaypointResDto;
 import com.sena.urbantracker.routes.application.mapper.RouteWaypointMapper;
 import com.sena.urbantracker.routes.domain.entity.RouteDomain;
@@ -51,7 +49,7 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto,
     }
 
     @Override
-    public CrudResponseDto<RouteWaypointDto> create(RouteWaypointDto dto) {
+    public CrudResponseDto<RouteWaypointResDto> create(RouteWaypointReqDto dto) {
         RouteDomain route = getRouteRepository().findById(dto.getRouteId())
                 .orElseThrow(() -> new EntityNotFoundException("Ruta no encontrada."));
 
@@ -84,7 +82,7 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto,
     }
 
     @Override
-    public CrudResponseDto<RouteWaypointDto> update(RouteWaypointDto dto) {
+    public CrudResponseDto<RouteWaypointDto> update(RouteWaypointReqDto dto) {
         RouteWaypointDomain waypoint = getRouteWaypointRepository().findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Punto de ruta no encontrado."));
 

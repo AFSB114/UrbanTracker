@@ -1,6 +1,5 @@
 package com.sena.urbantracker.routes.application.mapper;
 
-import com.sena.urbantracker.routes.application.dto.response.RouteWaypointDto;
 import com.sena.urbantracker.routes.domain.entity.RouteDomain;
 import com.sena.urbantracker.routes.domain.entity.RouteWaypointDomain;
 

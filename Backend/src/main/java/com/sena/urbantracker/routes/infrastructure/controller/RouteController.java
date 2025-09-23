@@ -1,8 +1,5 @@
 package com.sena.urbantracker.routes.infrastructure.controller;
 
-import com.sena.urbantracker.routes.application.dto.request.RouteReqDto;
-import com.sena.urbantracker.routes.application.dto.request.RouteWithWaypointsReqDto;
-import com.sena.urbantracker.routes.application.dto.response.BaseRouteReqDto;
 import com.sena.urbantracker.routes.application.service.RouteService;
 import com.sena.urbantracker.shared.infrastructure.controller.BaseController;
 import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
