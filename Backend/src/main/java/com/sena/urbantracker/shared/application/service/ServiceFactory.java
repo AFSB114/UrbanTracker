@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 @Component
 public interface ServiceFactory {
 
-    <T, ID> CrudOperations<T, ID> createCrudService(EntityType entityClass);
+    <DReq, DRes, ID> CrudOperations<DReq, DRes, ID> createCrudService(EntityType entityClass);
 
     <T> T createSpecializedService(EntityType entityType, Class<T> serviceInterface);
 
-    <T, ID> CrudOperations<T, ID> getService(EntityType type, Class<T> dtoClass);
+    <DReq, DRes, ID> CrudOperations<DReq, DRes, ID> getService(EntityType type, Class<DReq> dtoClass);
 
     boolean supports(EntityType entityType);
 }

@@ -1,6 +1,7 @@
 package com.sena.urbantracker.routes.application.service;
 
 import com.sena.urbantracker.routes.application.dto.request.RouteReqDto;
+import com.sena.urbantracker.routes.application.dto.request.RouteWaypointReqDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteResDto;
 import com.sena.urbantracker.routes.application.mapper.RouteMapper;
 import com.sena.urbantracker.routes.domain.entity.RouteDomain;
@@ -33,7 +34,7 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
     }
 
     private RouteWaypointService getRouteWaypointService() {
-        return (RouteWaypointService) serviceFactory.createService(EntityType.ROUTE_WAYPOINT);
+        return (RouteWaypointService) serviceFactory.createCrudService(EntityType.ROUTE_WAYPOINT);
     }
 
     @Override
@@ -46,7 +47,6 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
         RouteDomain entity = RouteMapper.toEntity(request);
         RouteDomain saved = getRouteRepository().save(entity);
 
-        // Create waypoints for the route
         for (RouteWaypointReqDto waypointDto : request.getWaypoints()) {
             waypointDto.setRouteId(saved.getId());
             getRouteWaypointService().create(waypointDto);
