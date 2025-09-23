@@ -113,4 +113,7 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto,
         return CrudResponseDto.success(getRouteWaypointRepository().existsById(id), "Verificación de existencia completada");
     }
 
+    public CrudResponseDto<List<RouteWaypointReqDto>> findByRouteId(Long routeId) {
+        return null;
+    }
 }

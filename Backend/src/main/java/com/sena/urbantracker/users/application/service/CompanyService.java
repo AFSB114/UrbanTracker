@@ -21,10 +21,9 @@ public class CompanyService implements CrudOperations<CompanyDTO, CompanyDTO, Lo
 
     @Override
     public CrudResponseDto<CompanyDTO> create(CompanyDTO dto) {
-       if (companyRepository.existsById(dto.getId())) {
-           throw new EntityAlreadyExistsException("La empresa con id " + dto.getId() + " ya existe.");
+       if (companyRepository.existsByNit(dto.getNit())) {
+           throw new EntityAlreadyExistsException("La empresa con NIT " + dto.getNit() + " ya existe.");
        }
-       System.out.println("se guardo en base de datos");
        Company entity = CompanyMapper.toEntity(dto);
        entity.setActive(true);
 
@@ -33,9 +32,9 @@ public class CompanyService implements CrudOperations<CompanyDTO, CompanyDTO, Lo
     }
 
     @Override
-    public CrudResponseDto<Optional<CompanyDTO>> findById(Long aLong) {
-        Company company = companyRepository.findById(aLong)
-                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + aLong + " no encontrada."));
+    public CrudResponseDto<Optional<CompanyDTO>> findById(Long id) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + id + " no encontrada."));
 
         return CrudResponseDto.success(Optional.of(CompanyMapper.toDto(company)), "Empresa encontrada");
     }
@@ -47,9 +46,9 @@ public class CompanyService implements CrudOperations<CompanyDTO, CompanyDTO, Lo
     }
 
     @Override
-    public CrudResponseDto<CompanyDTO> update(CompanyDTO dto, Object id) {
-        Company company = companyRepository.findById(dto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + dto.getId() + " no encontrada."));
+    public CrudResponseDto<CompanyDTO> update(CompanyDTO dto, Long id) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + id + " no encontrada."));
 
         company.setName(dto.getName());
         company.setNit(dto.getNit());
@@ -63,47 +62,45 @@ public class CompanyService implements CrudOperations<CompanyDTO, CompanyDTO, Lo
     }
 
     @Override
-    public CrudResponseDto<CompanyDTO> deleteById(Long aLong) {
-        if (!companyRepository.existsById(aLong)) {
-            throw new EntityNotFoundException("Empresa con id " + aLong + " no encontrada.");
+    public CrudResponseDto<CompanyDTO> deleteById(Long id) {
+        if (!companyRepository.existsById(id)) {
+            throw new EntityNotFoundException("Empresa con id " + id + " no encontrada.");
         }
 
-        companyRepository.deleteById(aLong);
-        return CrudResponseDto.success(CompanyMapper.toDto(null), "Empresa eliminada correctamente");
+        companyRepository.deleteById(id);
+        return CrudResponseDto.success(null, "Empresa eliminada correctamente");
     }
 
     @Override
-    public CrudResponseDto<CompanyDTO> activateById(Long aLong) {
-        Company company = companyRepository.findById(aLong)
-                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + aLong + " no encontrada."));
+    public CrudResponseDto<CompanyDTO> activateById(Long id) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + id + " no encontrada."));
 
         company.setActive(true);
         companyRepository.save(company);
-        return CrudResponseDto.success(CompanyMapper.toDto(company), "Empresa activada correctamente");
+        return CrudResponseDto.success(CompanyMapper.toDto(company), "Empresa activada");
     }
 
     @Override
-    public CrudResponseDto<CompanyDTO> deactivateById(Long aLong) {
-        Company company = companyRepository.findById(aLong)
-                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + aLong + " no encontrada."));
+    public CrudResponseDto<CompanyDTO> deactivateById(Long id) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + id + " no encontrada."));
 
         company.setActive(false);
         companyRepository.save(company);
-        return CrudResponseDto.success(CompanyMapper.toDto(company), "Empresa desactivada correctamente");
+        return CrudResponseDto.success(CompanyMapper.toDto(company), "Empresa desactivada");
     }
 
     @Override
-    public CrudResponseDto<Boolean> existsById(Long aLong) {
-        if (companyRepository.existsById(aLong)) {
-            return CrudResponseDto.success(true, "Empresa con id " + aLong + " existe.");
-        }
-        return CrudResponseDto.success(false, "Empresa con id " + aLong + " no existe.");
+    public CrudResponseDto<Boolean> existsById(Long id) {
+        return CrudResponseDto.success(companyRepository.existsById(id), "Verificación de existencia completada");
     }
 
 
     private static class CompanyMapper {
 
         private static CompanyDTO toDto(Company entity) {
+            if (entity == null) return null;
             CompanyDTO dto = new CompanyDTO();
             dto.setId(entity.getId());
             dto.setName(entity.getName());
@@ -116,6 +113,7 @@ public class CompanyService implements CrudOperations<CompanyDTO, CompanyDTO, Lo
         }
 
         private static Company toEntity(CompanyDTO dto) {
+            if (dto == null) return null;
             Company entity = new Company();
             entity.setId(dto.getId());
             entity.setName(dto.getName());

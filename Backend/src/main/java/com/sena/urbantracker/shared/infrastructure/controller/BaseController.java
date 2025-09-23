@@ -27,7 +27,7 @@ import java.util.Optional;
  * @param <ID> El tipo del identificador (generalmente Long)
  */
 @Slf4j
-public abstract class BaseController<DReq extends BaseDto, DRes extends BaseDto, ID> {
+public abstract class BaseController<DReq , DRes , ID> {
 
     protected final ServiceFactory serviceFactory;
     protected final EntityType entityType;
@@ -85,7 +85,7 @@ public abstract class BaseController<DReq extends BaseDto, DRes extends BaseDto,
         }
 
         // Asumimos que el DTO tiene un método setId que acepta Long
-        (dto).setId((Long) id);
+//        (dto).setId((Long) id);
 
         CrudOperations<DReq, DRes, ID> service = getService();
         CrudResponseDto<DRes> response = service.update(dto, id);

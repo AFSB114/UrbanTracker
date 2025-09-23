@@ -54,7 +54,7 @@ public class VehicleService implements CrudOperations<VehicleDto, VehicleDto, Lo
 
     @Override
     public CrudResponseDto<VehicleDto> update(VehicleDto dto, Long id) {
-        Vehicle vehicle = vehicleRepository.findById(dto.getId())
+        Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Vehículo no encontrado."));
 
         vehicle.setModel(dto.getModel());
@@ -93,15 +93,14 @@ public class VehicleService implements CrudOperations<VehicleDto, VehicleDto, Lo
     }
 
     @Override
-    public CrudResponseDto<Boolean> existsById(Long aLong) {
-        Vehicle vehicle = vehicleRepository.findById(aLong)
-                .orElseThrow(() -> new EntityNotFoundException("Vehículo no encontrado."));
-        return CrudResponseDto.success(vehicleRepository.existsById(aLong), "Vehículo encontrado");
+    public CrudResponseDto<Boolean> existsById(Long id) {
+        return CrudResponseDto.success(vehicleRepository.existsById(id), "Verificación de existencia completada");
     }
 
 
     private static class VehicleMapper {
         public static VehicleDto toDto(Vehicle entity) {
+            if (entity == null) return null;
 
             VehicleDto dto = new VehicleDto();
             dto.setId(entity.getId());
@@ -118,6 +117,8 @@ public class VehicleService implements CrudOperations<VehicleDto, VehicleDto, Lo
         }
 
         public static Vehicle toEntity(VehicleDto dto) {
+            if (dto == null) return null;
+
             Vehicle entity = new Vehicle();
             entity.setId(dto.getId());
             entity.setLicencePlate(dto.getLicencePlate());
