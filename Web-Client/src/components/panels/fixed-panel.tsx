@@ -6,10 +6,12 @@ import { RoutesPanel } from "./routes-panel"
 import { LocationPanel } from "./location-panel"
 import { MessagesPanel } from "./messages-panel"
 import { ProfilePanel } from "./profile-panel"
-import { usePanelContext } from "components/panels/panel-context"
+import { usePanelActive } from "components/panels/panel-active-context"
+import { usePanelCollapse } from "components/panels/panel-collapse-context"
 
 export function FixedPanel() {
-  const { activePanel, isPanelCollapsed, togglePanelCollapse } = usePanelContext()
+  const { activePanel } = usePanelActive();
+  const { isPanelCollapsed, togglePanelCollapse } = usePanelCollapse();
 
   const renderPanel = () => {
     switch (activePanel) {
@@ -73,12 +75,13 @@ export function FixedPanel() {
         <SearchBar />
       </div>
 
-      {/* Panel Title */}
-      <div className="px-4 py-3 border-b border-gray-100">
-        <h2 className="font-semibold text-gray-900">{getPanelTitle()}</h2>
+      {/* Panel Title y contenido controlado por el panel activo */}
+      <div className="flex-1 overflow-y-auto p-4">
+        {activePanel === "routes" ? (
+          <RoutesPanel showTitle />
+        ) : renderPanel()}
       </div>
-
-      <div className="flex-1 overflow-y-auto p-4">{renderPanel()}</div>
     </div>
   )
+
 }

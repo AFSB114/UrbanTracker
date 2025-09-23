@@ -1,3 +1,51 @@
+/* Animación suave para el panel fijo */
+.fixed-panel-anim-wrapper {
+  position: relative;
+  height: 100%;
+}
+.fixed-panel-anim-panel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  z-index: 20;
+  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
+  will-change: transform, opacity;
+}
+.fixed-panel-anim-panel.expanded {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.fixed-panel-anim-panel.collapsed {
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+/* Animación para el panel fijo (FixedPanel) */
+.fixed-panel-anim-container {
+  position: relative;
+  height: 100%;
+}
+.fixed-panel-anim {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  z-index: 20;
+  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
+  will-change: transform, opacity;
+}
+.fixed-panel-anim.expanded {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.fixed-panel-anim.collapsed {
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
 @import 'tailwindcss';
 @import 'tw-animate-css';
 

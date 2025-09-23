@@ -1,5 +1,13 @@
-import { PanelProvider } from "components/panels/panel-context"
+
+import { PanelActiveProvider } from "components/panels/panel-active-context";
+import { PanelCollapseProvider } from "components/panels/panel-collapse-context";
 
 export default function DemoLayout({ children }: { children: React.ReactNode }) {
-  return <PanelProvider>{children}</PanelProvider>
+  return (
+    <PanelActiveProvider>
+      <PanelCollapseProvider>
+        {children}
+      </PanelCollapseProvider>
+    </PanelActiveProvider>
+  );
 }
