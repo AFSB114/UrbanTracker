@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import Image from "next/image"
 
 export default function LoginPage() {
-    const [userName, setEmail] = useState("")
+    const [userName, setUserName] = useState("")
     const [password, setPassword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
@@ -75,11 +75,11 @@ export default function LoginPage() {
                                     Nombre del usuario
                                 </Label>
                                 <Input
-                                    id="email"
+                                    id="userName"
                                     type="text"
                                     placeholder="Admin123456"
                                     value={userName}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(e) => setUserName(e.target.value)}
                                     required
                                     className="bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-ring"
                                 />
