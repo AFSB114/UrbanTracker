@@ -3,8 +3,8 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 export function DownloadAppMenu() {
     return (
         <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild>
-                <button className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-medium text-sm rounded-lg shadow hover:bg-blue-700 transition-colors">
+            <DropdownMenu.Trigger>
+                <button className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-medium text-sm rounded-lg shadow hover:bg-blue-700 transition-colors cursor-pointer hover:scale-[1.04]">
                     📱 Descargar App
                 </button>
             </DropdownMenu.Trigger>

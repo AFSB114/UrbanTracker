@@ -31,7 +31,9 @@ export default function Header() {
       <div className="container mx-auto px-4 py-4 ">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <img src="/Logo-completo-UrbanTracker.svg" alt="" className="w-auto h-12" />
+            <a href="/" title="Ir a la página principal">
+              <img src="/Logo-completo-UrbanTracker.svg" alt="UrbanTracker Logo" className="w-auto h-12" />
+            </a>
           </div>
 
           {/* Desktop Navigation */}
@@ -40,7 +42,7 @@ export default function Header() {
               <button
                 key={section.id}
                 onClick={() => handleNavClick(section.id)}
-                className="text-foreground hover:text-primary transition-colors"
+                className="text-foreground hover:text-primary transition-colors cursor-pointer hover:scale-[1.04]"
               >
                 {section.label}
               </button>
@@ -61,7 +63,7 @@ export default function Header() {
                 <button
                   key={section.id}
                   onClick={() => handleNavClick(section.id)}
-                  className="text-left text-foreground hover:text-primary transition-colors"
+                  className="text-left text-foreground hover:text-primary transition-colors cursor-pointer hover:scale-[1.04]"
                 >
                   {section.label}
                 </button>

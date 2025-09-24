@@ -38,7 +38,7 @@ export default function HowItWorks() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {steps.map((step, index) => (
             <div key={index} className="relative">
-              <Card className="text-center h-full">
+                <Card className="text-center h-full transition-all duration-200 hover:shadow-xl hover:scale-[1.02]">
                 <CardHeader>
                   <div className="mx-auto w-16 h-16 bg-accent rounded-full flex items-center justify-center mb-4">
                     <step.icon className="h-8 w-8 text-accent-foreground" />

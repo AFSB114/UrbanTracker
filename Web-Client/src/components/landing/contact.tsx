@@ -92,7 +92,7 @@ export default function Contact() {
                   />
                 </div>
 
-                <Button type="submit" className="w-full" size="lg">
+                <Button type="submit" className="w-full cursor-pointer transition-all hover:scale-[1.04] hover:bg-primary/80" size="lg">
                   <Send className="mr-2 h-5 w-5" />
                   Enviar Mensaje
                 </Button>

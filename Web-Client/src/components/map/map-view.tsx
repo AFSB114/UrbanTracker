@@ -26,6 +26,7 @@ export default function MapView() {
         }}
         mapStyle="mapbox://styles/mapbox/dark-v11"
         attributionControl={false}
+        // projection={"globe"}
       />
     </div>
   );

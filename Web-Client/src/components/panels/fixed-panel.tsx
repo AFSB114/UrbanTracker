@@ -3,9 +3,8 @@
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { SearchBar } from "components/shared/search-bar"
 import { RoutesPanel } from "./routes-panel"
-import { LocationPanel } from "./location-panel"
-import { MessagesPanel } from "./messages-panel"
-import { ProfilePanel } from "./profile-panel"
+import { LocationPanel } from "./stop-info-panel"
+import { MessagesPanel } from "./general-info-panel"
 import { usePanelActive } from "components/panels/panel-active-context"
 import { usePanelCollapse } from "components/panels/panel-collapse-context"
 
@@ -22,7 +21,7 @@ export function FixedPanel() {
       case "messages":
         return <MessagesPanel />
       case "profile":
-        return <ProfilePanel />
+  return null // Panel de perfil eliminado
       default:
         return <RoutesPanel />
     }

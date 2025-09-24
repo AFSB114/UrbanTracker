@@ -4,25 +4,25 @@ import { Avatar, AvatarFallback, AvatarImage } from "ui/avatar"
 const teamMembers = [
   {
     name: "Brayan Estiven Carvajal Padilla",
-    role: "Desarrollador Full Stack",
+    role: "Desarrollador Frontend",
     initials: "BC",
-    image: "/foto-profesional.jpg",
+    image: "/brayan-img.jpg",
   },
   {
     name: "Andres Felipe Suaza Bustos",
-    role: "Desarrollador Frontend",
+    role: "Desarrollador Full Stack",
     initials: "AS",
     image: "/foto-profesional.jpg",
   },
   {
     name: "Diego Fernando Cuellar Hernandez",
-    role: "Desarrollador Backend",
+    role: "Desarrollador Full Stack",
     initials: "DC",
     image: "/foto-profesional.jpg",
   },
   {
     name: "Carlos Javier Rodriguez Manchola",
-    role: "Analista de Sistemas",
+    role: "Desarrollador Full Stack",
     initials: "CR",
     image: "/foto-profesional.jpg",
   },
@@ -41,7 +41,7 @@ export default function Team() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {teamMembers.map((member, index) => (
-            <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+            <Card key={index} className="text-center hover:shadow-lg transition-shadow transition-all duration-200 hover:shadow-xl hover:scale-[1.02]">
               <CardHeader>
                 <Avatar className="w-20 h-20 mx-auto mb-4">
                   <AvatarImage src={member.image || "/placeholder.svg"} alt={member.name} />

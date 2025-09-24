@@ -19,7 +19,7 @@ export default function Hero() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={() => router.push("demo")}>
+              <Button size="lg" className="mr-4 cursor-pointer transition-all hover:scale-[1.04] hover:bg-primary/80" onClick={() => router.push("demo")}>
               <MapPin className="mr-2 h-5 w-5" />
               Ver Demo
             </Button>
