@@ -1,6 +1,6 @@
 import type { Company, CompanyFormData } from '../types/companyTypes';
 
-const API_URL = 'http://localhost:8085/api/v1/public/company';
+const API_URL = 'http://localhost:8086/api/v1/public/companies';
 
 export const companyService = {
   getAll: async (): Promise<Company[]> => {

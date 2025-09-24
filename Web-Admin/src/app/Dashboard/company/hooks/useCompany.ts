@@ -42,30 +42,30 @@ export const useCompanies = (): UseCompaniesReturn => {
 
 
   useEffect(() => {
-      const loadCompanies = async () => {
-        setIsLoading(true);
-        try {
-          const data = await companyService.getAll();
-          setCompanies(data);
-        } catch (error) {
-          console.error("Failed to load vehicles:", error);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-  
-      loadCompanies();
-    }, []);
+    const loadCompanies = async () => {
+      setIsLoading(true);
+      try {
+        const data = await companyService.getAll();
+        setCompanies(data);
+      } catch (error) {
+        console.error("Failed to load vehicles:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCompanies();
+  }, []);
 
   const filteredCompanies = useMemo(() => {
     const safeCompanies = Array.isArray(companies) ? companies : [];
-  
+
     if (!searchTerm.trim()) {
       return safeCompanies;
     }
-  
+
     const searchLower = searchTerm.toLowerCase().trim();
-  
+
     if (statusFilter === "all") {
       return companies.filter(company =>
         company.name.toLowerCase().includes(searchLower) ||
@@ -75,16 +75,16 @@ export const useCompanies = (): UseCompaniesReturn => {
         company.country.toLowerCase().includes(searchLower)
       );
     }
-  
+
     return companies.filter(company =>
-        company.name.toLowerCase().includes(searchLower) ||
-        company.nit.toLowerCase().includes(searchLower) ||
-        company.phone.toLowerCase().includes(searchLower) ||
-        company.email.toLowerCase().includes(searchLower) ||
-        company.country.toLowerCase().includes(searchLower)
+      company.name.toLowerCase().includes(searchLower) ||
+      company.nit.toLowerCase().includes(searchLower) ||
+      company.phone.toLowerCase().includes(searchLower) ||
+      company.email.toLowerCase().includes(searchLower) ||
+      company.country.toLowerCase().includes(searchLower)
     );
   }, [companies, searchTerm, statusFilter]);
-  
+
   // Reset to page 1 when items per page changes
   useEffect(() => {
     setPaginationConfig((prev) => ({ ...prev, page: 1 }));
@@ -186,7 +186,7 @@ export const useCompanies = (): UseCompaniesReturn => {
         throw {
           message: "El nombre y el NIT son obligatorios",
           status: 400,
-        } 
+        }
       }
 
       const companyData = {
@@ -210,23 +210,25 @@ export const useCompanies = (): UseCompaniesReturn => {
     } finally {
       setIsSaving(false);
     }
-  }, [editingCompany,formData,closeModal,isSaving]);
+  }, [editingCompany, formData, closeModal, isSaving]);
 
   // Delete company
-    const confirmDeleteCompany = useCallback(async () => {
-      if (isDeleting) return;
-    
-      setIsDeleting(true);
-    
-      try {
-        await companyService.delete(companyToDelete!.id);
-        closeDeleteModal();
-      } catch (error) {
-        throw error; // Re-throw for component to handle
-      } finally {
-        setIsDeleting(false);
-      }
-    }, [companyToDelete, closeDeleteModal, isDeleting]);
+  const confirmDeleteCompany = useCallback(async () => {
+    if (isDeleting) return;
+
+    setIsDeleting(true);
+
+    try {
+      await companyService.delete(companyToDelete!.id);
+      // Remove the deleted company from local state to update UI immediately
+      setCompanies(prev => prev.filter(c => c.id !== companyToDelete!.id));
+      closeDeleteModal();
+    } catch (error) {
+      throw error; // Re-throw for component to handle
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [companyToDelete, closeDeleteModal, isDeleting]);
 
   return {
     // Data
@@ -261,5 +263,5 @@ export const useCompanies = (): UseCompaniesReturn => {
     saveCompany,
     confirmDeleteCompany,
     setStatusFilter,
-};
+  };
 };
