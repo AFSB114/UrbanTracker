@@ -5,19 +5,17 @@ import com.sena.urbantracker.routes.domain.repository.RouteScheduleRepository;
 import com.sena.urbantracker.routes.infrastructure.persistence.mapper.RouteSchedulePersistenceMapper;
 import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteScheduleModel;
 import com.sena.urbantracker.routes.infrastructure.repository.jpa.RouteScheduleJpaRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class RouteScheduleRepositoryImpl implements RouteScheduleRepository {
 
     private final RouteScheduleJpaRepository jpaRepository;
-
-    public RouteScheduleRepositoryImpl(RouteScheduleJpaRepository jpaRepository) {
-        this.jpaRepository = jpaRepository;
-    }
 
     @Override
     public RouteScheduleDomain save(RouteScheduleDomain domain) {

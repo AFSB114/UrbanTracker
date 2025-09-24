@@ -1,95 +1,97 @@
 package com.sena.urbantracker.users.application.service;
 
-
+import com.sena.urbantracker.users.application.dto.request.CompanyReqDto;
+import com.sena.urbantracker.users.application.dto.response.CompanyResDto;
+import com.sena.urbantracker.users.application.mapper.CompanyMapper;
+import com.sena.urbantracker.users.domain.entity.CompanyDomain;
+import com.sena.urbantracker.users.domain.repository.CompanyRepository;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import com.sena.urbantracker.users.application.dto.request.CompanyReqDto;
-import com.sena.urbantracker.users.application.dto.response.CompanyResDTOA;
-import com.sena.urbantracker.users.domain.repository.ICompany;
-import com.sena.urbantracker.users.domain.entity.Company;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CompanyService implements CrudOperations<CompanyReqDto, CompanyResDTOA, Long> {
+public class CompanyService implements CrudOperations<CompanyReqDto, CompanyResDto, Long> {
 
-    private final ICompany companyRepository;
+    private final CompanyRepository companyRepository;
 
     @Override
-    public CrudResponseDto<CompanyResDTOA> create(CompanyReqDto dto) {
-       if (companyRepository.existsByNit(dto.getNit())) {
-           throw new EntityAlreadyExistsException("La empresa con NIT " + dto.getNit() + " ya existe.");
-       }
-       Company entity = CompanyMapper.toEntity(dto);
-       entity.setActive(true);
+    public CrudResponseDto<CompanyResDto> create(CompanyReqDto request) {
+        if (companyRepository.existsByNit(request.getNit())) {
+            throw new EntityAlreadyExistsException("Ya existe una compañía con NIT: " + request.getNit());
+        }
 
-       Company saved = companyRepository.save(entity);
-       return CrudResponseDto.success(CompanyMapper.toDto(saved), "Empresa creada correctamente");
+        CompanyDomain entity = CompanyMapper.toEntity(request);
+        CompanyDomain saved = companyRepository.save(entity);
+
+        return CrudResponseDto.success(CompanyMapper.toDto(saved), "Compañía creada correctamente");
     }
 
     @Override
-    public CrudResponseDto<Optional<CompanyResDTOA>> findById(Long id) {
-        Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + id + " no encontrada."));
+    public CrudResponseDto<Optional<CompanyResDto>> findById(Long id) {
+        CompanyDomain company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Compañía con id " + id + " no encontrada."));
 
-        return CrudResponseDto.success(Optional.of(CompanyMapper.toDto(company)), "Empresa encontrada");
+        return CrudResponseDto.success(Optional.of(CompanyMapper.toDto(company)), "Compañía encontrada");
     }
 
     @Override
-    public CrudResponseDto<List<CompanyResDTOA>> findAll() {
-        List<Company> companies = companyRepository.findAll();
-        return CrudResponseDto.success(companies.stream().map(CompanyMapper::toDto).toList(), "Empresas encontradas");
+    public CrudResponseDto<List<CompanyResDto>> findAll() {
+        List<CompanyResDto> dtos = companyRepository.findAll()
+                .stream()
+                .map(CompanyMapper::toDto)
+                .toList();
+
+        return CrudResponseDto.success(dtos, "Listado de compañías");
     }
 
     @Override
-    public CrudResponseDto<CompanyResDTOA> update(CompanyReqDto dto, Long id) {
-        Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + id + " no encontrada."));
+    public CrudResponseDto<CompanyResDto> update(CompanyReqDto request, Long id) {
+        CompanyDomain company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Compañía no encontrada."));
 
-        company.setName(dto.getName());
-        company.setNit(dto.getNit());
-        company.setPhone(dto.getPhone());
-        company.setEmail(dto.getEmail());
-        company.setCountry(dto.getCountry());
-//        company.setActive(dto.getActive());
+        company.setName(request.getName());
+        company.setNit(request.getNit());
+        company.setPhone(request.getPhone());
+        company.setEmail(request.getEmail());
+        company.setCountry(request.getCountry());
 
-        Company updated = companyRepository.save(company);
-        return CrudResponseDto.success(CompanyMapper.toDto(updated), "Empresa actualizada correctamente");
+        CompanyDomain updated = companyRepository.save(company);
+        return CrudResponseDto.success(CompanyMapper.toDto(updated), "Compañía actualizada correctamente");
     }
 
     @Override
-    public CrudResponseDto<CompanyResDTOA> deleteById(Long id) {
+    public CrudResponseDto<CompanyResDto> deleteById(Long id) {
         if (!companyRepository.existsById(id)) {
-            throw new EntityNotFoundException("Empresa con id " + id + " no encontrada.");
+            throw new EntityNotFoundException("Compañía no encontrada.");
         }
 
         companyRepository.deleteById(id);
-        return CrudResponseDto.success(null, "Empresa eliminada correctamente");
+        return CrudResponseDto.success(CompanyMapper.toDto(null), "Compañía eliminada correctamente");
     }
 
     @Override
-    public CrudResponseDto<CompanyResDTOA> activateById(Long id) {
-        Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + id + " no encontrada."));
-
+    public CrudResponseDto<CompanyResDto> activateById(Long id) {
+        CompanyDomain company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Compañía no encontrada."));
         company.setActive(true);
         companyRepository.save(company);
-        return CrudResponseDto.success(CompanyMapper.toDto(company), "Empresa activada");
+        return CrudResponseDto.success(CompanyMapper.toDto(company), "Compañía activada");
     }
 
     @Override
-    public CrudResponseDto<CompanyResDTOA> deactivateById(Long id) {
-        Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + id + " no encontrada."));
-
+    public CrudResponseDto<CompanyResDto> deactivateById(Long id) {
+        CompanyDomain company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Compañía no encontrada."));
         company.setActive(false);
         companyRepository.save(company);
-        return CrudResponseDto.success(CompanyMapper.toDto(company), "Empresa desactivada");
+        return CrudResponseDto.success(CompanyMapper.toDto(company), "Compañía desactivada");
     }
 
     @Override
@@ -97,32 +99,7 @@ public class CompanyService implements CrudOperations<CompanyReqDto, CompanyResD
         return CrudResponseDto.success(companyRepository.existsById(id), "Verificación de existencia completada");
     }
 
-
-    private static class CompanyMapper {
-
-        private static CompanyResDTOA toDto(Company entity) {
-            if (entity == null) return null;
-            CompanyResDTOA dto = new CompanyResDTOA();
-            dto.setId(entity.getId());
-            dto.setName(entity.getName());
-            dto.setNit(entity.getNit());
-            dto.setEmail(entity.getEmail());
-            dto.setPhone(entity.getPhone());
-            dto.setCountry(entity.getCountry());
-            dto.setActive(entity.getActive());
-            return dto;
-        }
-
-        private static Company toEntity(CompanyReqDto dto) {
-            if (dto == null) return null;
-            Company entity = new Company();
-            entity.setName(dto.getName());
-            entity.setNit(dto.getNit());
-            entity.setPhone(dto.getPhone());
-            entity.setEmail(dto.getEmail());
-            entity.setCountry(dto.getCountry());
-            return entity;
-        }
+    public boolean existsByNit(String nit) {
+        return companyRepository.existsByNit(nit);
     }
-
 }

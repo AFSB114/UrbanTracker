@@ -1,13 +1,14 @@
 package com.sena.urbantracker.vehicles.application.service;
 
+import com.sena.urbantracker.vehicles.application.dto.request.VehicleReqDto;
+import com.sena.urbantracker.vehicles.application.dto.response.VehicleResDto;
+import com.sena.urbantracker.vehicles.application.mapper.VehicleMapper;
+import com.sena.urbantracker.vehicles.domain.entity.VehicleDomain;
+import com.sena.urbantracker.vehicles.domain.repository.VehicleRepository;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import com.sena.urbantracker.vehicles.application.dto.response.VehicleResDtoA;
-import com.sena.urbantracker.vehicles.domain.entity.Vehicle;
-import com.sena.urbantracker.vehicles.domain.valueobject.VehicleStatusType;
-import com.sena.urbantracker.vehicles.domain.repository.IVehicle;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,34 +17,33 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class VehicleService implements CrudOperations<VehicleResDtoA, VehicleResDtoA, Long>{
+public class VehicleService implements CrudOperations<VehicleReqDto, VehicleResDto, Long> {
 
-    private final IVehicle vehicleRepository;
+    private final VehicleRepository vehicleRepository;
 
     @Override
-    public CrudResponseDto<VehicleResDtoA> create(VehicleResDtoA dto) {
-        if (vehicleRepository.existsByLicencePlate(dto.getLicencePlate())) {
-            throw new EntityAlreadyExistsException("Ya existe un vehículo con placa: " + dto.getLicencePlate());
+    public CrudResponseDto<VehicleResDto> create(VehicleReqDto request) {
+        if (vehicleRepository.existsByLicencePlate(request.getLicencePlate())) {
+            throw new EntityAlreadyExistsException("Ya existe un vehículo con placa: " + request.getLicencePlate());
         }
 
-        Vehicle entity = VehicleMapper.toEntity(dto);
-        entity.setStatus(VehicleStatusType.ACTIVE);
+        VehicleDomain entity = VehicleMapper.toEntity(request);
+        VehicleDomain saved = vehicleRepository.save(entity);
 
-        Vehicle saved = vehicleRepository.save(entity);
         return CrudResponseDto.success(VehicleMapper.toDto(saved), "Vehículo creado correctamente");
     }
 
     @Override
-    public CrudResponseDto<Optional<VehicleResDtoA>> findById(Long id) {
-        Vehicle vehicle = vehicleRepository.findById(id)
+    public CrudResponseDto<Optional<VehicleResDto>> findById(Long id) {
+        VehicleDomain vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Vehículo con id " + id + " no encontrado."));
 
         return CrudResponseDto.success(Optional.of(VehicleMapper.toDto(vehicle)), "Vehículo encontrado");
     }
 
     @Override
-    public CrudResponseDto<List<VehicleResDtoA>> findAll() {
-        List<VehicleResDtoA> dtos = vehicleRepository.findAll()
+    public CrudResponseDto<List<VehicleResDto>> findAll() {
+        List<VehicleResDto> dtos = vehicleRepository.findAll()
                 .stream()
                 .map(VehicleMapper::toDto)
                 .toList();
@@ -51,21 +51,26 @@ public class VehicleService implements CrudOperations<VehicleResDtoA, VehicleRes
         return CrudResponseDto.success(dtos, "Listado de vehículos");
     }
 
-
     @Override
-    public CrudResponseDto<VehicleResDtoA> update(VehicleResDtoA dto, Long id) {
-        Vehicle vehicle = vehicleRepository.findById(id)
+    public CrudResponseDto<VehicleResDto> update(VehicleReqDto request, Long id) {
+        VehicleDomain vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Vehículo no encontrado."));
 
-        vehicle.setModel(dto.getModel());
-        vehicle.setLicencePlate(dto.getLicencePlate());
+        vehicle.setLicencePlate(request.getLicencePlate());
+        vehicle.setBrand(request.getBrand());
+        vehicle.setModel(request.getModel());
+        vehicle.setYear(request.getYear());
+        vehicle.setColor(request.getColor());
+        vehicle.setPassengerCapacity(request.getPassengerCapacity());
+        vehicle.setStatus(request.getStatus());
+        vehicle.setInService(request.isInService());
 
-        Vehicle updated = vehicleRepository.save(vehicle);
+        VehicleDomain updated = vehicleRepository.save(vehicle);
         return CrudResponseDto.success(VehicleMapper.toDto(updated), "Vehículo actualizado correctamente");
     }
 
     @Override
-    public CrudResponseDto<VehicleResDtoA> deleteById(Long id) {
+    public CrudResponseDto<VehicleResDto> deleteById(Long id) {
         if (!vehicleRepository.existsById(id)) {
             throw new EntityNotFoundException("Vehículo no encontrado.");
         }
@@ -75,19 +80,19 @@ public class VehicleService implements CrudOperations<VehicleResDtoA, VehicleRes
     }
 
     @Override
-    public CrudResponseDto<VehicleResDtoA> activateById(Long id) {
-        Vehicle vehicle = vehicleRepository.findById(id)
+    public CrudResponseDto<VehicleResDto> activateById(Long id) {
+        VehicleDomain vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Vehículo no encontrado."));
-        vehicle.setStatus(VehicleStatusType.ACTIVE);
+        vehicle.setActive(true);
         vehicleRepository.save(vehicle);
         return CrudResponseDto.success(VehicleMapper.toDto(vehicle), "Vehículo activado");
     }
 
     @Override
-    public CrudResponseDto<VehicleResDtoA> deactivateById(Long id) {
-        Vehicle vehicle = vehicleRepository.findById(id)
+    public CrudResponseDto<VehicleResDto> deactivateById(Long id) {
+        VehicleDomain vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Vehículo no encontrado."));
-        vehicle.setStatus(VehicleStatusType.INACTIVE);
+        vehicle.setActive(false);
         vehicleRepository.save(vehicle);
         return CrudResponseDto.success(VehicleMapper.toDto(vehicle), "Vehículo desactivado");
     }
@@ -95,43 +100,6 @@ public class VehicleService implements CrudOperations<VehicleResDtoA, VehicleRes
     @Override
     public CrudResponseDto<Boolean> existsById(Long id) {
         return CrudResponseDto.success(vehicleRepository.existsById(id), "Verificación de existencia completada");
-    }
-
-
-    private static class VehicleMapper {
-        public static VehicleResDtoA toDto(Vehicle entity) {
-            if (entity == null) return null;
-
-            VehicleResDtoA dto = new VehicleResDtoA();
-            dto.setId(entity.getId());
-            dto.setLicencePlate(entity.getLicencePlate());
-            dto.setModel(entity.getModel());
-            dto.setColor(entity.getColor());
-            dto.setYear(entity.getYear());
-            dto.setBrand(entity.getBrand());
-            dto.setCompany(entity.getCompany());
-            dto.setPassengerCapacity(entity.getPassengerCapacity());
-            dto.setVehicleType(entity.getVehicleType());
-            dto.setActive(entity.getStatus().equals(VehicleStatusType.ACTIVE));
-            return dto;
-        }
-
-        public static Vehicle toEntity(VehicleResDtoA dto) {
-            if (dto == null) return null;
-
-            Vehicle entity = new Vehicle();
-            entity.setId(dto.getId());
-            entity.setLicencePlate(dto.getLicencePlate());
-            entity.setModel(dto.getModel());
-            entity.setColor(dto.getColor());
-            entity.setYear(dto.getYear());
-            entity.setBrand(dto.getBrand());
-            entity.setCompany(dto.getCompany());
-            entity.setPassengerCapacity(dto.getPassengerCapacity());
-            entity.setVehicleType(dto.getVehicleType());
-            entity.setStatus(dto.getActive() ? VehicleStatusType.ACTIVE : VehicleStatusType.INACTIVE);
-            return entity;
-        }
     }
 
 }

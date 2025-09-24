@@ -4,7 +4,8 @@ import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.infrastructure.controller.BaseController;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
-import com.sena.urbantracker.vehicles.application.dto.response.VehicleAssigmentResDtoA;
+import com.sena.urbantracker.vehicles.application.dto.request.VehicleAssignmentReqDto;
+import com.sena.urbantracker.vehicles.application.dto.response.VehicleAssigmentResDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,48 +16,48 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/vehicle-assigment")
-public class VehicleAssigmentController extends BaseController<VehicleAssigmentResDtoA, VehicleAssigmentResDtoA, Long> {
+public class VehicleAssigmentController extends BaseController<VehicleAssignmentReqDto, VehicleAssigmentResDto, Long> {
 
     public VehicleAssigmentController(ServiceFactory serviceFactory) {
-        super(serviceFactory, EntityType.VEHICLE_ASSIGMENT, VehicleAssigmentResDtoA.class, VehicleAssigmentResDtoA.class);
+        super(serviceFactory, EntityType.VEHICLE_ASSIGMENT, VehicleAssignmentReqDto.class, VehicleAssigmentResDto.class);
     }
 
-    protected Class<VehicleAssigmentResDtoA> getDtoClass() {
-        return VehicleAssigmentResDtoA.class;
+    protected Class<VehicleAssigmentResDto> getDtoClass() {
+        return VehicleAssigmentResDto.class;
     }
 
     @Override
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<VehicleAssigmentResDtoA>> create(@Valid @RequestBody VehicleAssigmentResDtoA dto) {
+    public ResponseEntity<CrudResponseDto<VehicleAssigmentResDto>> create(@Valid @RequestBody VehicleAssignmentReqDto dto) {
         return super.create(dto);
     }
 
     @Override
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<Optional<VehicleAssigmentResDtoA>>> findById(@PathVariable Long id) {
+    public ResponseEntity<CrudResponseDto<Optional<VehicleAssigmentResDto>>> findById(@PathVariable Long id) {
         return super.findById(id);
     }
 
     @Override
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<List<VehicleAssigmentResDtoA>>> findAll() {
+    public ResponseEntity<CrudResponseDto<List<VehicleAssigmentResDto>>> findAll() {
         return super.findAll();
     }
 
     @Override
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<VehicleAssigmentResDtoA>> update(@PathVariable Long id, @Valid @RequestBody VehicleAssigmentResDtoA dto) {
+    public ResponseEntity<CrudResponseDto<VehicleAssigmentResDto>> update(@PathVariable Long id, @Valid @RequestBody VehicleAssignmentReqDto dto) {
         return super.update(id, dto);
     }
 
     @Override
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<VehicleAssigmentResDtoA>> delete(@PathVariable Long id) {
+    public ResponseEntity<CrudResponseDto<VehicleAssigmentResDto>> delete(@PathVariable Long id) {
         return super.delete(id);
     }
 }

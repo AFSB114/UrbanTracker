@@ -5,8 +5,6 @@ import com.sena.urbantracker.security.domain.entity.Role;
 import com.sena.urbantracker.security.domain.entity.User;
 import com.sena.urbantracker.security.domain.repository.RoleRepository;
 import com.sena.urbantracker.security.domain.repository.UserRepository;
-import com.sena.urbantracker.users.domain.entity.UserProfile;
-import com.sena.urbantracker.users.domain.repository.IUserProfile;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;

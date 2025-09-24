@@ -2,7 +2,7 @@ package com.sena.urbantracker.monitoring.domain.entity;
 
 
 import com.sena.urbantracker.monitoring.domain.valueobject.DataSourceType;
-import com.sena.urbantracker.vehicles.domain.entity.Vehicle;
+import com.sena.urbantracker.vehicles.infrastructure.persistence.model.VehicleModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +25,7 @@ public class Tracking {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_id", nullable = false)
-    private Vehicle vehicle;
+    private VehicleModel vehicle;
 
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "trajectory_id", nullable = false)

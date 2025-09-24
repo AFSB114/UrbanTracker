@@ -2,6 +2,7 @@ package com.sena.urbantracker.routes.infrastructure.persistence.mapper;
 
 import com.sena.urbantracker.routes.domain.entity.RouteTrajectoryDomain;
 import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteTrajectoryModel;
+import com.sena.urbantracker.vehicles.infrastructure.persistence.mapper.VehiclePersistenceMapper;
 
 public class RouteTrajectoryPersistenceMapper {
 
@@ -10,7 +11,7 @@ public class RouteTrajectoryPersistenceMapper {
         return RouteTrajectoryModel.builder()
                 .id(domain.getId())
                 .route(RoutePersistenceMapper.toModel(domain.getRoute()))
-                .vehicle(domain.getVehicle())
+                .vehicle(VehiclePersistenceMapper.toModel(domain.getVehicle()))
                 .startTime(domain.getStartTime())
                 .endTime(domain.getEndTime())
                 .trajectoryStatus(domain.getTrajectoryStatus())
@@ -25,7 +26,7 @@ public class RouteTrajectoryPersistenceMapper {
         return RouteTrajectoryDomain.builder()
                 .id(model.getId())
                 .route(RoutePersistenceMapper.toDomain(model.getRoute()))
-                .vehicle(model.getVehicle())
+                .vehicle(VehiclePersistenceMapper.toDomain(model.getVehicle()))
                 .startTime(model.getStartTime())
                 .endTime(model.getEndTime())
                 .trajectoryStatus(model.getTrajectoryStatus())

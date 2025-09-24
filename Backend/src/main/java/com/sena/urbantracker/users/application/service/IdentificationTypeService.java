@@ -4,9 +4,7 @@ import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExists
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import com.sena.urbantracker.users.application.dto.response.IdentificationTypeResDtoA;
-import com.sena.urbantracker.users.domain.repository.IIdentificationType;
-import com.sena.urbantracker.users.domain.entity.IdentificationType;
+import com.sena.urbantracker.users.application.dto.response.IdentificationTypeResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -14,12 +12,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class IdentificationTypeService implements CrudOperations<IdentificationTypeResDtoA, IdentificationTypeResDtoA, Long> {
+public class IdentificationTypeService implements CrudOperations<IdentificationTypeResDto, IdentificationTypeResDto, Long> {
 
     private final IIdentificationType identificationTypeRepository;
 
     @Override
-    public CrudResponseDto<IdentificationTypeResDtoA> create(IdentificationTypeResDtoA dto) {
+    public CrudResponseDto<IdentificationTypeResDto> create(IdentificationTypeResDto dto) {
         if (identificationTypeRepository.existsById(dto.getId())) {
             throw new EntityAlreadyExistsException("El tipo de identificación con id " + dto.getId() + " ya existe.");
         }
@@ -30,7 +28,7 @@ public class IdentificationTypeService implements CrudOperations<IdentificationT
     }
 
     @Override
-    public CrudResponseDto<Optional<IdentificationTypeResDtoA>> findById(Long aLong) {
+    public CrudResponseDto<Optional<IdentificationTypeResDto>> findById(Long aLong) {
         IdentificationType identificationType = identificationTypeRepository.findById(aLong)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de identificación con id " + aLong + " no encontrado."));
 
@@ -38,13 +36,13 @@ public class IdentificationTypeService implements CrudOperations<IdentificationT
     }
 
     @Override
-    public CrudResponseDto<List<IdentificationTypeResDtoA>> findAll() {
+    public CrudResponseDto<List<IdentificationTypeResDto>> findAll() {
         List<IdentificationType> identificationTypes = identificationTypeRepository.findAll();
         return CrudResponseDto.success(identificationTypes.stream().map(IdentificationTypeMapper::toDto).toList(), "Tipos de identificación encontrados");
     }
 
     @Override
-    public CrudResponseDto<IdentificationTypeResDtoA> update(IdentificationTypeResDtoA dto, Long id) {
+    public CrudResponseDto<IdentificationTypeResDto> update(IdentificationTypeResDto dto, Long id) {
         IdentificationType identificationType = identificationTypeRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de identificación con id " + dto.getId() + " no encontrado."));
 
@@ -57,7 +55,7 @@ public class IdentificationTypeService implements CrudOperations<IdentificationT
     }
 
     @Override
-    public CrudResponseDto<IdentificationTypeResDtoA> deleteById(Long aLong) {
+    public CrudResponseDto<IdentificationTypeResDto> deleteById(Long aLong) {
         if (!identificationTypeRepository.existsById(aLong)) {
             throw new EntityNotFoundException("Tipo de identificación con id " + aLong + " no encontrado.");
         }
@@ -67,13 +65,13 @@ public class IdentificationTypeService implements CrudOperations<IdentificationT
     }
 
     @Override
-    public CrudResponseDto<IdentificationTypeResDtoA> activateById(Long aLong) {
+    public CrudResponseDto<IdentificationTypeResDto> activateById(Long aLong) {
         // IdentificationType doesn't have active field, so this might not apply
         throw new UnsupportedOperationException("Activate operation not supported for IdentificationType");
     }
 
     @Override
-    public CrudResponseDto<IdentificationTypeResDtoA> deactivateById(Long aLong) {
+    public CrudResponseDto<IdentificationTypeResDto> deactivateById(Long aLong) {
         // IdentificationType doesn't have active field, so this might not apply
         throw new UnsupportedOperationException("Deactivate operation not supported for IdentificationType");
     }
@@ -88,9 +86,9 @@ public class IdentificationTypeService implements CrudOperations<IdentificationT
 
     private static class IdentificationTypeMapper {
 
-        private static IdentificationTypeResDtoA toDto(IdentificationType entity) {
+        private static IdentificationTypeResDto toDto(IdentificationType entity) {
             if (entity == null) return null;
-            IdentificationTypeResDtoA dto = new IdentificationTypeResDtoA();
+            IdentificationTypeResDto dto = new IdentificationTypeResDto();
             dto.setId(entity.getId());
             dto.setTypeName(entity.getTypeName());
             dto.setDescription(entity.getDescription());
@@ -98,7 +96,7 @@ public class IdentificationTypeService implements CrudOperations<IdentificationT
             return dto;
         }
 
-        private static IdentificationType toEntity(IdentificationTypeResDtoA dto) {
+        private static IdentificationType toEntity(IdentificationTypeResDto dto) {
             IdentificationType entity = new IdentificationType();
             entity.setId(dto.getId());
             entity.setTypeName(dto.getTypeName());

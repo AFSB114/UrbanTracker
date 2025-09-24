@@ -1,11 +1,13 @@
 package com.sena.urbantracker.vehicles.application.service;
 
+import com.sena.urbantracker.vehicles.application.dto.request.VehicleAssignmentReqDto;
+import com.sena.urbantracker.vehicles.application.dto.response.VehicleAssigmentResDto;
+import com.sena.urbantracker.vehicles.application.mapper.VehicleAssignmentMapper;
+import com.sena.urbantracker.vehicles.domain.entity.VehicleAssignmentDomain;
+import com.sena.urbantracker.vehicles.domain.repository.VehicleAssignmentRepository;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import com.sena.urbantracker.vehicles.application.dto.response.VehicleAssigmentResDtoA;
-import com.sena.urbantracker.vehicles.domain.entity.VehicleAssigments;
-import com.sena.urbantracker.vehicles.domain.repository.IVehicleAssigments;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,97 +16,75 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class VehicleAssigmentService implements CrudOperations<VehicleAssigmentResDtoA, VehicleAssigmentResDtoA, Long> {
+public class VehicleAssigmentService implements CrudOperations<VehicleAssignmentReqDto, VehicleAssigmentResDto, Long> {
 
-    private final IVehicleAssigments vehicleAssigmentRepository;
+    private final VehicleAssignmentRepository vehicleAssignmentRepository;
 
     @Override
-    public CrudResponseDto<VehicleAssigmentResDtoA> create(VehicleAssigmentResDtoA dto) {
-        VehicleAssigments entity = VehicleAssigmentMapper.toEntity(dto);
+    public CrudResponseDto<VehicleAssigmentResDto> create(VehicleAssignmentReqDto request) {
+        VehicleAssignmentDomain entity = VehicleAssignmentMapper.toEntity(request);
+        VehicleAssignmentDomain saved = vehicleAssignmentRepository.save(entity);
 
-        VehicleAssigments saved = vehicleAssigmentRepository.save(entity);
-        return CrudResponseDto.success(VehicleAssigmentMapper.toDto(saved), "Asignación de vehículo creada correctamente");
+        return CrudResponseDto.success(VehicleAssignmentMapper.toDto(saved), "Asignación de vehículo creada correctamente");
     }
 
     @Override
-    public CrudResponseDto<Optional<VehicleAssigmentResDtoA>> findById(Long id) {
-        VehicleAssigments vehicleAssigment = vehicleAssigmentRepository.findById(id)
+    public CrudResponseDto<Optional<VehicleAssigmentResDto>> findById(Long id) {
+        VehicleAssignmentDomain vehicleAssignment = vehicleAssignmentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Asignación de vehículo con id " + id + " no encontrada."));
 
-        return CrudResponseDto.success(Optional.of(VehicleAssigmentMapper.toDto(vehicleAssigment)), "Asignación de vehículo encontrada");
+        return CrudResponseDto.success(Optional.of(VehicleAssignmentMapper.toDto(vehicleAssignment)), "Asignación de vehículo encontrada");
     }
 
     @Override
-    public CrudResponseDto<List<VehicleAssigmentResDtoA>> findAll() {
-        List<VehicleAssigmentResDtoA> dtos = vehicleAssigmentRepository.findAll()
+    public CrudResponseDto<List<VehicleAssigmentResDto>> findAll() {
+        List<VehicleAssigmentResDto> dtos = vehicleAssignmentRepository.findAll()
                 .stream()
-                .map(VehicleAssigmentMapper::toDto)
+                .map(VehicleAssignmentMapper::toDto)
                 .toList();
 
         return CrudResponseDto.success(dtos, "Listado de asignaciones de vehículo");
     }
 
     @Override
-    public CrudResponseDto<VehicleAssigmentResDtoA> update(VehicleAssigmentResDtoA dto, Long id) {
-        VehicleAssigments vehicleAssigment = vehicleAssigmentRepository.findById(dto.getId())
+    public CrudResponseDto<VehicleAssigmentResDto> update(VehicleAssignmentReqDto request, Long id) {
+        VehicleAssignmentDomain vehicleAssignment = vehicleAssignmentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Asignación de vehículo no encontrada."));
 
-        vehicleAssigment.setVehicle(dto.getVehicle());
-        vehicleAssigment.setDriver(dto.getDriver());
-        vehicleAssigment.setNote(dto.getNote());
-        vehicleAssigment.setAssignmentStatus(dto.getAssignmentStatus());
+        vehicleAssignment.setVehicleId(request.getVehicleId());
+        vehicleAssignment.setDriverId(request.getDriverId());
+        vehicleAssignment.setNote(request.getNote());
+        vehicleAssignment.setAssignmentStatus(request.getAssignmentStatus());
 
-        VehicleAssigments updated = vehicleAssigmentRepository.save(vehicleAssigment);
-        return CrudResponseDto.success(VehicleAssigmentMapper.toDto(updated), "Asignación de vehículo actualizada correctamente");
+        VehicleAssignmentDomain updated = vehicleAssignmentRepository.save(vehicleAssignment);
+        return CrudResponseDto.success(VehicleAssignmentMapper.toDto(updated), "Asignación de vehículo actualizada correctamente");
     }
 
     @Override
-    public CrudResponseDto<VehicleAssigmentResDtoA> deleteById(Long id) {
-        if (!vehicleAssigmentRepository.existsById(id)) {
+    public CrudResponseDto<VehicleAssigmentResDto> deleteById(Long id) {
+        if (!vehicleAssignmentRepository.existsById(id)) {
             throw new EntityNotFoundException("Asignación de vehículo no encontrada.");
         }
 
-        vehicleAssigmentRepository.deleteById(id);
-        return CrudResponseDto.success(VehicleAssigmentMapper.toDto(null), "Asignación de vehículo eliminada correctamente");
+        vehicleAssignmentRepository.deleteById(id);
+        return CrudResponseDto.success(VehicleAssignmentMapper.toDto(null), "Asignación de vehículo eliminada correctamente");
     }
 
     @Override
-    public CrudResponseDto<VehicleAssigmentResDtoA> activateById(Long id) {
+    public CrudResponseDto<VehicleAssigmentResDto> activateById(Long id) {
         // No aplica para asignaciones
         return CrudResponseDto.success(null, "Operación no soportada");
     }
 
     @Override
-    public CrudResponseDto<VehicleAssigmentResDtoA> deactivateById(Long id) {
+    public CrudResponseDto<VehicleAssigmentResDto> deactivateById(Long id) {
         // No aplica para asignaciones
         return CrudResponseDto.success(null, "Operación no soportada");
     }
 
     @Override
-    public CrudResponseDto<Boolean> existsById(Long aLong) {
-        return CrudResponseDto.success(vehicleAssigmentRepository.existsById(aLong), "Asignación de vehículo encontrada");
+    public CrudResponseDto<Boolean> existsById(Long id) {
+        return CrudResponseDto.success(vehicleAssignmentRepository.existsById(id), "Verificación de existencia completada");
     }
 
-    private static class VehicleAssigmentMapper {
-        public static VehicleAssigmentResDtoA toDto(VehicleAssigments entity) {
-            VehicleAssigmentResDtoA dto = new VehicleAssigmentResDtoA();
-            dto.setId(entity.getId());
-            dto.setVehicle(entity.getVehicle());
-            dto.setDriver(entity.getDriver());
-            dto.setNote(entity.getNote());
-            dto.setAssignmentStatus(entity.getAssignmentStatus());
-            dto.setActive(true); // Asumimos activo
-            return dto;
-        }
-
-        public static VehicleAssigments toEntity(VehicleAssigmentResDtoA dto) {
-            VehicleAssigments entity = new VehicleAssigments();
-            entity.setId(dto.getId());
-            entity.setVehicle(dto.getVehicle());
-            entity.setDriver(dto.getDriver());
-            entity.setNote(dto.getNote());
-            entity.setAssignmentStatus(dto.getAssignmentStatus());
-            return entity;
-        }
-    }
 }

@@ -1,12 +1,14 @@
 package com.sena.urbantracker.vehicles.application.service;
 
+import com.sena.urbantracker.vehicles.application.dto.request.VehicleTypeReqDto;
+import com.sena.urbantracker.vehicles.application.dto.response.VehicleTypeResDto;
+import com.sena.urbantracker.vehicles.application.mapper.VehicleTypeMapper;
+import com.sena.urbantracker.vehicles.domain.entity.VehicleTypeDomain;
+import com.sena.urbantracker.vehicles.domain.repository.VehicleTypeRepository;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import com.sena.urbantracker.vehicles.application.dto.response.VehicleTypeResDtoA;
-import com.sena.urbantracker.vehicles.domain.entity.VehicleType;
-import com.sena.urbantracker.vehicles.domain.repository.IVehicleType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,33 +17,33 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class VehicleTypeService implements CrudOperations<VehicleTypeResDtoA, VehicleTypeResDtoA, Long> {
+public class VehicleTypeService implements CrudOperations<VehicleTypeReqDto, VehicleTypeResDto, Long> {
 
-    private final IVehicleType vehicleTypeRepository;
+    private final VehicleTypeRepository vehicleTypeRepository;
 
     @Override
-    public CrudResponseDto<VehicleTypeResDtoA> create(VehicleTypeResDtoA dto) {
-        if (vehicleTypeRepository.existsByName(dto.getName())) {
-            throw new EntityAlreadyExistsException("Ya existe un tipo de vehículo con nombre: " + dto.getName());
+    public CrudResponseDto<VehicleTypeResDto> create(VehicleTypeReqDto request) {
+        if (vehicleTypeRepository.existsByName(request.getName())) {
+            throw new EntityAlreadyExistsException("Ya existe un tipo de vehículo con nombre: " + request.getName());
         }
 
-        VehicleType entity = VehicleTypeMapper.toEntity(dto);
+        VehicleTypeDomain entity = VehicleTypeMapper.toEntity(request);
+        VehicleTypeDomain saved = vehicleTypeRepository.save(entity);
 
-        VehicleType saved = vehicleTypeRepository.save(entity);
         return CrudResponseDto.success(VehicleTypeMapper.toDto(saved), "Tipo de vehículo creado correctamente");
     }
 
     @Override
-    public CrudResponseDto<Optional<VehicleTypeResDtoA>> findById(Long id) {
-        VehicleType vehicleType = vehicleTypeRepository.findById(id)
+    public CrudResponseDto<Optional<VehicleTypeResDto>> findById(Long id) {
+        VehicleTypeDomain vehicleType = vehicleTypeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de vehículo con id " + id + " no encontrado."));
 
         return CrudResponseDto.success(Optional.of(VehicleTypeMapper.toDto(vehicleType)), "Tipo de vehículo encontrado");
     }
 
     @Override
-    public CrudResponseDto<List<VehicleTypeResDtoA>> findAll() {
-        List<VehicleTypeResDtoA> dtos = vehicleTypeRepository.findAll()
+    public CrudResponseDto<List<VehicleTypeResDto>> findAll() {
+        List<VehicleTypeResDto> dtos = vehicleTypeRepository.findAll()
                 .stream()
                 .map(VehicleTypeMapper::toDto)
                 .toList();
@@ -50,19 +52,19 @@ public class VehicleTypeService implements CrudOperations<VehicleTypeResDtoA, Ve
     }
 
     @Override
-    public CrudResponseDto<VehicleTypeResDtoA> update(VehicleTypeResDtoA dto, Long id) {
-        VehicleType vehicleType = vehicleTypeRepository.findById(id)
+    public CrudResponseDto<VehicleTypeResDto> update(VehicleTypeReqDto request, Long id) {
+        VehicleTypeDomain vehicleType = vehicleTypeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Tipo de vehículo no encontrado."));
 
-        vehicleType.setName(dto.getName());
-        vehicleType.setDescription(dto.getDescription());
+        vehicleType.setName(request.getName());
+        vehicleType.setDescription(request.getDescription());
 
-        VehicleType updated = vehicleTypeRepository.save(vehicleType);
+        VehicleTypeDomain updated = vehicleTypeRepository.save(vehicleType);
         return CrudResponseDto.success(VehicleTypeMapper.toDto(updated), "Tipo de vehículo actualizado correctamente");
     }
 
     @Override
-    public CrudResponseDto<VehicleTypeResDtoA> deleteById(Long id) {
+    public CrudResponseDto<VehicleTypeResDto> deleteById(Long id) {
         if (!vehicleTypeRepository.existsById(id)) {
             throw new EntityNotFoundException("Tipo de vehículo no encontrado.");
         }
@@ -72,8 +74,8 @@ public class VehicleTypeService implements CrudOperations<VehicleTypeResDtoA, Ve
     }
 
     @Override
-    public CrudResponseDto<VehicleTypeResDtoA> activateById(Long id) {
-        VehicleType vehicleType = vehicleTypeRepository.findById(id)
+    public CrudResponseDto<VehicleTypeResDto> activateById(Long id) {
+        VehicleTypeDomain vehicleType = vehicleTypeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de vehículo no encontrado."));
         vehicleType.setActive(true);
         vehicleTypeRepository.save(vehicleType);
@@ -81,8 +83,8 @@ public class VehicleTypeService implements CrudOperations<VehicleTypeResDtoA, Ve
     }
 
     @Override
-    public CrudResponseDto<VehicleTypeResDtoA> deactivateById(Long id) {
-        VehicleType vehicleType = vehicleTypeRepository.findById(id)
+    public CrudResponseDto<VehicleTypeResDto> deactivateById(Long id) {
+        VehicleTypeDomain vehicleType = vehicleTypeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de vehículo no encontrado."));
         vehicleType.setActive(false);
         vehicleTypeRepository.save(vehicleType);
@@ -90,27 +92,8 @@ public class VehicleTypeService implements CrudOperations<VehicleTypeResDtoA, Ve
     }
 
     @Override
-    public CrudResponseDto<Boolean> existsById(Long aLong) {
-        return CrudResponseDto.success(vehicleTypeRepository.existsById(aLong), "Tipo de vehículo encontrado");
+    public CrudResponseDto<Boolean> existsById(Long id) {
+        return CrudResponseDto.success(vehicleTypeRepository.existsById(id), "Verificación de existencia completada");
     }
 
-    private static class VehicleTypeMapper {
-        public static VehicleTypeResDtoA toDto(VehicleType entity) {
-            VehicleTypeResDtoA dto = new VehicleTypeResDtoA();
-            dto.setId(entity.getId());
-            dto.setName(entity.getName());
-            dto.setDescription(entity.getDescription());
-            dto.setActive(entity.getActive());
-            return dto;
-        }
-
-        public static VehicleType toEntity(VehicleTypeResDtoA dto) {
-            VehicleType entity = new VehicleType();
-            entity.setId(dto.getId());
-            entity.setName(dto.getName());
-            entity.setDescription(dto.getDescription());
-            entity.setActive(dto.getActive());
-            return entity;
-        }
-    }
 }

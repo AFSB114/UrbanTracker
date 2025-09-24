@@ -4,7 +4,7 @@ import com.sena.urbantracker.routes.application.dto.request.RouteTrajectoryReqDt
 import com.sena.urbantracker.routes.application.dto.response.RouteTrajectoryResDto;
 import com.sena.urbantracker.routes.domain.entity.RouteDomain;
 import com.sena.urbantracker.routes.domain.entity.RouteTrajectoryDomain;
-import com.sena.urbantracker.vehicles.domain.entity.Vehicle;
+import com.sena.urbantracker.vehicles.domain.entity.VehicleDomain;
 
 public class RouteTrajectoryMapper {
 
@@ -27,7 +27,7 @@ public class RouteTrajectoryMapper {
         if (dto == null) return null;
         return RouteTrajectoryDomain.builder()
                 .route(RouteDomain.builder().id(dto.getRouteId()).build())
-                .vehicle(Vehicle.builder().id(dto.getVehicleId()).build()) // Assuming Vehicle has id
+                .vehicle(VehicleDomain.builder().id(dto.getVehicleId()).build()) // Assuming Vehicle has id
                 .startTime(dto.getStartTime())
                 .endTime(dto.getEndTime())
                 .trajectoryStatus(dto.getTrajectoryStatus())

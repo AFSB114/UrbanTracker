@@ -1,6 +1,6 @@
 package com.sena.urbantracker.security.domain.entity;
 
-import com.sena.urbantracker.users.domain.entity.UserProfile;
+import com.sena.urbantracker.users.application.dto.response.UserProfileResDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +30,7 @@ public class RecoveryRequest {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private UserProfile user;
+    private UserProfileResDto user;
 
     // para asignar automaticamente la fecha de creación
     @PrePersist

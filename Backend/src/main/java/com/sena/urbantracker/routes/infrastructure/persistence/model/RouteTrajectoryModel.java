@@ -2,7 +2,7 @@ package com.sena.urbantracker.routes.infrastructure.persistence.model;
 
 import com.sena.urbantracker.routes.domain.valueobject.TrajectoryStatusType;
 import com.sena.urbantracker.shared.application.dto.BaseEntity;
-import com.sena.urbantracker.vehicles.domain.entity.Vehicle;
+import com.sena.urbantracker.vehicles.infrastructure.persistence.model.VehicleModel;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -23,7 +23,7 @@ public class RouteTrajectoryModel extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "vehicle_id", nullable = false)
-    private Vehicle vehicle;
+    private VehicleModel vehicle;
 
     @Column(name = "start_time", nullable = false)
     @Builder.Default

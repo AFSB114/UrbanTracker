@@ -4,9 +4,7 @@ import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExists
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import com.sena.urbantracker.users.application.dto.response.UserIdentificationResDtoA;
-import com.sena.urbantracker.users.domain.repository.IUserIdentification;
-import com.sena.urbantracker.users.domain.entity.UserIdentification;
+import com.sena.urbantracker.users.application.dto.response.UserIdentificationResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -14,12 +12,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserIdentificationService implements CrudOperations<UserIdentificationResDtoA, UserIdentificationResDtoA, Long> {
+public class UserIdentificationService implements CrudOperations<UserIdentificationResDto, UserIdentificationResDto, Long> {
 
     private final IUserIdentification userIdentificationRepository;
 
     @Override
-    public CrudResponseDto<UserIdentificationResDtoA> create(UserIdentificationResDtoA dto) {
+    public CrudResponseDto<UserIdentificationResDto> create(UserIdentificationResDto dto) {
         if (userIdentificationRepository.existsById(dto.getId())) {
             throw new EntityAlreadyExistsException("La identificación de usuario con id " + dto.getId() + " ya existe.");
         }
@@ -31,7 +29,7 @@ public class UserIdentificationService implements CrudOperations<UserIdentificat
     }
 
     @Override
-    public CrudResponseDto<Optional<UserIdentificationResDtoA>> findById(Long aLong) {
+    public CrudResponseDto<Optional<UserIdentificationResDto>> findById(Long aLong) {
         UserIdentification userIdentification = userIdentificationRepository.findById(aLong)
                 .orElseThrow(() -> new EntityNotFoundException("Identificación de usuario con id " + aLong + " no encontrada."));
 
@@ -39,13 +37,13 @@ public class UserIdentificationService implements CrudOperations<UserIdentificat
     }
 
     @Override
-    public CrudResponseDto<List<UserIdentificationResDtoA>> findAll() {
+    public CrudResponseDto<List<UserIdentificationResDto>> findAll() {
         List<UserIdentification> userIdentifications = userIdentificationRepository.findAll();
         return CrudResponseDto.success(userIdentifications.stream().map(UserIdentificationMapper::toDto).toList(), "Identificaciones de usuario encontradas");
     }
 
     @Override
-    public CrudResponseDto<UserIdentificationResDtoA> update(UserIdentificationResDtoA dto, Long id) {
+    public CrudResponseDto<UserIdentificationResDto> update(UserIdentificationResDto dto, Long id) {
         UserIdentification userIdentification = userIdentificationRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Identificación de usuario con id " + dto.getId() + " no encontrada."));
 
@@ -59,7 +57,7 @@ public class UserIdentificationService implements CrudOperations<UserIdentificat
     }
 
     @Override
-    public CrudResponseDto<UserIdentificationResDtoA> deleteById(Long aLong) {
+    public CrudResponseDto<UserIdentificationResDto> deleteById(Long aLong) {
         if (!userIdentificationRepository.existsById(aLong)) {
             throw new EntityNotFoundException("Identificación de usuario con id " + aLong + " no encontrada.");
         }
@@ -69,7 +67,7 @@ public class UserIdentificationService implements CrudOperations<UserIdentificat
     }
 
     @Override
-    public CrudResponseDto<UserIdentificationResDtoA> activateById(Long aLong) {
+    public CrudResponseDto<UserIdentificationResDto> activateById(Long aLong) {
         UserIdentification userIdentification = userIdentificationRepository.findById(aLong)
                 .orElseThrow(() -> new EntityNotFoundException("Identificación de usuario con id " + aLong + " no encontrada."));
 
@@ -79,7 +77,7 @@ public class UserIdentificationService implements CrudOperations<UserIdentificat
     }
 
     @Override
-    public CrudResponseDto<UserIdentificationResDtoA> deactivateById(Long aLong) {
+    public CrudResponseDto<UserIdentificationResDto> deactivateById(Long aLong) {
         UserIdentification userIdentification = userIdentificationRepository.findById(aLong)
                 .orElseThrow(() -> new EntityNotFoundException("Identificación de usuario con id " + aLong + " no encontrada."));
 
@@ -98,9 +96,9 @@ public class UserIdentificationService implements CrudOperations<UserIdentificat
 
     private static class UserIdentificationMapper {
 
-        private static UserIdentificationResDtoA toDto(UserIdentification entity) {
+        private static UserIdentificationResDto toDto(UserIdentification entity) {
             if (entity == null) return null;
-            UserIdentificationResDtoA dto = new UserIdentificationResDtoA();
+            UserIdentificationResDto dto = new UserIdentificationResDto();
             dto.setId(entity.getId());
             dto.setUser(entity.getUser());
             dto.setIdentificationType(entity.getIdentificationType());
@@ -109,7 +107,7 @@ public class UserIdentificationService implements CrudOperations<UserIdentificat
             return dto;
         }
 
-        private static UserIdentification toEntity(UserIdentificationResDtoA dto) {
+        private static UserIdentification toEntity(UserIdentificationResDto dto) {
             UserIdentification entity = new UserIdentification();
             entity.setId(dto.getId());
             entity.setUser(dto.getUser());

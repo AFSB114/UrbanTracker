@@ -5,8 +5,6 @@ import com.sena.urbantracker.security.application.dto.response.ResponseLoginDTO;
 import com.sena.urbantracker.security.domain.entity.RecoveryRequest;
 import com.sena.urbantracker.security.domain.entity.User;
 import com.sena.urbantracker.security.domain.repository.RecoveryRequestRepository;
-import com.sena.urbantracker.users.domain.entity.UserProfile;
-import com.sena.urbantracker.users.domain.repository.IUserProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
