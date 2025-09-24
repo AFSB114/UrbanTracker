@@ -1,4 +1,5 @@
 export interface RouteWaypointRequest {
+  destination: "OUTBOUND" | "RETURN";
   sequence: number;
   latitude: number;
   longitude: number;

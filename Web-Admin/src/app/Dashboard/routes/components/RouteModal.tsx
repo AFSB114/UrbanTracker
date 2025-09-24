@@ -1,12 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Trash2, X, Save } from "lucide-react";
-import {
-  RouteResponse,
-  RouteWaypoint,
-  type RouteWaypointRequest,
-  type RouteWithWaypointsRequest,
-} from "../types/routeTypes";
-import MapView from "./mapbox/MapView";
+import {RouteResponse,RouteWaypoint,type RouteWaypointRequest,type RouteWithWaypointsRequest,} from "../types/routeTypes";
+import MapView from "./mapbox/MapVIew";
 import {
   RouteEditorProvider,
   useRouteEditor,
@@ -223,8 +218,9 @@ const RouteModalContent: React.FC<{
 
   const loadRouteData = useCallback(
     (route: RouteResponse, waypointsData: RouteWaypoint[]) => {
-      const waypointRequests: RouteWaypointRequest[] = waypointsData.map(
+      const RouteWaypointRequest: RouteWaypointRequest[] = waypointsData.map(
         (wp) => ({
+          destination: (wp.destination as "OUTBOUND" | "RETURN") || DEST_OUTBOUND,
           sequence: wp.sequence,
           latitude: wp.latitude,
           longitude: wp.longitude,
@@ -236,10 +232,10 @@ const RouteModalContent: React.FC<{
         number: route.numberRoute,
         description: route.description || "",
         totalDistance: route.totalDistance,
-        waypoints: waypointRequests,
+        waypoints: RouteWaypointRequest,
       });
 
-      setWaypointList(waypointRequests);
+      setWaypointList(RouteWaypointRequest);
     },
     [setWaypointList]
   );
