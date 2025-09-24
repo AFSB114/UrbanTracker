@@ -2,30 +2,26 @@ package com.sena.urbantracker.routes.infrastructure.persistence.model;
 
 import com.sena.urbantracker.routes.domain.valueobject.WaypointDestineType;
 import com.sena.urbantracker.routes.domain.valueobject.WaypointType;
+import com.sena.urbantracker.shared.application.dto.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+@Data
 @Entity
+@SuperBuilder
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Table(
         name = "route_waypoint",
         schema = "routes",
         uniqueConstraints = @UniqueConstraint(columnNames = {"route_id", "sequence", "type", "destine"}),
         indexes = @Index(columnList = "route_id"))
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-@Builder
-public class RouteWaypointModel {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class RouteWaypointModel extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "route_id", nullable = false)
@@ -47,12 +43,4 @@ public class RouteWaypointModel {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private WaypointDestineType destine;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 }

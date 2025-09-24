@@ -3,16 +3,14 @@ package com.sena.urbantracker.routes.application.service;
 import com.sena.urbantracker.routes.application.dto.request.RouteWaypointReqDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteWaypointResDto;
 import com.sena.urbantracker.routes.application.mapper.RouteWaypointMapper;
+import com.sena.urbantracker.routes.domain.repository.RouteRepository;
 import com.sena.urbantracker.routes.domain.entity.RouteDomain;
 import com.sena.urbantracker.routes.domain.entity.RouteWaypointDomain;
-import com.sena.urbantracker.routes.domain.repository.IRoute;
-import com.sena.urbantracker.routes.domain.repository.IRouteWaypoint;
+import com.sena.urbantracker.routes.domain.repository.RouteWaypointRepository;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
-import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
+import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import com.sena.urbantracker.shared.domain.enums.EntityType;
-import com.sena.urbantracker.shared.application.service.RepositoryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -24,35 +22,30 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto, RouteWaypointResDto, Long> {
 
-    @Lazy
-    private final RepositoryFactory repositoryFactory;
+   @Lazy
+   private final RouteWaypointRepository routeWaypointRepository;
 
-    private IRouteWaypoint getRouteWaypointRepository() {
-        return (IRouteWaypoint) repositoryFactory.createRepository(EntityType.ROUTE_WAYPOINT, RouteWaypointDomain.class);
-    }
-
-    private IRoute getRouteRepository() {
-        return (IRoute) repositoryFactory.createRepository(EntityType.ROUTE, RouteDomain.class);
-    }
+   @Lazy
+   private final RouteRepository routeRepository;
 
     @Override
     public CrudResponseDto<RouteWaypointResDto> create(RouteWaypointReqDto dto) {
-        RouteDomain route = getRouteRepository().findById(dto.getRouteId())
+        RouteDomain route = routeRepository.findById(dto.getRouteId())
                 .orElseThrow(() -> new EntityNotFoundException("Ruta no encontrada."));
 
-        if (getRouteWaypointRepository().existsByRouteAndSequence(route, dto.getSequence())) {
+        if (routeWaypointRepository.existsByRouteAndSequence(route, dto.getSequence())) {
             throw new EntityAlreadyExistsException("Ya existe un punto de ruta con secuencia: " + dto.getSequence() + " para la ruta: " + route.getId());
         }
 
         RouteWaypointDomain entity = RouteWaypointMapper.toEntity(dto, route);
-        RouteWaypointDomain saved = getRouteWaypointRepository().save(entity);
+        RouteWaypointDomain saved = routeWaypointRepository.save(entity);
         System.out.println("Punto de ruta creado");
         return CrudResponseDto.success(RouteWaypointMapper.toDto(saved), "Punto de ruta creado correctamente");
     }
 
     @Override
     public CrudResponseDto<Optional<RouteWaypointResDto>> findById(Long id) {
-        RouteWaypointDomain waypoint = getRouteWaypointRepository().findById(id)
+        RouteWaypointDomain waypoint = routeWaypointRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Punto de ruta con id " + id + " no encontrado."));
 
         return CrudResponseDto.success(Optional.of(RouteWaypointMapper.toDto(waypoint)), "Punto de ruta encontrado");
@@ -60,7 +53,7 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto,
 
     @Override
     public CrudResponseDto<List<RouteWaypointResDto>> findAll() {
-        List<RouteWaypointResDto> dtos = getRouteWaypointRepository().findAll()
+        List<RouteWaypointResDto> dtos = routeWaypointRepository.findAll()
                 .stream()
                 .map(RouteWaypointMapper::toDto)
                 .toList();
@@ -70,10 +63,10 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto,
 
     @Override
     public CrudResponseDto<RouteWaypointResDto> update(RouteWaypointReqDto dto, Long id) {
-        RouteWaypointDomain waypoint = getRouteWaypointRepository().findById(id)
+        RouteWaypointDomain waypoint = routeWaypointRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Punto de ruta no encontrado."));
 
-        RouteDomain route = getRouteRepository().findById(dto.getRouteId())
+        RouteDomain route = routeRepository.findById(dto.getRouteId())
                 .orElseThrow(() -> new EntityNotFoundException("Ruta no encontrada."));
 
         waypoint.setRoute(route);
@@ -81,17 +74,17 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto,
         waypoint.setLatitude(dto.getLatitude());
         waypoint.setLongitude(dto.getLongitude());
 
-        RouteWaypointDomain updated = getRouteWaypointRepository().save(waypoint);
+        RouteWaypointDomain updated = routeWaypointRepository.save(waypoint);
         return CrudResponseDto.success(RouteWaypointMapper.toDto(updated), "Punto de ruta actualizado correctamente");
     }
 
     @Override
     public CrudResponseDto<RouteWaypointResDto> deleteById(Long id) {
-        if (!getRouteWaypointRepository().existsById(id)) {
+        if (!routeWaypointRepository.existsById(id)) {
             throw new EntityNotFoundException("Punto de ruta no encontrado.");
         }
 
-        getRouteWaypointRepository().deleteById(id);
+        routeWaypointRepository.deleteById(id);
         return CrudResponseDto.success(RouteWaypointMapper.toDto(null), "Punto de ruta eliminado correctamente");
     }
 
@@ -107,7 +100,7 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto,
 
     @Override
     public CrudResponseDto<Boolean> existsById(Long id) {
-        return CrudResponseDto.success(getRouteWaypointRepository().existsById(id), "Verificación de existencia completada");
+        return CrudResponseDto.success(routeWaypointRepository.existsById(id), "Verificación de existencia completada");
     }
 
     public CrudResponseDto<List<RouteWaypointReqDto>> findByRouteId(Long routeId) {

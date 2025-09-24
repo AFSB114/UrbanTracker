@@ -1,8 +1,7 @@
 package com.sena.urbantracker.shared.infrastructure.controller;
 
 import com.sena.urbantracker.shared.infrastructure.exception.ValidationException;
-import com.sena.urbantracker.shared.domain.dto.BaseDto;
-import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
+import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;

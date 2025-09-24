@@ -1,24 +1,15 @@
 package com.sena.urbantracker.routes.domain.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.sena.urbantracker.shared.application.dto.ABaseDomain;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-@Builder
-public class RouteDomain {
-    private Long id;
+@SuperBuilder
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class RouteDomain extends ABaseDomain {
     private Integer numberRoute;
     private String description;
     private Double totalDistance;
-    private Boolean active;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private List<RouteWaypointDomain> routeWaypoints;
 }

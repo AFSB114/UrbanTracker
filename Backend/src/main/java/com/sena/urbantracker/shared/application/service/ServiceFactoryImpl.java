@@ -1,5 +1,7 @@
 package com.sena.urbantracker.shared.application.service;
 
+import com.sena.urbantracker.routes.application.service.RouteScheduleService;
+import com.sena.urbantracker.routes.application.service.RouteTrajectoryService;
 import com.sena.urbantracker.shared.infrastructure.exception.FactoryException;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
@@ -17,6 +19,7 @@ import com.sena.urbantracker.routes.application.service.RouteWaypointService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -38,8 +41,11 @@ public class ServiceFactoryImpl implements ServiceFactory {
     private final UserIdentificationService userIdentificationService;
     private final UserProfileService userProfileService;
     private final RoleService roleService;
+    // Routes
     private final RouteService routeService;
     private final RouteWaypointService routeWaypointService;
+    private final RouteScheduleService routeScheduleService;
+    private final RouteTrajectoryService routeTrajectoryService;
 
     private Map<EntityType, CrudOperations<?, ?, ?>> crudServices;
 
@@ -56,8 +62,11 @@ public class ServiceFactoryImpl implements ServiceFactory {
         map.put(EntityType.USER_IDENTIFICATION, userIdentificationService);
         map.put(EntityType.USER_PROFILE, userProfileService);
         map.put(EntityType.ROLE, roleService);
+        // Routes
         map.put(EntityType.ROUTE, routeService);
         map.put(EntityType.ROUTE_WAYPOINT, routeWaypointService);
+        map.put(EntityType.ROUTE_SCHEDULE, routeScheduleService);
+        map.put(EntityType.ROUTE_TRAJECTORY, routeTrajectoryService);
 
         // Hacemos el mapa inmutable para evitar modificaciones en runtime
         crudServices = Collections.unmodifiableMap(map);

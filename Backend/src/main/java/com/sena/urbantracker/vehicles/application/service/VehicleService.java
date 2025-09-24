@@ -2,9 +2,9 @@ package com.sena.urbantracker.vehicles.application.service;
 
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
-import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
+import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import com.sena.urbantracker.vehicles.application.dto.response.VehicleDto;
+import com.sena.urbantracker.vehicles.application.dto.response.VehicleResDtoA;
 import com.sena.urbantracker.vehicles.domain.entity.Vehicle;
 import com.sena.urbantracker.vehicles.domain.valueobject.VehicleStatusType;
 import com.sena.urbantracker.vehicles.domain.repository.IVehicle;
@@ -16,12 +16,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class VehicleService implements CrudOperations<VehicleDto, VehicleDto, Long>{
+public class VehicleService implements CrudOperations<VehicleResDtoA, VehicleResDtoA, Long>{
 
     private final IVehicle vehicleRepository;
 
     @Override
-    public CrudResponseDto<VehicleDto> create(VehicleDto dto) {
+    public CrudResponseDto<VehicleResDtoA> create(VehicleResDtoA dto) {
         if (vehicleRepository.existsByLicencePlate(dto.getLicencePlate())) {
             throw new EntityAlreadyExistsException("Ya existe un vehículo con placa: " + dto.getLicencePlate());
         }
@@ -34,7 +34,7 @@ public class VehicleService implements CrudOperations<VehicleDto, VehicleDto, Lo
     }
 
     @Override
-    public CrudResponseDto<Optional<VehicleDto>> findById(Long id) {
+    public CrudResponseDto<Optional<VehicleResDtoA>> findById(Long id) {
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Vehículo con id " + id + " no encontrado."));
 
@@ -42,8 +42,8 @@ public class VehicleService implements CrudOperations<VehicleDto, VehicleDto, Lo
     }
 
     @Override
-    public CrudResponseDto<List<VehicleDto>> findAll() {
-        List<VehicleDto> dtos = vehicleRepository.findAll()
+    public CrudResponseDto<List<VehicleResDtoA>> findAll() {
+        List<VehicleResDtoA> dtos = vehicleRepository.findAll()
                 .stream()
                 .map(VehicleMapper::toDto)
                 .toList();
@@ -53,7 +53,7 @@ public class VehicleService implements CrudOperations<VehicleDto, VehicleDto, Lo
 
 
     @Override
-    public CrudResponseDto<VehicleDto> update(VehicleDto dto, Long id) {
+    public CrudResponseDto<VehicleResDtoA> update(VehicleResDtoA dto, Long id) {
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Vehículo no encontrado."));
 
@@ -65,7 +65,7 @@ public class VehicleService implements CrudOperations<VehicleDto, VehicleDto, Lo
     }
 
     @Override
-    public CrudResponseDto<VehicleDto> deleteById(Long id) {
+    public CrudResponseDto<VehicleResDtoA> deleteById(Long id) {
         if (!vehicleRepository.existsById(id)) {
             throw new EntityNotFoundException("Vehículo no encontrado.");
         }
@@ -75,7 +75,7 @@ public class VehicleService implements CrudOperations<VehicleDto, VehicleDto, Lo
     }
 
     @Override
-    public CrudResponseDto<VehicleDto> activateById(Long id) {
+    public CrudResponseDto<VehicleResDtoA> activateById(Long id) {
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Vehículo no encontrado."));
         vehicle.setStatus(VehicleStatusType.ACTIVE);
@@ -84,7 +84,7 @@ public class VehicleService implements CrudOperations<VehicleDto, VehicleDto, Lo
     }
 
     @Override
-    public CrudResponseDto<VehicleDto> deactivateById(Long id) {
+    public CrudResponseDto<VehicleResDtoA> deactivateById(Long id) {
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Vehículo no encontrado."));
         vehicle.setStatus(VehicleStatusType.INACTIVE);
@@ -99,10 +99,10 @@ public class VehicleService implements CrudOperations<VehicleDto, VehicleDto, Lo
 
 
     private static class VehicleMapper {
-        public static VehicleDto toDto(Vehicle entity) {
+        public static VehicleResDtoA toDto(Vehicle entity) {
             if (entity == null) return null;
 
-            VehicleDto dto = new VehicleDto();
+            VehicleResDtoA dto = new VehicleResDtoA();
             dto.setId(entity.getId());
             dto.setLicencePlate(entity.getLicencePlate());
             dto.setModel(entity.getModel());
@@ -116,7 +116,7 @@ public class VehicleService implements CrudOperations<VehicleDto, VehicleDto, Lo
             return dto;
         }
 
-        public static Vehicle toEntity(VehicleDto dto) {
+        public static Vehicle toEntity(VehicleResDtoA dto) {
             if (dto == null) return null;
 
             Vehicle entity = new Vehicle();

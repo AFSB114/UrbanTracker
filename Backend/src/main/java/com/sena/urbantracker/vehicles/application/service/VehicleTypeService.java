@@ -2,9 +2,9 @@ package com.sena.urbantracker.vehicles.application.service;
 
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
-import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
+import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import com.sena.urbantracker.vehicles.application.dto.response.VehicleTypeDto;
+import com.sena.urbantracker.vehicles.application.dto.response.VehicleTypeResDtoA;
 import com.sena.urbantracker.vehicles.domain.entity.VehicleType;
 import com.sena.urbantracker.vehicles.domain.repository.IVehicleType;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +15,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class VehicleTypeService implements CrudOperations<VehicleTypeDto, VehicleTypeDto, Long> {
+public class VehicleTypeService implements CrudOperations<VehicleTypeResDtoA, VehicleTypeResDtoA, Long> {
 
     private final IVehicleType vehicleTypeRepository;
 
     @Override
-    public CrudResponseDto<VehicleTypeDto> create(VehicleTypeDto dto) {
+    public CrudResponseDto<VehicleTypeResDtoA> create(VehicleTypeResDtoA dto) {
         if (vehicleTypeRepository.existsByName(dto.getName())) {
             throw new EntityAlreadyExistsException("Ya existe un tipo de vehículo con nombre: " + dto.getName());
         }
@@ -32,7 +32,7 @@ public class VehicleTypeService implements CrudOperations<VehicleTypeDto, Vehicl
     }
 
     @Override
-    public CrudResponseDto<Optional<VehicleTypeDto>> findById(Long id) {
+    public CrudResponseDto<Optional<VehicleTypeResDtoA>> findById(Long id) {
         VehicleType vehicleType = vehicleTypeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de vehículo con id " + id + " no encontrado."));
 
@@ -40,8 +40,8 @@ public class VehicleTypeService implements CrudOperations<VehicleTypeDto, Vehicl
     }
 
     @Override
-    public CrudResponseDto<List<VehicleTypeDto>> findAll() {
-        List<VehicleTypeDto> dtos = vehicleTypeRepository.findAll()
+    public CrudResponseDto<List<VehicleTypeResDtoA>> findAll() {
+        List<VehicleTypeResDtoA> dtos = vehicleTypeRepository.findAll()
                 .stream()
                 .map(VehicleTypeMapper::toDto)
                 .toList();
@@ -50,7 +50,7 @@ public class VehicleTypeService implements CrudOperations<VehicleTypeDto, Vehicl
     }
 
     @Override
-    public CrudResponseDto<VehicleTypeDto> update(VehicleTypeDto dto, Long id) {
+    public CrudResponseDto<VehicleTypeResDtoA> update(VehicleTypeResDtoA dto, Long id) {
         VehicleType vehicleType = vehicleTypeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Tipo de vehículo no encontrado."));
 
@@ -62,7 +62,7 @@ public class VehicleTypeService implements CrudOperations<VehicleTypeDto, Vehicl
     }
 
     @Override
-    public CrudResponseDto<VehicleTypeDto> deleteById(Long id) {
+    public CrudResponseDto<VehicleTypeResDtoA> deleteById(Long id) {
         if (!vehicleTypeRepository.existsById(id)) {
             throw new EntityNotFoundException("Tipo de vehículo no encontrado.");
         }
@@ -72,7 +72,7 @@ public class VehicleTypeService implements CrudOperations<VehicleTypeDto, Vehicl
     }
 
     @Override
-    public CrudResponseDto<VehicleTypeDto> activateById(Long id) {
+    public CrudResponseDto<VehicleTypeResDtoA> activateById(Long id) {
         VehicleType vehicleType = vehicleTypeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de vehículo no encontrado."));
         vehicleType.setActive(true);
@@ -81,7 +81,7 @@ public class VehicleTypeService implements CrudOperations<VehicleTypeDto, Vehicl
     }
 
     @Override
-    public CrudResponseDto<VehicleTypeDto> deactivateById(Long id) {
+    public CrudResponseDto<VehicleTypeResDtoA> deactivateById(Long id) {
         VehicleType vehicleType = vehicleTypeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de vehículo no encontrado."));
         vehicleType.setActive(false);
@@ -95,8 +95,8 @@ public class VehicleTypeService implements CrudOperations<VehicleTypeDto, Vehicl
     }
 
     private static class VehicleTypeMapper {
-        public static VehicleTypeDto toDto(VehicleType entity) {
-            VehicleTypeDto dto = new VehicleTypeDto();
+        public static VehicleTypeResDtoA toDto(VehicleType entity) {
+            VehicleTypeResDtoA dto = new VehicleTypeResDtoA();
             dto.setId(entity.getId());
             dto.setName(entity.getName());
             dto.setDescription(entity.getDescription());
@@ -104,7 +104,7 @@ public class VehicleTypeService implements CrudOperations<VehicleTypeDto, Vehicl
             return dto;
         }
 
-        public static VehicleType toEntity(VehicleTypeDto dto) {
+        public static VehicleType toEntity(VehicleTypeResDtoA dto) {
             VehicleType entity = new VehicleType();
             entity.setId(dto.getId());
             entity.setName(dto.getName());

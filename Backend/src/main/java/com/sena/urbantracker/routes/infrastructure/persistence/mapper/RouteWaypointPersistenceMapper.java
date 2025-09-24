@@ -1,7 +1,6 @@
 package com.sena.urbantracker.routes.infrastructure.persistence.mapper;
 
 import com.sena.urbantracker.routes.domain.entity.RouteWaypointDomain;
-import com.sena.urbantracker.routes.domain.valueobject.WaypointDestineType;
 import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteWaypointModel;
 
 public class RouteWaypointPersistenceMapper {
@@ -25,7 +24,7 @@ public class RouteWaypointPersistenceMapper {
         if (model == null) return null;
         return RouteWaypointDomain.builder()
                 .id(model.getId())
-                .routeId(model.getRoute() != null ? model.getRoute().getId() : null)
+                .route(RoutePersistenceMapper.toDomain(model.getRoute()))
                 .sequence(model.getSequence())
                 .latitude(model.getLatitude())
                 .longitude(model.getLongitude())
