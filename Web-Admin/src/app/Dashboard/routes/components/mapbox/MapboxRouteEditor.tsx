@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
 // import type { RouteWaypoint } from '../../types/routeTypes';
 
 interface RouteWaypoint {

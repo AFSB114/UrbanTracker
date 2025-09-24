@@ -3,7 +3,7 @@ import { ApiClient } from '../../../utils/apiClient';
 import { API_ENDPOINTS } from './config';
 import type { CrudResponse } from './types';
 
-const apiClient = new ApiClient('http://localhost:8085');
+const apiClient = new ApiClient('http://localhost:8080');
 
 export class RoutesApi {
   static async getAllRoutes(): Promise<CrudResponse<RouteResponse[]>> {

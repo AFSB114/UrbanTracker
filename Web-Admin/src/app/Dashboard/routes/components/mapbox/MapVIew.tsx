@@ -1,10 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import Map, {
-  Source,
-  Layer,
-  Marker,
-} from "react-map-gl/mapbox";
-import "mapbox-gl/dist/mapbox-gl.css";
+import Map, {Source,Layer,Marker,} from "react-map-gl/mapbox";
 import type { RouteWaypointRequest } from "../../types/routeTypes";
 import type { MapMouseEvent } from "mapbox-gl";
 import type { FeatureCollection } from "geojson";
