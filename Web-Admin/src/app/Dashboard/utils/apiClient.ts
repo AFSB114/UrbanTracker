@@ -4,6 +4,8 @@ export interface ApiError {
   errors?: Record<string, string[]>;
 }
 
+const token = localStorage.getItem("token");
+
 export class ApiClient {
   private baseURL: string;
 
@@ -21,6 +23,7 @@ export class ApiClient {
       headers: {
         "Content-Type": "application/json",
         ...options.headers,
+        Authorization: token ? `Bearer ${token}` : "",
       },
       ...options,
     };
