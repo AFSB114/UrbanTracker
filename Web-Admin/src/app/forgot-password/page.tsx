@@ -1,98 +1,138 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { OTPInput } from "@/components/otp-input"
+import { ArrowLeft } from "lucide-react"
+import Image from "next/image"
 
 export default function ForgotPasswordPage() {
-    const [otp, setOtp] = useState("")
+    const [email, setEmail] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
+    const [isEmailSent, setIsEmailSent] = useState(false)
+    const router = useRouter()
 
-    const handleOTPComplete = (otpValue: string) => {
-        setOtp(otpValue)
-        console.log("OTP para reset de contraseña:", otpValue)
-        // Aquí manejarías el envío del OTP para reset de contraseña
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setIsLoading(true)
+
+        try {
+            // Simular envío de email
+            await new Promise((resolve) => setTimeout(resolve, 2000))
+            setIsEmailSent(true)
+        } catch (error) {
+            console.error("Error sending reset email:", error)
+        }
+
+        setIsLoading(false)
     }
 
-    const handleResetPassword = () => {
-        console.log("Reset de contraseña solicitado con OTP:", otp)
-        // Aquí manejarías el reset de contraseña
+    const handleContinue = () => {
+        router.push(`/verify-otp?email=${encodeURIComponent(email)}`)
     }
 
     return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
             <div className="w-full max-w-md space-y-8">
+                {/* Back button */}
+                <button
+                    onClick={() => router.back()}
+                    className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                    <ArrowLeft className="w-4 h-4" />
+                    Volver
+                </button>
+
                 {/* Logo/Brand */}
                 <div className="text-center">
                     <div className="inline-flex items-center justify-center w-12 h-12 bg-primary text-primary-foreground rounded-lg mb-4">
-                        <svg
-                            className="w-6 h-6"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                            />
-                        </svg>
+                        <Image src="/white-logo.svg" alt="Logo" width={50} height={50} />
                     </div>
-                    <h1 className="text-2xl font-bold text-foreground">Restablecer contraseña</h1>
+                    <h1 className="text-2xl font-bold text-foreground">
+                        {isEmailSent ? "Revisa tu email" : "¿Olvidaste tu contraseña?"}
+                    </h1>
                     <p className="text-muted-foreground mt-2">
-                        Ingresa el código de 6 dígitos enviado a tu email
+                        {isEmailSent
+                            ? "Te hemos enviado un código de verificación"
+                            : "Te enviaremos un código para restablecer tu contraseña"}
                     </p>
                 </div>
 
                 <Card className="border-border bg-card">
                     <CardHeader className="space-y-1">
                         <CardTitle className="text-xl text-center text-card-foreground">
-                            Verificación de código
+                            {isEmailSent ? "Código enviado" : "Recuperar contraseña"}
                         </CardTitle>
                         <CardDescription className="text-center text-muted-foreground">
-                            Ingresa el código de 6 dígitos que enviamos a tu email para restablecer tu contraseña
+                            {isEmailSent
+                                ? `Hemos enviado un código de 6 dígitos a ${email}`
+                                : "Ingresa tu email para recibir el código de verificación"}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        <div className="space-y-4">
-                            <OTPInput length={6} onComplete={handleOTPComplete} className="justify-center" />
-                        </div>
-                        <Button
-                            onClick={handleResetPassword}
-                            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                            disabled={otp.length !== 6}
-                        >
-                            Restablecer contraseña
-                        </Button>
-                        <div className="text-center space-y-2">
-                            <p className="text-sm text-muted-foreground">¿No recibiste el código?</p>
-                            <button
-                                type="button"
-                                className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
-                            >
-                                Reenviar código
-                            </button>
-                        </div>
+                        {!isEmailSent ? (
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="email" className="text-card-foreground">
+                                        Email
+                                    </Label>
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        placeholder="tu@email.com"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                        className="bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-ring"
+                                    />
+                                </div>
+                                <Button
+                                    type="submit"
+                                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? (
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                                            Enviando código...
+                                        </div>
+                                    ) : (
+                                        "Enviar código"
+                                    )}
+                                </Button>
+                            </form>
+                        ) : (
+                            <div className="space-y-4">
+                                <div className="text-center p-4 bg-green-50 border border-green-200 rounded-lg">
+                                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <p className="text-sm text-green-800">Código enviado exitosamente</p>
+                                </div>
+                                <Button
+                                    onClick={handleContinue}
+                                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                                >
+                                    Continuar
+                                </Button>
+                                <div className="text-center">
+                                    <button
+                                        onClick={() => setIsEmailSent(false)}
+                                        className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
+                                    >
+                                        ¿No recibiste el código? Reenviar
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
-
-                {/* Footer */}
-                <div className="text-center text-sm text-muted-foreground">
-                    <p>
-                        {"Al continuar, aceptas nuestros "}
-                        <button className="underline underline-offset-4 hover:text-foreground transition-colors">
-                            Términos de servicio
-                        </button>
-                        {" y "}
-                        <button className="underline underline-offset-4 hover:text-foreground transition-colors">
-                            Política de privacidad
-                        </button>
-                    </p>
-                </div>
             </div>
         </div>
     )

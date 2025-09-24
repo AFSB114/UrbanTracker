@@ -1,7 +1,49 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, Route, Car, TrendingUp, Activity, AlertTriangle, MapPin } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { decodeJWT } from "@/lib/utils"
 
 export default function DashboardPage() {
+
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
+  const [user, setUser] = useState<{ email?: string } | null>(null)
+
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+
+    if (!token) {
+      router.push("/")
+      return
+    }
+
+    const decoded = decodeJWT(token)
+
+    if (!decoded || (decoded.exp && decoded.exp < Date.now() / 1000)) {
+      localStorage.removeItem("token")
+      router.push("/")
+      return
+    }
+
+    setUser({ email: decoded.email || decoded.name || "usuario@ejemplo.com" })
+    setIsLoading(false)
+  }, [router])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex items-center gap-2 text-foreground">
+          <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+          Cargando...
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
       <div className="animate-fade-in">

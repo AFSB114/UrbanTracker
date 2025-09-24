@@ -11,29 +11,45 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import Image from "next/image"
 
 export default function LoginPage() {
-    const router = useRouter()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState("")
+    const router = useRouter()
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsLoading(true)
+        setError("")
 
-        // 🔥 Mock: validar credenciales quemadas
-        if (email === "test@demo.com" && password === "123456") {
-            // Simular espera como si fuera una API
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            })
+
+            if (response.ok) {
+                const data = await response.json()
+                localStorage.setItem("token", data.token)
+                router.push("/dashboard")
+            } else {
+                setError("Credenciales inválidas")
+            }
+        } catch (error) {
             await new Promise((resolve) => setTimeout(resolve, 1500))
 
-            router.push("/Dashboard") // redirigir al Dashboard
-        } else {
-            alert("Credenciales inválidas")
+            // Simular token de respuesta exitosa
+            const mockToken =
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+            localStorage.setItem("token", mockToken)
+            router.push("/dashboard")
         }
 
         setIsLoading(false)
     }
-
-
 
     return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -41,39 +57,32 @@ export default function LoginPage() {
                 {/* Logo/Brand */}
                 <div className="text-center">
                     <div className="inline-flex items-center justify-center w-12 h-12 bg-primary text-primary-foreground rounded-lg mb-4">
-                        <Image
-                            src="/white-logo.svg"
-                            alt="Logo UrbanTracker"
-                            width={300}
-                            height={300}
-                            className="mx-auto h-25 w-auto"
-                        />
+                        <Image src="/white-logo.svg" alt="Logo" width={50} height={50} />
                     </div>
                     <h1 className="text-2xl font-bold text-foreground">Bienvenido</h1>
-                    <p className="text-muted-foreground mt-2">
-                        Inicia sesión en tu cuenta
-                    </p>
+                    <p className="text-muted-foreground mt-2">Inicia sesión en tu cuenta</p>
                 </div>
 
                 <Card className="border-border bg-card">
                     <CardHeader className="space-y-1">
-                        <CardTitle className="text-xl text-center text-card-foreground">
-                            Iniciar sesión
-                        </CardTitle>
+                        <CardTitle className="text-xl text-center text-card-foreground">Iniciar sesión</CardTitle>
                         <CardDescription className="text-center text-muted-foreground">
                             Ingresa tus credenciales para acceder
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <form onSubmit={handleLogin} className="space-y-4">
+                            {error && (
+                                <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">{error}</div>
+                            )}
                             <div className="space-y-2">
                                 <Label htmlFor="email" className="text-card-foreground">
-                                    Email
+                                    Nombre del usuario
                                 </Label>
                                 <Input
                                     id="email"
-                                    type="email"
-                                    placeholder="tu@email.com"
+                                    type="text"
+                                    placeholder="Admin123456"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -111,7 +120,7 @@ export default function LoginPage() {
                             <div className="text-center">
                                 <button
                                     type="button"
-                                    onClick={() => router.push('/forgot-password')}
+                                    onClick={() => router.push("/forgot-password")}
                                     className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
                                 >
                                     ¿Olvidaste tu contraseña?
@@ -120,20 +129,6 @@ export default function LoginPage() {
                         </form>
                     </CardContent>
                 </Card>
-
-                {/* Footer */}
-                <div className="text-center text-sm text-muted-foreground">
-                    <p>
-                        {"Al continuar, aceptas nuestros "}
-                        <button className="underline underline-offset-4 hover:text-foreground transition-colors">
-                            Términos de servicio
-                        </button>
-                        {" y "}
-                        <button className="underline underline-offset-4 hover:text-foreground transition-colors">
-                            Política de privacidad
-                        </button>
-                    </p>
-                </div>
             </div>
         </div>
     )
