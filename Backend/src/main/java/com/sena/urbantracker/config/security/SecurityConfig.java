@@ -21,7 +21,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = false, jsr250Enabled = false)
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final AuthenticationProvider authProvider;

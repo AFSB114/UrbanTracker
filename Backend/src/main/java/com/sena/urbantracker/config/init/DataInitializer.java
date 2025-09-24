@@ -27,20 +27,20 @@ public class DataInitializer implements CommandLineRunner {
 
         // Verifico si el rol ADMIN existe en la base de datos,
         // si no existe, lo creo y lo guardo
-        RoleDomain adminRole = roleRepository.findByName("ROLE_ADMIN")
+        RoleDomain adminRole = roleRepository.findByName("ADMIN")
                 .orElseGet(() -> roleRepository.save(
                         RoleDomain.builder()
-                                .name("ROLE_ADMIN")
+                                .name("ADMIN")
                                 .description("Tiene acceso completo al sistema")
                                 .build()
                 ));
 
         // Verifico si el rol DRIVER existe en la base de datos,
         // si no existe, lo creo y lo guardo
-        roleRepository.findByName("ROLE_DRIVER")
+        roleRepository.findByName("DRIVER")
                 .orElseGet(() -> roleRepository.save(
                         RoleDomain.builder()
-                                .name("ROLE_DRIVER")
+                                .name("DRIVER")
                                 .description("Usuario con permisos limitados a las funcionalidades de conductor")
                                 .build()
                 ));
