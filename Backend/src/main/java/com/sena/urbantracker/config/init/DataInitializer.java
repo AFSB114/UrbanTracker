@@ -56,18 +56,19 @@ public class DataInitializer implements CommandLineRunner {
             adminUser.setPassword(passwordEncoder.encode("admin123"));
             // le asigno el rol ADMIN creado arriba
             adminUser.setRole(adminRole);
+            adminUser = userRepository.save(adminUser);
 
-            //Datos de UserProfile
-            UserProfileDomain adminUserProfile = UserProfileDomain.builder()
-                    .firstName("Super")
-                    .lastName("Admin")
-                    .email("urbantracker751@gmail.com")
-                    .user(adminUser)
-                    .build();
+            if (adminUser != null) {
+                //Datos de UserProfile
+                UserProfileDomain adminUserProfile = UserProfileDomain.builder()
+                        .firstName("Super")
+                        .lastName("Admin")
+                        .email("urbantracker751@gmail.com")
+                        .user(adminUser)
+                        .build();
 
-            userRepository.save(adminUser);
-            userProfileRepository.save(adminUserProfile);
-
+                userProfileRepository.save(adminUserProfile);
+            }
             System.out.println("✅ Usuario ADMIN creado (user:" + adminUsername + "/ pass: admin123)");
         }
     }
