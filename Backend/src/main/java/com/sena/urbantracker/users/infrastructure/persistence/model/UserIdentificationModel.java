@@ -1,6 +1,5 @@
 package com.sena.urbantracker.users.infrastructure.persistence.model;
 
-import com.sena.urbantracker.security.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +23,7 @@ public class UserIdentificationModel {
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
-    private User user;
+    private UserProfileModel user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_type", nullable = false)

@@ -6,6 +6,8 @@ import com.sena.urbantracker.shared.infrastructure.exception.FactoryException;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import com.sena.urbantracker.security.application.service.RoleService;
+import com.sena.urbantracker.security.application.service.UserService;
+import com.sena.urbantracker.security.application.service.RecoveryRequestService;
 import com.sena.urbantracker.users.application.service.CompanyService;
 import com.sena.urbantracker.users.application.service.DriverService;
 import com.sena.urbantracker.users.application.service.IdentificationTypeService;
@@ -51,6 +53,8 @@ public class ServiceFactoryImpl implements ServiceFactory {
     private final UserIdentificationService userIdentificationService;
     private final UserProfileService userProfileService;
     private final RoleService roleService;
+    private final UserService userService;
+    private final RecoveryRequestService recoveryRequestService;
     // Routes
     private final RouteService routeService;
     private final RouteWaypointService routeWaypointService;
@@ -72,6 +76,8 @@ public class ServiceFactoryImpl implements ServiceFactory {
         map.put(EntityType.USER_IDENTIFICATION, userIdentificationService);
         map.put(EntityType.USER_PROFILE, userProfileService);
         map.put(EntityType.ROLE, roleService);
+        map.put(EntityType.USER, userService);
+        map.put(EntityType.RECOVERY_REQUEST, recoveryRequestService);
         // Routes
         map.put(EntityType.ROUTE, routeService);
         map.put(EntityType.ROUTE_WAYPOINT, routeWaypointService);

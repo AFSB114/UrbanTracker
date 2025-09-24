@@ -1,8 +1,6 @@
 package com.sena.urbantracker.config.init;
 
 
-import com.sena.urbantracker.security.domain.entity.Role;
-import com.sena.urbantracker.security.domain.entity.User;
 import com.sena.urbantracker.security.domain.repository.RoleRepository;
 import com.sena.urbantracker.security.domain.repository.UserRepository;
 import com.sena.urbantracker.users.domain.entity.UserProfileDomain;

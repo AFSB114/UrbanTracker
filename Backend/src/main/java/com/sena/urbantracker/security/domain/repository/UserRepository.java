@@ -1,24 +1,24 @@
 package com.sena.urbantracker.security.domain.repository;
 
-import com.sena.urbantracker.security.application.dto.response.UserViewDTO;
-import com.sena.urbantracker.security.domain.entity.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import com.sena.urbantracker.security.domain.entity.UserDomain;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository {
 
-    @Query("""
-                 SELECT new com.sena.urbantracker.security.application.dto.response.UserViewDTO(
-                  u.id, u.userName, u.role.id)
-                  FROM User u
-             """)
-    List<UserViewDTO> getAll();
+    UserDomain save(UserDomain domain);
+
+    Optional<UserDomain> findById(Long id);
+
+    List<UserDomain> findAll();
+
+    void deleteById(Long id);
+
+    boolean existsById(Long id);
 
     boolean existsByUserName(String userName);
 
-    Optional<User> findByUserName(String username);
+    Optional<UserDomain> findByUserName(String username);
 
 }

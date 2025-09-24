@@ -1,6 +1,6 @@
 package com.sena.urbantracker.security.application.service;
 
-import com.sena.urbantracker.security.domain.entity.User;
+import com.sena.urbantracker.security.domain.entity.UserDomain;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -35,15 +35,15 @@ public class JwtService {
         return getAllClaims(token).get("role", String.class);
     }
 
-    public String generateToken(User user) {
+    public String generateToken(UserDomain user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
         claims.put("role", user.getRole().getName());
-        claims.put("userName", user.getUsername());
+        claims.put("userName", user.getUserName());
 
         return Jwts.builder()
             .addClaims(claims)
-            .setSubject(user.getUsername())
+            .setSubject(user.getUserName())
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
             .signWith(getKey(), SignatureAlgorithm.HS256)

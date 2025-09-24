@@ -11,11 +11,11 @@ public class UserPersistenceMapper {
                 .id(domain.getId())
                 .userName(domain.getUserName())
                 .password(domain.getPassword())
-                .active(domain.getActive())
                 .role(RolePersistenceMapper.toModel(domain.getRole()))
+                .lastLogin(domain.getLastLogin())
+                .active(domain.getActive())
                 .createdAt(domain.getCreatedAt())
                 .updatedAt(domain.getUpdatedAt())
-                .lastLogin(domain.getLastLogin())
                 .build();
     }
 
@@ -23,13 +23,13 @@ public class UserPersistenceMapper {
         if (model == null) return null;
         return UserDomain.builder()
                 .id(model.getId())
-                .userName(model.getUsername())
+                .userName(model.getUserName())
                 .password(model.getPassword())
-                .active(model.getActive())
                 .role(RolePersistenceMapper.toDomain(model.getRole()))
+                .lastLogin(model.getLastLogin())
+                .active(model.getActive())
                 .createdAt(model.getCreatedAt())
                 .updatedAt(model.getUpdatedAt())
-                .lastLogin(model.getLastLogin())
                 .build();
     }
 }

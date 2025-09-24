@@ -1,14 +1,24 @@
 package com.sena.urbantracker.security.domain.repository;
 
-import com.sena.urbantracker.security.domain.entity.Role;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.sena.urbantracker.security.domain.entity.RoleDomain;
 
+import java.util.List;
 import java.util.Optional;
 
-public interface RoleRepository extends JpaRepository<Role, Long> {
+public interface RoleRepository {
+
+    RoleDomain save(RoleDomain domain);
+
+    Optional<RoleDomain> findById(Long id);
+
+    List<RoleDomain> findAll();
+
+    void deleteById(Long id);
+
+    boolean existsById(Long id);
 
     boolean existsByName(String name);
 
-    Optional<Role> findByName(String name);
+    Optional<RoleDomain> findByName(String name);
 
 }

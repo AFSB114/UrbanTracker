@@ -1,23 +1,18 @@
 package com.sena.urbantracker.security.domain.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.sena.urbantracker.shared.application.dto.ABaseDomain;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-@Builder
-public class UserDomain {
-    private Long id;
+@SuperBuilder
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class UserDomain extends ABaseDomain {
     private String userName;
     private String password;
-    private Boolean active;
     private RoleDomain role;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     private LocalDateTime lastLogin;
 }

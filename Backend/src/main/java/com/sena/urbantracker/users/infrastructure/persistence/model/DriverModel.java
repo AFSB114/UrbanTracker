@@ -1,6 +1,5 @@
 package com.sena.urbantracker.users.infrastructure.persistence.model;
 
-import com.sena.urbantracker.security.domain.entity.User;
 import com.sena.urbantracker.security.infrastructure.persistence.model.UserModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.sena.urbantracker.users.application.dto.response;
+package com.sena.urbantracker.security.application.dto.response;
 
 import com.sena.urbantracker.shared.application.dto.response.ABaseResDto;
 import lombok.Data;
@@ -10,9 +10,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class UserIdentificationResDto extends ABaseResDto {
-
-    private UserProfileResDto user;
-    private IdentificationTypeResDto identificationType;
-    private String identificationNumber;
+public class RoleResDto extends ABaseResDto {
+    private String name;
+    private String description;
 }

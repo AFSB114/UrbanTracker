@@ -1,18 +1,24 @@
 package com.sena.urbantracker.security.domain.repository;
 
-import com.sena.urbantracker.security.domain.entity.RecoveryRequest;
-import com.sena.urbantracker.users.domain.entity.UserProfileDomain;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.transaction.annotation.Transactional;
+import com.sena.urbantracker.security.domain.entity.RecoveryRequestDomain;
+import com.sena.urbantracker.security.domain.entity.UserDomain;
 
+import java.util.List;
 import java.util.Optional;
 
-public interface RecoveryRequestRepository extends JpaRepository<RecoveryRequest, Integer> {
+public interface RecoveryRequestRepository {
 
-    Optional<RecoveryRequest> findTopByUserOrderByCreatedAtDesc(UserProfileDomain user);
+    RecoveryRequestDomain save(RecoveryRequestDomain domain);
 
-    @Modifying
-    @Transactional
-    long deleteAllByUser(UserProfileDomain user);
+    Optional<RecoveryRequestDomain> findById(Long id);
+
+    List<RecoveryRequestDomain> findAll();
+
+    void deleteById(Long id);
+
+    boolean existsById(Long id);
+
+    Optional<RecoveryRequestDomain> findTopByUserOrderByCreatedAtDesc(UserDomain user);
+
+    long deleteAllByUser(UserDomain user);
 }

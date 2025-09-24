@@ -2,8 +2,8 @@ package com.sena.urbantracker.security.application.service;
 
 import com.sena.urbantracker.security.application.dto.request.RecoveryCodeValidationDTO;
 import com.sena.urbantracker.security.application.dto.response.ResponseLoginDTO;
-import com.sena.urbantracker.security.domain.entity.RecoveryRequest;
-import com.sena.urbantracker.security.domain.entity.User;
+import com.sena.urbantracker.security.domain.entity.RecoveryRequestDomain;
+import com.sena.urbantracker.security.domain.entity.UserDomain;
 import com.sena.urbantracker.security.domain.repository.RecoveryRequestRepository;
 import com.sena.urbantracker.users.application.mapper.UserProfileMapper;
 import com.sena.urbantracker.users.domain.entity.UserProfileDomain;
@@ -42,17 +42,18 @@ public class RecoveryService {
         UserProfileDomain user = userOpt.get();
 
         // Eliminar cualquier código anterior de ese usuario
-        recoveryRequestRepository.deleteAllByUser(user);
+        recoveryRequestRepository.deleteAllByUser(user.getUser());
 
         // 1. Generar código
         String code = String.valueOf(new Random().nextInt(900000) + 100000);
         LocalDateTime expiration = LocalDateTime.now().plusMinutes(20);
 
         // 2. Guardar solicitud
-        RecoveryRequest request = new RecoveryRequest();
-        request.setCode(passwordEncoder.encode(code));
-        request.setExpirationTime(expiration);
-        request.setUser(UserProfileMapper.toDto(user));
+        RecoveryRequestDomain request = RecoveryRequestDomain.builder()
+                .code(passwordEncoder.encode(code))
+                .expirationTime(expiration)
+                .user(user) // assuming user is UserDomain, but it's UserProfileDomain
+                .build();
         recoveryRequestRepository.save(request);
 
         // 3. Enviar correo

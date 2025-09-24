@@ -1,21 +1,22 @@
 package com.sena.urbantracker.security.application.mapper;
 
-import com.sena.urbantracker.security.application.dto.request.UserDTO;
-import com.sena.urbantracker.security.application.dto.response.UserViewDTO;
+import com.sena.urbantracker.security.application.dto.request.UserReqDto;
+import com.sena.urbantracker.security.application.dto.response.UserResDto;
 import com.sena.urbantracker.security.domain.entity.UserDomain;
 
 public class UserMapper {
 
-    public static UserViewDTO toDto(UserDomain entity) {
+    public static UserResDto toDto(UserDomain entity) {
         if (entity == null) return null;
-        return UserViewDTO.builder()
+        return UserResDto.builder()
                 .id(entity.getId())
                 .userName(entity.getUserName())
-                .role(entity.getRole().getId())
+                .role(RoleMapper.toDto(entity.getRole()))
+                .lastLogin(entity.getLastLogin())
                 .build();
     }
 
-    public static UserDomain toEntity(UserDTO dto) {
+    public static UserDomain toEntity(UserReqDto dto) {
         if (dto == null) return null;
         return UserDomain.builder()
                 .userName(dto.getUserName())

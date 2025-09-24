@@ -1,85 +1,30 @@
 package com.sena.urbantracker.security.infrastructure.persistence.model;
 
+import com.sena.urbantracker.shared.application.dto.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
 
-@Entity
-@Table(name = "user", schema = "security")
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-@Builder
-public class UserModel implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Entity
+@SuperBuilder
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@Table(name = "user", schema = "security")
+public class UserModel extends BaseEntity {
 
-    @Column(name = "username", nullable = false, unique = true, length = 50)
+    @Column(name = "user_name", nullable = false, unique = true)
     private String userName;
 
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private Boolean active = true;
-
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "role_id")
     private RoleModel role;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.getName()));
-    }
-
-    @Override
-    public String getUsername() {
-        return userName;
-    }
-
-
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true; // logica para indicar si la cuenta está expirada.
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true; // Lo mismo: lógica si se bloquean cuentas
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true; // Lógica de expiración de contraseña
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return active;
-    }
 }

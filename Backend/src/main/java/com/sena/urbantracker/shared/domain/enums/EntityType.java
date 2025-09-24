@@ -16,7 +16,8 @@ public enum EntityType {
     ROUTE_TRAJECTORY("Route Trajectory", "routeTrajectories"),
     USER("User", "users"),
     ADMIN("Admin", "admins"),
-    ROLE("Role", "roles");
+    ROLE("Role", "roles"),
+    RECOVERY_REQUEST("Recovery Request", "recoveryRequests");
 
     private final String displayName;
     private final String pluralName;

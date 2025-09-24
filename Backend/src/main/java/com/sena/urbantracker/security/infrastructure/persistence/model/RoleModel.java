@@ -1,50 +1,21 @@
 package com.sena.urbantracker.security.infrastructure.persistence.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sena.urbantracker.shared.application.dto.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-@Entity
-@Table(name = "role", schema = "security")
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-@Builder
-public class RoleModel {
+@Entity
+@SuperBuilder
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@Table(name = "role", schema = "security")
+public class RoleModel extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false, length = 200)
+    @Column(name = "description")
     private String description;
-
-    @Column(nullable = false)
-    @Builder.Default
-    private Boolean active = true;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<UserModel> users = new ArrayList<>(); // inicializar para evitar NPE
-
 }

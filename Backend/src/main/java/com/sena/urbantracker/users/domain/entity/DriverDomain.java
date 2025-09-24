@@ -1,6 +1,5 @@
 package com.sena.urbantracker.users.domain.entity;
 
-import com.sena.urbantracker.security.domain.entity.User;
 import com.sena.urbantracker.security.domain.entity.UserDomain;
 import com.sena.urbantracker.shared.application.dto.ABaseDomain;
 import lombok.*;
