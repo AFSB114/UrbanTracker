@@ -112,7 +112,7 @@ export const useCompanies = (): UseCompaniesReturn => {
       totalCompanies: companies.length,
       activeCompanies: companies.length,
       inactiveCompanies: companies.length,
-      newThisMonth: Math.floor(companies.length * 0.3), // Mock: 30% are new this month
+      newThisMonth: Math.floor(companies.length * 0.3),
     };
   }, [companies.length]);
 

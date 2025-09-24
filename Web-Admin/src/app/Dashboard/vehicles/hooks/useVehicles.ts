@@ -45,21 +45,21 @@ export function useVehicles(): UseVehiculesReturn {
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  useEffect(() => {
-    const loadVehicles = async () => {
-      setIsLoading(true);
-      try {
-        const data = await vehicleService.getAll();
-        setVehicles(data);
-      } catch (error) {
-        console.error("Failed to load vehicles:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadVehicles();
+  const loadVehicles = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const data = await vehicleService.getAll();
+      setVehicles(data);
+    } catch (error) {
+      console.error("Failed to load vehicles:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadVehicles();
+  }, [loadVehicles]);
 
   // Filter vehicles based on search term
   const filteredVehicles = useMemo(() => {
@@ -117,7 +117,7 @@ export function useVehicles(): UseVehiculesReturn {
       totalVehicules: vehicles.length,
       activeVehicules: vehicles.length, 
       inactiveVehicules: vehicles.length,
-      newThisMonth: Math.floor(vehicles.length * 0.3), // Mock: 30% are new this month
+      newThisMonth: Math.floor(vehicles.length * 0.3),
     };
   }, [vehicles.length]);
 
@@ -229,6 +229,7 @@ export function useVehicles(): UseVehiculesReturn {
       setVehicles((prev) => [...prev, savedVehicle]);
     }
 
+    await loadVehicles();
     closeModal();
   } catch (error) {
     console.error("Error guardando vehículo:", error);
@@ -236,7 +237,7 @@ export function useVehicles(): UseVehiculesReturn {
   } finally {
     setIsSaving(false);
   }
-}, [vehicles, editingVehicle, formData, closeModal, isSaving]);
+}, [vehicles, editingVehicle, formData, closeModal, isSaving, loadVehicles]);
 
 
   const confirmDeleteVehicle = useCallback(async () => {
@@ -265,7 +266,7 @@ export function useVehicles(): UseVehiculesReturn {
     } finally {
       setIsDeleting(false);
     }
-  }, [vehicleToDelete, isDeleting, closeDeleteModal, filteredVehicles.length, paginationConfig, setPage]);
+  }, [vehicleToDelete, isDeleting, closeDeleteModal, filteredVehicles.length, paginationConfig, setPage, loadVehicles]);
 
   return {
     

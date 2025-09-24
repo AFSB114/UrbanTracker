@@ -1,7 +1,7 @@
 
 import type { Vehicle, VehiculeFormData } from '../types/vehiculeTypes';
 
-const API_URL = 'http://localhost:8085/api/v1/public/vehicle';
+const API_URL = 'http://localhost:8080/api/v1/public/vehicle';
 
 export const vehicleService = {
   getAll: async (): Promise<Vehicle[]> => {

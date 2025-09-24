@@ -26,20 +26,21 @@ function useVehicleType(): UseVehicleTypesReturn {
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  useEffect(() => {
-    const loadVehicleTypes = async () => {
-      setIsLoading(true);
-      try {
-        const data = await vehicleTypeService.getAll();
-        setVehicleTypes(data);
-      } catch (error) {
-        console.error("Failed to load vehicle types:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadVehicleTypes();
+  const loadVehicleTypes = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const data = await vehicleTypeService.getAll();
+      setVehicleTypes(data);
+    } catch (error) {
+      console.error("Failed to load vehicle types:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadVehicleTypes();
+  }, [loadVehicleTypes]);
 
   const filteredVehicles = useMemo(() => {
     const safeVehicleTypes = Array.isArray(vehicleTypes) ? vehicleTypes : [];
@@ -151,13 +152,15 @@ function useVehicleType(): UseVehicleTypesReturn {
       } else {
         await vehicleTypeService.create(vehicleTypeData);
       }
+
+      await loadVehicleTypes();
       closeModal();
     } catch (error) {
       throw error;
     } finally {
       setIsSaving(false);
     }
-  }, [editingVehicleType, formData, closeModal, isSaving]);
+  }, [editingVehicleType, formData, closeModal, isSaving, loadVehicleTypes]);
 
   const confirmDeleteVehicleType = useCallback(async () => {
     if (isDeleting) return;
@@ -172,7 +175,7 @@ function useVehicleType(): UseVehicleTypesReturn {
     } finally {
       setIsDeleting(false);
     }
-  }, [vehicleTypeToDelete, closeDeleteModal, isDeleting]);
+  }, [vehicleTypeToDelete, closeDeleteModal, isDeleting, loadVehicleTypes]);
 
   return {
     filteredVehicles,
