@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import Image from "next/image"
 
 export default function LoginPage() {
-    const [email, setEmail] = useState("")
+    const [userName, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
@@ -23,29 +23,24 @@ export default function LoginPage() {
         setError("")
 
         try {
-            const response = await fetch("/api/login", {
+            const response = await fetch("http://localhost:8086/api/v1/public/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ userName, password }),
             })
 
             if (response.ok) {
                 const data = await response.json()
+                console.log(data)
                 localStorage.setItem("token", data.token)
-                router.push("/dashboard")
+                router.push("/Dashboard")
             } else {
                 setError("Credenciales inválidas")
             }
         } catch (error) {
-            await new Promise((resolve) => setTimeout(resolve, 1500))
-
-            // Simular token de respuesta exitosa
-            const mockToken =
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-            localStorage.setItem("token", mockToken)
-            router.push("/dashboard")
+           return setError("Error al iniciar sesión. Inténtalo de nuevo.")
         }
 
         setIsLoading(false)
@@ -83,7 +78,7 @@ export default function LoginPage() {
                                     id="email"
                                     type="text"
                                     placeholder="Admin123456"
-                                    value={email}
+                                    value={userName}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     className="bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-ring"

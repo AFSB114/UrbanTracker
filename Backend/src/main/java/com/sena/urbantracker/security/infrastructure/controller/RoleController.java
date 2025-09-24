@@ -32,7 +32,7 @@ public class RoleController extends BaseController<RoleResDtoA, RoleResDtoA, Lon
     }
 
     @Override
-    @GetMapping
+    @GetMapping("/")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CrudResponseDto<List<RoleResDtoA>>> findAll() {
         return super.findAll();

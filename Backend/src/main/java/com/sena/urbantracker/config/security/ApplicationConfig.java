@@ -1,6 +1,6 @@
 package com.sena.urbantracker.config.security;
 
-import com.sena.urbantracker.security.domain.repository.UserRepository;
+import com.sena.urbantracker.security.domain.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
-    private final UserRepository user;
+    private final IUserRepository user;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {

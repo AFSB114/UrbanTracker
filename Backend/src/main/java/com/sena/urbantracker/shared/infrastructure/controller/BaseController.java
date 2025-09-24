@@ -52,7 +52,6 @@ public abstract class BaseController<DReq , DRes , ID> {
      }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CrudResponseDto<DRes>> create(@Valid @RequestBody DReq dto) {
         CrudOperations<DReq, DRes, ID> service = getService();
         CrudResponseDto<DRes> response = service.create(dto);

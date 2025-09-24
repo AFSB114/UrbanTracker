@@ -41,7 +41,7 @@ public class AuthController {
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", "Error interno del servidor");
-            error.put("message", "Por favor, intente nuevamente");
+            error.put("message", "Por favor, intente nuevamente"+e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }

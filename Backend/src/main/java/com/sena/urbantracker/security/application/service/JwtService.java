@@ -1,12 +1,15 @@
 package com.sena.urbantracker.security.application.service;
 
 import com.sena.urbantracker.security.domain.entity.User;
+import com.sena.urbantracker.security.domain.entity.UserDomain;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,9 @@ import java.util.function.Function;
 @Service
 @RequiredArgsConstructor
 public class JwtService {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
+
     // clave secreta
     private static final String secretKey = "WPC5shXV5tYdD1WEtW+u6NoQKE2w09OzRgRNsHBL80M=";
 
@@ -36,6 +42,23 @@ public class JwtService {
     }
 
     public String generateToken(User user) {
+        logger.info("Generando token para usuario: {} con rol: {}", user.getUsername(), user.getRole() != null ? user.getRole().getName() : "null");
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", user.getId());
+        claims.put("role", user.getRole().getName());
+        claims.put("userName", user.getUsername());
+
+        return Jwts.builder()
+            .addClaims(claims)
+            .setSubject(user.getUsername())
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+            .signWith(getKey(), SignatureAlgorithm.HS256)
+            .compact();
+    }
+
+    public String generateToken(UserDomain user) {
+        logger.info("Generando token para usuario: {} con rol: {}", user.getUsername(), user.getRole() != null ? user.getRole().getName() : "null");
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
         claims.put("role", user.getRole().getName());
