@@ -37,8 +37,8 @@ export function CompanyCard({ company, onEdit, onDelete }: CompanyCardProps) {
                                 <span>{company.phone}</span>
                             </div>
                             <div className="text-sm">
-                                <span className="font-medium text-zinc-400">
-                                    Contacto
+                                <span className="font-medium text-zinc-400 mr-1">
+                                    Contacto:
                                 </span>
                                 <span className="text-emerald-500">{company.email}</span>
                             </div>
