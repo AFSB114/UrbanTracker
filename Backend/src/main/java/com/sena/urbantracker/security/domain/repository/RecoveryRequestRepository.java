@@ -21,4 +21,6 @@ public interface RecoveryRequestRepository {
     Optional<RecoveryRequestDomain> findTopByUserOrderByCreatedAtDesc(UserDomain user);
 
     long deleteAllByUser(UserDomain user);
+
+    void delete(RecoveryRequestDomain recoveryRequest);
 }

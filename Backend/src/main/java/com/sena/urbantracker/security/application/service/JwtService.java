@@ -39,11 +39,11 @@ public class JwtService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
         claims.put("role", user.getRole().getName());
-        claims.put("userName", user.getUserName());
+        claims.put("userName", user.getUsername());
 
         return Jwts.builder()
             .addClaims(claims)
-            .setSubject(user.getUserName())
+            .setSubject(user.getUsername())
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
             .signWith(getKey(), SignatureAlgorithm.HS256)

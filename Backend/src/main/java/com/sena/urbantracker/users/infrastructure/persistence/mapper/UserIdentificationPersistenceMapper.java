@@ -1,5 +1,6 @@
 package com.sena.urbantracker.users.infrastructure.persistence.mapper;
 
+import com.sena.urbantracker.security.infrastructure.persistence.mapper.UserPersistenceMapper;
 import com.sena.urbantracker.users.domain.entity.UserIdentificationDomain;
 import com.sena.urbantracker.users.infrastructure.persistence.model.UserIdentificationModel;
 
@@ -9,7 +10,7 @@ public class UserIdentificationPersistenceMapper {
         if (domain == null) return null;
         return UserIdentificationModel.builder()
                 .id(domain.getId())
-                .user(domain.getUser())
+                .user(UserProfilePersistenceMapper.toModel(domain.getUser()))
                 .identificationType(IdentificationTypePersistenceMapper.toModel(domain.getIdentificationType()))
                 .identificationNumber(domain.getIdentificationNumber())
                 .active(domain.getActive())
@@ -21,7 +22,7 @@ public class UserIdentificationPersistenceMapper {
         if (model == null) return null;
         return UserIdentificationDomain.builder()
                 .id(model.getId())
-                .user(model.getUser())
+                .user(UserProfilePersistenceMapper.toDomain(model.getUser()))
                 .identificationType(IdentificationTypePersistenceMapper.toDomain(model.getIdentificationType()))
                 .identificationNumber(model.getIdentificationNumber())
                 .active(model.getActive())

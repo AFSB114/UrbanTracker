@@ -1,8 +1,10 @@
 package com.sena.urbantracker.security.infrastructure.repository.impl;
 
 import com.sena.urbantracker.security.domain.entity.RecoveryRequestDomain;
+import com.sena.urbantracker.security.domain.entity.UserDomain;
 import com.sena.urbantracker.security.domain.repository.RecoveryRequestRepository;
 import com.sena.urbantracker.security.infrastructure.persistence.mapper.RecoveryRequestPersistenceMapper;
+import com.sena.urbantracker.security.infrastructure.persistence.mapper.UserPersistenceMapper;
 import com.sena.urbantracker.security.infrastructure.persistence.model.RecoveryRequestModel;
 import com.sena.urbantracker.security.infrastructure.persistence.model.UserModel;
 import com.sena.urbantracker.security.infrastructure.repository.jpa.RecoveryRequestJpaRepository;
@@ -49,14 +51,20 @@ public class RecoveryRequestRepositoryImpl implements RecoveryRequestRepository 
     }
 
     @Override
-    public Optional<RecoveryRequestDomain> findTopByUserOrderByCreatedAtDesc(RecoveryRequestDomain user) {
-        UserModel userModel = RecoveryRequestPersistenceMapper.toModel(user).getUser();
+    public Optional<RecoveryRequestDomain> findTopByUserOrderByCreatedAtDesc(UserDomain user) {
+        UserModel userModel = UserPersistenceMapper.toModel(user);
         return jpaRepository.findTopByUserOrderByCreatedAtDesc(userModel).map(RecoveryRequestPersistenceMapper::toDomain);
     }
 
     @Override
-    public long deleteAllByUser(RecoveryRequestDomain user) {
-        UserModel userModel = RecoveryRequestPersistenceMapper.toModel(user).getUser();
+    public long deleteAllByUser(UserDomain user) {
+        UserModel userModel = UserPersistenceMapper.toModel(user);
         return jpaRepository.deleteAllByUser(userModel);
+    }
+
+    @Override
+    public void delete(RecoveryRequestDomain recoveryRequest) {
+        RecoveryRequestModel model = RecoveryRequestPersistenceMapper.toModel(recoveryRequest);
+        jpaRepository.delete(model);
     }
 }

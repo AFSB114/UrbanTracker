@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Table(name = "user", schema = "security")
 public class UserModel extends BaseEntity {
 
-    @Column(name = "user_name", nullable = false, unique = true)
+    @Column(name = "username", nullable = false, unique = true)
     private String userName;
 
     @Column(name = "password", nullable = false)

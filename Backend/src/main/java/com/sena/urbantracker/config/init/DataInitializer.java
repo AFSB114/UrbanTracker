@@ -1,6 +1,8 @@
 package com.sena.urbantracker.config.init;
 
 
+import com.sena.urbantracker.security.domain.entity.RoleDomain;
+import com.sena.urbantracker.security.domain.entity.UserDomain;
 import com.sena.urbantracker.security.domain.repository.RoleRepository;
 import com.sena.urbantracker.security.domain.repository.UserRepository;
 import com.sena.urbantracker.users.domain.entity.UserProfileDomain;
@@ -25,9 +27,9 @@ public class DataInitializer implements CommandLineRunner {
 
         // Verifico si el rol ADMIN existe en la base de datos,
         // si no existe, lo creo y lo guardo
-        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+        RoleDomain adminRole = roleRepository.findByName("ROLE_ADMIN")
                 .orElseGet(() -> roleRepository.save(
-                        Role.builder()
+                        RoleDomain.builder()
                                 .name("ROLE_ADMIN")
                                 .description("Tiene acceso completo al sistema")
                                 .build()
@@ -37,7 +39,7 @@ public class DataInitializer implements CommandLineRunner {
         // si no existe, lo creo y lo guardo
         roleRepository.findByName("ROLE_DRIVER")
                 .orElseGet(() -> roleRepository.save(
-                        Role.builder()
+                        RoleDomain.builder()
                                 .name("ROLE_DRIVER")
                                 .description("Usuario con permisos limitados a las funcionalidades de conductor")
                                 .build()
@@ -49,7 +51,7 @@ public class DataInitializer implements CommandLineRunner {
         if (userRepository.findByUserName(adminUsername).isEmpty()) {
 
             //Datos de User
-            User adminUser = new User();
+            UserDomain adminUser = new UserDomain();
             adminUser.setUserName(adminUsername);
             adminUser.setPassword(passwordEncoder.encode("admin123"));
             // le asigno el rol ADMIN creado arriba

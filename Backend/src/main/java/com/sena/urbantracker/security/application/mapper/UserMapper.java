@@ -10,7 +10,7 @@ public class UserMapper {
         if (entity == null) return null;
         return UserResDto.builder()
                 .id(entity.getId())
-                .userName(entity.getUserName())
+                .userName(entity.getUsername())
                 .role(RoleMapper.toDto(entity.getRole()))
                 .lastLogin(entity.getLastLogin())
                 .build();
