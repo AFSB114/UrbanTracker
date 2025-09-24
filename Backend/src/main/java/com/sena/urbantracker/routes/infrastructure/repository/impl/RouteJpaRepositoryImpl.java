@@ -6,17 +6,15 @@ import com.sena.urbantracker.routes.infrastructure.persistence.mapper.RoutePersi
 import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteModel;
 import com.sena.urbantracker.routes.infrastructure.repository.jpa.RouteJpaRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Slf4j
-@Component
+@Repository
 @RequiredArgsConstructor
-public class RouteJpaRepositoryImpl implements RouteRepository {
+class RouteRepositoryAdapter implements RouteRepository {
 
     private final RouteJpaRepository jpaRepository;
 

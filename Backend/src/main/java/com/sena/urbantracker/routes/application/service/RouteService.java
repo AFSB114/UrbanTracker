@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Long> {
 
     @Lazy
@@ -29,6 +28,12 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
 
     @Lazy
     private final RouteWaypointRepository routeWaypointRepository;
+
+    public RouteService(@Lazy RouteRepository routeRepository,
+                        @Lazy RouteWaypointRepository routeWaypointRepository) {
+        this.routeRepository = routeRepository;
+        this.routeWaypointRepository = routeWaypointRepository;
+    }
 
     @Override
     public CrudResponseDto<RouteResDto> create(RouteReqDto request) {

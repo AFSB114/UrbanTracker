@@ -1,87 +1,74 @@
 package com.sena.urbantracker.shared.application.service;
 
 import com.sena.urbantracker.routes.application.service.RouteScheduleService;
+import com.sena.urbantracker.routes.application.service.RouteService;
 import com.sena.urbantracker.routes.application.service.RouteTrajectoryService;
-import com.sena.urbantracker.shared.infrastructure.exception.FactoryException;
+import com.sena.urbantracker.routes.application.service.RouteWaypointService;
+import com.sena.urbantracker.security.application.service.RoleService;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import com.sena.urbantracker.security.application.service.RoleService;
+import com.sena.urbantracker.shared.infrastructure.exception.FactoryException;
 import com.sena.urbantracker.users.application.service.CompanyService;
 import com.sena.urbantracker.users.application.service.DriverService;
 import com.sena.urbantracker.users.application.service.IdentificationTypeService;
 import com.sena.urbantracker.users.application.service.UserIdentificationService;
 import com.sena.urbantracker.users.application.service.UserProfileService;
+import com.sena.urbantracker.vehicles.application.service.VehicleAssigmentService;
 import com.sena.urbantracker.vehicles.application.service.VehicleService;
 import com.sena.urbantracker.vehicles.application.service.VehicleTypeService;
-import com.sena.urbantracker.vehicles.application.service.VehicleAssigmentService;
-import com.sena.urbantracker.routes.application.service.RouteService;
-import com.sena.urbantracker.routes.application.service.RouteWaypointService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ServiceFactoryImpl implements ServiceFactory {
 
-    private final VehicleService vehicleService;
-    private final VehicleTypeService vehicleTypeService;
-    private final VehicleAssigmentService vehicleAssigmentService;
-    private final DriverService driverService;
-    private final CompanyService companyService;
-    private final IdentificationTypeService identificationTypeService;
-    private final UserIdentificationService userIdentificationService;
-    private final UserProfileService userProfileService;
-    private final RoleService roleService;
-    // Routes
-    private final RouteService routeService;
-    private final RouteWaypointService routeWaypointService;
-    private final RouteScheduleService routeScheduleService;
-    private final RouteTrajectoryService routeTrajectoryService;
+    private final ApplicationContext applicationContext;
 
-    private Map<EntityType, CrudOperations<?, ?, ?>> crudServices;
+    private Map<EntityType, Supplier<CrudOperations<?, ?, ?>>> providers;
 
     @PostConstruct
     public void init() {
-        Map<EntityType, CrudOperations<?, ?, ?>> map = new EnumMap<>(EntityType.class);
+        EnumMap<EntityType, Supplier<CrudOperations<?, ?, ?>>> map = new EnumMap<>(EntityType.class);
 
-        map.put(EntityType.VEHICLE, vehicleService);
-        map.put(EntityType.VEHICLE_TYPE, vehicleTypeService);
-        map.put(EntityType.VEHICLE_ASSIGMENT, vehicleAssigmentService);
-        map.put(EntityType.DRIVER, driverService);
-        map.put(EntityType.COMPANY, companyService);
-        map.put(EntityType.IDENTIFICATION_TYPE, identificationTypeService);
-        map.put(EntityType.USER_IDENTIFICATION, userIdentificationService);
-        map.put(EntityType.USER_PROFILE, userProfileService);
-        map.put(EntityType.ROLE, roleService);
+        // Vehicles
+        map.put(EntityType.VEHICLE, () -> applicationContext.getBean(VehicleService.class));
+        map.put(EntityType.VEHICLE_TYPE, () -> applicationContext.getBean(VehicleTypeService.class));
+        map.put(EntityType.VEHICLE_ASSIGMENT, () -> applicationContext.getBean(VehicleAssigmentService.class));
+
+        // Users
+        map.put(EntityType.DRIVER, () -> applicationContext.getBean(DriverService.class));
+        map.put(EntityType.COMPANY, () -> applicationContext.getBean(CompanyService.class));
+        map.put(EntityType.IDENTIFICATION_TYPE, () -> applicationContext.getBean(IdentificationTypeService.class));
+        map.put(EntityType.USER_IDENTIFICATION, () -> applicationContext.getBean(UserIdentificationService.class));
+        map.put(EntityType.USER_PROFILE, () -> applicationContext.getBean(UserProfileService.class));
+        map.put(EntityType.ROLE, () -> applicationContext.getBean(RoleService.class));
+
         // Routes
-        map.put(EntityType.ROUTE, routeService);
-        map.put(EntityType.ROUTE_WAYPOINT, routeWaypointService);
-        map.put(EntityType.ROUTE_SCHEDULE, routeScheduleService);
-        map.put(EntityType.ROUTE_TRAJECTORY, routeTrajectoryService);
+        map.put(EntityType.ROUTE, () -> applicationContext.getBean(RouteService.class));
+        map.put(EntityType.ROUTE_WAYPOINT, () -> applicationContext.getBean(RouteWaypointService.class));
+        map.put(EntityType.ROUTE_SCHEDULE, () -> applicationContext.getBean(RouteScheduleService.class));
+        map.put(EntityType.ROUTE_TRAJECTORY, () -> applicationContext.getBean(RouteTrajectoryService.class));
 
-        // Hacemos el mapa inmutable para evitar modificaciones en runtime
-        crudServices = Collections.unmodifiableMap(map);
+        providers = Map.copyOf(map);
 
-        log.info("Servicios CRUD registrados en ServiceFactory:");
-        crudServices.forEach((key, value) ->
-                log.info("   - {} -> {}", key, value.getClass().getSimpleName()));
+        log.info("Servicios CRUD registrados en ServiceFactory (lazy):");
+        providers.forEach((key, value) -> log.info("   - {}", key));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <DReq, DRes, ID> CrudOperations<DReq, DRes, ID> createCrudService(EntityType entityType) {
-
-        CrudOperations<?, ?, ?> service = crudServices.get(entityType);
-        if (service == null) {
+        Supplier<CrudOperations<?, ?, ?>> supplier = providers.get(entityType);
+        if (supplier == null) {
             throw new FactoryException(
                     "No CRUD service registered for entity: " + entityType,
                     entityType,
@@ -89,11 +76,9 @@ public class ServiceFactoryImpl implements ServiceFactory {
             );
         }
         try {
-            @SuppressWarnings("unchecked")
-            CrudOperations<DReq, DRes, ID> typedService = (CrudOperations<DReq, DRes, ID>) service;
-            log.debug("[Factory] Servicio CRUD obtenido para {} -> {}",
-                    entityType, typedService.getClass().getSimpleName());
-            return typedService;
+            CrudOperations<?, ?, ?> service = supplier.get();
+            log.debug("[Factory] Servicio CRUD obtenido para {} -> {}", entityType, service.getClass().getSimpleName());
+            return (CrudOperations<DReq, DRes, ID>) service;
         } catch (ClassCastException e) {
             log.error("Error de tipo al transmitir el servicio para {}: {}", entityType, e.getMessage());
             throw new FactoryException(
@@ -107,15 +92,15 @@ public class ServiceFactoryImpl implements ServiceFactory {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T createSpecializedService(EntityType entityType, Class<T> serviceInterface) {
-        CrudOperations<?, ?, ?> service = crudServices.get(entityType);
-        if (service == null) {
+        Supplier<CrudOperations<?, ?, ?>> supplier = providers.get(entityType);
+        if (supplier == null) {
             throw new FactoryException(
                     "No service registered for entity: " + entityType,
                     entityType,
                     "SPECIALIZED"
             );
         }
-
+        Object service = supplier.get();
         if (!serviceInterface.isInstance(service)) {
             throw new FactoryException(
                     "Service " + entityType + " does not implement " + serviceInterface.getSimpleName(),
@@ -123,20 +108,18 @@ public class ServiceFactoryImpl implements ServiceFactory {
                     "SPECIALIZED"
             );
         }
-
         return (T) service;
     }
 
     @Override
     public <DReq, DRes, ID> CrudOperations<DReq, DRes, ID> getService(EntityType type, Class<DReq> dtoClass) {
-        log.trace("[Factory] getService llamado con EntityType={}, DTO={}",  //logTrace: capturar información extremadamente detallada sobre la ejecución
-                type, dtoClass.getSimpleName());
+        log.trace("[Factory] getService llamado con EntityType={}, DTO={}", type, dtoClass.getSimpleName());
         return createCrudService(type);
     }
 
     @Override
     public boolean supports(EntityType entityType) {
-        boolean supported = crudServices.containsKey(entityType);
+        boolean supported = providers.containsKey(entityType);
         log.trace("[Factory] supports({}) -> {}", entityType, supported);
         return supported;
     }

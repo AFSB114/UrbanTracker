@@ -8,19 +8,26 @@ import com.sena.urbantracker.routes.domain.repository.RouteScheduleRepository;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @Service
-@RequiredArgsConstructor
 public class RouteScheduleService implements CrudOperations<RouteScheduleReqDto, RouteScheduleResDto, Long> {
 
     private final RouteScheduleRepository routeScheduleRepository;
+
+    public RouteScheduleService(@Lazy RouteScheduleRepository routeScheduleRepository) {
+        this.routeScheduleRepository = routeScheduleRepository;
+    }
+
+    @PostConstruct
+    public void init() {
+        System.out.println("RouteScheduleService initialized");
+    }
 
     @Override
     public CrudResponseDto<RouteScheduleResDto> create(RouteScheduleReqDto request) {
