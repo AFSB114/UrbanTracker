@@ -7,7 +7,7 @@ import com.sena.urbantracker.users.application.dto.response.DriverResDto;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/public/drivers")
+@RequestMapping("/api/v1/public/driver")
 public class DriverController extends BaseController<DriverResDto, DriverResDto, Long> {
 
     public DriverController(ServiceFactory serviceFactory) {

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/public/route-waypoints")
+@RequestMapping("/api/v1/public/route-waypoint")
 public class RouteWaypointController extends BaseController<RouteWaypointReqDto, RouteWaypointResDto, Long> {
 
     private final RouteWaypointService routeWaypointService;

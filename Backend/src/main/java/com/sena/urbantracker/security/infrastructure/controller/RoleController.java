@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/public/security/roles")
+@RequestMapping("/api/v1/security/role")
 public class RoleController extends BaseController<RoleReqDto, RoleResDto, Long> {
 
     public RoleController(ServiceFactory serviceFactory) {

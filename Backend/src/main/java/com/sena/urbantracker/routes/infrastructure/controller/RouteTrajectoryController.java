@@ -8,7 +8,7 @@ import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/public/route-trajectories")
+@RequestMapping("/api/v1/public/route-trajectorie")
 public class RouteTrajectoryController extends BaseController<RouteTrajectoryReqDto, RouteTrajectoryResDto, Long> {
 
     public RouteTrajectoryController(ServiceFactory serviceFactory) {

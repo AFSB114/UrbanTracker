@@ -7,7 +7,7 @@ import com.sena.urbantracker.users.application.dto.response.IdentificationTypeRe
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/public/identification-types")
+@RequestMapping("/api/v1/public/identification-type")
 public class IdentificationTypeController extends BaseController<IdentificationTypeResDto, IdentificationTypeResDto, Long> {
 
     public IdentificationTypeController(ServiceFactory serviceFactory) {

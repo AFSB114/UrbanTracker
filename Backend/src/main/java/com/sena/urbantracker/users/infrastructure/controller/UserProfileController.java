@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/user-profiles")
+@RequestMapping("/api/v1/user-profile")
 public class UserProfileController extends BaseController<UserProfileResDto, UserProfileResDto, Long> {
 
     public UserProfileController(ServiceFactory serviceFactory) {

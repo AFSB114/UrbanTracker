@@ -8,7 +8,7 @@ import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/public/security/users")
+@RequestMapping("/api/v1/security/user")
 public class UserController extends BaseController<UserReqDto, UserResDto, Long> {
 
     public UserController(ServiceFactory serviceFactory) {

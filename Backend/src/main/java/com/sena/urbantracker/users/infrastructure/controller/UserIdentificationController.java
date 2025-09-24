@@ -7,7 +7,7 @@ import com.sena.urbantracker.users.application.dto.response.UserIdentificationRe
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/public/user-identifications")
+@RequestMapping("/api/v1/public/user-identification")
 public class UserIdentificationController extends BaseController<UserIdentificationResDto, UserIdentificationResDto, Long> {
 
     public UserIdentificationController(ServiceFactory serviceFactory) {

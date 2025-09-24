@@ -8,7 +8,7 @@ import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/public/security/recovery-requests")
+@RequestMapping("/api/v1/security/recovery-request")
 public class RecoveryRequestController extends BaseController<RecoveryRequestReqDto, RecoveryRequestResDto, Long> {
 
     public RecoveryRequestController(ServiceFactory serviceFactory) {

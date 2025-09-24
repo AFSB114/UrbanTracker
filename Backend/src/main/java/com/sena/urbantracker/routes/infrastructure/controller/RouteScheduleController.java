@@ -8,7 +8,7 @@ import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/public/route-schedules")
+@RequestMapping("/api/v1/public/route-schedule")
 public class RouteScheduleController extends BaseController<RouteScheduleReqDto, RouteScheduleResDto, Long> {
 
     public RouteScheduleController(ServiceFactory serviceFactory) {

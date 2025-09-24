@@ -8,7 +8,7 @@ import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/public/companies")
+@RequestMapping("/api/v1/public/company")
 public class CompanyController extends BaseController<CompanyReqDto, CompanyResDto, Long> {
 
     public CompanyController(ServiceFactory serviceFactory) {
