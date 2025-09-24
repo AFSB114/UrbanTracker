@@ -2,27 +2,21 @@ package com.sena.urbantracker.routes.domain.entity;
 
 import com.sena.urbantracker.routes.domain.valueobject.WaypointDestineType;
 import com.sena.urbantracker.routes.domain.valueobject.WaypointType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.sena.urbantracker.shared.application.dto.ABaseDomain;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-@Builder
-public class RouteWaypointDomain {
-    private Long id;
-    private Long routeId;
+@SuperBuilder
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class RouteWaypointDomain extends ABaseDomain {
+    private RouteDomain route;
     private Integer sequence;
     private Double latitude;
     private Double longitude;
     private WaypointType type;
     private WaypointDestineType destine;
-    private Boolean active;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private RouteDomain route;
 }

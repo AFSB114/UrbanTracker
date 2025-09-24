@@ -2,9 +2,9 @@ package com.sena.urbantracker.users.application.service;
 
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
-import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
+import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import com.sena.urbantracker.users.application.dto.response.UserProfileDto;
+import com.sena.urbantracker.users.application.dto.response.UserProfileResDtoA;
 import com.sena.urbantracker.users.domain.repository.IUserProfile;
 import com.sena.urbantracker.users.domain.entity.UserProfile;
 import lombok.RequiredArgsConstructor;
@@ -13,20 +13,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
-public class UserProfileService implements CrudOperations<UserProfileDto, UserProfileDto, Long> {
+public class UserProfileService implements CrudOperations<UserProfileResDtoA, UserProfileResDtoA, Long> {
 
     private final IUserProfile userProfileRepository;
 
     @Override
-    public CrudResponseDto<UserProfileDto> create(UserProfileDto dto) {
+    public CrudResponseDto<UserProfileResDtoA> create(UserProfileResDtoA dto) {
         if (userProfileRepository.existsById(dto.getId())) {
             throw new EntityAlreadyExistsException("El perfil de usuario con id " + dto.getId() + " ya existe.");
         }
@@ -37,15 +31,15 @@ public class UserProfileService implements CrudOperations<UserProfileDto, UserPr
     }
 
     @Override
-    public CrudResponseDto<Optional<UserProfileDto>> findById(Long id) {
+    public CrudResponseDto<Optional<UserProfileResDtoA>> findById(Long id) {
         UserProfile userProfile = userProfileRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario con id " + id + " no encontrado."));
         return CrudResponseDto.success(Optional.of(UserProfileMapper.toDto(userProfile)), "Perfil de usuario encontrado");
     }
 
     @Override
-    public CrudResponseDto<List<UserProfileDto>> findAll() {
-        List<UserProfileDto> dtos = userProfileRepository.findAll()
+    public CrudResponseDto<List<UserProfileResDtoA>> findAll() {
+        List<UserProfileResDtoA> dtos = userProfileRepository.findAll()
                 .stream()
                 .map(UserProfileMapper::toDto)
                 .toList();
@@ -53,7 +47,7 @@ public class UserProfileService implements CrudOperations<UserProfileDto, UserPr
     }
 
     @Override
-    public CrudResponseDto<UserProfileDto> update(UserProfileDto dto, Long id) {
+    public CrudResponseDto<UserProfileResDtoA> update(UserProfileResDtoA dto, Long id) {
         UserProfile userProfile = userProfileRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario con id " + dto.getId() + " no encontrado."));
         userProfile.setFirstName(dto.getFirstName());
@@ -65,7 +59,7 @@ public class UserProfileService implements CrudOperations<UserProfileDto, UserPr
     }
 
     @Override
-    public CrudResponseDto<UserProfileDto> deleteById(Long id) {
+    public CrudResponseDto<UserProfileResDtoA> deleteById(Long id) {
         if (!userProfileRepository.existsById(id)) {
             throw new EntityNotFoundException("Perfil de usuario no encontrado.");
         }
@@ -75,12 +69,12 @@ public class UserProfileService implements CrudOperations<UserProfileDto, UserPr
 
 
     @Override
-    public CrudResponseDto<UserProfileDto> activateById(Long id) {
+    public CrudResponseDto<UserProfileResDtoA> activateById(Long id) {
         throw new UnsupportedOperationException("Activate not supported for UserProfile");
     }
 
     @Override
-    public CrudResponseDto<UserProfileDto> deactivateById(Long id) {
+    public CrudResponseDto<UserProfileResDtoA> deactivateById(Long id) {
         throw new UnsupportedOperationException("Deactivate not supported for UserProfile");
     }
 
@@ -90,9 +84,9 @@ public class UserProfileService implements CrudOperations<UserProfileDto, UserPr
     }
 
     private static class UserProfileMapper {
-        public static UserProfileDto toDto(UserProfile entity) {
+        public static UserProfileResDtoA toDto(UserProfile entity) {
             if (entity == null) return null;
-            UserProfileDto dto = new UserProfileDto();
+            UserProfileResDtoA dto = new UserProfileResDtoA();
             dto.setId(entity.getId());
             dto.setFirstName(entity.getFirstName());
             dto.setLastName(entity.getLastName());
@@ -103,7 +97,7 @@ public class UserProfileService implements CrudOperations<UserProfileDto, UserPr
             return dto;
         }
 
-        public static UserProfile toEntity(UserProfileDto dto) {
+        public static UserProfile toEntity(UserProfileResDtoA dto) {
             UserProfile entity = new UserProfile();
             entity.setId(dto.getId());
             entity.setFirstName(dto.getFirstName());

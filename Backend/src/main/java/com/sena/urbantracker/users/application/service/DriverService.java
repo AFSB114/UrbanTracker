@@ -2,9 +2,9 @@ package com.sena.urbantracker.users.application.service;
 
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
-import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
+import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import com.sena.urbantracker.users.application.dto.response.DriverDto;
+import com.sena.urbantracker.users.application.dto.response.DriverResDtoA;
 import com.sena.urbantracker.users.domain.repository.IDriver;
 import com.sena.urbantracker.users.domain.entity.Driver;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +14,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class DriverService implements CrudOperations<DriverDto, DriverDto, Long> {
+public class DriverService implements CrudOperations<DriverResDtoA, DriverResDtoA, Long> {
 
     private final IDriver driverRepository;
 
     @Override
-    public CrudResponseDto<DriverDto> create(DriverDto dto) {
+    public CrudResponseDto<DriverResDtoA> create(DriverResDtoA dto) {
         if (driverRepository.existsById(dto.getId())) {
             throw new EntityAlreadyExistsException("El conductor con id " + dto.getId() + " ya existe.");
         }
@@ -31,7 +31,7 @@ public class DriverService implements CrudOperations<DriverDto, DriverDto, Long>
     }
 
     @Override
-    public CrudResponseDto<Optional<DriverDto>> findById(Long aLong) {
+    public CrudResponseDto<Optional<DriverResDtoA>> findById(Long aLong) {
         Driver driver = driverRepository.findById(aLong)
                 .orElseThrow(() -> new EntityNotFoundException("Conductor con id " + aLong + " no encontrado."));
 
@@ -39,13 +39,13 @@ public class DriverService implements CrudOperations<DriverDto, DriverDto, Long>
     }
 
     @Override
-    public CrudResponseDto<List<DriverDto>> findAll() {
+    public CrudResponseDto<List<DriverResDtoA>> findAll() {
         List<Driver> drivers = driverRepository.findAll();
         return CrudResponseDto.success(drivers.stream().map(DriverMapper::toDto).toList(), "Conductores encontrados");
     }
 
     @Override
-    public CrudResponseDto<DriverDto> update(DriverDto dto, Long id) {
+    public CrudResponseDto<DriverResDtoA> update(DriverResDtoA dto, Long id) {
         Driver driver = driverRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Conductor con id " + dto.getId() + " no encontrado."));
 
@@ -57,7 +57,7 @@ public class DriverService implements CrudOperations<DriverDto, DriverDto, Long>
     }
 
     @Override
-    public CrudResponseDto<DriverDto> deleteById(Long aLong) {
+    public CrudResponseDto<DriverResDtoA> deleteById(Long aLong) {
         if (!driverRepository.existsById(aLong)) {
             throw new EntityNotFoundException("Conductor con id " + aLong + " no encontrado.");
         }
@@ -67,7 +67,7 @@ public class DriverService implements CrudOperations<DriverDto, DriverDto, Long>
     }
 
     @Override
-    public CrudResponseDto<DriverDto> activateById(Long aLong) {
+    public CrudResponseDto<DriverResDtoA> activateById(Long aLong) {
         Driver driver = driverRepository.findById(aLong)
                 .orElseThrow(() -> new EntityNotFoundException("Conductor con id " + aLong + " no encontrado."));
 
@@ -77,7 +77,7 @@ public class DriverService implements CrudOperations<DriverDto, DriverDto, Long>
     }
 
     @Override
-    public CrudResponseDto<DriverDto> deactivateById(Long aLong) {
+    public CrudResponseDto<DriverResDtoA> deactivateById(Long aLong) {
         Driver driver = driverRepository.findById(aLong)
                 .orElseThrow(() -> new EntityNotFoundException("Conductor con id " + aLong + " no encontrado."));
 
@@ -96,16 +96,16 @@ public class DriverService implements CrudOperations<DriverDto, DriverDto, Long>
 
     private static class DriverMapper {
 
-        private static DriverDto toDto(Driver entity) {
+        private static DriverResDtoA toDto(Driver entity) {
             if (entity == null) return null;
-            DriverDto dto = new DriverDto();
+            DriverResDtoA dto = new DriverResDtoA();
             dto.setId(entity.getId());
             dto.setUser(entity.getUser());
             dto.setActive(entity.getActive());
             return dto;
         }
 
-        private static Driver toEntity(DriverDto dto) {
+        private static Driver toEntity(DriverResDtoA dto) {
             Driver entity = new Driver();
             entity.setId(dto.getId());
             entity.setUser(dto.getUser());

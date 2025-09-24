@@ -1,6 +1,6 @@
 package com.sena.urbantracker.shared.infrastructure.exception;
 
-import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
+import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.enums.OperationType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

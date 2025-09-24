@@ -1,6 +1,6 @@
 package com.sena.urbantracker.shared.domain.repository;
 
-import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
+import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 
 import java.util.List;
 import java.util.Optional;

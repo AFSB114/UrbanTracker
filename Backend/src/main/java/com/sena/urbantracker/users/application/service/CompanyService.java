@@ -3,10 +3,10 @@ package com.sena.urbantracker.users.application.service;
 
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
-import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
+import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import com.sena.urbantracker.users.application.dto.request.CompanyReqDto;
-import com.sena.urbantracker.users.application.dto.response.CompanyDTO;
+import com.sena.urbantracker.users.application.dto.response.CompanyResDTOA;
 import com.sena.urbantracker.users.domain.repository.ICompany;
 import com.sena.urbantracker.users.domain.entity.Company;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +16,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CompanyService implements CrudOperations<CompanyReqDto, CompanyDTO, Long> {
+public class CompanyService implements CrudOperations<CompanyReqDto, CompanyResDTOA, Long> {
 
     private final ICompany companyRepository;
 
     @Override
-    public CrudResponseDto<CompanyDTO> create(CompanyReqDto dto) {
+    public CrudResponseDto<CompanyResDTOA> create(CompanyReqDto dto) {
        if (companyRepository.existsByNit(dto.getNit())) {
            throw new EntityAlreadyExistsException("La empresa con NIT " + dto.getNit() + " ya existe.");
        }
@@ -33,7 +33,7 @@ public class CompanyService implements CrudOperations<CompanyReqDto, CompanyDTO,
     }
 
     @Override
-    public CrudResponseDto<Optional<CompanyDTO>> findById(Long id) {
+    public CrudResponseDto<Optional<CompanyResDTOA>> findById(Long id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + id + " no encontrada."));
 
@@ -41,13 +41,13 @@ public class CompanyService implements CrudOperations<CompanyReqDto, CompanyDTO,
     }
 
     @Override
-    public CrudResponseDto<List<CompanyDTO>> findAll() {
+    public CrudResponseDto<List<CompanyResDTOA>> findAll() {
         List<Company> companies = companyRepository.findAll();
         return CrudResponseDto.success(companies.stream().map(CompanyMapper::toDto).toList(), "Empresas encontradas");
     }
 
     @Override
-    public CrudResponseDto<CompanyDTO> update(CompanyReqDto dto, Long id) {
+    public CrudResponseDto<CompanyResDTOA> update(CompanyReqDto dto, Long id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + id + " no encontrada."));
 
@@ -63,7 +63,7 @@ public class CompanyService implements CrudOperations<CompanyReqDto, CompanyDTO,
     }
 
     @Override
-    public CrudResponseDto<CompanyDTO> deleteById(Long id) {
+    public CrudResponseDto<CompanyResDTOA> deleteById(Long id) {
         if (!companyRepository.existsById(id)) {
             throw new EntityNotFoundException("Empresa con id " + id + " no encontrada.");
         }
@@ -73,7 +73,7 @@ public class CompanyService implements CrudOperations<CompanyReqDto, CompanyDTO,
     }
 
     @Override
-    public CrudResponseDto<CompanyDTO> activateById(Long id) {
+    public CrudResponseDto<CompanyResDTOA> activateById(Long id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + id + " no encontrada."));
 
@@ -83,7 +83,7 @@ public class CompanyService implements CrudOperations<CompanyReqDto, CompanyDTO,
     }
 
     @Override
-    public CrudResponseDto<CompanyDTO> deactivateById(Long id) {
+    public CrudResponseDto<CompanyResDTOA> deactivateById(Long id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Empresa con id " + id + " no encontrada."));
 
@@ -100,9 +100,9 @@ public class CompanyService implements CrudOperations<CompanyReqDto, CompanyDTO,
 
     private static class CompanyMapper {
 
-        private static CompanyDTO toDto(Company entity) {
+        private static CompanyResDTOA toDto(Company entity) {
             if (entity == null) return null;
-            CompanyDTO dto = new CompanyDTO();
+            CompanyResDTOA dto = new CompanyResDTOA();
             dto.setId(entity.getId());
             dto.setName(entity.getName());
             dto.setNit(entity.getNit());

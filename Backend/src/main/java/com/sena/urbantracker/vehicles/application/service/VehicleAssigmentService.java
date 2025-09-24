@@ -1,9 +1,9 @@
 package com.sena.urbantracker.vehicles.application.service;
 
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
-import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
+import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import com.sena.urbantracker.vehicles.application.dto.response.VehicleAssigmentDto;
+import com.sena.urbantracker.vehicles.application.dto.response.VehicleAssigmentResDtoA;
 import com.sena.urbantracker.vehicles.domain.entity.VehicleAssigments;
 import com.sena.urbantracker.vehicles.domain.repository.IVehicleAssigments;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +14,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class VehicleAssigmentService implements CrudOperations<VehicleAssigmentDto, VehicleAssigmentDto, Long> {
+public class VehicleAssigmentService implements CrudOperations<VehicleAssigmentResDtoA, VehicleAssigmentResDtoA, Long> {
 
     private final IVehicleAssigments vehicleAssigmentRepository;
 
     @Override
-    public CrudResponseDto<VehicleAssigmentDto> create(VehicleAssigmentDto dto) {
+    public CrudResponseDto<VehicleAssigmentResDtoA> create(VehicleAssigmentResDtoA dto) {
         VehicleAssigments entity = VehicleAssigmentMapper.toEntity(dto);
 
         VehicleAssigments saved = vehicleAssigmentRepository.save(entity);
@@ -27,7 +27,7 @@ public class VehicleAssigmentService implements CrudOperations<VehicleAssigmentD
     }
 
     @Override
-    public CrudResponseDto<Optional<VehicleAssigmentDto>> findById(Long id) {
+    public CrudResponseDto<Optional<VehicleAssigmentResDtoA>> findById(Long id) {
         VehicleAssigments vehicleAssigment = vehicleAssigmentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Asignación de vehículo con id " + id + " no encontrada."));
 
@@ -35,8 +35,8 @@ public class VehicleAssigmentService implements CrudOperations<VehicleAssigmentD
     }
 
     @Override
-    public CrudResponseDto<List<VehicleAssigmentDto>> findAll() {
-        List<VehicleAssigmentDto> dtos = vehicleAssigmentRepository.findAll()
+    public CrudResponseDto<List<VehicleAssigmentResDtoA>> findAll() {
+        List<VehicleAssigmentResDtoA> dtos = vehicleAssigmentRepository.findAll()
                 .stream()
                 .map(VehicleAssigmentMapper::toDto)
                 .toList();
@@ -45,7 +45,7 @@ public class VehicleAssigmentService implements CrudOperations<VehicleAssigmentD
     }
 
     @Override
-    public CrudResponseDto<VehicleAssigmentDto> update(VehicleAssigmentDto dto, Long id) {
+    public CrudResponseDto<VehicleAssigmentResDtoA> update(VehicleAssigmentResDtoA dto, Long id) {
         VehicleAssigments vehicleAssigment = vehicleAssigmentRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Asignación de vehículo no encontrada."));
 
@@ -59,7 +59,7 @@ public class VehicleAssigmentService implements CrudOperations<VehicleAssigmentD
     }
 
     @Override
-    public CrudResponseDto<VehicleAssigmentDto> deleteById(Long id) {
+    public CrudResponseDto<VehicleAssigmentResDtoA> deleteById(Long id) {
         if (!vehicleAssigmentRepository.existsById(id)) {
             throw new EntityNotFoundException("Asignación de vehículo no encontrada.");
         }
@@ -69,13 +69,13 @@ public class VehicleAssigmentService implements CrudOperations<VehicleAssigmentD
     }
 
     @Override
-    public CrudResponseDto<VehicleAssigmentDto> activateById(Long id) {
+    public CrudResponseDto<VehicleAssigmentResDtoA> activateById(Long id) {
         // No aplica para asignaciones
         return CrudResponseDto.success(null, "Operación no soportada");
     }
 
     @Override
-    public CrudResponseDto<VehicleAssigmentDto> deactivateById(Long id) {
+    public CrudResponseDto<VehicleAssigmentResDtoA> deactivateById(Long id) {
         // No aplica para asignaciones
         return CrudResponseDto.success(null, "Operación no soportada");
     }
@@ -86,8 +86,8 @@ public class VehicleAssigmentService implements CrudOperations<VehicleAssigmentD
     }
 
     private static class VehicleAssigmentMapper {
-        public static VehicleAssigmentDto toDto(VehicleAssigments entity) {
-            VehicleAssigmentDto dto = new VehicleAssigmentDto();
+        public static VehicleAssigmentResDtoA toDto(VehicleAssigments entity) {
+            VehicleAssigmentResDtoA dto = new VehicleAssigmentResDtoA();
             dto.setId(entity.getId());
             dto.setVehicle(entity.getVehicle());
             dto.setDriver(entity.getDriver());
@@ -97,7 +97,7 @@ public class VehicleAssigmentService implements CrudOperations<VehicleAssigmentD
             return dto;
         }
 
-        public static VehicleAssigments toEntity(VehicleAssigmentDto dto) {
+        public static VehicleAssigments toEntity(VehicleAssigmentResDtoA dto) {
             VehicleAssigments entity = new VehicleAssigments();
             entity.setId(dto.getId());
             entity.setVehicle(dto.getVehicle());

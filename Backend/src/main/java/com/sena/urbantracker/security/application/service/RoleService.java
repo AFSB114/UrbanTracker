@@ -1,11 +1,11 @@
 package com.sena.urbantracker.security.application.service;
 
-import com.sena.urbantracker.security.application.dto.response.RoleDto;
+import com.sena.urbantracker.security.application.dto.response.RoleResDtoA;
 import com.sena.urbantracker.security.domain.entity.Role;
 import com.sena.urbantracker.security.domain.repository.RoleRepository;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
-import com.sena.urbantracker.shared.domain.dto.CrudResponseDto;
+import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +17,12 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RoleService implements CrudOperations<RoleDto, RoleDto, Long> {
+public class RoleService implements CrudOperations<RoleResDtoA, RoleResDtoA, Long> {
 
     private final RoleRepository roleRepository;
 
     @Override
-    public CrudResponseDto<RoleDto> create(RoleDto dto) {
+    public CrudResponseDto<RoleResDtoA> create(RoleResDtoA dto) {
         if (roleRepository.existsByName(dto.getName())) {
             throw new EntityAlreadyExistsException("El rol con nombre " + dto.getName() + " ya existe.");
         }
@@ -35,7 +35,7 @@ public class RoleService implements CrudOperations<RoleDto, RoleDto, Long> {
     }
 
     @Override
-    public CrudResponseDto<Optional<RoleDto>> findById(Long id) {
+    public CrudResponseDto<Optional<RoleResDtoA>> findById(Long id) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Rol con id " + id + " no encontrado."));
 
@@ -43,9 +43,9 @@ public class RoleService implements CrudOperations<RoleDto, RoleDto, Long> {
     }
 
     @Override
-    public CrudResponseDto<List<RoleDto>> findAll() {
+    public CrudResponseDto<List<RoleResDtoA>> findAll() {
         log.info("Entrando a findAll de RoleService...");
-        List<RoleDto> dtos = roleRepository.findAll()
+        List<RoleResDtoA> dtos = roleRepository.findAll()
                 .stream()
                 .map(RoleMapper::toDto)
                 .toList();
@@ -55,7 +55,7 @@ public class RoleService implements CrudOperations<RoleDto, RoleDto, Long> {
 
 
     @Override
-    public CrudResponseDto<RoleDto> update(RoleDto dto, Long id) {
+    public CrudResponseDto<RoleResDtoA> update(RoleResDtoA dto, Long id) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Rol con id " + id + " no encontrado."));
 
@@ -68,7 +68,7 @@ public class RoleService implements CrudOperations<RoleDto, RoleDto, Long> {
     }
 
     @Override
-    public CrudResponseDto<RoleDto> deleteById(Long id) {
+    public CrudResponseDto<RoleResDtoA> deleteById(Long id) {
         if (!roleRepository.existsById(id)) {
             throw new EntityNotFoundException("Rol con id " + id + " no encontrado.");
         }
@@ -78,7 +78,7 @@ public class RoleService implements CrudOperations<RoleDto, RoleDto, Long> {
     }
 
     @Override
-    public CrudResponseDto<RoleDto> activateById(Long id) {
+    public CrudResponseDto<RoleResDtoA> activateById(Long id) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Rol con id " + id + " no encontrado."));
 
@@ -88,7 +88,7 @@ public class RoleService implements CrudOperations<RoleDto, RoleDto, Long> {
     }
 
     @Override
-    public CrudResponseDto<RoleDto> deactivateById(Long id) {
+    public CrudResponseDto<RoleResDtoA> deactivateById(Long id) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Rol con id " + id + " no encontrado."));
 
@@ -109,9 +109,9 @@ public class RoleService implements CrudOperations<RoleDto, RoleDto, Long> {
 
     private static class RoleMapper {
 
-        private static RoleDto toDto(Role entity) {
+        private static RoleResDtoA toDto(Role entity) {
             if (entity == null) return null;
-            RoleDto dto = new RoleDto();
+            RoleResDtoA dto = new RoleResDtoA();
             dto.setId(entity.getId());
             dto.setName(entity.getName());
             dto.setDescription(entity.getDescription());
@@ -119,7 +119,7 @@ public class RoleService implements CrudOperations<RoleDto, RoleDto, Long> {
             return dto;
         }
 
-        private static Role toEntity(RoleDto dto) {
+        private static Role toEntity(RoleResDtoA dto) {
             if (dto == null) return null;
             Role entity = new Role();
             entity.setId(dto.getId());

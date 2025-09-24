@@ -3,19 +3,19 @@ package com.sena.urbantracker.users.infrastructure.controller;
 import com.sena.urbantracker.shared.infrastructure.controller.BaseController;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
-import com.sena.urbantracker.users.application.dto.response.UserIdentificationDto;
+import com.sena.urbantracker.users.application.dto.response.UserIdentificationResDtoA;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/public/user-identifications")
-public class UserIdentificationController extends BaseController<UserIdentificationDto, UserIdentificationDto, Long> {
+public class UserIdentificationController extends BaseController<UserIdentificationResDtoA, UserIdentificationResDtoA, Long> {
 
     public UserIdentificationController(ServiceFactory serviceFactory) {
-        super(serviceFactory, EntityType.USER_IDENTIFICATION, UserIdentificationDto.class, UserIdentificationDto.class);
+        super(serviceFactory, EntityType.USER_IDENTIFICATION, UserIdentificationResDtoA.class, UserIdentificationResDtoA.class);
     }
 
 
-    protected Class<UserIdentificationDto> getDtoClass() {
-        return UserIdentificationDto.class;
+    protected Class<UserIdentificationResDtoA> getDtoClass() {
+        return UserIdentificationResDtoA.class;
     }
 }
