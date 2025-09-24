@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import Image from "next/image"
 
 export default function LoginPage() {
-    const [email, setEmail] = useState("")
+    const [userName, setUserName] = useState("")
     const [password, setPassword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
@@ -23,18 +23,18 @@ export default function LoginPage() {
         setError("")
 
         try {
-            const response = await fetch("/api/login", {
+            const response = await fetch("http://localhost:8080/api/v1/public/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ userName, password }),
             })
 
             if (response.ok) {
                 const data = await response.json()
                 localStorage.setItem("token", data.token)
-                router.push("/dashboard")
+                router.push("/Dashboard")
             } else {
                 setError("Credenciales inválidas")
             }
@@ -45,7 +45,7 @@ export default function LoginPage() {
             const mockToken =
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
             localStorage.setItem("token", mockToken)
-            router.push("/dashboard")
+            router.push("/Dashboard")
         }
 
         setIsLoading(false)
@@ -56,8 +56,8 @@ export default function LoginPage() {
             <div className="w-full max-w-md space-y-8">
                 {/* Logo/Brand */}
                 <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-primary text-primary-foreground rounded-lg mb-4">
-                        <Image src="/white-logo.svg" alt="Logo" width={50} height={50} />
+                    <div className="flex items-center justify-center mb-6">
+                        <Image src="/Logo completo blanco -UrbanTracker.svg" alt="Logo" width={200} height={50} />
                     </div>
                     <h1 className="text-2xl font-bold text-foreground">Bienvenido</h1>
                     <p className="text-muted-foreground mt-2">Inicia sesión en tu cuenta</p>
@@ -76,15 +76,15 @@ export default function LoginPage() {
                                 <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">{error}</div>
                             )}
                             <div className="space-y-2">
-                                <Label htmlFor="email" className="text-card-foreground">
+                                <Label htmlFor="userName" className="text-card-foreground">
                                     Nombre del usuario
                                 </Label>
                                 <Input
-                                    id="email"
+                                    id="userName"
                                     type="text"
                                     placeholder="Admin123456"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    value={userName}
+                                    onChange={(e) => setUserName(e.target.value)}
                                     required
                                     className="bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-ring"
                                 />
@@ -105,7 +105,7 @@ export default function LoginPage() {
                             </div>
                             <Button
                                 type="submit"
-                                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                                className="w-full bg-primary text-primary-foreground hover:bg-primary/100 transition-colors"
                                 disabled={isLoading}
                             >
                                 {isLoading ? (
