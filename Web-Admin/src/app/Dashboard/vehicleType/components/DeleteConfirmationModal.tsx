@@ -1,31 +1,37 @@
-
 import { Button } from "@/components/ui/button";
-import {Dialog,DialogContent,DialogDescription,DialogFooter,DialogHeader,DialogTitle,} from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { AlertTriangle, Loader2 } from "lucide-react";
-import type { Vehicle } from "../types/vehiculeTypes";
+import type { VehicleType } from "../types/vehicleTypes";
 
 interface DeleteConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => Promise<void>;
-  vehicle: Vehicle | null;
+  vehicleType: VehicleType | null;
   isDeleting: boolean;
 }
 
-export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
+const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
-  vehicle,
+  vehicleType,
   isDeleting,
 }) => {
-  if (!vehicle) return null;
+  if (!vehicleType) return null;
 
   const handleConfirm = async () => {
     try {
       await onConfirm();
     } catch (error) {
-      console.error('Error deleting vehicle:', error);
+      console.error('Error deleting vehicle type:', error);
     }
   };
 
@@ -33,9 +39,9 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Eliminar Vehículo</DialogTitle>
+          <DialogTitle>Eliminar Tipo de Vehículo</DialogTitle>
           <DialogDescription>
-            ¿Estás seguro que deseas eliminar el vehículo <span className="font-bold">{vehicle.licensePlate}</span>?
+            ¿Estás seguro que deseas eliminar el tipo <span className="font-bold">{vehicleType.name}</span>?
           </DialogDescription>
         </DialogHeader>
         <div className="flex items-center gap-2 mb-4">
@@ -51,4 +57,6 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default DeleteConfirmationModal;

@@ -1,13 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { companyService } from "../services/companyService";
-import type {
-  Company,
-  CompanyFormData,
-  UseCompaniesReturn,
-  PaginationData,
-  PaginationConfig,
-  CompanyStatistics,
-} from "../types/companyTypes";
+import type {Company,CompanyFormData,UseCompaniesReturn,PaginationData,PaginationConfig,CompanyStatistics,} from "../types/companyTypes";
 
 const INITIAL_FORM_DATA: CompanyFormData = {
   name: "",

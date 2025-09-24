@@ -1,23 +1,23 @@
-import type { Company, CompanyFormData } from '../types/companyTypes';
+import { VehicleType } from '../types/vehicleTypes';
 
-const API_URL = 'http://localhost:8085/api/v1/public/companies';
+const API_URL = 'http://localhost:8085/api/v1/public/vehicletypes';
 
-export const companyService = {
-  getAll: async (): Promise<Company[]> => {
+export const vehicleTypeService = {
+  getAll: async (): Promise<VehicleType[]> => {
     const response = await fetch(API_URL, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
     if (!response.ok) {
-      console.error("Error cargando empresas:", response.status, await response.text());
-      throw new Error("Error al cargar empresas");
+      console.error("Error cargando tipos de vehículo:", response.status, await response.text());
+      throw new Error("Error al cargar tipos de vehículo");
     }
     const result = await response.json();
     console.log("Respuesta GET:", result);
     return result.data;
   },
 
-  create: async (data: CompanyFormData): Promise<Company> => {
+  create: async (data: VehicleType): Promise<VehicleType> => {
     console.log("Enviando datos al backend:", data);
     const response = await fetch(API_URL, {
       method: "POST",
@@ -26,16 +26,16 @@ export const companyService = {
     });
 
     if (!response.ok) {
-      console.error("Error creando empresa:", response.status, await response.text());
-      throw new Error("No se pudo crear la empresa");
+      console.error("Error creando tipo de vehículo:", response.status, await response.text());
+      throw new Error("No se pudo crear el tipo de vehículo");
     }
 
     const result = await response.json();
     console.log("Respuesta POST:", result);
-    return result.data; 
+    return result.data; // <- Aquí devolvemos solo el objeto tipo de vehículo
   },
 
-  update: async (id: number, data: CompanyFormData): Promise<Company> => {
+  update: async (id: number, data: VehicleType): Promise<VehicleType> => {
     const response = await fetch(`${API_URL}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -43,8 +43,8 @@ export const companyService = {
     });
 
     if (!response.ok) {
-      console.error("Error actualizando empresa:", response.status, await response.text());
-      throw new Error("No se pudo actualizar la empresa");
+      console.error("Error actualizando tipo de vehículo:", response.status, await response.text());
+      throw new Error("No se pudo actualizar el tipo de vehículo");
     }
 
     const result = await response.json();
@@ -55,8 +55,8 @@ export const companyService = {
   delete: async (id: number): Promise<void> => {
     const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
     if (!response.ok) {
-      console.error("Error eliminando empresa:", response.status, await response.text());
-      throw new Error("No se pudo eliminar la empresa");
+      console.error("Error eliminando tipo de vehículo:", response.status, await response.text());
+      throw new Error("No se pudo eliminar el tipo de vehículo");
     }
-  },
+  }
 };

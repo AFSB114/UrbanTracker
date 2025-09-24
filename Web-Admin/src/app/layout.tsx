@@ -1,5 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
+import Image from "next/image"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -7,8 +8,12 @@ export const metadata: Metadata = {
   description: "Sistema de gestión de transporte y logística",
   generator: "v0.app",
   icons: {
-    icon: "/white-logo.png",
-  },
+  icon: [
+    { url: "/white-logo.svg", sizes: "any", type: "image/svg+xml" },
+    { url: "/favicon.ico", sizes: "any", type: "image/x-icon" },
+  ],
+}
+
 }
 
 export default function RootLayout({

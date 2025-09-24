@@ -1,8 +1,18 @@
-
 import { Button } from "@/components/ui/button";
-import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue} from "@/components/ui/select";
-import {ChevronLeft,ChevronRight,ChevronsLeft,ChevronsRight} from "lucide-react";
-import type { PaginationData } from "../types/vehiculeTypes";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight
+} from "lucide-react";
+import type { PaginationData } from "../types/vehicleTypes";
 
 interface PaginationProps {
   pagination: PaginationData;
@@ -13,14 +23,14 @@ interface PaginationProps {
   itemsPerPageOptions?: number[];
 }
 
-export function Pagination({
+const Pagination: React.FC<PaginationProps> = ({
   pagination,
   onPageChange,
   onItemsPerPageChange,
   isLoading = false,
   showItemsPerPageSelect = true,
   itemsPerPageOptions = [5, 10, 20, 50],
-}: PaginationProps) {
+}) => {
   const {
     currentPage,
     totalPages,
@@ -61,3 +71,5 @@ export function Pagination({
     </div>
   );
 }
+
+export default Pagination;

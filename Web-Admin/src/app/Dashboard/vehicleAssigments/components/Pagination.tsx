@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue} from "@/components/ui/select";
 import {ChevronLeft,ChevronRight,ChevronsLeft,ChevronsRight} from "lucide-react";
-import type { PaginationData } from "../types/vehiculeTypes";
+import type { PaginationData } from "../types/VehicleAssigmentsType";
 
 interface PaginationProps {
   pagination: PaginationData;
