@@ -5,6 +5,9 @@ import com.sena.urbantracker.shared.domain.enums.OperationType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -136,6 +139,22 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<CrudResponseDto<Object>> handleAccessDenied(AccessDeniedException ex) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        log.warn("❌ Acceso denegado para usuario: {}",
+                auth != null ? auth.getName() : "ANÓNIMO");
+
+        CrudResponseDto<Object> response = CrudResponseDto.error(
+                "Access Denied",
+                OperationType.CREATE,
+                "Security"
+        );
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

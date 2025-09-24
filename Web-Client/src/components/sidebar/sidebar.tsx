@@ -2,10 +2,10 @@
 
 import { Truck, MapPin, MessageCircle, User } from "lucide-react"
 import { Button } from "components/ui/button"
-import { usePanelContext } from "components/panels/panel-context"
+import { usePanelActive } from "components/panels/panel-active-context"
 
 export function Sidebar() {
-  const { activePanel, setActivePanel } = usePanelContext()
+  const { activePanel, setActivePanel } = usePanelActive()
   const navigationItems = [
     { id: "routes", icon: Truck, label: "Rutas" },
     { id: "location", icon: MapPin, label: "Ubicación" },
