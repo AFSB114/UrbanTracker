@@ -13,7 +13,7 @@ public class VehicleAssignmentMapper {
         return VehicleAssigmentResDto.builder()
                 .id(entity.getId())
                 .vehicle(VehicleResDto.builder().id(entity.getVehicleId()).build())
-                .driver(DriverResDto.builder().id(entity.getDriverId()).build)
+                .driver(DriverResDto.builder().id(entity.getDriverId()).build())
                 .assignmentStatus(entity.getAssignmentStatus())
                 .note(entity.getNote())
                 .build();

@@ -5,6 +5,8 @@ import com.sena.urbantracker.security.domain.entity.Role;
 import com.sena.urbantracker.security.domain.entity.User;
 import com.sena.urbantracker.security.domain.repository.RoleRepository;
 import com.sena.urbantracker.security.domain.repository.UserRepository;
+import com.sena.urbantracker.users.domain.entity.UserProfileDomain;
+import com.sena.urbantracker.users.domain.repository.UserProfileRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +19,7 @@ public class DataInitializer implements CommandLineRunner {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final IUserProfile IuserProfile;
+    private final UserProfileRepository userProfileRepository;
 
     // Creo los roles al iniciar el proyecto
     @Override
@@ -56,15 +58,15 @@ public class DataInitializer implements CommandLineRunner {
             adminUser.setRole(adminRole);
 
             //Datos de UserProfile
-            UserProfile adminUserProfile = new UserProfile();
-            adminUserProfile.setFirstName("Super");
-            adminUserProfile.setLastName("Admin");
-            adminUserProfile.setEmail("urbantracker751@gmail.com");
-            // le asigno el User admin creado arriba
-            adminUserProfile.setUser(adminUser);
+            UserProfileDomain adminUserProfile = UserProfileDomain.builder()
+                    .firstName("Super")
+                    .lastName("Admin")
+                    .email("urbantracker751@gmail.com")
+                    .user(adminUser)
+                    .build();
 
             userRepository.save(adminUser);
-            IuserProfile.save(adminUserProfile);
+            userProfileRepository.save(adminUserProfile);
 
             System.out.println("✅ Usuario ADMIN creado (user:" + adminUsername + "/ pass: admin123)");
         }

@@ -1,6 +1,7 @@
 package com.sena.urbantracker.users.application.mapper;
 
 import com.sena.urbantracker.security.domain.entity.User;
+import com.sena.urbantracker.security.domain.entity.UserDomain;
 import com.sena.urbantracker.users.application.dto.request.DriverReqDto;
 import com.sena.urbantracker.users.application.dto.response.DriverResDto;
 import com.sena.urbantracker.users.domain.entity.DriverDomain;
@@ -21,7 +22,7 @@ public class DriverMapper {
     public static DriverDomain toEntity(DriverReqDto dto) {
         if (dto == null) return null;
         return DriverDomain.builder()
-                .user(User.builder().id(dto.getUserId()).build())
+                .user(UserDomain.builder().id(dto.getUserId()).build())
                 .active(true)
                 .build();
     }

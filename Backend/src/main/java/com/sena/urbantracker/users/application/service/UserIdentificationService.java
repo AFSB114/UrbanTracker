@@ -4,7 +4,12 @@ import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExists
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
+import com.sena.urbantracker.users.application.dto.request.UserIdentificationReqDto;
 import com.sena.urbantracker.users.application.dto.response.UserIdentificationResDto;
+import com.sena.urbantracker.users.application.mapper.UserIdentificationMapper;
+import com.sena.urbantracker.users.domain.entity.IdentificationTypeDomain;
+import com.sena.urbantracker.users.domain.entity.UserIdentificationDomain;
+import com.sena.urbantracker.users.domain.repository.UserIdentificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -12,25 +17,21 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserIdentificationService implements CrudOperations<UserIdentificationResDto, UserIdentificationResDto, Long> {
+public class UserIdentificationService implements CrudOperations<UserIdentificationReqDto, UserIdentificationResDto, Long> {
 
-    private final IUserIdentification userIdentificationRepository;
+    private final UserIdentificationRepository userIdentificationRepository;
 
     @Override
-    public CrudResponseDto<UserIdentificationResDto> create(UserIdentificationResDto dto) {
-        if (userIdentificationRepository.existsById(dto.getId())) {
-            throw new EntityAlreadyExistsException("La identificación de usuario con id " + dto.getId() + " ya existe.");
-        }
-        UserIdentification entity = UserIdentificationMapper.toEntity(dto);
-        entity.setActive(true);
+    public CrudResponseDto<UserIdentificationResDto> create(UserIdentificationReqDto dto) {
+        UserIdentificationDomain entity = UserIdentificationMapper.toEntity(dto);
 
-        UserIdentification saved = userIdentificationRepository.save(entity);
+        UserIdentificationDomain saved = userIdentificationRepository.save(entity);
         return CrudResponseDto.success(UserIdentificationMapper.toDto(saved), "Identificación de usuario creada correctamente");
     }
 
     @Override
     public CrudResponseDto<Optional<UserIdentificationResDto>> findById(Long aLong) {
-        UserIdentification userIdentification = userIdentificationRepository.findById(aLong)
+        UserIdentificationDomain userIdentification = userIdentificationRepository.findById(aLong)
                 .orElseThrow(() -> new EntityNotFoundException("Identificación de usuario con id " + aLong + " no encontrada."));
 
         return CrudResponseDto.success(Optional.of(UserIdentificationMapper.toDto(userIdentification)), "Identificación de usuario encontrada");
@@ -38,21 +39,20 @@ public class UserIdentificationService implements CrudOperations<UserIdentificat
 
     @Override
     public CrudResponseDto<List<UserIdentificationResDto>> findAll() {
-        List<UserIdentification> userIdentifications = userIdentificationRepository.findAll();
+        List<UserIdentificationDomain> userIdentifications = userIdentificationRepository.findAll();
         return CrudResponseDto.success(userIdentifications.stream().map(UserIdentificationMapper::toDto).toList(), "Identificaciones de usuario encontradas");
     }
 
     @Override
-    public CrudResponseDto<UserIdentificationResDto> update(UserIdentificationResDto dto, Long id) {
-        UserIdentification userIdentification = userIdentificationRepository.findById(dto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Identificación de usuario con id " + dto.getId() + " no encontrada."));
+    public CrudResponseDto<UserIdentificationResDto> update(UserIdentificationReqDto dto, Long id) {
+        UserIdentificationDomain userIdentification = userIdentificationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Identificación de usuario con id " + id + " no encontrada."));
 
-        userIdentification.setUser(dto.getUser());
-        userIdentification.setIdentificationType(dto.getIdentificationType());
+        userIdentification.setIdentificationType(IdentificationTypeDomain.builder().id(dto.getIdentificationTypeId()).build());
         userIdentification.setIdentificationNumber(dto.getIdentificationNumber());
-        userIdentification.setActive(dto.getActive());
+//        userIdentification.setActive(dto.getActive());
 
-        UserIdentification updated = userIdentificationRepository.save(userIdentification);
+        UserIdentificationDomain updated = userIdentificationRepository.save(userIdentification);
         return CrudResponseDto.success(UserIdentificationMapper.toDto(updated), "Identificación de usuario actualizada correctamente");
     }
 
@@ -68,7 +68,7 @@ public class UserIdentificationService implements CrudOperations<UserIdentificat
 
     @Override
     public CrudResponseDto<UserIdentificationResDto> activateById(Long aLong) {
-        UserIdentification userIdentification = userIdentificationRepository.findById(aLong)
+        UserIdentificationDomain userIdentification = userIdentificationRepository.findById(aLong)
                 .orElseThrow(() -> new EntityNotFoundException("Identificación de usuario con id " + aLong + " no encontrada."));
 
         userIdentification.setActive(true);
@@ -78,7 +78,7 @@ public class UserIdentificationService implements CrudOperations<UserIdentificat
 
     @Override
     public CrudResponseDto<UserIdentificationResDto> deactivateById(Long aLong) {
-        UserIdentification userIdentification = userIdentificationRepository.findById(aLong)
+        UserIdentificationDomain userIdentification = userIdentificationRepository.findById(aLong)
                 .orElseThrow(() -> new EntityNotFoundException("Identificación de usuario con id " + aLong + " no encontrada."));
 
         userIdentification.setActive(false);
@@ -92,30 +92,6 @@ public class UserIdentificationService implements CrudOperations<UserIdentificat
             return CrudResponseDto.success(true, "Identificación de usuario con id " + aLong + " existe.");
         }
         return CrudResponseDto.success(false, "Identificación de usuario con id " + aLong + " no existe.");
-    }
-
-    private static class UserIdentificationMapper {
-
-        private static UserIdentificationResDto toDto(UserIdentification entity) {
-            if (entity == null) return null;
-            UserIdentificationResDto dto = new UserIdentificationResDto();
-            dto.setId(entity.getId());
-            dto.setUser(entity.getUser());
-            dto.setIdentificationType(entity.getIdentificationType());
-            dto.setIdentificationNumber(entity.getIdentificationNumber());
-            dto.setActive(entity.getActive());
-            return dto;
-        }
-
-        private static UserIdentification toEntity(UserIdentificationResDto dto) {
-            UserIdentification entity = new UserIdentification();
-            entity.setId(dto.getId());
-            entity.setUser(dto.getUser());
-            entity.setIdentificationType(dto.getIdentificationType());
-            entity.setIdentificationNumber(dto.getIdentificationNumber());
-            entity.setActive(dto.getActive());
-            return entity;
-        }
     }
 
 }

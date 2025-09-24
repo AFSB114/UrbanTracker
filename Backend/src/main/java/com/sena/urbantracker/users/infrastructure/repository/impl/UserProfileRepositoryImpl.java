@@ -48,4 +48,9 @@ public class UserProfileRepositoryImpl implements UserProfileRepository {
     public boolean existsById(Long id) {
         return jpaRepository.existsById(id);
     }
+
+    @Override
+    public Optional<UserProfileDomain> findByEmail(String email) {
+        return jpaRepository.findByEmail(email);
+    }
 }

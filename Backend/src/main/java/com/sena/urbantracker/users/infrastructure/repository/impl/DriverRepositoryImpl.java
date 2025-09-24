@@ -48,4 +48,9 @@ public class DriverRepositoryImpl implements DriverRepository {
     public boolean existsById(Long id) {
         return jpaRepository.existsById(id);
     }
+
+    @Override
+    public boolean existsByUserId(Long userId) {
+        return jpaRepository.existsByUserId(userId);
+    }
 }

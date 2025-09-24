@@ -1,6 +1,7 @@
 package com.sena.urbantracker.users.infrastructure.persistence.model;
 
 import com.sena.urbantracker.security.domain.entity.User;
+import com.sena.urbantracker.security.infrastructure.persistence.model.UserModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +26,7 @@ public class DriverModel {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
-    private User user;
+    private UserModel user;
 
     @Column(nullable = false)
     @Builder.Default

@@ -4,7 +4,11 @@ import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExists
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
+import com.sena.urbantracker.users.application.dto.request.UserProfileReqDto;
 import com.sena.urbantracker.users.application.dto.response.UserProfileResDto;
+import com.sena.urbantracker.users.application.mapper.UserProfileMapper;
+import com.sena.urbantracker.users.domain.entity.UserProfileDomain;
+import com.sena.urbantracker.users.domain.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,24 +17,21 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserProfileService implements CrudOperations<UserProfileResDto, UserProfileResDto, Long> {
+public class UserProfileService implements CrudOperations<UserProfileReqDto, UserProfileResDto, Long> {
 
-    private final IUserProfile userProfileRepository;
+    private final UserProfileRepository userProfileRepository;
 
     @Override
-    public CrudResponseDto<UserProfileResDto> create(UserProfileResDto dto) {
-        if (userProfileRepository.existsById(dto.getId())) {
-            throw new EntityAlreadyExistsException("El perfil de usuario con id " + dto.getId() + " ya existe.");
-        }
-        UserProfile entity = UserProfileMapper.toEntity(dto);
+    public CrudResponseDto<UserProfileResDto> create(UserProfileReqDto dto) {
+        UserProfileDomain entity = UserProfileMapper.toEntity(dto);
 
-        UserProfile saved = userProfileRepository.save(entity);
+        UserProfileDomain saved = userProfileRepository.save(entity);
         return CrudResponseDto.success(UserProfileMapper.toDto(saved), "Perfil de usuario creado correctamente");
     }
 
     @Override
     public CrudResponseDto<Optional<UserProfileResDto>> findById(Long id) {
-        UserProfile userProfile = userProfileRepository.findById(id)
+        UserProfileDomain userProfile = userProfileRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario con id " + id + " no encontrado."));
         return CrudResponseDto.success(Optional.of(UserProfileMapper.toDto(userProfile)), "Perfil de usuario encontrado");
     }
@@ -45,14 +46,14 @@ public class UserProfileService implements CrudOperations<UserProfileResDto, Use
     }
 
     @Override
-    public CrudResponseDto<UserProfileResDto> update(UserProfileResDto dto, Long id) {
-        UserProfile userProfile = userProfileRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario con id " + dto.getId() + " no encontrado."));
+    public CrudResponseDto<UserProfileResDto> update(UserProfileReqDto dto, Long id) {
+        UserProfileDomain userProfile = userProfileRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario con id " + id + " no encontrado."));
         userProfile.setFirstName(dto.getFirstName());
         userProfile.setLastName(dto.getLastName());
         userProfile.setEmail(dto.getEmail());
         userProfile.setPhone(dto.getPhone());
-        UserProfile updated = userProfileRepository.save(userProfile);
+        UserProfileDomain updated = userProfileRepository.save(userProfile);
         return CrudResponseDto.success(UserProfileMapper.toDto(updated), "Perfil de usuario actualizado correctamente");
     }
 
@@ -79,31 +80,6 @@ public class UserProfileService implements CrudOperations<UserProfileResDto, Use
     @Override
     public CrudResponseDto<Boolean> existsById(Long id) {
         return CrudResponseDto.success(userProfileRepository.existsById(id), "Verificación de existencia completada");
-    }
-
-    private static class UserProfileMapper {
-        public static UserProfileResDto toDto(UserProfile entity) {
-            if (entity == null) return null;
-            UserProfileResDto dto = new UserProfileResDto();
-            dto.setId(entity.getId());
-            dto.setFirstName(entity.getFirstName());
-            dto.setLastName(entity.getLastName());
-            dto.setEmail(entity.getEmail());
-            dto.setPhone(entity.getPhone());
-            dto.setCreatedAt(entity.getCreatedAt());
-            dto.setUpdatedAt(entity.getUpdatedAt());
-            return dto;
-        }
-
-        public static UserProfile toEntity(UserProfileResDto dto) {
-            UserProfile entity = new UserProfile();
-            entity.setId(dto.getId());
-            entity.setFirstName(dto.getFirstName());
-            entity.setLastName(dto.getLastName());
-            entity.setEmail(dto.getEmail());
-            entity.setPhone(dto.getPhone());
-            return entity;
-        }
     }
 
 }

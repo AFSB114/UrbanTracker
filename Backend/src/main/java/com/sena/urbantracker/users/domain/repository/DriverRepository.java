@@ -16,4 +16,6 @@ public interface DriverRepository {
     void deleteById(Long id);
 
     boolean existsById(Long id);
+
+    boolean existsByUserId(Long userId);
 }

@@ -1,5 +1,6 @@
 package com.sena.urbantracker.users.infrastructure.persistence.mapper;
 
+import com.sena.urbantracker.security.infrastructure.persistence.mapper.UserPersistenceMapper;
 import com.sena.urbantracker.users.domain.entity.DriverDomain;
 import com.sena.urbantracker.users.infrastructure.persistence.model.DriverModel;
 
@@ -9,7 +10,7 @@ public class DriverPersistenceMapper {
         if (domain == null) return null;
         return DriverModel.builder()
                 .id(domain.getId())
-                .user(domain.getUser())
+                .user(UserPersistenceMapper.toModel(domain.getUser()))
                 .active(domain.getActive())
                 .createdAt(domain.getCreatedAt())
                 .updatedAt(domain.getUpdatedAt())
@@ -20,7 +21,7 @@ public class DriverPersistenceMapper {
         if (model == null) return null;
         return DriverDomain.builder()
                 .id(model.getId())
-                .user(model.getUser())
+                .user(UserPersistenceMapper.toDomain(model.getUser()))
                 .active(model.getActive())
                 .createdAt(model.getCreatedAt())
                 .updatedAt(model.getUpdatedAt())

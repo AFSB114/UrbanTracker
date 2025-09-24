@@ -1,5 +1,6 @@
 package com.sena.urbantracker.users.application.service;
 
+import com.sena.urbantracker.security.domain.entity.UserDomain;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
@@ -22,6 +23,9 @@ public class DriverService implements CrudOperations<DriverReqDto, DriverResDto,
 
     @Override
     public CrudResponseDto<DriverResDto> create(DriverReqDto request) {
+        if (driverRepository.existsByUserId(request.getUserId())) {
+            throw new EntityAlreadyExistsException("Ya existe un conductor para el usuario con id: " + request.getUserId());
+        }
         DriverDomain entity = DriverMapper.toEntity(request);
         entity.setActive(true);
         DriverDomain saved = driverRepository.save(entity);
@@ -44,12 +48,12 @@ public class DriverService implements CrudOperations<DriverReqDto, DriverResDto,
     }
 
     @Override
-    public CrudResponseDto<DriverResDto> update(DriverResDto dto, Long id) {
+    public CrudResponseDto<DriverResDto> update(DriverReqDto dto, Long id) {
         DriverDomain driver = driverRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Conductor con id " + dto.getId() + " no encontrado."));
+                .orElseThrow(() -> new EntityNotFoundException("Conductor con id " + id + " no encontrado."));
 
-        driver.setUser(dto.getUser());
-        driver.setActive(dto.getActive());
+        driver.setUser(UserDomain.builder().id(dto.getUserId()).build());
+//        driver.setActive(dto.getActive());
 
         DriverDomain updated = driverRepository.save(driver);
         return CrudResponseDto.success(DriverMapper.toDto(updated), "Conductor actualizado correctamente");

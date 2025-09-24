@@ -10,20 +10,20 @@ public class IdentificationTypeMapper {
         if (entity == null) return null;
         return IdentificationTypeResDto.builder()
                 .id(entity.getId())
-                .name(entity.getName())
+                .typeName(entity.getTypeName())
                 .description(entity.getDescription())
-                .active(entity.getActive())
-                .createdAt(entity.getCreatedAt())
-                .updatedAt(entity.getUpdatedAt())
+//                .active(entity.getActive())
+//                .createdAt(entity.getCreatedAt())
+//                .updatedAt(entity.getUpdatedAt())
                 .build();
     }
 
     public static IdentificationTypeDomain toEntity(IdentificationTypeReqDto dto) {
         if (dto == null) return null;
         return IdentificationTypeDomain.builder()
-                .name(dto.getName())
+                .typeName(dto.getName())
                 .description(dto.getDescription())
-                .active(true)
+//                .active(true)
                 .build();
     }
 }

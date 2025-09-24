@@ -5,6 +5,9 @@ import com.sena.urbantracker.security.application.dto.response.ResponseLoginDTO;
 import com.sena.urbantracker.security.domain.entity.RecoveryRequest;
 import com.sena.urbantracker.security.domain.entity.User;
 import com.sena.urbantracker.security.domain.repository.RecoveryRequestRepository;
+import com.sena.urbantracker.users.application.mapper.UserProfileMapper;
+import com.sena.urbantracker.users.domain.entity.UserProfileDomain;
+import com.sena.urbantracker.users.domain.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +23,7 @@ import java.util.Random;
 @Service
 public class RecoveryService {
 
-    private final IUserProfile userRepository;
+    private final UserProfileRepository userRepository;
     private final RecoveryRequestRepository recoveryRequestRepository;
     private final EmailService emailService;
     private final JwtService jwtService;
@@ -29,14 +32,14 @@ public class RecoveryService {
     @Transactional
     public ResponseEntity<?> generateRecoveryCode(String email) {
 
-        Optional<UserProfile> userOpt = userRepository.findByEmail(email);
+        Optional<UserProfileDomain> userOpt = userRepository.findByEmail(email);
 
         if (!userOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("El email no existe");
         }
 
-        UserProfile user = userOpt.get();
+        UserProfileDomain user = userOpt.get();
 
         // Eliminar cualquier código anterior de ese usuario
         recoveryRequestRepository.deleteAllByUser(user);
@@ -49,7 +52,7 @@ public class RecoveryService {
         RecoveryRequest request = new RecoveryRequest();
         request.setCode(passwordEncoder.encode(code));
         request.setExpirationTime(expiration);
-        request.setUser(user);
+        request.setUser(UserProfileMapper.toDto(user));
         recoveryRequestRepository.save(request);
 
         // 3. Enviar correo
@@ -59,13 +62,13 @@ public class RecoveryService {
     }
 
     public ResponseEntity<?> validateRecoveryCode(RecoveryCodeValidationDTO dto) {
-        Optional<UserProfile> userProfileOpt = userRepository.findByEmail(dto.getEmail());
+        Optional<UserProfileDomain> userProfileOpt = userRepository.findByEmail(dto.getEmail());
 
         if (!userProfileOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email no encontrado.");
         }
 
-        UserProfile userProfile = userProfileOpt.get();
+        UserProfileDomain userProfile = userProfileOpt.get();
 
         Optional<RecoveryRequest> recoveryRequestOpt =
                 recoveryRequestRepository.findTopByUserOrderByCreatedAtDesc(userProfile);
