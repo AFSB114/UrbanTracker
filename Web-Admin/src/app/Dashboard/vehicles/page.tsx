@@ -28,6 +28,8 @@ export default function VehiclesPage() {
     isLoading,
     isDeleting,
     isSaving,
+    companies,
+    vehicleTypes,
     setSearchTerm,
     setStatusFilter,
     setPage,
@@ -159,6 +161,8 @@ export default function VehiclesPage() {
         onFormChange={updateFormData}
         isSaving={isSaving}
         errors={formErrors}
+        companies={companies}
+        vehicleTypes={vehicleTypes}
       />
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal

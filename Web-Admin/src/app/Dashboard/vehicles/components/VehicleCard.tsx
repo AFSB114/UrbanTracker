@@ -12,12 +12,11 @@ interface VehicleCardProps {
 
 export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
   const getStatusStyles = (status: Vehicle['status']) => {
-    const styles = {
-      "Operational": "bg-green-600 text-white hover:bg-green-700",
-      "En Ruta": "bg-blue-600 text-white hover:bg-blue-700",
-      "Fuera de Servicio": "bg-red-600 text-white hover:bg-red-700"
+    const styles: Record<string, string> = {
+      "ACTIVE": "bg-green-600 text-white hover:bg-green-700",
+      "INACTIVE": "bg-red-600 text-white hover:bg-red-700"
     }
-    return styles[status]
+    return styles[status] || "bg-gray-600 text-white hover:bg-gray-700"
   }
 
   return (
@@ -31,7 +30,7 @@ export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <h3 className="text-xl font-bold text-white">
-                  {vehicle.licensePlate}
+                  {vehicle.licencePlate}
                 </h3>
                 <Badge className={getStatusStyles(vehicle.status)}>
                   {vehicle.status}
@@ -42,16 +41,14 @@ export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
                   {vehicle.brand} {vehicle.model}
                 </span>
                 <span className="mx-2">•</span>
-                <span>{vehicle.type}</span>
+                <span>{vehicle.year}</span>
               </div>
-              {vehicle.driver && (
-                <div className="text-sm">
-                  <span className="font-medium text-zinc-400">
-                    Conductor Asignado:{" "}
-                  </span>
-                  <span className="text-emerald-500">{vehicle.driver}</span>
-                </div>
-              )}
+              <div className="text-sm">
+                <span className="font-medium text-zinc-400">
+                  Capacidad:{" "}
+                </span>
+                <span className="text-emerald-500">{vehicle.passengerCapacity} pasajeros</span>
+              </div>
             </div>
           </div>
           <div className="flex gap-2">

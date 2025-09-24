@@ -14,9 +14,11 @@ interface VehicleModalProps {
   formData: VehiculeFormData
   onClose: () => void
   onSave: () => void
-  onFormChange: (field: keyof VehiculeFormData, value: string ) => void
+  onFormChange: (field: keyof VehiculeFormData, value: string | number) => void
   isSaving: boolean;
   errors: Record<string, string>
+  companies: any[]
+  vehicleTypes: any[]
 }
 
 type VehicleType = string;
@@ -30,59 +32,75 @@ const VEHICLE_STATUSES: VehicleStatus[] = [
   'Operational', 'En Ruta', 'Fuera de Servicio'
 ]
 
-export const VehicleModal: React.FC<VehicleModalProps> = ({ 
+export const VehicleModal: React.FC<VehicleModalProps> = ({
   isOpen,
   isEditing,
   formData,
   onClose,
   onSave,
   onFormChange,
+  companies,
+  vehicleTypes,
   }) => {
 
     const [isLoading, setIsLoading] = useState(false);
-    const [errors, setErrors] = useState<Partial<VehiculeFormData>>({});
+    const [errors, setErrors] = useState<Record<string, string>>({});
   
     const validateForm = (): boolean => {
-      const newErrors: Partial<VehiculeFormData> = {};
-  
-      if (!formData.licensePlate.trim()) {
-        newErrors.licensePlate = 'Número de matrícula requerido';
-      } else if (formData.licensePlate.trim().length < 4) {
-        newErrors.licensePlate = 'Número de matrícula debe tener al menos 4 caracteres';
-      } else if (!/^[a-zA-Z0-9]+$/.test(formData.licensePlate.trim())) {
-        newErrors.licensePlate = 'Número de matrícula debe ser alfanumérico';
+      const newErrors: Record<string, string> = {};
+
+      if (!formData.licencePlate.trim()) {
+        newErrors.licencePlate = 'Número de matrícula requerido';
+      } else if (formData.licencePlate.trim().length < 4) {
+        newErrors.licencePlate = 'Número de matrícula debe tener al menos 4 caracteres';
+      } else if (!/^[a-zA-Z0-9]+$/.test(formData.licencePlate.trim())) {
+        newErrors.licencePlate = 'Número de matrícula debe ser alfanumérico';
       }
-  
+
       if (!formData.brand.trim()) {
         newErrors.brand = 'Marca requerida';
       } else if (formData.brand.trim().length < 2) {
         newErrors.brand = 'Marca debe tener al menos 2 caracteres';
       }
-  
+
       if (!formData.model.trim()) {
         newErrors.model = 'Modelo requerido';
       } else if (formData.model.trim().length < 2) {
         newErrors.model = 'Modelo debe tener al menos 2 caracteres';
       }
-  
-      if (!formData.type.trim()) {
-        newErrors.type = 'Tipo requerido';
-      } else if (formData.type.trim().length < 2) {
-        newErrors.type = 'Tipo debe tener al menos 2 caracteres';
+
+      if (formData.companyId === 0) {
+        newErrors.companyId = 'Compañía requerida';
       }
-  
+
+      if (formData.vehicleTypeId === 0) {
+        newErrors.vehicleTypeId = 'Tipo de vehículo requerido';
+      }
+
+      if (formData.year <= 0) {
+        newErrors.year = 'Año debe ser mayor a 0';
+      }
+
+      if (formData.passengerCapacity <= 0) {
+        newErrors.passengerCapacity = 'Capacidad debe ser mayor a 0';
+      }
+
       setErrors(newErrors);
       return Object.keys(newErrors).length === 0;
     };
   
-    const handleInputChange = (field: keyof VehiculeFormData) => 
+    const handleInputChange = (field: keyof VehiculeFormData) =>
       (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
+        const value = event.target.type === 'number' ? Number(event.target.value) : event.target.value;
         onFormChange(field, value);
-        
+
         // Clear error when user starts typing
-        if (errors[field]) {
-          setErrors(prev => ({ ...prev, [field]: undefined }));
+        if (errors[field as string]) {
+          setErrors(prev => {
+            const newErrors = { ...prev };
+            delete newErrors[field as string];
+            return newErrors;
+          });
         }
       };
   
@@ -113,43 +131,44 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="licensePlate" className="text-zinc-400">
+              <Label htmlFor="licencePlate" className="text-zinc-400">
                 Matrícula *
               </Label>
               <Input
-                id="licensePlate"
-                value={formData.licensePlate}
-                onChange={handleInputChange("licensePlate")}
+                id="licencePlate"
+                value={formData.licencePlate}
+                onChange={handleInputChange("licencePlate")}
                 className="bg-zinc-800 border-zinc-700 text-white"
                 placeholder="ABC-123"
                 disabled={isLoading}
               />
-              {errors.licensePlate && (
-                <p className="text-sm text-red-500">{errors.licensePlate}</p>
+              {errors.licencePlate && (
+                <p className="text-sm text-red-500">{errors.licencePlate}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="type" className="text-zinc-400">
-                Tipo *
+              <Label htmlFor="vehicleTypeId" className="text-zinc-400">
+                Tipo de Vehículo *
               </Label>
               <Select
-                value={formData.type}
-                onValueChange={(value: VehicleType) =>
-                  onFormChange("type", value)
-                }
+                value={formData.vehicleTypeId.toString()}
+                onValueChange={(value) => onFormChange("vehicleTypeId", Number(value))}
               >
                 <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
-                  <SelectValue placeholder="Seleccione el tipo" />
+                  <SelectValue placeholder="Seleccione el tipo de vehículo" />
                 </SelectTrigger>
                 <SelectContent className="bg-zinc-800 border-zinc-700">
-                  {VEHICLE_TYPES.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
+                  {vehicleTypes.map((type) => (
+                    <SelectItem key={type.id} value={type.id.toString()}>
+                      {type.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {errors.vehicleTypeId && (
+                <p className="text-sm text-red-500">{errors.vehicleTypeId}</p>
+              )}
             </div>
           </div>
 
@@ -189,24 +208,83 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="company" className="text-zinc-400">
-                Compañia *
+              <Label htmlFor="companyId" className="text-zinc-400">
+                Compañía *
               </Label>
-              <Input
-                id="company"
-                value={formData.company}
-                onChange={handleInputChange("company")}
-                className="bg-zinc-800 border-zinc-700 text-white"
-                placeholder="Transporte SA"
-                disabled={isLoading}
-              />
-              {errors.company && (
-                <p className="text-sm text-red-500">{errors.company}</p>
+              <Select
+                value={formData.companyId.toString()}
+                onValueChange={(value) => onFormChange("companyId", Number(value))}
+              >
+                <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
+                  <SelectValue placeholder="Seleccione la compañía" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-800 border-zinc-700">
+                  {companies.map((company) => (
+                    <SelectItem key={company.id} value={company.id.toString()}>
+                      {company.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.companyId && (
+                <p className="text-sm text-red-500">{errors.companyId}</p>
               )}
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="year" className="text-zinc-400">
+                Año *
+              </Label>
+              <Input
+                id="year"
+                type="number"
+                value={formData.year}
+                onChange={handleInputChange("year")}
+                className="bg-zinc-800 border-zinc-700 text-white"
+                placeholder="2023"
+                disabled={isLoading}
+              />
+              {errors.year && (
+                <p className="text-sm text-red-500">{errors.year}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="color" className="text-zinc-400">
+                Color
+              </Label>
+              <Input
+                id="color"
+                value={formData.color}
+                onChange={handleInputChange("color")}
+                className="bg-zinc-800 border-zinc-700 text-white"
+                placeholder="Rojo"
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="passengerCapacity" className="text-zinc-400">
+                Capacidad de Pasajeros *
+              </Label>
+              <Input
+                id="passengerCapacity"
+                type="number"
+                value={formData.passengerCapacity}
+                onChange={handleInputChange("passengerCapacity")}
+                className="bg-zinc-800 border-zinc-700 text-white"
+                placeholder="10"
+                disabled={isLoading}
+              />
+              {errors.passengerCapacity && (
+                <p className="text-sm text-red-500">{errors.passengerCapacity}</p>
+              )}
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="status" className="text-zinc-400">
                 Estado *
@@ -228,25 +306,6 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="driver" className="text-zinc-400">
-                Conductor
-              </Label>
-              <Input
-                id="driver"
-                value={formData.driver}
-                onChange={handleInputChange("driver")}
-                className="bg-zinc-800 border-zinc-700 text-white"
-                placeholder="Nombre del conductor"
-                disabled={isLoading}
-              />
-              {errors.driver && (
-                <p className="text-sm text-red-500">{errors.driver}</p>
-              )}
             </div>
           </div>
 

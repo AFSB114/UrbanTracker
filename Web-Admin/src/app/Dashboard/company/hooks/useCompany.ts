@@ -7,7 +7,7 @@ const INITIAL_FORM_DATA: CompanyFormData = {
   nit: "",
   phone: "",
   email: "",
-  country: "",
+  country: "colombia",
 };
 
 const DEFAULT_ITEMS_PER_PAGE = 5;

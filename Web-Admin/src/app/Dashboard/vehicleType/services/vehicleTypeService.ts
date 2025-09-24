@@ -1,6 +1,6 @@
 import { VehicleType } from '../types/vehicleTypes';
 
-const API_URL = 'http://localhost:8080/api/v1/vehicle-type';
+const API_URL = 'http://localhost:8080/api/v1/public/vehicle-type';
 
 export const vehicleTypeService = {
   getAll: async (): Promise<VehicleType[]> => {
