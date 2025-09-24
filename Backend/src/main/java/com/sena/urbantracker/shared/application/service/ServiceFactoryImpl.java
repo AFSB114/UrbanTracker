@@ -27,6 +27,16 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * ServiceFactoryImpl acts as a central registry mapping EntityType to the corresponding CrudOperations service.
+ * It enables generic controllers (BaseController) to delegate CRUD endpoints without wiring each service explicitly.
+ * Benefits:
+ * - Reduces boilerplate in controllers by using a single BaseController for CRUD across entities.
+ * - Centralized registration helps ensure a single place to audit exposed CRUD services.
+ * Notes:
+ * - Prefer direct constructor injection in controllers when you need custom endpoints only and no generic CRUD.
+ * - Avoid eager initialization issues by keeping potentially cyclic dependencies @Lazy (as applied to RouteService).
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

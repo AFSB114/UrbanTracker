@@ -11,6 +11,7 @@ import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import jakarta.annotation.PostConstruct;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,11 @@ import java.util.Optional;
 public class RouteScheduleService implements CrudOperations<RouteScheduleReqDto, RouteScheduleResDto, Long> {
 
     private final RouteScheduleRepository routeScheduleRepository;
+
+    @PostConstruct
+    public void init() {
+        log.info("RouteScheduleService bean created");
+    }
 
     @Override
     public CrudResponseDto<RouteScheduleResDto> create(RouteScheduleReqDto request) {

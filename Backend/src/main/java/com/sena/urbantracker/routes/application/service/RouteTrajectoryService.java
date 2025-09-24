@@ -9,7 +9,6 @@ import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundExcep
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +18,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RouteTrajectoryService implements CrudOperations<RouteTrajectoryReqDto, RouteTrajectoryResDto, Long> {
 
-    @Lazy
     private final RouteTrajectoryRepository routeTrajectoryRepository;
 
     @Override

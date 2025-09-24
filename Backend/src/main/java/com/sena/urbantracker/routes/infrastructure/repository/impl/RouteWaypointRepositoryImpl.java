@@ -8,39 +8,38 @@ import com.sena.urbantracker.routes.infrastructure.persistence.mapper.RouteWaypo
 import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteModel;
 import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteWaypointModel;
 import com.sena.urbantracker.routes.infrastructure.repository.jpa.RouteWaypointJpaRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-@Slf4j
-@Component
-@RequiredArgsConstructor
-public class RouteWaypointJpaRepositoryImpl implements RouteWaypointRepository {
+@Repository
+public class RouteWaypointRepositoryImpl implements RouteWaypointRepository {
 
     private final RouteWaypointJpaRepository jpaRepository;
 
+    public RouteWaypointRepositoryImpl(RouteWaypointJpaRepository jpaRepository) {
+        this.jpaRepository = jpaRepository;
+    }
+
     @Override
-    public List<RouteWaypointDomain> findAll() {
-        return jpaRepository.findAll().stream()
-                .map(RouteWaypointPersistenceMapper::toDomain)
-                .collect(Collectors.toList());
+    public RouteWaypointDomain save(RouteWaypointDomain domain) {
+        RouteWaypointModel model = RouteWaypointPersistenceMapper.toModel(domain);
+        RouteWaypointModel saved = jpaRepository.save(model);
+        return RouteWaypointPersistenceMapper.toDomain(saved);
     }
 
     @Override
     public Optional<RouteWaypointDomain> findById(Long id) {
-        return jpaRepository.findById(id)
-                .map(RouteWaypointPersistenceMapper::toDomain);
+        return jpaRepository.findById(id).map(RouteWaypointPersistenceMapper::toDomain);
     }
 
     @Override
-    public RouteWaypointDomain save(RouteWaypointDomain routeWaypoint) {
-        RouteWaypointModel model = RouteWaypointPersistenceMapper.toModel(routeWaypoint);
-        RouteWaypointModel saved = jpaRepository.save(model);
-        return RouteWaypointPersistenceMapper.toDomain(saved);
+    public List<RouteWaypointDomain> findAll() {
+        return jpaRepository.findAll()
+                .stream()
+                .map(RouteWaypointPersistenceMapper::toDomain)
+                .toList();
     }
 
     @Override
@@ -53,16 +52,17 @@ public class RouteWaypointJpaRepositoryImpl implements RouteWaypointRepository {
         return jpaRepository.existsById(id);
     }
 
-
+    @Override
     public boolean existsByRouteAndSequence(RouteDomain route, Integer sequence) {
         RouteModel routeModel = RoutePersistenceMapper.toModel(route);
         return jpaRepository.existsByRouteAndSequence(routeModel, sequence);
     }
 
-
+    @Override
     public List<RouteWaypointDomain> findByRouteId(Long routeId) {
-        return jpaRepository.findByRoute_Id(routeId).stream()
+        return jpaRepository.findByRoute_Id(routeId)
+                .stream()
                 .map(RouteWaypointPersistenceMapper::toDomain)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

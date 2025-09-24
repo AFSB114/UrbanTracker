@@ -5,26 +5,25 @@ import com.sena.urbantracker.routes.domain.repository.RouteScheduleRepository;
 import com.sena.urbantracker.routes.infrastructure.persistence.mapper.RouteSchedulePersistenceMapper;
 import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteScheduleModel;
 import com.sena.urbantracker.routes.infrastructure.repository.jpa.RouteScheduleJpaRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-@Slf4j
-@Component
-@RequiredArgsConstructor
-public class RouteScheduleJpaRepositoryImpl implements RouteScheduleRepository {
+@Repository
+public class RouteScheduleRepositoryImpl implements RouteScheduleRepository {
 
     private final RouteScheduleJpaRepository jpaRepository;
 
+    public RouteScheduleRepositoryImpl(RouteScheduleJpaRepository jpaRepository) {
+        this.jpaRepository = jpaRepository;
+    }
+
     @Override
-    public List<RouteScheduleDomain> findAll() {
-        return jpaRepository.findAll().stream()
-                .map(RouteSchedulePersistenceMapper::toDomain)
-                .collect(Collectors.toList());
+    public RouteScheduleDomain save(RouteScheduleDomain domain) {
+        RouteScheduleModel model = RouteSchedulePersistenceMapper.toModel(domain);
+        RouteScheduleModel saved = jpaRepository.save(model);
+        return RouteSchedulePersistenceMapper.toDomain(saved);
     }
 
     @Override
@@ -34,10 +33,11 @@ public class RouteScheduleJpaRepositoryImpl implements RouteScheduleRepository {
     }
 
     @Override
-    public RouteScheduleDomain save(RouteScheduleDomain routeSchedule) {
-        RouteScheduleModel model = RouteSchedulePersistenceMapper.toModel(routeSchedule);
-        RouteScheduleModel saved = jpaRepository.save(model);
-        return RouteSchedulePersistenceMapper.toDomain(saved);
+    public List<RouteScheduleDomain> findAll() {
+        return jpaRepository.findAll()
+                .stream()
+                .map(RouteSchedulePersistenceMapper::toDomain)
+                .toList();
     }
 
     @Override
@@ -50,7 +50,3 @@ public class RouteScheduleJpaRepositoryImpl implements RouteScheduleRepository {
         return jpaRepository.existsById(id);
     }
 }
-
-
-
-

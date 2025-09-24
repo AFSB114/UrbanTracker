@@ -5,39 +5,38 @@ import com.sena.urbantracker.routes.domain.repository.RouteRepository;
 import com.sena.urbantracker.routes.infrastructure.persistence.mapper.RoutePersistenceMapper;
 import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteModel;
 import com.sena.urbantracker.routes.infrastructure.repository.jpa.RouteJpaRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-@Slf4j
-@Component
-@RequiredArgsConstructor
-public class RouteJpaRepositoryImpl implements RouteRepository {
+@Repository
+public class RouteRepositoryImpl implements RouteRepository {
 
     private final RouteJpaRepository jpaRepository;
 
+    public RouteRepositoryImpl(RouteJpaRepository jpaRepository) {
+        this.jpaRepository = jpaRepository;
+    }
+
     @Override
-    public List<RouteDomain> findAll() {
-        return jpaRepository.findAll().stream()
-                .map(RoutePersistenceMapper::toDomain)
-                .collect(Collectors.toList());
+    public RouteDomain save(RouteDomain domain) {
+        RouteModel model = RoutePersistenceMapper.toModel(domain);
+        RouteModel saved = jpaRepository.save(model);
+        return RoutePersistenceMapper.toDomain(saved);
     }
 
     @Override
     public Optional<RouteDomain> findById(Long id) {
-        return jpaRepository.findById(id)
-                .map(RoutePersistenceMapper::toDomain);
+        return jpaRepository.findById(id).map(RoutePersistenceMapper::toDomain);
     }
 
     @Override
-    public RouteDomain save(RouteDomain route) {
-        RouteModel model = RoutePersistenceMapper.toModel(route);
-        RouteModel saved = jpaRepository.save(model);
-        return RoutePersistenceMapper.toDomain(saved);
+    public List<RouteDomain> findAll() {
+        return jpaRepository.findAll()
+                .stream()
+                .map(RoutePersistenceMapper::toDomain)
+                .toList();
     }
 
     @Override
@@ -50,6 +49,7 @@ public class RouteJpaRepositoryImpl implements RouteRepository {
         return jpaRepository.existsById(id);
     }
 
+    @Override
     public boolean existsByNumberRoute(Integer numberRoute) {
         return jpaRepository.existsByNumberRoute(numberRoute);
     }

@@ -5,31 +5,27 @@ import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteSchedu
 
 public class RouteSchedulePersistenceMapper {
 
+    private RouteSchedulePersistenceMapper() {}
+
     public static RouteScheduleModel toModel(RouteScheduleDomain domain) {
         if (domain == null) return null;
-        return RouteScheduleModel.builder()
-                .id(domain.getId())
-                .route(RoutePersistenceMapper.toModel(domain.getRoute()))
-                .dayOfWeek(domain.getDayOfWeek())
-                .startTime(domain.getStartTime())
-                .endTime(domain.getEndTime())
-                .active(domain.getActive())
-                .createdAt(domain.getCreatedAt())
-                .updatedAt(domain.getUpdatedAt())
-                .build();
+        RouteScheduleModel model = new RouteScheduleModel();
+        model.setId(domain.getId());
+        model.setDayOfWeek(domain.getDayOfWeek());
+        model.setStartTime(domain.getStartTime());
+        model.setEndTime(domain.getEndTime());
+//        model.setActive(domain.isActive());
+        return model;
     }
 
     public static RouteScheduleDomain toDomain(RouteScheduleModel model) {
         if (model == null) return null;
-        return RouteScheduleDomain.builder()
-                .id(model.getId())
-                .route(RoutePersistenceMapper.toDomain(model.getRoute()))
-                .dayOfWeek(model.getDayOfWeek())
-                .startTime(model.getStartTime())
-                .endTime(model.getEndTime())
-                .active(model.getActive())
-                .createdAt(model.getCreatedAt())
-                .updatedAt(model.getUpdatedAt())
-                .build();
+        RouteScheduleDomain domain = new RouteScheduleDomain();
+        domain.setId(model.getId());
+        domain.setDayOfWeek(model.getDayOfWeek());
+        domain.setStartTime(model.getStartTime());
+        domain.setEndTime(model.getEndTime());
+//        domain.setActive(model.isActive());
+        return domain;
     }
 }
