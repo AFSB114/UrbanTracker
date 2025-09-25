@@ -14,6 +14,7 @@ public class UserProfileMapper {
                 .lastName(entity.getLastName())
                 .email(entity.getEmail())
                 .phone(entity.getPhone())
+                .userId(entity.getUser().getId())
                 .active(entity.getActive())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
@@ -27,6 +28,10 @@ public class UserProfileMapper {
                 .lastName(dto.getLastName())
                 .email(dto.getEmail())
                 .phone(dto.getPhone())
+                .user(UserDomain.builder()
+                        .id(dto.getUserId())
+                        .build()
+                )
                 .active(true)
                 .build();
     }

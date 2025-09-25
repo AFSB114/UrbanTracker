@@ -13,4 +13,5 @@ public class UserProfileReqDto extends ABaseReqDto {
     private String lastName;
     private String email;
     private String phone;
+    private Long userId;
 }

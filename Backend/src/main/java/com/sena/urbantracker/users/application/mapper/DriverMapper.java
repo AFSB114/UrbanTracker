@@ -21,7 +21,6 @@ public class DriverMapper {
     public static DriverDomain toEntity(DriverReqDto dto) {
         if (dto == null) return null;
         return DriverDomain.builder()
-                .user(UserDomain.builder().id(dto.getUserId()).build())
                 .active(true)
                 .build();
     }
