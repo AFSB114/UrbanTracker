@@ -21,9 +21,20 @@ export default function ForgotPasswordPage() {
         setIsLoading(true)
 
         try {
-            // Simular envío de email
-            await new Promise((resolve) => setTimeout(resolve, 2000))
-            setIsEmailSent(true)
+            const response = await fetch("http://localhost:8080/api/v1/public/auth/forgot-password", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email }),
+            })
+
+            if (response.ok) {
+                const data = await response.json()
+                console.log("codigo enviado:", data.code)
+                router.push("/verify-otp")
+            } else {
+            }
         } catch (error) {
             console.error("Error sending reset email:", error)
         }
