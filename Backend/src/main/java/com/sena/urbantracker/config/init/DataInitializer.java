@@ -8,25 +8,23 @@ import com.sena.urbantracker.security.domain.repository.UserRepository;
 import com.sena.urbantracker.users.domain.entity.UserProfileDomain;
 import com.sena.urbantracker.users.domain.repository.UserProfileRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
 @Component
-public class DataInitializer implements CommandLineRunner {
+public class DataInitializer {
 
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserProfileRepository userProfileRepository;
 
-    // Creo los roles al iniciar el proyecto
-    @Override
-    public void run(String... args) {
-
-        // Verifico si el rol ADMIN existe en la base de datos,
-        // si no existe, lo creo y lo guardo
+    @EventListener(ApplicationReadyEvent.class)
+    public void initData() {
+        // Roles
         RoleDomain adminRole = roleRepository.findByName("ADMIN")
                 .orElseGet(() -> roleRepository.save(
                         RoleDomain.builder()
@@ -35,8 +33,6 @@ public class DataInitializer implements CommandLineRunner {
                                 .build()
                 ));
 
-        // Verifico si el rol DRIVER existe en la base de datos,
-        // si no existe, lo creo y lo guardo
         roleRepository.findByName("DRIVER")
                 .orElseGet(() -> roleRepository.save(
                         RoleDomain.builder()
@@ -45,32 +41,24 @@ public class DataInitializer implements CommandLineRunner {
                                 .build()
                 ));
 
-        // Crear usuario ADMIN si no existe
+        // Usuario ADMIN
         String adminUsername = "admin";
-        // Si no existe un usuario con username = "admin" creo uno
         if (userRepository.findByUserName(adminUsername).isEmpty()) {
-
-            //Datos de User
             UserDomain adminUser = new UserDomain();
             adminUser.setUserName(adminUsername);
             adminUser.setPassword(passwordEncoder.encode("admin123"));
-            // le asigno el rol ADMIN creado arriba
             adminUser.setRole(adminRole);
             adminUser = userRepository.save(adminUser);
 
-            if (adminUser != null) {
-                //Datos de UserProfile
-                UserProfileDomain adminUserProfile = UserProfileDomain.builder()
-                        .firstName("Super")
-                        .lastName("Admin")
-                        .email("urbantracker751@gmail.com")
-                        .user(adminUser)
-                        .build();
+            UserProfileDomain adminProfile = UserProfileDomain.builder()
+                    .firstName("Super")
+                    .lastName("Admin")
+                    .email("urbantracker751@gmail.com")
+                    .user(adminUser)
+                    .build();
+            userProfileRepository.save(adminProfile);
 
-                userProfileRepository.save(adminUserProfile);
-            }
-            System.out.println("✅ Usuario ADMIN creado (user:" + adminUsername + "/ pass: admin123)");
+            System.out.println("✅ Usuario ADMIN creado (user: admin / pass: admin123)");
         }
     }
-
 }

@@ -1,0 +1,7 @@
+-- Crea todos los schemas que se necesitan
+CREATE SCHEMA IF NOT EXISTS monitoring;
+CREATE SCHEMA IF NOT EXISTS reports;
+CREATE SCHEMA IF NOT EXISTS routes;
+CREATE SCHEMA IF NOT EXISTS security;
+CREATE SCHEMA IF NOT EXISTS users;
+CREATE SCHEMA IF NOT EXISTS vehicles;
