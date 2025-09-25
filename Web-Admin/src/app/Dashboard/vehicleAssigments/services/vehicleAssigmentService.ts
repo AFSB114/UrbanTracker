@@ -1,62 +1,43 @@
 import type { VehicleAssigment, VehicleAssigmentFormData } from "../types/VehicleAssigmentsType";
-
-const API_URL = 'http://localhost:8080/api/v1/vehicle-assigment';
+import { VehicleAssignmentsApi } from './api/vehicleAssigmentApi';
 
 export const vehicleAssigmentService = {
   getAll: async (): Promise<VehicleAssigment[]> => {
-    const response = await fetch(API_URL, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
-    if (!response.ok) {
-      console.error("Error cargando asignaciones de vehículos:", response.status, await response.text());
-      throw new Error("Error al cargar asignaciones de vehículos");
+    const result = await VehicleAssignmentsApi.getAllVehicleAssignments();
+    if (!result.success) {
+      console.error("Error cargando asignaciones de vehículos:", result.message);
+      throw new Error(result.message || "Error al cargar asignaciones de vehículos");
     }
-    const result = await response.json();
     console.log("Respuesta GET:", result);
-    return result.data;
+    return result.data || [];
   },
 
   create: async (data: VehicleAssigmentFormData): Promise<VehicleAssigment> => {
     console.log("Enviando datos al backend:", data);
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      console.error("Error creando asignación de vehículo:", response.status, await response.text());
-      throw new Error("No se pudo crear la asignación de vehículo");
+    const result = await VehicleAssignmentsApi.createVehicleAssignment(data);
+    if (!result.success) {
+      console.error("Error creando asignación de vehículo:", result.message);
+      throw new Error(result.message || "No se pudo crear la asignación de vehículo");
     }
-
-    const result = await response.json();
     console.log("Respuesta POST:", result);
-    return result.data; 
+    return result.data!;
   },
 
   update: async (id: number, data: VehicleAssigmentFormData): Promise<VehicleAssigment> => {
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      console.error("Error actualizando asignación de vehículo:", response.status, await response.text());
-      throw new Error("No se pudo actualizar la asignación de vehículo");
+    const result = await VehicleAssignmentsApi.updateVehicleAssignment(id, data);
+    if (!result.success) {
+      console.error("Error actualizando asignación de vehículo:", result.message);
+      throw new Error(result.message || "No se pudo actualizar la asignación de vehículo");
     }
-
-    const result = await response.json();
     console.log("Respuesta PUT:", result);
-    return result.data;
+    return result.data!;
   },
 
   delete: async (id: number): Promise<void> => {
-    const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-    if (!response.ok) {
-      console.error("Error eliminando asignación de vehículo:", response.status, await response.text());
-      throw new Error("No se pudo eliminar la asignación de vehículo");
+    const result = await VehicleAssignmentsApi.deleteVehicleAssignment(id);
+    if (!result.success) {
+      console.error("Error eliminando asignación de vehículo:", result.message);
+      throw new Error(result.message || "No se pudo eliminar la asignación de vehículo");
     }
   },
 };
