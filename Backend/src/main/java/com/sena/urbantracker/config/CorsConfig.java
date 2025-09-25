@@ -24,8 +24,8 @@ public class CorsConfig {
                 "http://172.30.7.87:3000", // API accesible desde el celular
                 "null" // Para herramientas como IntelliJ IDEA, Postman, cURL
         ));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type",  "Link", "X-Total-Count"));
         config.setAllowCredentials(true); // Importante si se está usando cookies o Authorization header
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
