@@ -1,12 +1,18 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { driverService } from '../services/driverService';
 import type { Driver, DriverFormData, DriverStatistics, UseDriversReturn, PaginationData, PaginationConfig } from '../types/driverTypes';
+import type { ApiError } from '../services/api/types';
 
 
 
 const INITIAL_FORM_DATA: DriverFormData = {
-  name: '',
-  identification: '',
+  idNumber: '',
+  password: '',
+  roleId: 2,
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
 };
 
 const DEFAULT_ITEMS_PER_PAGE = 5;
@@ -32,14 +38,20 @@ export const useDrivers = (): UseDriversReturn => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [apiError, setApiError] = useState<ApiError | null>(null);
 
   const loadDrivers = useCallback(async () => {
     setIsLoading(true);
+    setApiError(null);
     try {
       const data = await driverService.getAll();
       setDrivers(data);
     } catch (error) {
       console.error("Failed to load drivers:", error);
+      setApiError({
+        message: error instanceof Error ? error.message : "Error al cargar conductores",
+        status: 0,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -60,14 +72,18 @@ export const useDrivers = (): UseDriversReturn => {
 
     if (statusFilter === "all") {
       return drivers.filter(driver =>
-        driver.name.toLowerCase().includes(searchLower) ||
-        driver.identification.toLowerCase().includes(searchLower)
+        `${driver.firstName} ${driver.lastName}`.toLowerCase().includes(searchLower) ||
+        driver.idNumber.toLowerCase().includes(searchLower) ||
+        driver.email.toLowerCase().includes(searchLower) ||
+        driver.phone.toLowerCase().includes(searchLower)
       );
     }
 
     return drivers.filter(driver =>
-      driver.name.toLowerCase().includes(searchLower) ||
-      driver.identification.toLowerCase().includes(searchLower)
+      `${driver.firstName} ${driver.lastName}`.toLowerCase().includes(searchLower) ||
+      driver.idNumber.toLowerCase().includes(searchLower) ||
+      driver.email.toLowerCase().includes(searchLower) ||
+      driver.phone.toLowerCase().includes(searchLower)
     );
   }, [drivers, searchTerm, statusFilter]);
 
@@ -130,8 +146,13 @@ export const useDrivers = (): UseDriversReturn => {
   const openEditModal = useCallback((driver: Driver) => {
     setEditingDriver(driver);
     setFormData({
-      name: driver.name,
-      identification: driver.identification,
+      idNumber: driver.idNumber,
+      password: '', // Password not stored in Driver, so leave empty for edit
+      roleId: 2,
+      firstName: driver.firstName,
+      lastName: driver.lastName,
+      email: driver.email,
+      phone: driver.phone,
     });
     setIsDialogOpen(true);
   }, []);
@@ -157,23 +178,37 @@ export const useDrivers = (): UseDriversReturn => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   }, []);
 
+  const clearApiError = useCallback(() => {
+    setApiError(null);
+  }, []);
+
+  const refetchDrivers = useCallback(async () => {
+    await loadDrivers();
+  }, [loadDrivers]);
+
   const saveDriver = useCallback(async () => {
     if (isSaving) return;
 
     setIsSaving(true);
+    setApiError(null);
 
     try {
       // Client-side validation
-      if (!formData.name.trim() || !formData.identification.trim()) {
+      if (!formData.idNumber.trim() || !formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim() || !formData.phone.trim()) {
         throw {
-          message: "El nombre y la identificación son obligatorios",
+          message: "Todos los campos son obligatorios",
           status: 400,
         }
       }
 
       const driverData = {
-        name: formData.name.trim(),
-        identification: formData.identification.trim(),
+        idNumber: formData.idNumber.trim(),
+        password: formData.password,
+        roleId: formData.roleId,
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
       };
 
       if (editingDriver) {
@@ -185,7 +220,12 @@ export const useDrivers = (): UseDriversReturn => {
       await loadDrivers();
       closeModal();
     } catch (error) {
-      throw error; 
+      const err = error as { message?: string; status?: number };
+      setApiError({
+        message: err.message || "Error al guardar conductor",
+        status: err.status || 500,
+      });
+      throw error;
     } finally {
       setIsSaving(false);
     }
@@ -196,11 +236,18 @@ export const useDrivers = (): UseDriversReturn => {
     if (isDeleting) return;
 
     setIsDeleting(true);
+    setApiError(null);
 
     try {
       await driverService.delete(driverToDelete!.id);
+      await loadDrivers();
       closeDeleteModal();
     } catch (error) {
+      const err = error as { message?: string; status?: number };
+      setApiError({
+        message: err.message || "Error al eliminar conductor",
+        status: err.status || 500,
+      });
       throw error; // Re-throw for component to handle
     } finally {
       setIsDeleting(false);
@@ -227,6 +274,10 @@ export const useDrivers = (): UseDriversReturn => {
     isDeleting,
     isSaving,
 
+    // Error handling
+    apiError,
+    clearApiError,
+
     // Actions
     setSearchTerm,
     setPage,
@@ -239,5 +290,6 @@ export const useDrivers = (): UseDriversReturn => {
     updateFormData,
     saveDriver,
     confirmDeleteDriver,
+    refetchDrivers,
   };
 };

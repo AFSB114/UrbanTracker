@@ -100,28 +100,11 @@ export const DriverModal: React.FC<DriverModalProps> = ({
     setLocalApiError(null);
 
     try {
-      const dataToSend = { ...formData, roleId: 2 };
-      const response = await fetch('http://localhost:8080/api/v1/public/driver', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataToSend),
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        setSuccessMessage('Conductor registrado exitosamente');
-        // Reset form or close modal after success
-        // onClose(); // Uncomment if you want to close modal
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        setLocalApiError({
-          message: errorData.message || 'Error al registrar conductor',
-          errors: errorData.errors
-        });
-      }
+      await onSave();
+      // Modal will be closed by the hook's closeModal() call
     } catch (error) {
-      console.error('Error registrando conductor:', error);
-      setLocalApiError({ message: 'Error de conexión al servidor' });
+      console.error('Error guardando conductor:', error);
+      // Error is handled by the hook and passed via apiError prop
     } finally {
       setIsLoading(false);
     }

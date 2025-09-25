@@ -87,7 +87,6 @@ export const CompanyModal: React.FC<CompanyModalProps> = ({
         await onSave();
       } catch (error) {
         console.error('Error cargando conductores:', error);
-        // You can add a toast notification here
       } finally {
         setIsLoading(false);
       }

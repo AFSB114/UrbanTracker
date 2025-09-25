@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { AlertTriangle, Loader2, User, CreditCard } from "lucide-react";
+import { AlertTriangle, Loader2, User, CreditCard, Mail } from "lucide-react";
 import type { Driver } from "../types/driverTypes";
 import type { ApiError } from "../services/api/types";
 
@@ -70,15 +70,20 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
         <div className="bg-zinc-800 border border-zinc-700 rounded-lg p-4 space-y-3 ">
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-white" />
-            <span className="font-medium text-white">Name:</span>
-            <span className="text-white">{driver.name}</span>
+            <span className="font-medium text-white">Nombre:</span>
+            <span className="text-white">{driver.firstName} {driver.lastName}</span>
           </div>
           <div className="flex items-center gap-2">
             <CreditCard className="h-4 w-4 text-white" />
             <span className="font-medium text-white">ID:</span>
             <span className="font-mono text-white px-2 py-1 rounded">
-              {driver.identification}
+              {driver.idNumber}
             </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Mail className="h-4 w-4 text-zinc-400" />
+            <span className="font-medium text-zinc-400">Email:</span>
+            <span className="text-emerald-500">{driver.email}</span>
           </div>
         </div>
 
