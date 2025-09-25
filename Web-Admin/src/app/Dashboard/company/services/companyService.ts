@@ -1,62 +1,43 @@
 import type { Company, CompanyFormData } from '../types/companyTypes';
-
-const API_URL = 'http://localhost:8080/api/v1/public/company';
+import { CompaniesApi } from './api/companyApi';
 
 export const companyService = {
   getAll: async (): Promise<Company[]> => {
-    const response = await fetch(API_URL, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
-    if (!response.ok) {
-      console.error("Error cargando empresas:", response.status, await response.text());
-      throw new Error("Error al cargar empresas");
+    const result = await CompaniesApi.getAllCompanies();
+    if (!result.success) {
+      console.error("Error cargando empresas:", result.message);
+      throw new Error(result.message || "Error al cargar empresas");
     }
-    const result = await response.json();
     console.log("Respuesta GET:", result);
-    return result.data;
+    return result.data || [];
   },
 
   create: async (data: CompanyFormData): Promise<Company> => {
     console.log("Enviando datos al backend:", data);
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      console.error("Error creando empresa:", response.status, await response.text());
-      throw new Error("No se pudo crear la empresa");
+    const result = await CompaniesApi.createCompany(data);
+    if (!result.success) {
+      console.error("Error creando empresa:", result.message);
+      throw new Error(result.message || "No se pudo crear la empresa");
     }
-
-    const result = await response.json();
     console.log("Respuesta POST:", result);
-    return result.data; 
+    return result.data!;
   },
 
   update: async (id: number, data: CompanyFormData): Promise<Company> => {
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      console.error("Error actualizando empresa:", response.status, await response.text());
-      throw new Error("No se pudo actualizar la empresa");
+    const result = await CompaniesApi.updateCompany(id, data);
+    if (!result.success) {
+      console.error("Error actualizando empresa:", result.message);
+      throw new Error(result.message || "No se pudo actualizar la empresa");
     }
-
-    const result = await response.json();
     console.log("Respuesta PUT:", result);
-    return result.data;
+    return result.data!;
   },
 
   delete: async (id: number): Promise<void> => {
-    const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-    if (!response.ok) {
-      console.error("Error eliminando empresa:", response.status, await response.text());
-      throw new Error("No se pudo eliminar la empresa");
+    const result = await CompaniesApi.deleteCompany(id);
+    if (!result.success) {
+      console.error("Error eliminando empresa:", result.message);
+      throw new Error(result.message || "No se pudo eliminar la empresa");
     }
   },
 };

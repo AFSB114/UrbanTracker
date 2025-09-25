@@ -1,7 +1,17 @@
-export interface ApiError {
-  message: string;
-  status?: number;
-  errors?: Record<string, string | string[]>;
+export interface CrudResponse<T> {
+  success: boolean;
+  message?: string;
+  data?: T;
+  operation?: string;
+  entityType?: string;
+  timestamp: string;
+  validationErrors?: string[];
+}
+
+export interface ApiResponse<T> {
+  data: T;
+  message?: string;
+  success: boolean;
 }
 
 // API Response structures for drivers
@@ -24,14 +34,4 @@ export interface DriverApiResponse {
   active: boolean;
   userId: number;
   userProfile: UserProfile;
-}
-
-export interface ApiResponseWrapper<T = unknown> {
-  success: boolean;
-  message: string;
-  data: T;
-  operation: string;
-  entityType: string;
-  timestamp: string;
-  validationErrors: string[];
 }
