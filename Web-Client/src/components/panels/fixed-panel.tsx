@@ -3,84 +3,63 @@
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { SearchBar } from "components/shared/search-bar"
 import { RoutesPanel } from "./routes-panel"
-import { LocationPanel } from "./stop-info-panel"
-import { MessagesPanel } from "./general-info-panel"
+import { StopInfoPanel } from "./stop-info-panel"
+import { GeneralInfoPanel } from "./general-info-panel"
 import { usePanelActive } from "components/panels/panel-active-context"
 import { usePanelCollapse } from "components/panels/panel-collapse-context"
+import { useState } from "react"
 
 export function FixedPanel() {
   const { activePanel } = usePanelActive();
   const { isPanelCollapsed, togglePanelCollapse } = usePanelCollapse();
+  const [selectedRoute, setSelectedRoute] = useState<number | null>(null);
 
   const renderPanel = () => {
     switch (activePanel) {
       case "routes":
-        return <RoutesPanel />
-      case "location":
-        return <LocationPanel />
-      case "messages":
-        return <MessagesPanel />
-      case "profile":
-  return null // Panel de perfil eliminado
+        return <RoutesPanel showTitle selected={selectedRoute} setSelected={setSelectedRoute} />
+      case "stop-info":
+        return <StopInfoPanel />
+      case "general-info":
+        return <GeneralInfoPanel />
       default:
-        return <RoutesPanel />
+        return <RoutesPanel showTitle selected={selectedRoute} setSelected={setSelectedRoute} />
     }
-  }
-
-  const getPanelTitle = () => {
-    switch (activePanel) {
-      case "routes":
-        return "Rutas recomendadas"
-      case "location":
-        return "Ubicación"
-      case "messages":
-        return "Mensajes"
-      case "profile":
-        return "Perfil"
-      default:
-        return "Rutas recomendadas"
-    }
-  }
-
-  if (isPanelCollapsed) {
-    return (
-      <div className="relative">
-        {/* Etiqueta visible cuando está colapsado */}
-        <div
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-white border border-gray-200 rounded-r-md shadow-sm cursor-pointer hover:bg-gray-50 transition-colors z-10"
-          onClick={togglePanelCollapse}
-        >
-          <div className="flex items-center justify-center w-6 h-12">
-            <ChevronRight className="h-4 w-4 text-gray-600" />
-          </div>
-        </div>
-      </div>
-    )
   }
 
   return (
-    <div className="w-96 bg-white border-r border-gray-200 flex flex-col h-full relative">
-      <div
-        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full bg-white border border-l-0 border-gray-200 rounded-r-md shadow-sm cursor-pointer hover:bg-gray-50 transition-colors z-10"
-        onClick={togglePanelCollapse}
-      >
-        <div className="flex items-center justify-center w-6 h-12">
-          <ChevronLeft className="h-4 w-4 text-gray-600" />
+    <div className="fixed-panel-anim-wrapper">
+      <div className={`fixed-panel-anim-panel ${isPanelCollapsed ? "collapsed" : "expanded"} w-96 bg-zinc-900/50 border-r border-zinc-800 flex flex-col h-full relative backdrop-blur-sm`}>
+        <div
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full bg-zinc-800 border border-l-0 border-zinc-700 rounded-r-md shadow-sm cursor-pointer hover:bg-zinc-700 transition-colors z-10"
+          onClick={togglePanelCollapse}
+        >
+          <div className="flex items-center justify-center w-6 h-12">
+            <ChevronLeft className="h-4 w-4 text-zinc-300" />
+          </div>
+        </div>
+
+        {/* Search Bar Section */}
+        <div className="p-4 border-b border-zinc-800 bg-transparent">
+          <SearchBar />
+        </div>
+
+        {/* Panel Title y contenido controlado por el panel activo */}
+        <div className="flex-1 overflow-y-auto hide-scrollbar p-4">
+          {renderPanel()}
         </div>
       </div>
-
-      {/* Search Bar Section */}
-      <div className="p-4 border-b border-gray-100">
-        <SearchBar />
-      </div>
-
-      {/* Panel Title y contenido controlado por el panel activo */}
-      <div className="flex-1 overflow-y-auto p-4">
-        {activePanel === "routes" ? (
-          <RoutesPanel showTitle />
-        ) : renderPanel()}
-      </div>
+      {/* Botón para expandir cuando está colapsado */}
+      {isPanelCollapsed && (
+        <div
+          className="absolute left-0 top-1/2 -translate-y-1/2 bg-zinc-800 border border-zinc-700 rounded-r-md shadow-sm cursor-pointer hover:bg-zinc-700 transition-colors z-10"
+          onClick={togglePanelCollapse}
+        >
+          <div className="flex items-center justify-center w-6 h-12">
+            <ChevronRight className="h-4 w-4 text-zinc-300" />
+          </div>
+        </div>
+      )}
     </div>
-  )
-
+  );
 }

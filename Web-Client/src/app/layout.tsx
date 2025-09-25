@@ -7,7 +7,7 @@ import { Suspense } from "react"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "UrbanTracker - Seguimiento de Transporte Urbano",
+  title: "UrbanTracker",
   description: "Aplicación para rastrear y gestionar rutas de transporte urbano",
   generator: "v0.app",
 }

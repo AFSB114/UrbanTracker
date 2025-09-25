@@ -3,33 +3,33 @@ import { Button } from "components/ui/button"
 
 export function MapControls() {
   return (
-    <div className="absolute bottom-6 right-6 flex flex-col space-y-2">
-      <div className="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden">
+    <div className="absolute bottom-6 right-6 flex flex-col space-y-2 z-20">
+      <div className="bg-zinc-900/90 border border-zinc-800 rounded-lg shadow-lg overflow-hidden">
         <Button
           size="icon"
-          className="w-10 h-10 bg-white text-gray-700 hover:bg-gray-50 border-0 rounded-none"
+          className="w-8 h-8 bg-zinc-900 text-zinc-200 hover:bg-zinc-800 border-0 rounded-none"
           variant="ghost"
         >
-          <Plus className="h-5 w-5" />
+          <Plus className="h-4 w-4" />
         </Button>
 
-        <div className="h-px bg-gray-200" />
+        <div className="h-px bg-zinc-800" />
 
         <Button
           size="icon"
-          className="w-10 h-10 bg-white text-gray-700 hover:bg-gray-50 border-0 rounded-none"
+          className="w-8 h-8 bg-zinc-900 text-zinc-200 hover:bg-zinc-800 border-0 rounded-none"
           variant="ghost"
         >
-          <Minus className="h-5 w-5" />
+          <Minus className="h-4 w-4" />
         </Button>
       </div>
 
       <Button
         size="icon"
-        className="w-10 h-10 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 shadow-md"
+        className="w-8 h-8 bg-zinc-900 text-zinc-200 border border-zinc-800 hover:bg-zinc-800 shadow-lg"
         variant="outline"
       >
-        <Navigation className="h-5 w-5" />
+        <Navigation className="h-4 w-4" />
       </Button>
     </div>
   )
