@@ -19,6 +19,5 @@ public class UserProfileResDto extends ABaseResDto {
     private String email;
     private String phone;
     private Long userId;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+
 }

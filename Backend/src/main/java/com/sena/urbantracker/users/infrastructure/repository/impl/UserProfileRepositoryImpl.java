@@ -51,6 +51,11 @@ public class UserProfileRepositoryImpl implements UserProfileRepository {
 
     @Override
     public Optional<UserProfileDomain> findByEmail(String email) {
-        return jpaRepository.findByEmail(email);
+        return jpaRepository.findByEmail(email).map(UserProfilePersistenceMapper::toDomain);
+    }
+
+    @Override
+    public Optional<UserProfileDomain> findByUserId(Long userId) {
+        return jpaRepository.findByUserId(userId).map(UserProfilePersistenceMapper::toDomain);
     }
 }

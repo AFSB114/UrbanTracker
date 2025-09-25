@@ -18,4 +18,6 @@ public interface UserProfileRepository {
     boolean existsById(Long id);
 
     Optional<UserProfileDomain> findByEmail(String email);
+
+    Optional<UserProfileDomain> findByUserId(Long userId);
 }

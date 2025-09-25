@@ -1,8 +1,10 @@
 
 export interface Driver {
   id: number;
-  name: string;
-  identification: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
 }
 
 export interface DriverFormData {

@@ -15,6 +15,5 @@ import java.time.LocalDateTime;
 public class DriverResDto extends ABaseResDto {
     private Long userId;
     private Boolean active;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private UserProfileResDto userProfile;
 }

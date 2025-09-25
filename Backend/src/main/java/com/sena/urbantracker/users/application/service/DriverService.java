@@ -1,21 +1,22 @@
 package com.sena.urbantracker.users.application.service;
 
-import com.sena.urbantracker.security.application.dto.request.UserReqDto;
-import com.sena.urbantracker.security.application.dto.response.UserResDto;
-import com.sena.urbantracker.security.application.service.UserService;
+import com.sena.urbantracker.security.domain.entity.RoleDomain;
 import com.sena.urbantracker.security.domain.entity.UserDomain;
+import com.sena.urbantracker.security.domain.repository.RoleRepository;
 import com.sena.urbantracker.security.domain.repository.UserRepository;
+import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import com.sena.urbantracker.users.application.dto.request.DriverReqDto;
-import com.sena.urbantracker.users.application.dto.request.UserProfileReqDto;
 import com.sena.urbantracker.users.application.dto.response.DriverResDto;
-import com.sena.urbantracker.users.application.dto.response.UserProfileResDto;
 import com.sena.urbantracker.users.application.mapper.DriverMapper;
 import com.sena.urbantracker.users.domain.entity.DriverDomain;
+import com.sena.urbantracker.users.domain.entity.UserProfileDomain;
 import com.sena.urbantracker.users.domain.repository.DriverRepository;
+import com.sena.urbantracker.users.domain.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,58 +28,56 @@ import java.util.Optional;
 public class DriverService implements CrudOperations<DriverReqDto, DriverResDto, Long> {
 
     private final DriverRepository driverRepository;
-    private final UserService userService;
-    private final UserProfileService userProfileService;
     private final UserRepository userRepository;
+    private final UserProfileRepository userProfileRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
     public CrudResponseDto<DriverResDto> create(DriverReqDto request) {
 
-        // 1. Crear User con su servicio
-        UserReqDto userReq = new UserReqDto();
-        userReq.setUserName(request.getIdNumber());
-        userReq.setPassword(request.getPassword());
-        userReq.setRoleId(request.getRoleId());
-
-        CrudResponseDto<UserResDto> createdUser = userService.create(userReq);
-
-        if (createdUser == null || createdUser.getData() == null) {
-            throw new RuntimeException("Error al crear el usuario. No se puede continuar con la creación del conductor.");
+        // Check if user exists
+        if (userRepository.existsByUserName(request.getIdNumber())) {
+            throw new EntityAlreadyExistsException("Ya existe un usuario con nombre: " + request.getIdNumber());
         }
 
-        // Obtener la referencia del User persistido
-        UserDomain persistedUser = userRepository.findById(createdUser.getData().getId())
-                .orElseThrow(() -> new EntityNotFoundException("El usuario recién creado no se encuentra en la base de datos"));
+        // Get role
+        RoleDomain role = roleRepository.findById(request.getRoleId())
+                .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado"));
 
-        // 2. Crear UserProfile asociado al User
-        UserProfileReqDto profileDto = UserProfileReqDto.builder()
+        // Create User
+        UserDomain user = UserDomain.builder()
+                .userName(request.getIdNumber())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(role)
+                .active(true)
+                .build();
+
+        UserDomain savedUser = userRepository.save(user);
+
+        // Create UserProfile
+        UserProfileDomain profile = UserProfileDomain.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
                 .phone(request.getPhone())
-                .userId(persistedUser.getId()) // 🔑 se asocia al user real
+                .user(savedUser)
+                .active(true)
                 .build();
 
-        CrudResponseDto<UserProfileResDto> createdProfile = userProfileService.create(profileDto);
+        UserProfileDomain savedProfile = userProfileRepository.save(profile);
 
-        if (createdProfile == null || createdProfile.getData() == null) {
-            throw new RuntimeException("Error al crear el perfil de usuario. No se puede continuar con la creación del conductor.");
-        }
-
-        // 3. Crear Driver enlazado al User
-        DriverDomain driver = DriverMapper.toEntity(request);
-        driver.setActive(true);
-        driver.setUser(persistedUser); // 🔑 aquí sí ponemos el user persistido
+        // Create Driver
+        DriverDomain driver = DriverDomain.builder()
+                .user(savedUser)
+                .active(true)
+                .build();
 
         DriverDomain saved = driverRepository.save(driver);
 
-        if (saved == null || saved.getId() == null) {
-            throw new RuntimeException("Error al crear el conductor. Operación abortada.");
-        }
-
         return CrudResponseDto.success(
-                DriverMapper.toDto(saved),
+                DriverMapper.toDto(saved, savedProfile),
                 "Conductor creado correctamente"
         );
     }
@@ -89,13 +88,21 @@ public class DriverService implements CrudOperations<DriverReqDto, DriverResDto,
         DriverDomain driver = driverRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Conductor con id " + id + " no encontrado."));
 
-        return CrudResponseDto.success(Optional.of(DriverMapper.toDto(driver)), "Conductor encontrado");
+        UserProfileDomain profile = userProfileRepository.findByUserId(driver.getUser().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario no encontrado"));
+
+        return CrudResponseDto.success(Optional.of(DriverMapper.toDto(driver, profile)), "Conductor encontrado");
     }
 
     @Override
     public CrudResponseDto<List<DriverResDto>> findAll() {
         List<DriverDomain> drivers = driverRepository.findAll();
-        return CrudResponseDto.success(drivers.stream().map(DriverMapper::toDto).toList(), "Conductores encontrados");
+        List<DriverResDto> dtos = drivers.stream().map(driver -> {
+            UserProfileDomain profile = userProfileRepository.findByUserId(driver.getUser().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario no encontrado"));
+            return DriverMapper.toDto(driver, profile);
+        }).toList();
+        return CrudResponseDto.success(dtos, "Conductores encontrados");
     }
 
     @Override
@@ -103,19 +110,47 @@ public class DriverService implements CrudOperations<DriverReqDto, DriverResDto,
         DriverDomain driver = driverRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Conductor con id " + id + " no encontrado."));
 
+        UserDomain user = driver.getUser();
 
+        // Update user
+        user.setUserName(dto.getIdNumber());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+        RoleDomain role = roleRepository.findById(dto.getRoleId())
+                .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado"));
+        user.setRole(role);
+
+        // Update profile
+        UserProfileDomain profile = userProfileRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario no encontrado"));
+        profile.setFirstName(dto.getFirstName());
+        profile.setLastName(dto.getLastName());
+        profile.setEmail(dto.getEmail());
+        profile.setPhone(dto.getPhone());
+
+        userProfileRepository.save(profile);
+        userRepository.save(user);
         DriverDomain updated = driverRepository.save(driver);
-        return CrudResponseDto.success(DriverMapper.toDto(updated), "Conductor actualizado correctamente");
+
+        return CrudResponseDto.success(DriverMapper.toDto(updated, profile), "Conductor actualizado correctamente");
     }
 
     @Override
     public CrudResponseDto<DriverResDto> deleteById(Long aLong) {
-        if (!driverRepository.existsById(aLong)) {
-            throw new EntityNotFoundException("Conductor con id " + aLong + " no encontrado.");
-        }
+        DriverDomain driver = driverRepository.findById(aLong)
+                .orElseThrow(() -> new EntityNotFoundException("Conductor con id " + aLong + " no encontrado."));
 
+        UserDomain user = driver.getUser();
+
+        // Delete profile first
+        UserProfileDomain profile = userProfileRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario no encontrado"));
+        userProfileRepository.deleteById(profile.getId());
+
+        // Delete driver (which cascades to user)
         driverRepository.deleteById(aLong);
-        return CrudResponseDto.success(DriverMapper.toDto(null), "Conductor eliminado correctamente");
+
+        return CrudResponseDto.success(null, "Conductor eliminado correctamente");
     }
 
     @Override
@@ -125,7 +160,11 @@ public class DriverService implements CrudOperations<DriverReqDto, DriverResDto,
 
         driver.setActive(true);
         driverRepository.save(driver);
-        return CrudResponseDto.success(DriverMapper.toDto(driver), "Conductor activado correctamente");
+
+        UserProfileDomain profile = userProfileRepository.findByUserId(driver.getUser().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario no encontrado"));
+
+        return CrudResponseDto.success(DriverMapper.toDto(driver, profile), "Conductor activado correctamente");
     }
 
     @Override
@@ -135,7 +174,11 @@ public class DriverService implements CrudOperations<DriverReqDto, DriverResDto,
 
         driver.setActive(false);
         driverRepository.save(driver);
-        return CrudResponseDto.success(DriverMapper.toDto(driver), "Conductor desactivado correctamente");
+
+        UserProfileDomain profile = userProfileRepository.findByUserId(driver.getUser().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario no encontrado"));
+
+        return CrudResponseDto.success(DriverMapper.toDto(driver, profile), "Conductor desactivado correctamente");
     }
 
     @Override
