@@ -1,14 +1,24 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { Users, Route, Car, BarChart3, Menu, Building, ChevronDown, Clock, MapPin, Building2 } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import "../globals.css"
-import { cn } from "@/lib/utils"
-import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import {
+  BarChart3,
+  Building2,
+  Car,
+  ChevronDown,
+  Clock,
+  MapPin,
+  Menu,
+  Route,
+  Users
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type React from "react";
+import { useState } from "react";
+import "../globals.css";
 
 interface SubMenuItem {
   title: string;
@@ -81,27 +91,27 @@ const menuItems: MenuItem[] = [
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-    const [expandedItems, setExpandedItems] = useState<string[]>([])
-  const pathname = usePathname()
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const pathname = usePathname();
 
   const toggleExpanded = (title: string) => {
-    setExpandedItems(prev => 
-      prev.includes(title) 
-        ? prev.filter(item => item !== title)
+    setExpandedItems((prev) =>
+      prev.includes(title)
+        ? prev.filter((item) => item !== title)
         : [...prev, title]
-    )
-  }
+    );
+  };
 
-  const isExpanded = (title: string) => expandedItems.includes(title)
+  const isExpanded = (title: string) => expandedItems.includes(title);
 
-  const isActiveRoute = (href: string) => pathname === href
+  const isActiveRoute = (href: string) => pathname === href;
 
   const isParentActive = (subItems?: SubMenuItem[]) => {
-    if (!subItems) return false
-    return subItems.some(item => pathname === item.href)
-  }
+    if (!subItems) return false;
+    return subItems.some((item) => pathname === item.href);
+  };
 
   return (
     <div className="min-h-screen bg-black">

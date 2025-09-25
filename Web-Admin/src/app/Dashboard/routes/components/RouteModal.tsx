@@ -3,32 +3,13 @@ import { Trash2, X, Save } from "lucide-react";
 import {RouteResponse,RouteWaypoint,type RouteWaypointRequest,type RouteWithWaypointsRequest,} from "../types/routeTypes";
 import MapView from "./mapbox/MapVIew";
 import {
-  RouteEditorProvider,
   useRouteEditor,
 } from "../context/RouteEditorContext";
+import type { Route } from "next";
 
 const RouteModal: React.FC<{
   onClose: () => void;
-  onSave: (routeData: {
-    route: RouteResponse;
-    waypoints: RouteWaypoint[];
-  }) => Promise<void>;
-  editingRoute?: RouteResponse | null;
-  editingWaypoints?: RouteWaypoint[];
-}> = (props) => {
-  return (
-    <RouteEditorProvider>
-      <RouteModalContent {...props} />
-    </RouteEditorProvider>
-  );
-};
-
-const RouteModalContent: React.FC<{
-  onClose: () => void;
-  onSave: (routeData: {
-    route: RouteResponse;
-    waypoints: RouteWaypoint[];
-  }) => Promise<void>;
+  onSave: (routeData: RouteWithWaypointsRequest) => Promise<void>;
   editingRoute?: RouteResponse | null;
   editingWaypoints?: RouteWaypoint[];
 }> = ({ onClose, onSave, editingRoute, editingWaypoints = [] }) => {
@@ -48,7 +29,7 @@ const RouteModalContent: React.FC<{
   const [isVisible, setIsVisible] = useState(false);
   const [routeFormData, setRouteFormData] = useState<RouteWithWaypointsRequest>(
     {
-      number: "",
+      numberRoute: "",
       description: "",
       totalDistance: 0,
       waypoints: waypointList,
@@ -82,14 +63,14 @@ const RouteModalContent: React.FC<{
   // Requerimos que la vuelta haya sido registrada (routeGeometryReturn) antes de habilitar guardar
   const isValid =
     waypointList.length >= 2 &&
-    routeFormData.number.trim() !== "" &&
+    routeFormData.numberRoute.trim() !== "" &&
     !!routeGeometryReturn;
   const errors: string[] = [];
 
   if (waypointList.length < 2) {
     errors.push("Se requieren al menos 2 puntos para la ruta");
   }
-  if (!routeFormData.number.trim()) {
+  if (!routeFormData.numberRoute.trim()) {
     errors.push("El número de ruta es obligatorio");
   }
 
@@ -97,30 +78,30 @@ const RouteModalContent: React.FC<{
     if (!isValid) return null;
 
     // Empezamos con los waypoints explícitos (los seleccionados por el usuario)
-    const explicitWaypoints: RouteWaypoint[] = waypointList.map((wp) => ({
-      id: undefined,
+    const explicitWaypoints: RouteWaypointRequest[] = waypointList.map((wp) => ({
       active: true,
       routeId: editingRoute?.id || 0,
       sequence: wp.sequence,
       latitude: wp.latitude,
       longitude: wp.longitude,
+      type: "WAYPOINT",
+      destine: wp.destine,
     }));
 
     // Si existe una geometría (LineString) obtenida del servicio de rutas,
     // extraemos sus coordenadas y las convertimos en waypoints COMPLETO
-    const geometryWaypoints: RouteWaypoint[] = [];
+    const geometryWaypoints: RouteWaypointRequest[] = [];
     try {
       if (routeGeometry && routeGeometry.type === "LineString") {
         const coords = (routeGeometry as GeoJSON.LineString).coordinates;
         // Las coordenadas vienen [lng, lat]
         coords.forEach((c, i) => {
           geometryWaypoints.push({
-            id: undefined,
-            active: true,
             routeId: editingRoute?.id || 0,
             sequence: explicitWaypoints.length + i + 1,
             latitude: c[1],
             longitude: c[0],
+            type: "GEOMETRY",
           });
         });
       }
@@ -129,12 +110,11 @@ const RouteModalContent: React.FC<{
         const coordsR = (routeGeometryReturn as GeoJSON.LineString).coordinates;
         coordsR.forEach((c, i) => {
           geometryWaypoints.push({
-            id: undefined,
-            active: true,
             routeId: editingRoute?.id || 0,
             sequence: explicitWaypoints.length + i + 1,
             latitude: c[1],
             longitude: c[0],
+            type: "GEOMETRY",
           });
         });
       }
@@ -142,72 +122,55 @@ const RouteModalContent: React.FC<{
       console.warn("No se pudieron extraer coordenadas de la geometría:", err);
     }
 
-    const routeWaypoints: RouteWaypoint[] = [
-      ...explicitWaypoints,
-      ...geometryWaypoints,
-    ];
-
     // Construir el objeto request que espera el backend: waypoints con 'type'
     // Crear requestWaypoints incluyendo destination (OUTBOUND/RETURN)
     const requestWaypoints: RouteWaypointRequest[] = [
       ...waypointList.map((wp) => ({
+        routeId: editingRoute?.id || 0,
         sequence: wp.sequence,
         latitude: wp.latitude,
         longitude: wp.longitude,
         type: "WAYPOINT",
-        destination: (wp.destination as "OUTBOUND" | "RETURN") || DEST_OUTBOUND,
+        destine: wp.destine,
       })),
       ...(routeGeometry && routeGeometry.type === "LineString"
         ? (routeGeometry as GeoJSON.LineString).coordinates.map((c, i) => ({
-            sequence: waypointList.length + i + 1,
+            routeId: editingRoute?.id || 0,
+            sequence: i,
             latitude: c[1],
             longitude: c[0],
             type: "GEOMETRY",
-            destination: DEST_OUTBOUND,
+            destine: DEST_OUTBOUND,
           }))
         : []),
       ...(routeGeometryReturn && routeGeometryReturn.type === "LineString"
         ? (routeGeometryReturn as GeoJSON.LineString).coordinates.map(
-            (c, i) => ({
-              sequence:
-                waypointList.length +
-                (routeGeometry
-                  ? (routeGeometry as GeoJSON.LineString).coordinates.length
-                  : 0) +
-                i +
-                1,
+          (c, i) => ({
+              routeId: editingRoute?.id || 0,
+              sequence:i,
               latitude: c[1],
               longitude: c[0],
               type: "GEOMETRY",
-              destination: DEST_RETURN,
+              destine: DEST_RETURN,
             })
           )
         : []),
     ];
 
-    const route: RouteResponse = {
-      id: editingRoute?.id,
-      active: routeFormData.active || true,
-      numberRoute: routeFormData.number,
-      description: routeFormData.description || undefined,
-      totalDistance: routeFormData.totalDistance,
-      routeWaypoints,
-    };
-
     const request: RouteWithWaypointsRequest = {
-      number: routeFormData.number,
+      numberRoute: routeFormData.numberRoute,
       description: routeFormData.description || undefined,
       totalDistance: routeFormData.totalDistance,
       waypoints: requestWaypoints,
       active: routeFormData.active || true,
     };
 
-    return { route, waypoints: routeWaypoints, request };
+    return request ;
   };
 
   const resetEditor = () => {
     setRouteFormData({
-      number: "",
+      numberRoute: "",
       description: "",
       totalDistance: 0,
       waypoints: [],
@@ -220,16 +183,17 @@ const RouteModalContent: React.FC<{
     (route: RouteResponse, waypointsData: RouteWaypoint[]) => {
       const RouteWaypointRequest: RouteWaypointRequest[] = waypointsData.map(
         (wp) => ({
-          destination: (wp.destination as "OUTBOUND" | "RETURN") || DEST_OUTBOUND,
+          destine:
+            (wp.destine as "OUTBOUND" | "RETURN") || DEST_OUTBOUND,
           sequence: wp.sequence,
           latitude: wp.latitude,
           longitude: wp.longitude,
-          type: "SELECTED",
+          type: "WAYPOINT",
         })
       );
 
       setRouteFormData({
-        number: route.numberRoute,
+        numberRoute: route.numberRoute,
         description: route.description || "",
         totalDistance: route.totalDistance,
         waypoints: RouteWaypointRequest,
@@ -335,8 +299,8 @@ const RouteModalContent: React.FC<{
                   </label>
                   <input
                     type="number"
-                    value={routeFormData.number || ""}
-                    id="number"
+                    value={routeFormData.numberRoute || ""}
+                    id="numberRoute"
                     onChange={handleChangeFormData}
                     placeholder="Ej: 001, 092"
                     className="w-full px-3 py-2 border border-zinc-600 bg-zinc-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [moz-appearance:textfield]"
