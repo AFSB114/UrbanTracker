@@ -3,15 +3,17 @@ import { Bus } from "lucide-react";
 
 // Interface que define la estructura de una ruta de transporte público
 export interface Route {
-  name: string;            // Nombre de la ruta
-  description: string;     // Descripción breve
-  start: string;           // Punto de inicio
-  end: string;             // Punto final
-  startDetail: string;     // Detalle del inicio
-  endDetail: string;       // Detalle del final
-  imageStart: string;      // Imagen del inicio
-  imageEnd: string;        // Imagen del final
-  referenceImage: string;  // Imagen de referencia del trayecto
+  name: string;
+  description: string;
+
+  start: string;
+  end: string;
+
+  imageStart: string;
+  imageEnd: string;
+
+  startDetail: string;
+  endDetail: string;
 }
 
 // Componente que muestra el detalle de una ruta seleccionada
@@ -19,7 +21,7 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
   return (
     <div className="space-y-4 overflow-y-auto hide-scrollbar p-1">
       {/* Tarjeta resumen de la ruta */}
-  <div className="bg-zinc-800 border border-zinc-700 rounded-xl p-4 flex flex-col gap-2 shadow-sm transition-all duration-200 hover:shadow-xl hover:scale-[1.02]">
+      <div className="bg-zinc-800 border border-zinc-700 rounded-xl p-4 flex flex-col gap-2 shadow-sm transition-all duration-200 hover:shadow-xl hover:scale-[1.02]">
         <div className="flex items-center justify-between mb-2">
           <div className="flex flex-col">
             <h4 className="text-base font-semibold leading-tight text-zinc-100">{route.name}</h4>
@@ -52,7 +54,7 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
         </div>
       </div>
       {/* Tarjeta de detalles del recorrido */}
-  <div className="bg-zinc-800 border border-zinc-700 rounded-xl p-4 max-w-full overflow-hidden shadow-sm transition-all duration-200 hover:shadow-xl hover:scale-[1.02]">
+      <div className="bg-zinc-800 border border-zinc-700 rounded-xl p-4 max-w-full overflow-hidden shadow-sm transition-all duration-200 hover:shadow-xl hover:scale-[1.02]">
         <h4 className="font-semibold text-zinc-100 mb-2">Recorrido</h4>
         <div className="border-t border-zinc-700 my-2" />
         <div className="flex flex-col gap-2">
@@ -72,18 +74,6 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
               <span className="text-xs text-zinc-100 break-words whitespace-pre-line overflow-hidden max-w-full" style={{ display: 'block', whiteSpace: 'pre-line', wordBreak: 'break-word' }}>{route.endDetail}</span>
             </div>
           </div>
-        </div>
-      </div>
-      {/* Tarjeta de referencia visual del trayecto */}
-  <div className="bg-zinc-800 border border-zinc-700 rounded-xl p-4 flex flex-col gap-2 mt-4 shadow-sm transition-all duration-200 hover:shadow-xl hover:scale-[1.02]">
-        <h4 className="font-semibold text-zinc-100 mb-2">Referencia del trayecto</h4>
-        <div className="border-t border-zinc-700 my-2" />
-        <div className="flex justify-center items-center">
-          <img
-            src={route.referenceImage}
-            alt="Referencia del trayecto"
-            className="w-80 h-60 object-contain rounded"
-          />
         </div>
       </div>
     </div>

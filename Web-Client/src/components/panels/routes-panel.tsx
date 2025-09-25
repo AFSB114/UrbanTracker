@@ -7,20 +7,22 @@ const ROUTES: Route[] = [
   {
     name: "Ruta 999",
     description: "Antigua ruta 63",
+
     start: "Cr 7 con 90",
     end: "Conj. M Paula",
-    startDetail: "Carrera 7 con . 90GHFGHGHFGHFGHGH",
-    endDetail: "Estación Central. 9HFGHGH",
+
     imageStart: "/ruta1.png",
     imageEnd: "/ruta2.png",
-    referenceImage: "/ruta-info-full-img.svg",
+
+    startDetail: "Carrera 7 con.",
+    endDetail: "Estación Central.",
   },
 ];
 
 // Componente principal que muestra la lista de rutas o el detalle de una ruta seleccionada
 export function RoutesPanel({ showTitle = false, selected, setSelected }: { showTitle?: boolean, selected: number | null, setSelected: (idx: number | null) => void }) {
   return (
-  <div className="h-full overflow-y-auto hide-scrollbar px-2 py-2 p-1">
+    <div className="h-full overflow-y-auto hide-scrollbar px-2 py-2 p-1">
       {/* Encabezado con título y botón de volver si hay una ruta seleccionada */}
       {showTitle && (
         <div className="flex items-center gap-2 mb-4">
@@ -51,15 +53,16 @@ export function RoutesPanel({ showTitle = false, selected, setSelected }: { show
               className="bg-zinc-800 text-zinc-100 p-4 rounded-xl w-full font-sans border border-zinc-700 flex flex-col shadow-sm transition-all duration-200 hover:shadow-xl hover:scale-[1.02] cursor-pointer"
               onClick={() => setSelected(idx)}
             >
-                 <div className="flex items-center justify-between mb-2">
-                   <div className="flex flex-col">
-                     <h4 className="text-base font-semibold leading-tight text-zinc-100">{route.name}</h4>
-                     <p className="text-xs text-zinc-400 leading-tight">{route.description}</p>
-                   </div>
-                    <div className="flex items-center justify-center -ml-2">
-                       <img src="/bus-img.png" alt="Bus" className="w-30 h-10 object-contain" />
-                     </div>
-                 </div>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex flex-col">
+                  <h4 className="text-base font-semibold leading-tight text-zinc-100">{route.name}</h4>
+                  <p className="text-xs text-zinc-400 leading-tight">{route.description}</p>
+                </div>
+                <div className="flex items-center justify-center -ml-2">
+                  {/* Imagen del bus */}
+                  <img src="/bus-img.png" alt="Bus" className="w-30 h-10 object-contain" />
+                </div>
+              </div>
               <div className="border-t border-zinc-700 my-2" />
               <div className="flex flex-col gap-1">
                 {/* Línea de información de inicio */}

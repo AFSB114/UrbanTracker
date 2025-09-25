@@ -33,14 +33,14 @@ export default function Hero() {
               onClick={() => window.open('movil/user', '_blank')}
             >
               <Smartphone className="mr-2 h-5 w-5" />
-              Descargar App
+              Descargar App Conductor
             </Button>
           </div>
 
           <div className="relative">
             <div className="bg-zinc-800 rounded-lg shadow-xl p-8 border border-zinc-700">
               <img
-                src="/mapa-interactivo-de-transporte-p-blico-con-rutas-y.jpg"
+                src="/mapa-img.png"
                 alt="Vista previa del mapa interactivo de UrbanTracker"
                 className="w-full h-auto rounded-lg"
               />

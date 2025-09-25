@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Button } from "ui/button"
 import { Menu, X } from "lucide-react"
-import { DownloadAppMenu } from "components/landing/downloadAppMenu";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,14 +13,16 @@ export default function Header() {
     { id: "funciones", label: "Funciones" },
     { id: "como-funciona", label: "Cómo funciona" },
     { id: "equipo", label: "Equipo" },
-    { id: "contacto", label: "Contacto" },
   ];
 
   // Función reutilizable para hacer scroll y cerrar menú móvil
   const handleNavClick = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      // Calcula la posición teniendo en cuenta el header fijo
+      const yOffset = -80; // Ajusta según la altura de tu header
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
     }
     setIsMenuOpen(false);
   };
@@ -31,9 +32,14 @@ export default function Header() {
       <div className="container mx-auto px-4 py-4 ">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <a href="/" title="Ir a la página principal">
+            <button
+              type="button"
+              title="Ir a la parte superior"
+              onClick={() => handleNavClick("inicio")}
+              className="focus:outline-none cursor-pointer"
+            >
               <img src="/logo-full-white.svg" alt="UrbanTracker Logo" className="w-auto h-12" />
-            </a>
+            </button>
           </div>
 
           {/* Desktop Navigation */}

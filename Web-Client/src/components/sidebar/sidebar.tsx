@@ -16,7 +16,7 @@ export function Sidebar() {
 
   return (
     <div className="w-20 bg-zinc-900 border-r border-zinc-800 flex flex-col items-center py-4 space-y-4">
-      <div className="flex flex-col items-center space-y-1 mb-8"> {/* margen inferior más compacto */}
+      <div className="flex flex-col items-center space-y-1 mb-8">
         <a href="/" className="w-15 h-15 flex items-center justify-center" title="Ir a la página principal">
           <img src="/logo-icon-white.svg" alt="UrbanTracker Logo" className="w-13 h-13 object-contain" />
         </a>

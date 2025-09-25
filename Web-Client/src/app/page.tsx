@@ -5,7 +5,6 @@ import Hero from "landing/hero"
 import Features from "landing/features"
 import HowItWorks from "landing/how-it-works"
 import Team from "landing/team"
-import Contact from "landing/contact"
 import Footer from "landing/footer"
 
 export default function Home() {
@@ -16,7 +15,6 @@ export default function Home() {
       <Features />
       <HowItWorks />
       <Team />
-      <Contact />
       <Footer />
     </main>
   )

@@ -1,3 +1,6 @@
+body {
+  background: #000 !important;
+}
 /* Oculta visualmente la barra de scroll en los paneles */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
@@ -35,8 +38,6 @@
 }
 @import 'tailwindcss';
 @import 'tw-animate-css';
-
-
 
 :root {
   --background: oklch(1 0 0);

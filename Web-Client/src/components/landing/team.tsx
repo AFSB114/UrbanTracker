@@ -8,14 +8,14 @@ const teamMembers = [
     image: "/brayan-img.jpg",
   },
   {
-    name: "Andrés Felipe Salazar",
+    name: "Andrés Felipe Suaza Bustos",
     role: "Desarrollador Full Stack",
     image: "/foto-profesional.jpg",
   },
   {
     name: "Diego Fernando Cuellar Hernandez",
     role: "Desarrollador Backend",
-    image: "/foto-profesional.jpg",
+    image: "/diego-img.jpg",
   },
   {
     name: "Carlos Javier Rodriguez Manchola",
@@ -51,14 +51,6 @@ export default function Team() {
           ))}
         </div>
 
-        <div className="text-center mt-12">
-          <div className="inline-flex items-center space-x-2 bg-zinc-800 px-4 py-2 rounded-full">
-            <img src="/logo-sena-colombia.jpg" alt="Logo SENA" className="w-8 h-8" />
-            <span className="text-sm font-medium text-zinc-400">
-              Tecnólogo en Análisis y Desarrollo de Software - SENA
-            </span>
-          </div>
-        </div>
       </div>
     </section>
   )
