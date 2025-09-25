@@ -1,5 +1,7 @@
 package com.sena.urbantracker.security.infrastructure.controller;
 
+import com.sena.urbantracker.routes.application.dto.request.RouteReqDto;
+import com.sena.urbantracker.routes.application.dto.response.RouteResDto;
 import com.sena.urbantracker.security.application.dto.request.RoleReqDto;
 import com.sena.urbantracker.security.application.dto.response.RoleResDto;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
@@ -9,6 +11,7 @@ import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,10 +23,4 @@ public class RoleController extends BaseController<RoleReqDto, RoleResDto, Long>
         super(serviceFactory, EntityType.ROLE, RoleReqDto.class, RoleResDto.class);
     }
 
-    @Override
-    @GetMapping("/")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<List<RoleResDto>>> findAll() {
-        return super.findAll();
-    }
 }

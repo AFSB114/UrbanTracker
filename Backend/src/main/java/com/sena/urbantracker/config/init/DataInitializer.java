@@ -69,7 +69,7 @@ public class DataInitializer implements CommandLineRunner {
 
                 userProfileRepository.save(adminUserProfile);
             }
-            System.out.println("✅ Usuario ADMIN creado (user:" + adminUsername + "/ pass: admin123)");
+            System.out.println("✅ Usuario ADMIN creado (user: " + adminUsername + " | pass: admin123)");
         }
     }
 

@@ -1,5 +1,7 @@
 package com.sena.urbantracker.shared.infrastructure.controller;
 
+import com.sena.urbantracker.routes.application.dto.request.RouteReqDto;
+import com.sena.urbantracker.routes.application.dto.response.RouteResDto;
 import com.sena.urbantracker.shared.infrastructure.exception.ValidationException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.List;
@@ -98,6 +101,4 @@ public abstract class BaseController<DReq, DRes, ID> {
 
         return ResponseEntity.ok(response);
     }
-
-
 }
