@@ -30,8 +30,8 @@ public class RouteWaypointResDto extends ABaseResDto {
     private Double longitude;
 
     @NotNull(message = "El tipo es obligatorio")
-    private WaypointType type;
+    private String type;
 
     @NotNull(message = "El destino es obligatorio")
-    private WaypointDestineType destine;
+    private String destine;
 }

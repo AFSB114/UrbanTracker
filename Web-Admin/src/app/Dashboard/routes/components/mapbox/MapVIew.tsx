@@ -12,8 +12,7 @@ export default function MapView() {
     setRouteGeometry,
     setRouteGeometryReturn,
     setRouteDistance,
-    displayMode,
-    isReturnMode
+    displayMode
   } = useRouteEditor();
   const mapRef = useRef(null);
 
@@ -211,7 +210,7 @@ export default function MapView() {
               <Layer
                 id="route-outbound"
                 type="line"
-                paint={{ ...routeLayerStyle.paint, "line-color": "green" }}
+                paint={{ ...routeLayerStyle.paint, "line-color": "#22CA0A" }}
                 layout={{ "line-join": "round", "line-cap": "round" }}
               />
             </Source>
@@ -234,7 +233,7 @@ export default function MapView() {
               <Layer
                 id="route-return"
                 type="line"
-                paint={{ ...routeLayerStyle.paint, "line-color": "#ef4444" }}
+                paint={{ ...routeLayerStyle.paint, "line-color": "#E60305" }}
                 layout={{ "line-join": "round", "line-cap": "round" }}
               />
             </Source>

@@ -68,7 +68,6 @@ export const RouteEditorProvider: React.FC<RouteEditorProviderProps> = ({
       destine: isReturnMode ? "RETURN" : "OUTBOUND",
     };
     setWaypointList([...waypointList, newWaypoint]);
-    console.log("Añadiendo waypoint:", waypointList);
   };
 
   const removeWaypoint = (index: number) => {

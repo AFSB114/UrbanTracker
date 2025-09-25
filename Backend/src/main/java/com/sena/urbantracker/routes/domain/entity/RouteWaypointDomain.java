@@ -17,6 +17,6 @@ public class RouteWaypointDomain extends ABaseDomain {
     private Integer sequence;
     private Double latitude;
     private Double longitude;
-    private WaypointType type;
-    private WaypointDestineType destine;
+    private String type;
+    private String destine;
 }

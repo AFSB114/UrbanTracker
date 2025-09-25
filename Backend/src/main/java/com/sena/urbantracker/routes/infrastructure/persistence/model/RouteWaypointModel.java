@@ -37,10 +37,8 @@ public class RouteWaypointModel extends BaseEntity {
     private Double longitude;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private WaypointType type;
+    private String type;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private WaypointDestineType destine;
+    private String destine;
 }

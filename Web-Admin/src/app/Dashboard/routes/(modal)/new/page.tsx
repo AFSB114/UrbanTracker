@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import RouteModal from "../../components/RouteModal";
 import { RouteEditorProvider } from "../../context/RouteEditorContext";
 import { useRouteService } from "../../services/RouteServices";
+import type { RouteWithWaypointsRequest } from "../../types/routeTypes";
 
 export default function NewRoutePage() {
   const router = useRouter();
@@ -13,21 +14,18 @@ export default function NewRoutePage() {
     router.push("/Dashboard/routes");
   };
 
-  const { createRouteWithWaypoints } = useRouteService();
+  const { createRoute } = useRouteService();
 
-  const handleSave = async (data: unknown) => {
+  const handleSave = async (data: RouteWithWaypointsRequest) => {
     console.log("Guardar nueva ruta:", data);
     try {
-      // data should be the request with waypoints
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const req = (data as any).request;
-      if (!req) {
+      if (!data) {
         alert('Datos inválidos para guardar la ruta');
         return;
       }
-      // await createRouteWithWaypoints(req);
+      await createRoute(data);
       alert('Ruta creada correctamente');
-      // router.push("/Dashboard/routes");
+      router.push("/Dashboard/routes");
     } catch (err) {
       console.error('Error creando ruta', err);
       alert('Error al crear la ruta');

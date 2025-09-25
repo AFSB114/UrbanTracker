@@ -1,15 +1,14 @@
 export interface RouteWaypointRequest {
-  destination: "OUTBOUND" | "RETURN";
+  routeId?: number;
   sequence: number;
   latitude: number;
   longitude: number;
-  type: string; // e.g. 'WAYPOINT' | 'GEOMETRY' | 'COMPLETE' | 'SELECTED'
-  // Destination for the waypoint: OUTBOUND (ida) or RETURN (vuelta)
+  type: 'WAYPOINT' | 'GEOMETRY';
   destine?: "OUTBOUND" | "RETURN";
 }
 
 export interface RouteRequest {
-  number: string;
+  numberRoute: string;
   description?: string;
   totalDistance: number;
 }
@@ -22,11 +21,12 @@ export interface RouteWithWaypointsRequest extends RouteRequest {
 export interface RouteWaypointResponse {
   id?: number;
   active: boolean;
-  routeId: number;
+  routeId?: number;
   sequence: number;
   latitude: number;
   longitude: number;
-  destination?: "OUTBOUND" | "RETURN";
+  type: "WAYPOINT" | "GEOMETRY";
+  destine?: "OUTBOUND" | "RETURN";
 }
 
 export interface RouteResponse {
