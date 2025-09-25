@@ -58,7 +58,6 @@ public class DataInitializer {
                     .build();
             userProfileRepository.save(adminProfile);
 
-                userProfileRepository.save(adminUserProfile);
             }
             System.out.println("✅ Usuario ADMIN creado (user: " + adminUsername + " | pass: admin123)");
         }
