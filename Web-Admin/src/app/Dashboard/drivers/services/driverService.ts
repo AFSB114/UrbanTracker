@@ -1,6 +1,6 @@
 import type { Driver, DriverFormData } from '../types/driverTypes';
 
-const API_URL = 'http://localhost:8085/api/v1/public/drivers';
+const API_URL = 'http://localhost:8080/api/v1/public/driver';
 
 export const driverService = {
   getAll: async (): Promise<Driver[]> => {

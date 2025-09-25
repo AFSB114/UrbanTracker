@@ -83,7 +83,7 @@ const menuItems: MenuItem[] = [
   },
   {
     title: "Administrar Empresas",
-    href: "/Dashboard/companies",
+    href: "/Dashboard/company",
     icon: Building2,
   },
 ];
@@ -204,18 +204,18 @@ export default function DashboardLayout({
                               <Link
                                 href={subItem.href}
                                 className={cn(
-                                  "flex items-center space-x-3 px-4 py-2 rounded-lg transition-all duration-200 scale-95 text-zinc-300 hover:bg-zinc-800 hover:text-white hover:shadow-sm hover:scale-100",
+                                  "flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-zinc-800 hover:shadow-md hover:scale-105 group",
                                   isActiveRoute(subItem.href)
-                                    ? "bg-zinc-800 text-white shadow-sm"
-                                    : "text-zinc-300 hover:text-white"
+                                    ? "bg-zinc-800 text-white shadow-sm scale-100"
+                                    : "text-zinc-400"
                                 )}
                               >
                                 <subItem.icon
                                   className={cn(
-                                    "h-4 w-4 group-hover:text-emerald-400",
+                                    "h-5 w-5 transition-colors group-hover:text-emerald-400",
                                     isActiveRoute(subItem.href)
                                       ? "text-emerald-400"
-                                      : "text-zinc-300"
+                                      : "text-zinc-400"
                                   )}
                                 />
                                 <span className="text-sm font-medium">
@@ -232,18 +232,18 @@ export default function DashboardLayout({
                     <Link
                       href={item.href!}
                       className={cn(
-                        "flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-zinc-800 hover:shadow-md hover:scale-105",
+                        "flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-zinc-800 hover:shadow-md hover:scale-105 group",
                         isActiveRoute(item.href!)
-                          ? "bg-zinc-800 text-blue-700 shadow-sm"
-                          : "text-gray-700 hover:text-gray-900"
+                          ? "bg-zinc-800 text-white shadow-sm scale-100"
+                          : "text-zinc-400"
                       )}
                     >
                       <item.icon
                         className={cn(
-                          "h-5 w-5",
+                          "h-5 w-5 transition-colors group-hover:text-emerald-400",
                           isActiveRoute(item.href!)
                             ? "text-emerald-400"
-                            : "text-gray-500"
+                            : "text-zinc-400"
                         )}
                       />
                       <span className="font-medium">{item.title}</span>

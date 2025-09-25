@@ -23,10 +23,10 @@ import java.util.Optional;
  *
  * @param <DReq> El tipo del DTO de request que extiende BaseDto
  * @param <DRes> El tipo del DTO de response que extiende BaseDto
- * @param <ID> El tipo del identificador (generalmente Long)
+ * @param <ID>   El tipo del identificador (generalmente Long)
  */
 @Slf4j
-public abstract class BaseController<DReq , DRes , ID> {
+public abstract class BaseController<DReq, DRes, ID> {
 
     protected final ServiceFactory serviceFactory;
     protected final EntityType entityType;
@@ -34,7 +34,7 @@ public abstract class BaseController<DReq , DRes , ID> {
     protected final Class<DRes> responseDtoClass;
 
     public BaseController(ServiceFactory serviceFactory, EntityType entityType,
-                         Class<DReq> requestDtoClass, Class<DRes> responseDtoClass) {
+                          Class<DReq> requestDtoClass, Class<DRes> responseDtoClass) {
         this.serviceFactory = serviceFactory;
         this.entityType = entityType;
         this.requestDtoClass = requestDtoClass;
@@ -47,12 +47,11 @@ public abstract class BaseController<DReq , DRes , ID> {
      *
      * @return El servicio CRUD para este controlador
      */
-     protected CrudOperations<DReq, DRes, ID> getService() {
-         return serviceFactory.getService(entityType, requestDtoClass);
-     }
+    protected CrudOperations<DReq, DRes, ID> getService() {
+        return serviceFactory.getService(entityType, requestDtoClass);
+    }
 
     @PostMapping
-//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CrudResponseDto<DRes>> create(@Valid @RequestBody DReq dto) {
         CrudOperations<DReq, DRes, ID> service = getService();
         CrudResponseDto<DRes> response = service.create(dto);

@@ -31,22 +31,21 @@ export const useVehicleAssigments = (): any => {
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
+  const loadVehiclesAssignments = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const data = await vehicleAssigmentService.getAll();
+      setVehicles(data);
+    } catch (error) {
+      console.error("Failed to load vehicles assignments:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-      const loadVehicles = async () => {
-        setIsLoading(true);
-        try {
-          const data = await vehicleAssigmentService.getAll();
-          setVehicles(data);
-        } catch (error) {
-          console.error("Failed to load vehicles:", error);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-  
-      loadVehicles();
-    }, []);
+      loadVehiclesAssignments();
+    }, [loadVehiclesAssignments]);
 
   const filteredVehicles = useMemo(() => {
     const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
@@ -95,7 +94,7 @@ export const useVehicleAssigments = (): any => {
   const statistics = useMemo((): VehicleAssigmentsStatistics => {
     return {
       totalVehicles: vehicles.length,
-      newThisMonth: Math.floor(vehicles.length * 0.3), // Mock: 30% are new this month
+      newThisMonth: Math.floor(vehicles.length * 0.3), 
     };
   }, [vehicles.length]);
 
@@ -177,14 +176,14 @@ export const useVehicleAssigments = (): any => {
         await vehicleAssigmentService.create(vehicleAssignmentData);
       }
 
-
+      await loadVehiclesAssignments();
       closeModal();
     } catch (error) {
-      throw error; // Re-throw for component to handle
+      throw error; 
     } finally {
       setIsSaving(false);
     }
-  }, [editingVehicle,formData,closeModal,isSaving]);
+  }, [editingVehicle,formData,closeModal,isSaving, loadVehiclesAssignments]);
 
   // Delete vehicle
     const confirmDeleteVehicleAssignment = useCallback(async () => {
@@ -196,11 +195,11 @@ export const useVehicleAssigments = (): any => {
         await vehicleAssigmentService.delete(vehicleToDelete!.id);
         closeDeleteModal();
       } catch (error) {
-        throw error; // Re-throw for component to handle
+        throw error; 
       } finally {
         setIsDeleting(false);
       }
-    }, [vehicleToDelete, closeDeleteModal, isDeleting]);
+    }, [vehicleToDelete, closeDeleteModal, isDeleting, loadVehiclesAssignments]);
 
   return {
     // Data

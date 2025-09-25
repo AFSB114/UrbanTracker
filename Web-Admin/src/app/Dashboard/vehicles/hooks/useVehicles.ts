@@ -1,27 +1,24 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { vehicleService } from "../services/vehicleService";
-import type {
-  Vehicle,
-  VehiculeFormData,
-  UseVehiculesReturn,
-  PaginationData,
-  PaginationConfig,
-  VehiculeStatistics,
-} from "../types/vehiculeTypes";
+import { companyService } from "../../company/services/companyService";
+import { vehicleTypeService } from "../../vehicleType/services/vehicleTypeService";
+import type {Vehicle,VehiculeFormData,UseVehiculesReturn,PaginationData,PaginationConfig,VehiculeStatistics,} from "../types/vehiculeTypes";
+import type { Company } from "../../company/types/companyTypes";
+import type { VehicleType } from "../../vehicleType/types/vehicleTypes";
 
 
 const DEFAULT_ITEMS_PER_PAGE = 5;
 
 const INITIAL_FORM_DATA: VehiculeFormData = {
-  licensePlate: "",
+  licencePlate: "",
   brand: "",
   model: "",
-  type: "",
-  status: "En Ruta",
-  driver: "",
-  company: "Transporte SA",
-  capacity: 10,
   year: 2023,
+  color: "",
+  passengerCapacity: 10,
+  status: "ACTIVE",
+  companyId: 0,
+  vehicleTypeId: 0,
 };
 
 export function useVehicles(): UseVehiculesReturn {
@@ -45,21 +42,39 @@ export function useVehicles(): UseVehiculesReturn {
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  useEffect(() => {
-    const loadVehicles = async () => {
-      setIsLoading(true);
-      try {
-        const data = await vehicleService.getAll();
-        setVehicles(data);
-      } catch (error) {
-        console.error("Failed to load vehicles:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // Related data
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [vehicleTypes, setVehicleTypes] = useState<VehicleType[]>([]);
 
-    loadVehicles();
+  const loadVehicles = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const data = await vehicleService.getAll();
+      setVehicles(data);
+    } catch (error) {
+      console.error("Failed to load vehicles:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
+
+  const loadRelatedData = useCallback(async () => {
+    try {
+      const [companiesData, vehicleTypesData] = await Promise.all([
+        companyService.getAll(),
+        vehicleTypeService.getAll(),
+      ]);
+      setCompanies(companiesData);
+      setVehicleTypes(vehicleTypesData);
+    } catch (error) {
+      console.error("Failed to load related data:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadVehicles();
+    loadRelatedData();
+  }, [loadVehicles, loadRelatedData]);
 
   // Filter vehicles based on search term
   const filteredVehicles = useMemo(() => {
@@ -73,18 +88,16 @@ export function useVehicles(): UseVehiculesReturn {
 
     if (statusFilter === "all") {
       return vehicles.filter(vehicle =>
-        vehicle.licensePlate.toLowerCase().includes(searchLower) ||
+        vehicle.licencePlate.toLowerCase().includes(searchLower) ||
         vehicle.brand.toLowerCase().includes(searchLower) ||
-        vehicle.model.toLowerCase().includes(searchLower) ||
-        vehicle.driver.toLowerCase().includes(searchLower)
+        vehicle.model.toLowerCase().includes(searchLower)
       );
     }
 
     return vehicles.filter(vehicle =>
-        vehicle.licensePlate.toLowerCase().includes(searchLower) ||
+        vehicle.licencePlate.toLowerCase().includes(searchLower) ||
         vehicle.brand.toLowerCase().includes(searchLower) ||
-        vehicle.model.toLowerCase().includes(searchLower) ||
-        vehicle.driver.toLowerCase().includes(searchLower)
+        vehicle.model.toLowerCase().includes(searchLower)
     );
   }, [vehicles, searchTerm, statusFilter]);
 
@@ -117,7 +130,7 @@ export function useVehicles(): UseVehiculesReturn {
       totalVehicules: vehicles.length,
       activeVehicules: vehicles.length, 
       inactiveVehicules: vehicles.length,
-      newThisMonth: Math.floor(vehicles.length * 0.3), // Mock: 30% are new this month
+      newThisMonth: Math.floor(vehicles.length * 0.3),
     };
   }, [vehicles.length]);
 
@@ -143,15 +156,15 @@ export function useVehicles(): UseVehiculesReturn {
   const openEditModal = useCallback((vehicle: Vehicle) => {
     setEditingVehicle(vehicle);
     setFormData({
-      licensePlate: vehicle.licensePlate,
+      licencePlate: vehicle.licencePlate,
       brand: vehicle.brand,
       model: vehicle.model,
-      type: vehicle.type,
-      status: vehicle.status,
-      driver: vehicle.driver || "",
-      company: vehicle.company || "",
-      capacity: vehicle.capacity,
       year: vehicle.year,
+      color: vehicle.color,
+      passengerCapacity: vehicle.passengerCapacity,
+      status: vehicle.status,
+      companyId: vehicle.companyId,
+      vehicleTypeId: vehicle.vehicleTypeId,
     });
     setIsDialogOpen(true);
   }, []);
@@ -175,7 +188,7 @@ export function useVehicles(): UseVehiculesReturn {
 
   // Form data handler
   const updateFormData = useCallback(
-    (field: keyof VehiculeFormData, value: string) => {
+    (field: keyof VehiculeFormData, value: string | number) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
     },
     []
@@ -187,17 +200,16 @@ export function useVehicles(): UseVehiculesReturn {
   setIsSaving(true);
   try {
     if (
-      !formData.licensePlate.trim() ||
+      !formData.licencePlate.trim() ||
       !formData.brand.trim() ||
-      !formData.model.trim() ||
-      !formData.type
+      !formData.model.trim()
     ) {
-      throw new Error("License plate, brand, model and type are required");
+      throw new Error("Licence plate, brand and model are required");
     }
 
     const isDuplicate = vehicles.some(
       (vehicle) =>
-        vehicle.licensePlate === formData.licensePlate.trim() &&
+        vehicle.licencePlate === formData.licencePlate.trim() &&
         vehicle.id !== editingVehicle?.id
     );
 
@@ -229,6 +241,7 @@ export function useVehicles(): UseVehiculesReturn {
       setVehicles((prev) => [...prev, savedVehicle]);
     }
 
+    await loadVehicles();
     closeModal();
   } catch (error) {
     console.error("Error guardando vehículo:", error);
@@ -236,7 +249,7 @@ export function useVehicles(): UseVehiculesReturn {
   } finally {
     setIsSaving(false);
   }
-}, [vehicles, editingVehicle, formData, closeModal, isSaving]);
+}, [vehicles, editingVehicle, formData, closeModal, isSaving, loadVehicles]);
 
 
   const confirmDeleteVehicle = useCallback(async () => {
@@ -244,37 +257,25 @@ export function useVehicles(): UseVehiculesReturn {
 
     setIsDeleting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setVehicles((prev) =>
-        prev.filter((vehicle) => vehicle.id !== vehicleToDelete.id)
-      );
+      await vehicleService.delete(vehicleToDelete.id);
+      await loadVehicles();
       closeDeleteModal();
-
-      const newTotalItems = filteredVehicles.length - 1;
-      const newTotalPages = Math.ceil(
-        newTotalItems / paginationConfig.itemsPerPage
-      );
-
-      if (paginationConfig.page > newTotalPages && newTotalPages > 0) {
-        setPage(newTotalPages);
-      }
     } catch (error) {
-      console.error("Error deleting driver:", error);
+      console.error("Error deleting vehicle:", error);
       throw error;
     } finally {
       setIsDeleting(false);
     }
-  }, [vehicleToDelete, isDeleting, closeDeleteModal, filteredVehicles.length, paginationConfig, setPage]);
+  }, [vehicleToDelete, isDeleting, closeDeleteModal, loadVehicles]);
 
   return {
-    
+
     filteredVehicles,
     paginatedVehicles,
     searchTerm,
     statistics,
     pagination,
-    
+
     isDialogOpen,
     isDeleteModalOpen,
     editingVehicle,
@@ -284,16 +285,19 @@ export function useVehicles(): UseVehiculesReturn {
     isLoading,
     isDeleting,
     isSaving,
-    
+
+    companies,
+    vehicleTypes,
+
     setStatusFilter,
     setSearchTerm,
     setPage,
     setItemsPerPage,
     openCreateModal,
     openEditModal,
-    openDeleteModal, 
+    openDeleteModal,
     closeModal,
-    closeDeleteModal, 
+    closeDeleteModal,
     updateFormData,
     saveVehicle,
     confirmDeleteVehicle,
