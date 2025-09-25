@@ -58,3 +58,42 @@ export interface ResponseDTO<T> {
 export type Route = RouteResponse;
 export type RouteWaypoint = RouteWaypointResponse;
 export type RouteWithWaypoints = RouteResponse;
+
+// New types for refactored route system
+export interface RouteFormData {
+  numberRoute: string;
+  description: string;
+  outboundImage: File | null;
+  returnImage: File | null;
+}
+
+export interface RouteData {
+  waypoints: RouteWaypointRequest[];
+  geometry: GeoJSON.Geometry | null;
+  distance: number;
+}
+
+export interface RouteFormState {
+  formData: RouteFormData;
+  outboundRoute: RouteData;
+  returnRoute: RouteData;
+  currentView: 'outbound' | 'return' | 'both';
+}
+
+export interface CompleteRouteData {
+  numberRoute: string;
+  description: string;
+  outboundImage?: File;
+  returnImage?: File;
+  outboundRoute: { waypoints: RouteWaypointRequest[], geometry: GeoJSON.Geometry };
+  returnRoute: { waypoints: RouteWaypointRequest[], geometry: GeoJSON.Geometry };
+}
+
+export interface MapEditorProps {
+  mode: 'edit' | 'view';
+  routeType: 'outbound' | 'return' | 'both';
+  initialWaypoints?: RouteWaypointRequest[];
+  initialGeometry?: GeoJSON.Geometry;
+  onSave?: (waypoints: RouteWaypointRequest[], geometry: GeoJSON.Geometry) => void;
+  onCancel?: () => void;
+}

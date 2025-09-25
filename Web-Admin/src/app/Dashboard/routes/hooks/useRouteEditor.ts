@@ -1,14 +1,14 @@
 import { useState, useCallback, useMemo } from 'react';
-import { IRoute, RouteWaypoint } from '../types/routeTypes';
+import { Route, RouteWaypointRequest } from '../types/routeTypes';
 // Hook para el editor de rutas
-export const useRouteEditor = (initialRoute?: Partial<IRoute>, initialWaypoints?: RouteWaypoint[]) => {
-  const [route, setRoute] = useState<Partial<IRoute>>(initialRoute || {
-    route_number: '',
+export const useRouteEditor = (initialRoute?: Partial<Route>, initialWaypoints?: RouteWaypointRequest[]) => {
+  const [route, setRoute] = useState<Partial<Route>>(initialRoute || {
+    numberRoute: '',
     description: '',
     active: true
   });
 
-  const [waypoints, setWaypoints] = useState<RouteWaypoint[]>(initialWaypoints || []);
+  const [waypoints, setWaypoints] = useState<RouteWaypointRequest[]>(initialWaypoints || []);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
 
@@ -41,31 +41,32 @@ export const useRouteEditor = (initialRoute?: Partial<IRoute>, initialWaypoints?
 
   const isValid = useMemo(() => {
     return (
-      route.route_number?.trim() !== '' &&
+      route.numberRoute?.trim() !== '' &&
       waypoints.length >= 2 &&
       errors.length === 0
     );
-  }, [route.route_number, waypoints.length, errors.length]);
+  }, [route.numberRoute, waypoints.length, errors.length]);
 
-  const updateRoute = useCallback((updates: Partial<IRoute>) => {
+  const updateRoute = useCallback((updates: Partial<Route>) => {
     setRoute(prev => ({ ...prev, ...updates }));
     setErrors([]);
   }, []);
 
-  const updateWaypoints = useCallback((newWaypoints: RouteWaypoint[]) => {
+  const updateWaypoints = useCallback((newWaypoints: RouteWaypointRequest[]) => {
     const sortedWaypoints = newWaypoints.map((wp, index) => ({
       ...wp,
-      sequence_order: index + 1
+      sequence: index + 1
     }));
     setWaypoints(sortedWaypoints);
     setErrors([]);
   }, []);
 
   const addWaypointByCoords = useCallback((lat: number, lng: number) => {
-    const newWaypoint: RouteWaypoint = {
-      sequence_order: waypoints.length + 1,
+    const newWaypoint: RouteWaypointRequest = {
+      sequence: waypoints.length + 1,
       latitude: lat,
-      longitude: lng
+      longitude: lng,
+      type: "WAYPOINT"
     };
     const updatedWaypoints = [...waypoints, newWaypoint];
     setWaypoints(updatedWaypoints);
@@ -73,42 +74,41 @@ export const useRouteEditor = (initialRoute?: Partial<IRoute>, initialWaypoints?
 
   const removeWaypoint = useCallback((index: number) => {
     const updatedWaypoints = waypoints.filter((_, i) => i !== index)
-      .map((wp, i) => ({ ...wp, sequence_order: i + 1 }));
+      .map((wp, i) => ({ ...wp, sequence: i + 1 }));
     setWaypoints(updatedWaypoints);
   }, [waypoints]);
 
   const validateRoute = useCallback((): string[] => {
     const validationErrors: string[] = [];
-    if (!route.route_number?.trim()) {
+    if (!route.numberRoute?.trim()) {
       validationErrors.push('El número de ruta es obligatorio');
     }
     if (waypoints.length < 2) {
       validationErrors.push('La ruta debe tener al menos 2 puntos');
     }
-    if (route.route_number && route.route_number.length > 20) {
+    if (route.numberRoute && route.numberRoute.length > 20) {
       validationErrors.push('El número de ruta no puede exceder 20 caracteres');
     }
     setErrors(validationErrors);
     return validationErrors;
-  }, [route.route_number, waypoints.length]);
+  }, [route.numberRoute, waypoints.length]);
 
   const prepareRouteData = useCallback(() => {
     const validationErrors = validateRoute();
     if (validationErrors.length > 0) {
       return null;
     }
-    const routeData: IRoute = {
+    const routeData: Route = {
       ...route,
-      route_number: route.route_number!,
-      total_distance_km: totalDistance,
-      updated_at: new Date().toISOString()
-    };
+      numberRoute: route.numberRoute!,
+      totalDistance: totalDistance,
+    } as Route;
     return { route: routeData, waypoints: waypoints };
   }, [route, waypoints, totalDistance, validateRoute]);
 
   const resetEditor = useCallback(() => {
     setRoute({
-      route_number: '',
+      numberRoute: '',
       description: '',
       active: true
     });
@@ -117,7 +117,7 @@ export const useRouteEditor = (initialRoute?: Partial<IRoute>, initialWaypoints?
     setIsLoading(false);
   }, []);
 
-  const loadRouteData = useCallback((routeData: Partial<IRoute>, waypointData: RouteWaypoint[]) => {
+  const loadRouteData = useCallback((routeData: Partial<Route>, waypointData: RouteWaypointRequest[]) => {
     setRoute(routeData);
     setWaypoints(waypointData);
     setErrors([]);

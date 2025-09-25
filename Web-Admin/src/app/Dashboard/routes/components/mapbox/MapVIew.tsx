@@ -3,7 +3,7 @@ import Map, {Source,Layer,Marker,} from "react-map-gl/mapbox";
 import type { RouteWaypointRequest } from "../../types/routeTypes";
 import type { MapMouseEvent } from "mapbox-gl";
 import type { FeatureCollection } from "geojson";
-import { useRouteEditor } from "../../context/RouteEditorContext";
+import { useRouteMapEditor } from "../../context/RouteMapEditorContext";
 
 export default function MapView() {
   const {
@@ -12,8 +12,9 @@ export default function MapView() {
     setRouteGeometry,
     setRouteGeometryReturn,
     setRouteDistance,
+    setRouteDistanceReturn,
     displayMode
-  } = useRouteEditor();
+  } = useRouteMapEditor();
   const mapRef = useRef(null);
 
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -113,15 +114,22 @@ export default function MapView() {
 
       if (outboundRoute) {
         setRouteGeometry(outboundRoute.geometry as GeoJSON.Geometry);
-        setRouteDistance(outboundRoute.distance);
+        // Convertir distancia de metros a kilómetros y redondear a 2 decimales
+        const outboundDistanceKm = Math.round((outboundRoute.distance / 1000) * 100) / 100;
+        setRouteDistance(outboundDistanceKm);
       } else {
         setRouteGeometry(null);
+        setRouteDistance(null);
       }
 
       if (returnRoute) {
         setRouteGeometryReturn(returnRoute.geometry as GeoJSON.Geometry);
+        // Convertir distancia de metros a kilómetros y redondear a 2 decimales
+        const returnDistanceKm = Math.round((returnRoute.distance / 1000) * 100) / 100;
+        setRouteDistanceReturn(returnDistanceKm);
       } else {
         setRouteGeometryReturn(null);
+        setRouteDistanceReturn(null);
       }
     } catch (error) {
       console.error("Error fetching route:", error);
@@ -132,6 +140,7 @@ export default function MapView() {
     setRouteGeometry,
     setRouteGeometryReturn,
     setRouteDistance,
+    setRouteDistanceReturn,
   ]);
 
   useEffect(() => {
@@ -244,7 +253,8 @@ export default function MapView() {
             if (displayMode === "OUTBOUND")
               return !wp.destine || wp.destine === "OUTBOUND";
             if (displayMode === "RETURN") return wp.destine === "RETURN";
-            return true; // for BOTH
+            if (displayMode === "BOTH") return false; // No mostrar markers en vista BOTH
+            return true;
           })
           .map((waypoint, idx) => (
             <Marker
