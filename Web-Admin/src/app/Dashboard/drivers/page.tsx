@@ -11,6 +11,8 @@ import { DriverModal } from "./components/DriverModal";
 import { Pagination } from "./components/Pagination";
 import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
 import { Driver } from "./types/driverTypes";
+import type { ApiError } from "./services/api/types";
+
 
 export default function DriversPage() {
   const {

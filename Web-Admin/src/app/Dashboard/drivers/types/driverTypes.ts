@@ -6,8 +6,13 @@ export interface Driver {
 }
 
 export interface DriverFormData {
-  name: string;
-  identification: string;
+  idNumber: string;
+  password: string;
+  roleId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
 }
 
 

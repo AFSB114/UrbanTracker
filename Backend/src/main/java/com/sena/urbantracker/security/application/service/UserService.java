@@ -12,6 +12,7 @@ import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundExcep
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,9 +24,10 @@ public class UserService implements CrudOperations<UserReqDto, UserResDto, Long>
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
-    public CrudResponseDto<UserResDto> create(UserReqDto request) {
+    public CrudResponseDto<UserResDto>create(UserReqDto request) {
         if (userRepository.existsByUserName(request.getUserName())) {
             throw new EntityAlreadyExistsException("Ya existe un usuario con nombre: " + request.getUserName());
         }
@@ -35,6 +37,10 @@ public class UserService implements CrudOperations<UserReqDto, UserResDto, Long>
 
         UserDomain entity = UserMapper.toEntity(request);
         entity.setRole(role);
+
+        //se codifica la contraseña
+        entity.setPassword(passwordEncoder.encode(request.getPassword()));
+
         UserDomain saved = userRepository.save(entity);
 
         return CrudResponseDto.success(UserMapper.toDto(saved), "Usuario creado correctamente");
@@ -69,6 +75,8 @@ public class UserService implements CrudOperations<UserReqDto, UserResDto, Long>
         RoleDomain role = roleRepository.findById(request.getRoleId())
                 .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado"));
         user.setRole(role);
+
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         UserDomain updated = userRepository.save(user);
         return CrudResponseDto.success(UserMapper.toDto(updated), "Usuario actualizado correctamente");

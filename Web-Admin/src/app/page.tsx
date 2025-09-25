@@ -33,19 +33,14 @@ export default function LoginPage() {
 
             if (response.ok) {
                 const data = await response.json()
+                console.log("Login successful:", data.token)
                 localStorage.setItem("token", data.token)
                 router.push("/Dashboard")
             } else {
                 setError("Credenciales inválidas")
             }
         } catch (error) {
-            await new Promise((resolve) => setTimeout(resolve, 1500))
-
-            // Simular token de respuesta exitosa
-            const mockToken =
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-            localStorage.setItem("token", mockToken)
-            router.push("/Dashboard")
+            setError("Error al iniciar sesión")
         }
 
         setIsLoading(false)

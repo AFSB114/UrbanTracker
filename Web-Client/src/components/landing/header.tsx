@@ -27,12 +27,12 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50">
+  <header className="fixed top-0 w-full bg-zinc-900 border-b border-zinc-800 text-zinc-100 z-50">
       <div className="container mx-auto px-4 py-4 ">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <a href="/" title="Ir a la página principal">
-              <img src="/Logo-completo-UrbanTracker.svg" alt="UrbanTracker Logo" className="w-auto h-12" />
+              <img src="/logo-full-white.svg" alt="UrbanTracker Logo" className="w-auto h-12" />
             </a>
           </div>
 
@@ -42,7 +42,7 @@ export default function Header() {
               <button
                 key={section.id}
                 onClick={() => handleNavClick(section.id)}
-                className="text-foreground hover:text-primary transition-colors cursor-pointer hover:scale-[1.04]"
+                className="text-zinc-100 hover:text-primary transition-colors cursor-pointer hover:scale-[1.04]"
               >
                 {section.label}
               </button>

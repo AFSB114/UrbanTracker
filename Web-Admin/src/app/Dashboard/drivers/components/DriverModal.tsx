@@ -31,22 +31,49 @@ export const DriverModal: React.FC<DriverModalProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<DriverFormData>>({});
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [localApiError, setLocalApiError] = useState<ApiError | null>(null);
 
   const validateForm = (): boolean => {
     const newErrors: Partial<DriverFormData> = {};
 
-    if (!formData.name.trim()) {
-      newErrors.name = 'Nombre requerido';
-    } else if (formData.name.trim().length < 2) {
-      newErrors.name = 'Nombre debe tener al menos 2 caracteres';
+    if (!formData.idNumber.trim()) {
+      newErrors.idNumber = 'Número de identificación requerido';
+    } else if (formData.idNumber.trim().length < 4) {
+      newErrors.idNumber = 'Número de identificación debe tener al menos 4 caracteres';
+    } else if (!/^[a-zA-Z0-9]+$/.test(formData.idNumber.trim())) {
+      newErrors.idNumber = 'Número de identificación debe ser alfanumérico';
     }
 
-    if (!formData.identification.trim()) {
-      newErrors.identification = 'Identificacion es requerida';
-    } else if (formData.identification.trim().length < 4) {
-      newErrors.identification = 'Identificación debe tener al menos 4 caracteres';
-    } else if (!/^[a-zA-Z0-9]+$/.test(formData.identification.trim())) {
-      newErrors.identification = 'Identificación debe ser alfanumérica';
+    if (!formData.password.trim()) {
+      newErrors.password = 'Contraseña requerida';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Contraseña debe tener al menos 6 caracteres';
+    }
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'Nombre requerido';
+    } else if (formData.firstName.trim().length < 2) {
+      newErrors.firstName = 'Nombre debe tener al menos 2 caracteres';
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Apellido requerido';
+    } else if (formData.lastName.trim().length < 2) {
+      newErrors.lastName = 'Apellido debe tener al menos 2 caracteres';
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email requerido';
+    } else if (!emailRegex.test(formData.email.trim())) {
+      newErrors.email = 'Email no válido';
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Teléfono requerido';
+    } else if (formData.phone.trim().length < 7) {
+      newErrors.phone = 'Teléfono debe tener al menos 7 caracteres';
     }
 
     setErrors(newErrors);
@@ -65,15 +92,36 @@ export const DriverModal: React.FC<DriverModalProps> = ({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-      
+
     if (!validateForm()) return;
 
     setIsLoading(true);
+    setSuccessMessage(null);
+    setLocalApiError(null);
+
     try {
-      await onSave();
+      const dataToSend = { ...formData, roleId: 2 };
+      const response = await fetch('http://localhost:8080/api/v1/public/driver', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToSend),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setSuccessMessage('Conductor registrado exitosamente');
+        // Reset form or close modal after success
+        // onClose(); // Uncomment if you want to close modal
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        setLocalApiError({
+          message: errorData.message || 'Error al registrar conductor',
+          errors: errorData.errors
+        });
+      }
     } catch (error) {
-      console.error('Error cargando conductores:', error);
-      // You can add a toast notification here
+      console.error('Error registrando conductor:', error);
+      setLocalApiError({ message: 'Error de conexión al servidor' });
     } finally {
       setIsLoading(false);
     }
@@ -94,70 +142,159 @@ export const DriverModal: React.FC<DriverModalProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        {/* API Error Display */}
-        {apiError && (
-          <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-3 mb-4">
-            <div className="flex items-start gap-2">
-              <AlertTriangle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-red-200/80 text-sm">
-                  {apiError.message}
-                </p>
-                {/* Mostrar errores de validación del servidor si existen */}
-                {apiError.errors && Object.keys(apiError.errors).length > 0 && (
-                  <div className="mt-2 space-y-1">
-                    {Object.entries(apiError.errors).map(([field, messages]) => (
-                      <div key={field} className="text-red-200/70 text-xs">
-                        <strong className="capitalize">{field}:</strong>{" "}
-                        {Array.isArray(messages) ? messages.join(", ") : messages}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
+        {/* Success Message Display */}
+        {successMessage && (
+          <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-3 mb-4">
+            <p className="text-green-200/80 text-sm">{successMessage}</p>
           </div>
         )}
 
+        {/* API Error Display */}
+        {(localApiError || apiError) && (() => {
+          const errorToShow = localApiError || apiError;
+          return (
+            <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-3 mb-4">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-red-200/80 text-sm">
+                    {errorToShow!.message}
+                  </p>
+                  {/* Mostrar errores de validación del servidor si existen */}
+                  {errorToShow!.errors && Object.keys(errorToShow!.errors).length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {Object.entries(errorToShow!.errors).map(([field, messages]) => (
+                        <div key={field} className="text-red-200/70 text-xs">
+                          <strong className="capitalize">{field}:</strong>{" "}
+                          {Array.isArray(messages) ? messages.join(", ") : String(messages)}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-zinc-400">
-              Nombre *
-            </Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={handleInputChange("name")}
-              placeholder="Ingrese el nombre completo del conductor"
-              className={` bg-zinc-800 border-zinc-700 text-white ${
-                errors.name ? "border-red-500 " : ""
-              }`}
-              disabled={isLoading}
-            />
-            {errors.name && (
-              <p className="text-sm text-red-500">{errors.name}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="identification" className="text-sm font-medium">
-              Identificación *
+            <Label htmlFor="idNumber" className="text-zinc-400">
+              Número de Identificación *
             </Label>
             <div className="relative">
               <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                id="identification"
-                value={formData.identification}
-                onChange={handleInputChange("identification")}
-                placeholder="Introduzca el número de identificación"
+                id="idNumber"
+                value={formData.idNumber}
+                onChange={handleInputChange("idNumber")}
+                placeholder="Ingrese el número de identificación"
                 className={`pl-10 bg-zinc-800 border-zinc-700 text-white ${
-                  errors.identification ? "border-red-500" : ""
+                  errors.idNumber ? "border-red-500 " : ""
                 }`}
                 disabled={isLoading}
               />
             </div>
-            {errors.identification && (
-              <p className="text-sm text-red-500">{errors.identification}</p>
+            {errors.idNumber && (
+              <p className="text-sm text-red-500">{errors.idNumber}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password" className="text-zinc-400">
+              Contraseña *
+            </Label>
+            <Input
+              id="password"
+              type="password"
+              value={formData.password}
+              onChange={handleInputChange("password")}
+              placeholder="Ingrese la contraseña"
+              className={` bg-zinc-800 border-zinc-700 text-white ${
+                errors.password ? "border-red-500 " : ""
+              }`}
+              disabled={isLoading}
+            />
+            {errors.password && (
+              <p className="text-sm text-red-500">{errors.password}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="firstName" className="text-zinc-400">
+              Nombre *
+            </Label>
+            <Input
+              id="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange("firstName")}
+              placeholder="Ingrese el nombre"
+              className={` bg-zinc-800 border-zinc-700 text-white ${
+                errors.firstName ? "border-red-500 " : ""
+              }`}
+              disabled={isLoading}
+            />
+            {errors.firstName && (
+              <p className="text-sm text-red-500">{errors.firstName}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="lastName" className="text-zinc-400">
+              Apellido *
+            </Label>
+            <Input
+              id="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange("lastName")}
+              placeholder="Ingrese el apellido"
+              className={` bg-zinc-800 border-zinc-700 text-white ${
+                errors.lastName ? "border-red-500 " : ""
+              }`}
+              disabled={isLoading}
+            />
+            {errors.lastName && (
+              <p className="text-sm text-red-500">{errors.lastName}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-zinc-400">
+              Email *
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={handleInputChange("email")}
+              placeholder="Ingrese el email"
+              className={` bg-zinc-800 border-zinc-700 text-white ${
+                errors.email ? "border-red-500 " : ""
+              }`}
+              disabled={isLoading}
+            />
+            {errors.email && (
+              <p className="text-sm text-red-500">{errors.email}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="phone" className="text-zinc-400">
+              Teléfono *
+            </Label>
+            <Input
+              id="phone"
+              type="tel"
+              value={formData.phone}
+              onChange={handleInputChange("phone")}
+              placeholder="Ingrese el teléfono"
+              className={` bg-zinc-800 border-zinc-700 text-white ${
+                errors.phone ? "border-red-500 " : ""
+              }`}
+              disabled={isLoading}
+            />
+            {errors.phone && (
+              <p className="text-sm text-red-500">{errors.phone}</p>
             )}
           </div>
 
