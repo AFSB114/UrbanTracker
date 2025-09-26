@@ -62,4 +62,3 @@ public class DataInitializer {
         System.out.println("✅ Usuario ADMIN creado (user: " + adminUsername + " | pass: admin123)");
     }
 }
-

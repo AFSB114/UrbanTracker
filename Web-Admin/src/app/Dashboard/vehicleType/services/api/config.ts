@@ -1,3 +1,3 @@
 export const API_ENDPOINTS = {
-  VEHICLE_TYPES: '/api/v1/public/vehicle-type',
+  VEHICLE_TYPES: '/api/v1/vehicle-type',
 } as const;

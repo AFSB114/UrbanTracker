@@ -1,6 +1,8 @@
 package com.sena.urbantracker.vehicles.infrastructure.persistence.mapper;
 
+import com.sena.urbantracker.users.infrastructure.persistence.mapper.CompanyPersistenceMapper;
 import com.sena.urbantracker.vehicles.domain.entity.VehicleDomain;
+import com.sena.urbantracker.vehicles.infrastructure.persistence.mapper.VehicleTypePersistenceMapper;
 import com.sena.urbantracker.vehicles.infrastructure.persistence.model.VehicleModel;
 
 public class VehiclePersistenceMapper {
@@ -9,8 +11,8 @@ public class VehiclePersistenceMapper {
         if (domain == null) return null;
         return VehicleModel.builder()
                 .id(domain.getId())
-                .company(null) // TODO: map company if needed
-                .vehicleType(null) // TODO: map vehicleType if needed
+                .company(CompanyPersistenceMapper.toModel(domain.getCompany()))
+                .vehicleType(VehicleTypePersistenceMapper.toModel(domain.getVehicleType()))
                 .licencePlate(domain.getLicencePlate())
                 .brand(domain.getBrand())
                 .model(domain.getModel())
@@ -29,8 +31,8 @@ public class VehiclePersistenceMapper {
         if (model == null) return null;
         return VehicleDomain.builder()
                 .id(model.getId())
-                .companyId(model.getCompany() != null ? model.getCompany().getId() : null)
-                .vehicleTypeId(model.getVehicleType() != null ? model.getVehicleType().getId() : null)
+                .company(CompanyPersistenceMapper.toDomain(model.getCompany()))
+                .vehicleType(VehicleTypePersistenceMapper.toDomain(model.getVehicleType()))
                 .licencePlate(model.getLicencePlate())
                 .brand(model.getBrand())
                 .model(model.getModel())

@@ -14,22 +14,18 @@ interface VehicleModalProps {
   formData: VehiculeFormData
   onClose: () => void
   onSave: () => void
-  onFormChange: (field: keyof VehiculeFormData, value: string | number) => void
+  onFormChange: (field: keyof VehiculeFormData, value: string | number | boolean) => void
   isSaving: boolean;
   errors: Record<string, string>
   companies: any[]
   vehicleTypes: any[]
 }
 
-type VehicleType = string;
 type VehicleStatus = string;
 
-const VEHICLE_TYPES: VehicleType[] = [
-  'Camion', 'Van', 'Pickup', 'Coche', 'Bus'
-]
 
 const VEHICLE_STATUSES: VehicleStatus[] = [
-  'Operational', 'En Ruta', 'Fuera de Servicio'
+  'ACTIVE','INACTIVE'
 ]
 
 export const VehicleModal: React.FC<VehicleModalProps> = ({
@@ -307,6 +303,20 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="inService" className="text-zinc-400">
+              En Servicio
+            </Label>
+            <input
+              id="inService"
+              type="checkbox"
+              checked={formData.inService}
+              onChange={(e) => onFormChange("inService", e.target.checked)}
+              className="bg-zinc-800 border-zinc-700 text-white"
+              disabled={isLoading}
+            />
           </div>
 
           <div className="flex justify-end gap-3 pt-6">
