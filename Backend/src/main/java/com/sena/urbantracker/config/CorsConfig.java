@@ -20,6 +20,7 @@ public class CorsConfig {
                 "http://localhost:8081", // frontend original
                 "http://localhost:8085", // El puerto donde corre el API
                 "http://localhost:3000", // React típico
+                "http://localhost:3001",
                 "http://172.30.7.87:8081", // Metro desde tu celular (cambia por tu IP real)
                 "http://172.30.7.87:3000", // API accesible desde el celular
                 "null" // Para herramientas como IntelliJ IDEA, Postman, cURL
