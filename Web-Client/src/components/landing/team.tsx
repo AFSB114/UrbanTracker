@@ -5,22 +5,22 @@ const teamMembers = [
   {
     name: "Brayan Estiven Carvajal Padilla",
     role: "Desarrollador Frontend",
-    image: "/brayan-img.jpg",
+    image: "/brayan-img.webp",
   },
   {
     name: "Andrés Felipe Suaza Bustos",
     role: "Desarrollador Full Stack",
-    image: "/foto-profesional.jpg",
+    image: "/andres-img.webp",
   },
   {
     name: "Diego Fernando Cuellar Hernandez",
     role: "Desarrollador Backend",
-    image: "/diego-img.jpg",
+    image: "/diego-img.webp",
   },
   {
     name: "Carlos Javier Rodriguez Manchola",
     role: "Desarrollador Full Stack",
-    image: "/foto-profesional.jpg",
+    image: "/carlos-img.webp",
   },
 ]
 
