@@ -6,7 +6,7 @@ import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.infrastructure.controller.BaseController;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
-import jakarta.validation.Valid;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,13 +20,11 @@ public class RouteController extends BaseController<RouteReqDto, RouteResDto, Lo
         super(serviceFactory, EntityType.ROUTE, RouteReqDto.class, RouteResDto.class);
     }
 
-    @PostMapping("/create")
+    @PostMapping("/with-images")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CrudResponseDto<RouteResDto>> create(
-            @RequestParam("imageOutbound") MultipartFile imageOutbound,
-            @RequestParam("imageReturn") MultipartFile imageReturn,
-            @Valid @RequestBody RouteReqDto dto) {
+            @ModelAttribute RouteReqDto dto) throws BadRequestException {
         return super.create(dto);
     }
-
 }
+

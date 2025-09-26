@@ -2,11 +2,13 @@ package com.sena.urbantracker.routes.application.dto.request;
 
 import com.sena.urbantracker.shared.application.dto.request.ABaseReqDto;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,5 +29,15 @@ public class RouteReqDto extends ABaseReqDto {
     private Double totalDistance;
 
     @NotBlank(message = "Los puntos de ruta son obligatorios")
-    private List<RouteWaypointReqDto> waypoints;
+    private String waypoints;
+
+    private MultipartFile outboundImage;
+
+    private MultipartFile returnImage;
+
+    @Null
+    private String outboundImageUrl;
+
+    @Null
+    private String returnImageUrl;
 }

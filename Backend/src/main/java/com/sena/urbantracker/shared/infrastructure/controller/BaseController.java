@@ -9,6 +9,7 @@ import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -55,7 +56,7 @@ public abstract class BaseController<DReq, DRes, ID> {
     }
 
     @PostMapping
-    public ResponseEntity<CrudResponseDto<DRes>> create(@Valid @RequestBody DReq dto) {
+    public ResponseEntity<CrudResponseDto<DRes>> create(@Valid @RequestBody DReq dto) throws BadRequestException {
         CrudOperations<DReq, DRes, ID> service = getService();
         CrudResponseDto<DRes> response = service.create(dto);
         log.info("Response: {}", response);

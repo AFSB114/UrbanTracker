@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { RoutesApi } from './api/routeApi';
-import type { RouteRequest, RouteWithWaypointsRequest, RouteResponse, CrudResponse, ResponseDTO } from '../types/routeTypes';
+import type { RouteRequest, RouteWithWaypointsRequest, RouteResponse, CrudResponse, ResponseDTO, CompleteRouteData } from '../types/routeTypes';
 
 export const useRouteService = () => {
   const [loading, setLoading] = useState(false);
@@ -48,8 +48,14 @@ export const useRouteService = () => {
 
   const createRouteWithWaypoints = async (
     routeWithWaypoints: RouteWithWaypointsRequest
-  ): Promise<ResponseDTO> => {
+  ): Promise<CrudResponse<RouteResponse>> => {
     return handleApiCall(() => RoutesApi.createRouteWithWaypoints(routeWithWaypoints));
+  };
+
+  const createRouteWithImages = async (
+    routeData: CompleteRouteData
+  ): Promise<CrudResponse<RouteResponse>> => {
+    return handleApiCall(() => RoutesApi.createRouteWithImages(routeData));
   };
 
   return {
@@ -61,5 +67,6 @@ export const useRouteService = () => {
     updateRoute,
     deleteRoute,
     createRouteWithWaypoints,
+    createRouteWithImages,
   };
 };

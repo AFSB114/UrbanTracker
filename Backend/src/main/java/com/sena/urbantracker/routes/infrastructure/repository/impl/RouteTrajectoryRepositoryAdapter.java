@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class RouteTrajectoryRepositoryImpl implements RouteTrajectoryRepository {
+public class RouteTrajectoryRepositoryAdapter implements RouteTrajectoryRepository {
 
     private final RouteTrajectoryJpaRepository jpaRepository;
 
-    public RouteTrajectoryRepositoryImpl(RouteTrajectoryJpaRepository jpaRepository) {
+    public RouteTrajectoryRepositoryAdapter(RouteTrajectoryJpaRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
     }
 

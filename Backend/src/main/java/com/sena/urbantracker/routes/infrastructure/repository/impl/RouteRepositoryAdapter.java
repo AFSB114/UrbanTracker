@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class RouteRepositoryImpl implements RouteRepository {
+public class RouteRepositoryAdapter implements RouteRepository {
 
     private final RouteJpaRepository jpaRepository;
 
-    public RouteRepositoryImpl(RouteJpaRepository jpaRepository) {
+    public RouteRepositoryAdapter(RouteJpaRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
     }
 
@@ -52,5 +52,12 @@ public class RouteRepositoryImpl implements RouteRepository {
     @Override
     public boolean existsByNumberRoute(Integer numberRoute) {
         return jpaRepository.existsByNumberRoute(numberRoute);
+    }
+
+    @Override
+    public RouteDomain saveAndFlush(RouteDomain route) {
+        RouteModel model = RoutePersistenceMapper.toModel(route);
+        RouteModel saved = jpaRepository.saveAndFlush(model);
+        return RoutePersistenceMapper.toDomain(saved);
     }
 }

@@ -42,6 +42,7 @@ export default function MapView() {
   });
 
   const handleClickMap = (e: MapMouseEvent) => {
+    if (displayMode == "BOTH" || displayMode == "VIEW") return;
     const { lng, lat } = e.lngLat;
     addWaypoint(lat, lng);
   };

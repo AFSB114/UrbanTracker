@@ -4,6 +4,7 @@ import com.sena.urbantracker.shared.application.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -23,6 +24,12 @@ public class RouteModel extends BaseEntity {
 
     @Column(name = "total_distance")
     private Double totalDistance;
+
+    @Column(name = "outbound_image_url")
+    private String outboundImageUrl;
+
+    @Column(name = "return_image_url")
+    private String returnImageUrl;
 
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
     private List<RouteWaypointModel> routeWaypoints;

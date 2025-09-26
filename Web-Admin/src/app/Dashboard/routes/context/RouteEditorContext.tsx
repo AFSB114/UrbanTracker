@@ -60,12 +60,13 @@ export const RouteEditorProvider: React.FC<RouteEditorProviderProps> = ({
   );
 
   const addWaypoint = (lat: number, lng: number) => {
+    if (displayMode !== "OUTBOUND" && displayMode !== "RETURN") return;
     const newWaypoint: RouteWaypointRequest = {
       sequence: waypointList.length + 1,
       latitude: lat,
       longitude: lng,
       type: "WAYPOINT",
-      destine: isReturnMode ? "RETURN" : "OUTBOUND",
+      destine: displayMode as "OUTBOUND" | "RETURN",
     };
     setWaypointList([...waypointList, newWaypoint]);
   };

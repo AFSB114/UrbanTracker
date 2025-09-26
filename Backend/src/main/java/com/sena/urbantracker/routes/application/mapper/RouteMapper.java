@@ -13,6 +13,8 @@ public class RouteMapper {
                 .numberRoute(entity.getNumberRoute().toString())
                 .description(entity.getDescription())
                 .totalDistance(entity.getTotalDistance())
+                .outboundImageUrl(entity.getOutboundImageUrl())
+                .returnImageUrl(entity.getReturnImageUrl())
                 .build();
     }
 
@@ -22,6 +24,8 @@ public class RouteMapper {
                 .numberRoute(Integer.valueOf(dto.getNumberRoute()))
                 .description(dto.getDescription())
                 .totalDistance(dto.getTotalDistance())
+                .outboundImageUrl(dto.getOutboundImageUrl())
+                .returnImageUrl(dto.getReturnImageUrl())
                 .active(true)
                 .build();
     }

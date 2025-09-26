@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class RouteScheduleRepositoryImpl implements RouteScheduleRepository {
+public class RouteScheduleRepositoryAdapter implements RouteScheduleRepository {
 
     private final RouteScheduleJpaRepository jpaRepository;
 

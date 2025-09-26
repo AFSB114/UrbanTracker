@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class RouteWaypointRepositoryImpl implements RouteWaypointRepository {
+public class RouteWaypointRepositoryAdapter implements RouteWaypointRepository {
 
     private final RouteWaypointJpaRepository jpaRepository;
 
-    public RouteWaypointRepositoryImpl(RouteWaypointJpaRepository jpaRepository) {
+    public RouteWaypointRepositoryAdapter(RouteWaypointJpaRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
     }
 
@@ -64,5 +64,11 @@ public class RouteWaypointRepositoryImpl implements RouteWaypointRepository {
                 .stream()
                 .map(RouteWaypointPersistenceMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public void saveAll(List<RouteWaypointDomain> waypoints) {
+        jpaRepository.saveAll(waypoints.stream().map(RouteWaypointPersistenceMapper::toModel).toList());
+        return;
     }
 }

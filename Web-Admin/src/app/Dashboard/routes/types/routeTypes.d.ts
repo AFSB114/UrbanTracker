@@ -15,7 +15,6 @@ export interface RouteRequest {
 
 export interface RouteWithWaypointsRequest extends RouteRequest {
   waypoints: RouteWaypointRequest[];
-  active?: boolean;
 }
 
 export interface RouteWaypointResponse {

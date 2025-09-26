@@ -110,7 +110,6 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
                   onChange={(e) => updateFormData('numberRoute', e.target.value)}
                   placeholder="Ej: 001, 092"
                   className="w-full px-3 py-2 border border-zinc-600 bg-zinc-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={mode === 'view'}
                   maxLength={20}
                 />
               </div>
@@ -125,7 +124,6 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
                   placeholder="Descripción de la ruta..."
                   rows={3}
                   className="w-full px-3 py-2 border border-zinc-600 bg-zinc-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={mode === 'view'}
                 />
               </div>
             </div>

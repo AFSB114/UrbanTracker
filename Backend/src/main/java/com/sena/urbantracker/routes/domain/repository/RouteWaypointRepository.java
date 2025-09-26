@@ -21,4 +21,6 @@ public interface RouteWaypointRepository {
     boolean existsByRouteAndSequence(RouteDomain route, Integer sequence);
 
     List<RouteWaypointDomain> findByRouteId(Long routeId);
+
+    void saveAll(List<RouteWaypointDomain> waypoints);
 }

@@ -84,4 +84,41 @@ export class ApiClient {
   async delete<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: "DELETE" });
   }
+
+  async postFormData<T>(endpoint: string, formData: FormData): Promise<T> {
+    const url = `${this.baseURL}${endpoint}`;
+
+    const config: RequestInit = {
+      method: "POST",
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+      body: formData,
+    };
+
+    try {
+      const response = await fetch(url, config);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw {
+          message:
+            errorData.message || `HTTP error! status: ${response.status}`,
+          status: response.status,
+          errors: errorData.errors,
+        } as ApiError;
+      }
+
+      return await response.json();
+    } catch (error) {
+      if (error instanceof TypeError && error.message === "Failed to fetch") {
+        throw {
+          message:
+            "No se pudo conectar con el servidor. Verifique su conexión.",
+          status: 0,
+        } as ApiError;
+      }
+      throw error;
+    }
+  }
 }

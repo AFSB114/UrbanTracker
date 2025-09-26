@@ -45,7 +45,8 @@ public class SecurityConfig {
                                 "/actuator/health",
                                 "/actuator/scalar",
                                 "/docs/**",
-                                "/scalar/**").permitAll()
+                                "/scalar/**",
+                                "/images/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
