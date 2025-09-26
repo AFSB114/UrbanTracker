@@ -5,6 +5,10 @@ import com.sena.urbantracker.vehicles.application.dto.response.VehicleResDto;
 import com.sena.urbantracker.vehicles.application.mapper.VehicleMapper;
 import com.sena.urbantracker.vehicles.domain.entity.VehicleDomain;
 import com.sena.urbantracker.vehicles.domain.repository.VehicleRepository;
+import com.sena.urbantracker.vehicles.domain.repository.VehicleTypeRepository;
+import com.sena.urbantracker.users.domain.entity.CompanyDomain;
+import com.sena.urbantracker.users.domain.repository.CompanyRepository;
+import com.sena.urbantracker.vehicles.domain.entity.VehicleTypeDomain;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExistsException;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
@@ -20,6 +24,8 @@ import java.util.Optional;
 public class VehicleService implements CrudOperations<VehicleReqDto, VehicleResDto, Long> {
 
     private final VehicleRepository vehicleRepository;
+    private final CompanyRepository companyRepository;
+    private final VehicleTypeRepository vehicleTypeRepository;
 
     @Override
     public CrudResponseDto<VehicleResDto> create(VehicleReqDto request) {
@@ -28,6 +34,15 @@ public class VehicleService implements CrudOperations<VehicleReqDto, VehicleResD
         }
 
         VehicleDomain entity = VehicleMapper.toEntity(request);
+
+        CompanyDomain company = companyRepository.findById(request.getCompanyId())
+                .orElseThrow(() -> new EntityNotFoundException("Compañía no encontrada"));
+        VehicleTypeDomain vehicleType = vehicleTypeRepository.findById(request.getVehicleTypeId())
+                .orElseThrow(() -> new EntityNotFoundException("Tipo de vehículo no encontrado"));
+
+        entity.setCompany(company);
+        entity.setVehicleType(vehicleType);
+
         VehicleDomain saved = vehicleRepository.save(entity);
 
         return CrudResponseDto.success(VehicleMapper.toDto(saved), "Vehículo creado correctamente");

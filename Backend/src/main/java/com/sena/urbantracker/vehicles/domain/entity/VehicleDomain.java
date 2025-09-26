@@ -1,6 +1,7 @@
 package com.sena.urbantracker.vehicles.domain.entity;
 
 import com.sena.urbantracker.shared.application.dto.ABaseDomain;
+import com.sena.urbantracker.users.domain.entity.CompanyDomain;
 import com.sena.urbantracker.vehicles.domain.valueobject.VehicleStatusType;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -10,8 +11,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class VehicleDomain extends ABaseDomain {
-    private Long companyId; // Reference to Company
-    private Long vehicleTypeId; // Reference to VehicleType
+    private CompanyDomain company;
+    private VehicleTypeDomain vehicleType;
     private String licencePlate;
     private String brand;
     private String model;
