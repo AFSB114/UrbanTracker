@@ -2,19 +2,31 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import type { GeoJSON } from "geojson";
-import { RouteFormData, RouteData, CompleteRouteData, RouteWaypointRequest } from "../types/routeTypes";
+import { RouteFormData, RouteData, CompleteRouteData, RouteWaypointRequest, type RouteDetailsResponse } from "../types/routeTypes";
 
 interface RouteFormContextType {
   formData: RouteFormData;
   outboundRoute: RouteData;
   returnRoute: RouteData;
-  currentView: 'outbound' | 'return' | 'both';
-  updateFormData: (field: keyof RouteFormData, value: string | File | null) => void;
-  saveOutboundRoute: (waypoints: RouteWaypointRequest[], geometry: GeoJSON.Geometry, distance: number) => void;
-  saveReturnRoute: (waypoints: RouteWaypointRequest[], geometry: GeoJSON.Geometry, distance: number) => void;
-  setCurrentView: (view: 'outbound' | 'return' | 'both') => void;
+  currentView: "outbound" | "return" | "both";
+  updateFormData: (
+    field: keyof RouteFormData,
+    value: string | File | null
+  ) => void;
+  saveOutboundRoute: (
+    waypoints: RouteWaypointRequest[],
+    geometry: GeoJSON.Geometry,
+    distance: number
+  ) => void;
+  saveReturnRoute: (
+    waypoints: RouteWaypointRequest[],
+    geometry: GeoJSON.Geometry,
+    distance: number
+  ) => void;
+  setCurrentView: (view: "outbound" | "return" | "both") => void;
   resetForm: () => void;
   getCompleteRouteData: () => CompleteRouteData | null;
+  setInitialData: (data: RouteDetailsResponse) => void;
 }
 
 const RouteFormContext = createContext<RouteFormContextType | undefined>(undefined);
@@ -50,6 +62,25 @@ export const RouteFormProvider: React.FC<RouteFormProviderProps> = ({ children }
     geometry: null,
     distance: 0,
   });
+
+  const setInitialData = (data: RouteDetailsResponse) => {
+    setFormData({
+      numberRoute: data.numberRoute,
+      description: data.description || '',
+      outboundImage: data.outboundImage || null,
+      returnImage: data.returnImage || null,
+    })
+    setOutboundRoute({
+      waypoints: data.waypoints.filter(w => w.destine === 'OUTBOUND'),
+      geometry: null,
+      distance: 0,
+    });
+    setReturnRoute({
+      waypoints: data.waypoints.filter(w => w.destine === 'RETURN'),
+      geometry: null,
+      distance: 0,
+    });
+  };
 
   const [currentView, setCurrentView] = useState<'outbound' | 'return' | 'both'>('outbound');
 
@@ -130,6 +161,7 @@ export const RouteFormProvider: React.FC<RouteFormProviderProps> = ({ children }
     setCurrentView,
     resetForm,
     getCompleteRouteData,
+    setInitialData,
   };
 
   return (

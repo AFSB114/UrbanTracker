@@ -4,6 +4,7 @@ import type {
   RouteWithWaypointsRequest,
   CompleteRouteData,
   RouteWaypointRequest,
+  RouteDetailsResponse,
 } from "../../types/routeTypes";
 import { ApiClient } from "../../../utils/apiClient";
 import { API_ENDPOINTS } from "./config";
@@ -16,8 +17,8 @@ export class RoutesApi {
     return apiClient.get<CrudResponse<RouteResponse[]>>(API_ENDPOINTS.ROUTES);
   }
 
-  static async getRouteById(id: number, type: "WAYPOINTS" | "GEOMETRY"): Promise<CrudResponse<RouteResponse>> {
-    return apiClient.get<CrudResponse<RouteResponse>>(
+  static async getRouteById(id: number, type: "WAYPOINT" | "GEOMETRY"): Promise<CrudResponse<RouteDetailsResponse>> {
+    return apiClient.get<CrudResponse<RouteDetailsResponse>>(
       `${API_ENDPOINTS.ROUTES}/${id}/${type}`
     );
   }

@@ -43,6 +43,8 @@ export interface RouteDetailsResponse {
   numberRoute: string;
   description?: string;
   totalDistance: number;
+  outboundImage?: File;
+  returnImage?: File;
   waypoints: RouteWaypointResponse[];
 }
 

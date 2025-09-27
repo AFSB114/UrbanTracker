@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { RoutesApi } from './api/routeApi';
-import type { RouteRequest, RouteWithWaypointsRequest, RouteResponse, CrudResponse, ResponseDTO, CompleteRouteData } from '../types/routeTypes';
+import type { RouteRequest, RouteWithWaypointsRequest, RouteResponse, CrudResponse, ResponseDTO, CompleteRouteData, RouteDetailsResponse } from '../types/routeTypes';
 
 export const useRouteService = () => {
   const [loading, setLoading] = useState(false);
@@ -27,8 +27,8 @@ export const useRouteService = () => {
     return handleApiCall(() => RoutesApi.getAllRoutes());
   };
 
-  const getRouteById = async (id: number): Promise<CrudResponse<RouteResponse>> => {
-    return handleApiCall(() => RoutesApi.getRouteById(id));
+  const getRouteById = async (id: number, type: 'GEOMETRY' | 'WAYPOINT'): Promise<CrudResponse<RouteDetailsResponse>> => {
+    return handleApiCall(() => RoutesApi.getRouteById(id, type));
   };
 
   const createRoute = async (route: RouteRequest): Promise<CrudResponse<RouteResponse>> => {
