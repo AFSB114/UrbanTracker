@@ -50,6 +50,8 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
       return;
     }
 
+    console.log(completeData.totalDistance)
+
     setIsLoading(true);
     setErrors([]);
     try {

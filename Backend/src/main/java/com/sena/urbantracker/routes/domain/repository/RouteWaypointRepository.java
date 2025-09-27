@@ -23,4 +23,10 @@ public interface RouteWaypointRepository {
     List<RouteWaypointDomain> findByRouteId(Long routeId);
 
     void saveAll(List<RouteWaypointDomain> waypoints);
+
+    Integer countByTypeAndRoute(String type,RouteDomain routeDomain);
+
+    void deleteByRoute(RouteDomain route);
+
+    List<RouteWaypointDomain> findByRouteAndType(RouteDomain route, String type);
 }

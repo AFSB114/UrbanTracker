@@ -51,7 +51,7 @@ public class VehicleTypeController extends BaseController<VehicleTypeReqDto, Veh
     @Override
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<VehicleTypeResDto>> update(@PathVariable Long id, @Valid @RequestBody VehicleTypeReqDto dto) {
+    public ResponseEntity<CrudResponseDto<VehicleTypeResDto>> update(@PathVariable Long id, @Valid @RequestBody VehicleTypeReqDto dto) throws BadRequestException {
         return super.update(id, dto);
     }
 

@@ -34,7 +34,16 @@ export interface RouteResponse {
   numberRoute: string;
   description?: string;
   totalDistance: number;
-  routeWaypoints: RouteWaypointResponse[];
+  waypoints: number;
+}
+
+export interface RouteDetailsResponse {
+  id?: number;
+  active: boolean;
+  numberRoute: string;
+  description?: string;
+  totalDistance: number;
+  waypoints: RouteWaypointResponse[];
 }
 
 export interface CrudResponse<T> {
@@ -82,6 +91,7 @@ export interface RouteFormState {
 export interface CompleteRouteData {
   numberRoute: string;
   description: string;
+  totalDistance: number;
   outboundImage?: File;
   returnImage?: File;
   outboundRoute: { waypoints: RouteWaypointRequest[], geometry: GeoJSON.Geometry };

@@ -76,9 +76,9 @@ const MapEditor: React.FC<MapEditorProps> = ({
     try {
       // Save to form context
       if (routeType === 'outbound') {
-        saveOutboundRoute(waypointList, geometry, routeDistance || undefined);
+        saveOutboundRoute(waypointList, geometry, routeDistance);
       } else {
-        saveReturnRoute(waypointList, geometry, routeDistanceReturn || undefined);
+        saveReturnRoute(waypointList, geometry, routeDistanceReturn);
       }
 
       // Call onSave callback if provided

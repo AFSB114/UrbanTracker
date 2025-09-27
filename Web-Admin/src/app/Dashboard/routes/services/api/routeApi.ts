@@ -61,7 +61,6 @@ export class RoutesApi {
   ): Promise<CrudResponse<RouteResponse>> {
     const formData = new FormData();
 
-    // Construir los waypoints combinando outbound y return con destine
     const waypointsGeometry: RouteWaypointRequest[] = [
       ...routeData.outboundRoute.geometry?.coordinates.map((c, i) => ({
         latitude: c[1],
@@ -79,7 +78,6 @@ export class RoutesApi {
       })),
     ];
 
-    // Construir los waypoints combinando outbound y return con destine
     const waypoints: RouteWaypointRequest[] = [
       ...routeData.outboundRoute.waypoints.map((w) => ({
         ...w,
@@ -99,23 +97,11 @@ export class RoutesApi {
 
     const waypointList = [...uniqueWaypoints, ...waypointsGeometry];
 
-    // Calcular totalDistance (por ahora 0, ya que no está disponible en CompleteRouteData)
-    const totalDistance = 0;
-    console.log(
-      uniqueWaypoints.filter(
-        (wp) =>
-          wp.destine?.toUpperCase().trim() === "OUTBOUND" &&
-          wp.type === "WAYPOINT"
-      )
-    );
-
-    // Agregar campos del RouteWithWaypointsRequest
     formData.append("numberRoute", routeData.numberRoute);
     formData.append("description", routeData.description);
-    formData.append("totalDistance", totalDistance.toString());
+    formData.append("totalDistance", routeData.totalDistance.toString());
     formData.append("waypoints", JSON.stringify(waypointList));
 
-    // Agregar imágenes si existen
     if (routeData.outboundImage) {
       formData.append("outboundImage", routeData.outboundImage);
     }

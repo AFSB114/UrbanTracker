@@ -5,7 +5,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sena.urbantracker.routes.application.dto.request.RouteReqDto;
 import com.sena.urbantracker.routes.application.dto.request.RouteWaypointReqDto;
+import com.sena.urbantracker.routes.application.dto.response.RouteDetailsResDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteResDto;
+import com.sena.urbantracker.routes.application.dto.response.RouteWaypointResDto;
 import com.sena.urbantracker.routes.application.mapper.RouteMapper;
 import com.sena.urbantracker.routes.application.mapper.RouteWaypointMapper;
 import com.sena.urbantracker.routes.domain.entity.RouteDomain;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +53,7 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
 
         RouteDomain route = RouteMapper.toEntity(request);
         String outboundImageUrl = saveImage(request.getOutboundImage(), numberRouteInt, "outbound");
-        String returnImageUrl   = saveImage(request.getReturnImage(),   numberRouteInt, "return");
+        String returnImageUrl = saveImage(request.getReturnImage(), numberRouteInt, "return");
         route.setOutboundImageUrl(outboundImageUrl);
         route.setReturnImageUrl(returnImageUrl);
 
@@ -68,7 +71,7 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
 
         routeWaypointRepository.saveAll(waypoints);
 
-        return CrudResponseDto.success(RouteMapper.toDto(savedRoute), "Ruta creada correctamente");
+        return CrudResponseDto.success(RouteMapper.toDto(savedRoute, waypoints.size()), "Ruta creada correctamente");
     }
 
 
@@ -77,30 +80,66 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
         RouteDomain route = routeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ruta con id " + id + " no encontrada."));
 
-        return CrudResponseDto.success(Optional.of(RouteMapper.toDto(route)), "Ruta encontrada");
+
+        return CrudResponseDto.success(Optional.of(RouteMapper.toDto(route, 0)), "Ruta encontrada");
     }
 
     @Override
     public CrudResponseDto<List<RouteResDto>> findAll() {
-        List<RouteResDto> dtos = routeRepository.findAll()
-                .stream()
-                .map(RouteMapper::toDto)
-                .toList();
+        List<RouteDomain> routes = routeRepository.findAll();
+        List<RouteResDto> routesDto = new ArrayList<>();
+        for (RouteDomain route : routes) {
+            Integer numberWaypoints = routeWaypointRepository.countByTypeAndRoute("WAYPOINT", route);
+            routesDto.add(RouteMapper.toDto(route, numberWaypoints));
+        }
 
-        return CrudResponseDto.success(dtos, "Listado de rutas");
+        return CrudResponseDto.success(routesDto, "Listado de rutas");
     }
 
+
+    @Transactional(rollbackFor = BadRequestException.class)
     @Override
-    public CrudResponseDto<RouteResDto> update(RouteReqDto request, Long id) {
+    public CrudResponseDto<RouteResDto> update(RouteReqDto request, Long id) throws BadRequestException {
         RouteDomain route = routeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Ruta no encontrada."));
 
         route.setNumberRoute(Integer.valueOf(request.getNumberRoute()));
         route.setDescription(request.getDescription());
-        route.setTotalDistance(request.getTotalDistance());
+        route.setTotalDistance(Double.valueOf(request.getTotalDistance()));
 
-        RouteDomain updated = routeRepository.save(route);
-        return CrudResponseDto.success(RouteMapper.toDto(updated), "Ruta actualizada correctamente");
+        // Manejo condicional de imágenes
+        Integer numberRouteInt = Integer.valueOf(request.getNumberRoute());
+
+        // Outbound image
+        if (request.getOutboundImage() != null && !request.getOutboundImage().isEmpty()) {
+            deleteIfExists(route.getOutboundImageUrl());
+            String newOutbound = saveImage(request.getOutboundImage(), numberRouteInt, "outbound");
+            route.setOutboundImageUrl(newOutbound);
+        }
+        // Return image
+        if (request.getReturnImage() != null && !request.getReturnImage().isEmpty()) {
+            deleteIfExists(route.getReturnImageUrl());
+            String newReturn = saveImage(request.getReturnImage(), numberRouteInt, "return");
+            route.setReturnImageUrl(newReturn);
+        }
+
+        RouteDomain updated = routeRepository.saveAndFlush(route);
+
+        routeWaypointRepository.deleteByRoute(updated);
+
+        List<RouteWaypointReqDto> waypointDtos = parseJson(request.getWaypoints());
+
+        List<RouteWaypointDomain> waypoints = waypointDtos.stream()
+                .map(dto -> {
+                    RouteWaypointDomain e = RouteWaypointMapper.toEntity(dto, updated.getId());
+                    e.setRoute(updated);
+                    return e;
+                })
+                .toList();
+
+        routeWaypointRepository.saveAll(waypoints);
+
+        return CrudResponseDto.success(RouteMapper.toDto(updated, waypoints.size()), "Ruta actualizada correctamente");
     }
 
     @Override
@@ -110,7 +149,7 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
         }
 
         routeRepository.deleteById(id);
-        return CrudResponseDto.success(RouteMapper.toDto(null), "Ruta eliminada correctamente");
+        return CrudResponseDto.success(RouteMapper.toDto(null, 0), "Ruta eliminada correctamente");
     }
 
     @Override
@@ -119,7 +158,7 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
                 .orElseThrow(() -> new EntityNotFoundException("Ruta no encontrada."));
         route.setActive(true);
         routeRepository.save(route);
-        return CrudResponseDto.success(RouteMapper.toDto(route), "Ruta activada");
+        return CrudResponseDto.success(RouteMapper.toDto(route, 0), "Ruta activada");
     }
 
     @Override
@@ -128,12 +167,26 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
                 .orElseThrow(() -> new EntityNotFoundException("Ruta no encontrada."));
         route.setActive(false);
         routeRepository.save(route);
-        return CrudResponseDto.success(RouteMapper.toDto(route), "Ruta desactivada");
+        return CrudResponseDto.success(RouteMapper.toDto(route, 0), "Ruta desactivada");
     }
 
     @Override
     public CrudResponseDto<Boolean> existsById(Long id) {
         return CrudResponseDto.success(routeRepository.existsById(id), "Verificación de existencia completada");
+    }
+
+    public CrudResponseDto<RouteDetailsResDto> findByIdType(Long id, String type) {
+        RouteDomain route = routeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Ruta con id " + id + " no encontrada."));
+        List<RouteWaypointDomain> waypointDomains = routeWaypointRepository.findByRouteAndType(route, type);
+
+        RouteDetailsResDto routeDetails = RouteMapper.toDtoDetail(route);
+
+        routeDetails.setWaypoints(waypointDomains.stream()
+                .map(RouteWaypointMapper::toDto)
+                .toList());
+
+        return CrudResponseDto.success(routeDetails, "Ruta Lista");
     }
 
     private String saveImage(MultipartFile file, Integer routeNumber, String type) {
@@ -143,8 +196,8 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
         try {
             String originalFilename = file.getOriginalFilename();
             String extension = originalFilename != null && originalFilename.contains(".")
-                ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                : ".png";
+                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                    : ".png";
             String filename = "route_" + routeNumber + "_" + type + extension;
             Path path = Paths.get("src/main/resources/static/images/routes/" + filename);
             Files.createDirectories(path.getParent());
@@ -155,11 +208,27 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
         }
     }
 
+    private void deleteIfExists(String publicUrl) {
+        if (publicUrl == null || publicUrl.isBlank()) return;
+        try {
+            // publicUrl esperado: "/images/routes/archivo.ext"
+            String relative = publicUrl.startsWith("/") ? publicUrl.substring(1) : publicUrl;
+            Path path = Paths.get("src/main/resources/static").resolve(relative);
+            if (Files.exists(path)) {
+                Files.delete(path);
+            }
+        } catch (IOException e) {
+            // Decide si quieres fallar o solo registrar. Aquí lanzamos runtime para visibilidad.
+            throw new RuntimeException("Error al eliminar la imagen anterior: " + e.getMessage());
+        }
+    }
+
     private List<RouteWaypointReqDto> parseJson(String json) throws BadRequestException {
         List<RouteWaypointReqDto> waypointDtos;
         try {
             waypointDtos = objectMapper.readValue(
-                    json, new TypeReference<List<RouteWaypointReqDto>>() {});
+                    json, new TypeReference<List<RouteWaypointReqDto>>() {
+                    });
         } catch (JsonProcessingException e) {
             throw new BadRequestException("El JSON de waypoints es inválido: " + e.getMessage());
         }

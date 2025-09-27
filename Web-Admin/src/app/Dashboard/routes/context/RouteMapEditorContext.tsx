@@ -18,9 +18,9 @@ interface RouteMapEditorContextType {
   setRouteGeometryReturn: (g: GeoJSON.Geometry | null) => void;
 
   // Distancias temporales (de Mapbox API)
-  routeDistance: number | null;
+  routeDistance: number;
   setRouteDistance: (d: number | null) => void;
-  routeDistanceReturn: number | null;
+  routeDistanceReturn: number;
   setRouteDistanceReturn: (d: number | null) => void;
 
   // Estados de modo

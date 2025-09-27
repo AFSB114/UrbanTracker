@@ -1,6 +1,7 @@
 package com.sena.urbantracker.shared.infrastructure.controller;
 
 import com.sena.urbantracker.routes.application.dto.request.RouteReqDto;
+import com.sena.urbantracker.routes.application.dto.response.RouteDetailsResDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteResDto;
 import com.sena.urbantracker.shared.infrastructure.exception.ValidationException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
@@ -81,13 +82,10 @@ public abstract class BaseController<DReq, DRes, ID> {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CrudResponseDto<DRes>> update(@PathVariable ID id, @Valid @RequestBody DReq dto) {
+    public ResponseEntity<CrudResponseDto<DRes>> update(@PathVariable ID id, @Valid @RequestBody DReq dto) throws BadRequestException {
         if (id == null) {
             throw new ValidationException("ID cannot be null");
         }
-
-        // Asumimos que el DTO tiene un método setId que acepta Long
-//        (dto).setId((Long) id);
 
         CrudOperations<DReq, DRes, ID> service = getService();
         CrudResponseDto<DRes> response = service.update(dto, id);
@@ -101,5 +99,10 @@ public abstract class BaseController<DReq, DRes, ID> {
         CrudResponseDto<DRes> response = service.deleteById(id);
 
         return ResponseEntity.ok(response);
+    }
+
+    protected ResponseEntity<CrudResponseDto<Optional<DRes>>> findByIdToMap(ID id) {
+
+        return  null;
     }
 }
