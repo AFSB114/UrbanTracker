@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import type { GeoJSON } from "geojson";
-import { RouteFormData, RouteData, RouteFormState, CompleteRouteData, RouteWaypointRequest } from "../types/routeTypes";
+import { RouteFormData, RouteData, CompleteRouteData, RouteWaypointRequest } from "../types/routeTypes";
 
 interface RouteFormContextType {
   formData: RouteFormData;
