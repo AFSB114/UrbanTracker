@@ -1,6 +1,8 @@
 package com.sena.urbantracker.security.application.service;
 
+import com.sena.urbantracker.security.application.dto.request.ForgotPassword;
 import com.sena.urbantracker.security.application.dto.request.RecoveryCodeValidationDTO;
+import com.sena.urbantracker.security.application.dto.response.ForgotPasswordResponseDTO;
 import com.sena.urbantracker.security.application.dto.response.ResponseLoginDTO;
 import com.sena.urbantracker.security.domain.entity.RecoveryRequestDomain;
 import com.sena.urbantracker.security.domain.entity.UserDomain;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -31,13 +34,13 @@ public class RecoveryService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public ResponseEntity<?> generateRecoveryCode(String email) {
+    public ResponseEntity<ForgotPasswordResponseDTO> generateRecoveryCode(ForgotPassword forgot) {
 
-        Optional<UserProfileDomain> userOpt = userProfileRepository.findByEmail(email);
+        Optional<UserProfileDomain> userOpt = userProfileRepository.findByEmail(forgot.getEmail());
 
         if (!userOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("El email no existe");
+                    .body(new ForgotPasswordResponseDTO(false, "El email no existe", 404));
         }
 
         UserProfileDomain userProfile = userOpt.get();
@@ -54,14 +57,20 @@ public class RecoveryService {
         RecoveryRequestDomain request = RecoveryRequestDomain.builder()
                 .code(passwordEncoder.encode(code))
                 .expirationTime(expiration)
-                .user(user) // assuming user is UserDomain, but it's UserProfileDomain
+                .user(user)
                 .build();
         recoveryRequestRepository.save(request);
 
         // 3. Enviar correo
-        emailService.emailRecoveryPassword(userProfile.getEmail(), userProfile.getFirstName(), code);
+        try {
+            emailService.emailRecoveryPassword(userProfile.getEmail(), userProfile.getFirstName(), code);
+        } catch (Exception e) {
+            recoveryRequestRepository.delete(request);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ForgotPasswordResponseDTO(false, "Error al enviar el correo: " + e.getMessage(), 500));
+        }
 
-        return ResponseEntity.ok("Se ha enviado un código de verificación al correo.");
+        return ResponseEntity.ok(new ForgotPasswordResponseDTO(true, "Codigo enviado", null));
     }
 
     public ResponseEntity<?> validateRecoveryCode(RecoveryCodeValidationDTO dto) {
