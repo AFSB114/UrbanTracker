@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { RoutesApi } from './api/routeApi';
-import type { RouteRequest, RouteWithWaypointsRequest, RouteResponse, CrudResponse, ResponseDTO, CompleteRouteData, RouteDetailsResponse } from '../types/routeTypes';
+import type { RouteRequest, RouteResponse, CrudResponse,  CompleteRouteData, RouteDetailsResponse } from '../types/routeTypes';
 
 export const useRouteService = () => {
   const [loading, setLoading] = useState(false);

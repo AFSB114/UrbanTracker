@@ -1,7 +1,6 @@
 import type {
   RouteResponse,
   RouteRequest,
-  RouteWithWaypointsRequest,
   CompleteRouteData,
   RouteWaypointRequest,
   RouteDetailsResponse,

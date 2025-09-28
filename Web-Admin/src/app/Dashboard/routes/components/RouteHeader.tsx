@@ -1,4 +1,5 @@
 import { Plus } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface RouteHeaderProps {
   onCreateRoute: () => void;
@@ -13,13 +14,13 @@ export default function RouteHeader({ onCreateRoute }: RouteHeaderProps) {
           Administra las rutas de transporte
         </p>
       </div>
-      <button
+      <Button
         onClick={onCreateRoute}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center gap-2 font-medium"
+        className="bg-emerald-600 hover:bg-emerald-700 text-white transition-all duration-300 hover:scale-105"
       >
-        <Plus size={20} />
-        Nueva Ruta
-      </button>
+        <Plus className="h-4 w-4 mr-2" />
+        Nueva ruta
+      </Button>
     </div>
   );
 }
