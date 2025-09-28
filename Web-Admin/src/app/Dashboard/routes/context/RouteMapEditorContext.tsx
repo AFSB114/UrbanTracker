@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import type { GeoJSON } from "geojson";
 import { RouteWaypointRequest } from "../types/routeTypes";
 
@@ -18,10 +24,10 @@ interface RouteMapEditorContextType {
   setRouteGeometryReturn: (g: GeoJSON.Geometry | null) => void;
 
   // Distancias temporales (de Mapbox API)
-  routeDistance: number | null;
-  setRouteDistance: (d: number | null) => void;
-  routeDistanceReturn: number | null;
-  setRouteDistanceReturn: (d: number | null) => void;
+  routeDistance: number;
+  setRouteDistance: (d: number) => void;
+  routeDistanceReturn: number;
+  setRouteDistanceReturn: (d: number) => void;
 
   // Estados de modo
   isReturnMode: boolean;
@@ -61,10 +67,8 @@ export const RouteMapEditorProvider: React.FC<RouteMapEditorProviderProps> = ({
   );
   const [routeGeometryReturn, setRouteGeometryReturn] =
     useState<GeoJSON.Geometry | null>(null);
-  const [routeDistance, setRouteDistance] = useState<number | null>(null);
-  const [routeDistanceReturn, setRouteDistanceReturn] = useState<number | null>(
-    null
-  );
+  const [routeDistance, setRouteDistance] = useState<number>(0);
+  const [routeDistanceReturn, setRouteDistanceReturn] = useState<number>(0);
   const [isReturnMode, setIsReturnMode] = useState<boolean>(false);
   const [displayMode, setDisplayMode] = useState<
     "OUTBOUND" | "RETURN" | "BOTH" | "VIEW"
@@ -79,9 +83,13 @@ export const RouteMapEditorProvider: React.FC<RouteMapEditorProviderProps> = ({
 
     let sequence: number;
     if (destine) {
-      const existingWaypoints = waypointList.filter((wp) => wp.destine === destine);
+      const existingWaypoints = waypointList.filter(
+        (wp) => wp.destine === destine
+      );
       if (existingWaypoints.length > 0) {
-        const maxSequence = Math.max(...existingWaypoints.map((wp) => wp.sequence));
+        const maxSequence = Math.max(
+          ...existingWaypoints.map((wp) => wp.sequence)
+        );
         sequence = maxSequence + 1;
       } else {
         sequence = 1;
@@ -105,7 +113,7 @@ export const RouteMapEditorProvider: React.FC<RouteMapEditorProviderProps> = ({
     const updatedWaypoints = waypointList.filter((_, i) => i !== index);
     // Agrupar por destine y reindexar cada grupo
     const grouped = updatedWaypoints.reduce((acc, wp) => {
-      const key = wp.destine || 'undefined';
+      const key = wp.destine || "undefined";
       if (!acc[key]) acc[key] = [];
       acc[key].push(wp);
       return acc;
@@ -127,7 +135,7 @@ export const RouteMapEditorProvider: React.FC<RouteMapEditorProviderProps> = ({
     if (!waypointList || waypointList.length === 0) return;
 
     const grouped = waypointList.reduce((acc, wp) => {
-      const key = wp.destine || 'undefined';
+      const key = wp.destine || "undefined";
       if (!acc[key]) acc[key] = [];
       acc[key].push(wp);
       return acc;
@@ -149,7 +157,7 @@ export const RouteMapEditorProvider: React.FC<RouteMapEditorProviderProps> = ({
     }
     if (hasChanges) {
       setWaypointList(reindexed);
-    } 
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [waypointList.length]);
 
@@ -167,8 +175,8 @@ export const RouteMapEditorProvider: React.FC<RouteMapEditorProviderProps> = ({
     setWaypointList([]);
     setRouteGeometry(null);
     setRouteGeometryReturn(null);
-    setRouteDistance(null);
-    setRouteDistanceReturn(null);
+    setRouteDistance(0);
+    setRouteDistanceReturn(0);
     setIsReturnMode(false);
     setDisplayMode("OUTBOUND");
   };

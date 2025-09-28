@@ -69,6 +69,26 @@ public class RouteWaypointRepositoryAdapter implements RouteWaypointRepository {
     @Override
     public void saveAll(List<RouteWaypointDomain> waypoints) {
         jpaRepository.saveAll(waypoints.stream().map(RouteWaypointPersistenceMapper::toModel).toList());
-        return;
     }
+
+    public Integer countByTypeAndRoute(String type,RouteDomain routeDomain) {
+        RouteModel routeModel = RoutePersistenceMapper.toModel(routeDomain);
+        return jpaRepository.countByTypeAndRoute(type, routeModel);
+    }
+
+    @Override
+    public void deleteByRoute(RouteDomain routeDomain) {
+        jpaRepository.deleteAllByRoute_Id(routeDomain.getId());
+        System.out.println("Se han eliminado todos los waypoints de la ruta: " +  routeDomain.getId());
+    }
+
+    public List<RouteWaypointDomain> findByRouteAndType(RouteDomain route,  String type) {
+        RouteModel routeModel = RoutePersistenceMapper.toModel(route);
+        return jpaRepository.findByRouteAndType(routeModel, type)
+                .stream()
+                .map(RouteWaypointPersistenceMapper::toDomain)
+                .toList();
+    }
+
+
 }

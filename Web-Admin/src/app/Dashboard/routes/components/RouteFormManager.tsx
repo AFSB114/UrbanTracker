@@ -4,17 +4,21 @@ import { RouteFormProvider, useRouteForm } from '../context/RouteFormContext';
 import { RouteMapEditorProvider } from '../context/RouteMapEditorContext';
 import { CompleteRouteData, RouteResponse } from '../types/routeTypes';
 import MapEditor from './MapEditor';
+import { useRouteService } from '../services/RouteServices';
+import { get } from 'http';
 
 interface RouteFormManagerProps {
   onSave: (data: CompleteRouteData) => Promise<void>;
   editingRoute?: RouteResponse | null;
   mode?: 'create' | 'edit' | 'view';
+  id?: string;
 }
 
 const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
   onSave,
   editingRoute,
-  mode = 'create'
+  mode = 'create',
+  id = ''
 }) => {
   const {
     formData,
@@ -25,10 +29,24 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
     setCurrentView,
     resetForm,
     getCompleteRouteData,
+    setInitialData,
   } = useRouteForm();
+
+  const {getRouteById} = useRouteService();
 
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
+
+  useEffect(() => { 
+    if (id) {
+      getRouteById(parseInt(id), 'WAYPOINT').then((res) => {
+        if (res.data) {
+          setInitialData(res.data);
+        }
+      });
+    }
+  }, [id]);
+
 
   useEffect(() => {
     if (editingRoute && mode === 'edit') {
@@ -49,6 +67,8 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
       setErrors(['Complete todos los campos requeridos y ambas rutas']);
       return;
     }
+
+    console.log(completeData.totalDistance)
 
     setIsLoading(true);
     setErrors([]);
@@ -359,8 +379,7 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
             <MapEditor
               mode={mode === 'view' ? 'view' : currentView === 'both' ? 'view' : 'edit'}
               routeType={currentView}
-              initialWaypoints={currentView === 'outbound' ? outboundRoute.waypoints :
-                               currentView === 'return' ? returnRoute.waypoints : []}
+              initialWaypoints={[...outboundRoute.waypoints, ...returnRoute.waypoints]}
               initialGeometry={currentView === 'outbound' ? (outboundRoute.geometry ?? undefined) :
                               currentView === 'return' ? (returnRoute.geometry ?? undefined) : undefined}
               onSave={(waypoints, geometry) => {

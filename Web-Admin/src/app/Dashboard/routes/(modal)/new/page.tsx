@@ -20,7 +20,7 @@ export default function NewRoutePage() {
     try {
       await createRouteWithImages(data);
       alert('Ruta creada correctamente');
-      // router.push("/Dashboard/routes");
+      router.push("/Dashboard/routes");
     } catch (err) {
       console.error('Error creando ruta', err);
       alert('Error al crear la ruta');

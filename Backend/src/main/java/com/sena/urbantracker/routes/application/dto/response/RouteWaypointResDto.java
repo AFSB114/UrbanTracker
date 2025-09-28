@@ -14,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class RouteWaypointResDto extends ABaseResDto {
+
     private Long routeId;
 
     @NotNull(message = "La secuencia es obligatoria")

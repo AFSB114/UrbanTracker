@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import Map, {Source,Layer,Marker,} from "react-map-gl/mapbox";
+import Map, { Source, Layer, Marker } from "react-map-gl/mapbox";
 import type { RouteWaypointRequest } from "../../types/routeTypes";
 import type { MapMouseEvent } from "mapbox-gl";
 import type { FeatureCollection } from "geojson";
@@ -13,7 +13,7 @@ export default function MapView() {
     setRouteGeometryReturn,
     setRouteDistance,
     setRouteDistanceReturn,
-    displayMode
+    displayMode,
   } = useRouteMapEditor();
   const mapRef = useRef(null);
 
@@ -62,8 +62,8 @@ export default function MapView() {
               type: "Feature",
               geometry: { type: "LineString", coordinates: [] },
               properties: {},
-            }
-          ]
+            },
+          ],
         });
         setRouteGeometry(null);
         setRouteGeometryReturn(null);
@@ -85,14 +85,13 @@ export default function MapView() {
           `https://api.mapbox.com/directions/v5/mapbox/driving/${coords}?geometries=geojson&access_token=${accessToken}&overview=full`
         );
         const data = await res.json();
+        console.log("Mapbox Directions API response:", data);
         if (data.routes && data.routes.length > 0) return data.routes[0];
         return null;
       };
 
-      const outboundRoute = await fetchRouteFor(
-        outbound as RouteWaypointRequest[]
-      );
-      const returnRoute = await fetchRouteFor(ret as RouteWaypointRequest[]);
+      const outboundRoute = await fetchRouteFor(outbound);
+      const returnRoute = await fetchRouteFor(ret);
 
       const features: GeoJSON.Feature[] = [
         {
@@ -114,23 +113,25 @@ export default function MapView() {
       setRoute({ type: "FeatureCollection", features });
 
       if (outboundRoute) {
-        setRouteGeometry(outboundRoute.geometry as GeoJSON.Geometry);
+        setRouteGeometry(JSON.parse(JSON.stringify(outboundRoute.geometry)) as GeoJSON.Geometry);
         // Convertir distancia de metros a kilómetros y redondear a 2 decimales
-        const outboundDistanceKm = Math.round((outboundRoute.distance / 1000) * 100) / 100;
+        const outboundDistanceKm =
+          Math.round((outboundRoute.distance / 1000) * 100) / 100;
         setRouteDistance(outboundDistanceKm);
       } else {
         setRouteGeometry(null);
-        setRouteDistance(null);
+        setRouteDistance(0);
       }
 
       if (returnRoute) {
-        setRouteGeometryReturn(returnRoute.geometry as GeoJSON.Geometry);
+        setRouteGeometryReturn(JSON.parse(JSON.stringify(returnRoute.geometry)) as GeoJSON.Geometry);
         // Convertir distancia de metros a kilómetros y redondear a 2 decimales
-        const returnDistanceKm = Math.round((returnRoute.distance / 1000) * 100) / 100;
+        const returnDistanceKm =
+          Math.round((returnRoute.distance / 1000) * 100) / 100;
         setRouteDistanceReturn(returnDistanceKm);
       } else {
         setRouteGeometryReturn(null);
-        setRouteDistanceReturn(null);
+        setRouteDistanceReturn(0);
       }
     } catch (error) {
       console.error("Error fetching route:", error);

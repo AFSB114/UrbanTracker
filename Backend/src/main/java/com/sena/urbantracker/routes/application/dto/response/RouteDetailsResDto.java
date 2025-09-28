@@ -1,6 +1,5 @@
 package com.sena.urbantracker.routes.application.dto.response;
 
-import com.sena.urbantracker.routes.application.dto.request.RouteWaypointReqDto;
 import com.sena.urbantracker.shared.application.dto.response.ABaseResDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -15,7 +14,7 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class RouteResDto extends ABaseResDto {
+public class RouteDetailsResDto extends ABaseResDto {
     @NotBlank(message = "El número de ruta es obligatorio")
     @Size(min = 1, max = 50, message = "El número de ruta debe tener entre 1 y 50 caracteres")
     private String numberRoute;
@@ -27,7 +26,7 @@ public class RouteResDto extends ABaseResDto {
     private Double totalDistance;
 
     @NotBlank(message = "Los puntos de ruta son obligatorios")
-    private Integer waypoints;
+    private List<RouteWaypointResDto> waypoints;
 
     private String outboundImageUrl;
 
