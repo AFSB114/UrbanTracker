@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ArrowLeft } from "lucide-react"
 import Image from "next/image"
 
@@ -14,11 +15,13 @@ export default function ForgotPasswordPage() {
     const [email, setEmail] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [isEmailSent, setIsEmailSent] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
     const router = useRouter()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsLoading(true)
+        setErrorMessage("")
 
         try {
             const response = await fetch("http://localhost:8080/api/v1/public/auth/forgot-password", {
@@ -29,14 +32,16 @@ export default function ForgotPasswordPage() {
                 body: JSON.stringify({ email }),
             })
 
-            if (response.ok) {
-                const data = await response.json()
-                console.log("codigo enviado:", data.code)
-                router.push("/verify-otp")
+            const data = await response.json()
+
+            if (data.success) {
+                setIsEmailSent(true)
             } else {
+                setErrorMessage(data.message)
             }
         } catch (error) {
             console.error("Error sending reset email:", error)
+            setErrorMessage("Error al conectar con el servidor")
         }
 
         setIsLoading(false)
@@ -86,7 +91,13 @@ export default function ForgotPasswordPage() {
                     </CardHeader>
                     <CardContent className="space-y-6">
                         {!isEmailSent ? (
-                            <form onSubmit={handleSubmit} className="space-y-4">
+                            <>
+                                {errorMessage && (
+                                    <Alert variant="destructive">
+                                        <AlertDescription>{errorMessage}</AlertDescription>
+                                    </Alert>
+                                )}
+                                <form onSubmit={handleSubmit} className="space-y-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="email" className="text-card-foreground">
                                         Email
@@ -116,6 +127,7 @@ export default function ForgotPasswordPage() {
                                     )}
                                 </Button>
                             </form>
+                            </>
                         ) : (
                             <div className="space-y-4">
                                 <div className="text-center p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -134,7 +146,10 @@ export default function ForgotPasswordPage() {
                                 </Button>
                                 <div className="text-center">
                                     <button
-                                        onClick={() => setIsEmailSent(false)}
+                                        onClick={() => {
+                                            setIsEmailSent(false)
+                                            setErrorMessage("")
+                                        }}
                                         className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
                                     >
                                         ¿No recibiste el código? Reenviar

@@ -3,6 +3,7 @@ package com.sena.urbantracker.security.infrastructure.controller;
 import com.sena.urbantracker.security.application.dto.request.ForgotPassword;
 import com.sena.urbantracker.security.application.dto.request.RecoveryCodeValidationDTO;
 import com.sena.urbantracker.security.application.dto.request.RequestLoginAdminDTO;
+import com.sena.urbantracker.security.application.dto.response.ForgotPasswordResponseDTO;
 import com.sena.urbantracker.security.application.dto.response.ResponseLoginDTO;
 import com.sena.urbantracker.security.application.service.RecoveryService;
 import com.sena.urbantracker.security.application.service.UserSecurityService;
@@ -47,8 +48,8 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgot(@RequestBody ForgotPassword forgot) {
-        return recoveryService.generateRecoveryCode(forgot.getEmail());
+    public ResponseEntity<ForgotPasswordResponseDTO> forgot(@RequestBody ForgotPassword forgot) {
+        return recoveryService.generateRecoveryCode(forgot);
     }
 
     @PostMapping("/validate-code")

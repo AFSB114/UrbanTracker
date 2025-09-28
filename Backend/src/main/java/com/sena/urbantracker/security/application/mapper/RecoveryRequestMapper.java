@@ -1,7 +1,7 @@
 package com.sena.urbantracker.security.application.mapper;
 
 import com.sena.urbantracker.security.application.dto.request.RecoveryRequestReqDto;
-import com.sena.urbantracker.security.application.dto.response.RecoveryRequestResDto;
+import com.sena.urbantracker.security.application.dto.request.RecoveryRequestResDto;
 import com.sena.urbantracker.security.domain.entity.RecoveryRequestDomain;
 
 public class RecoveryRequestMapper {
