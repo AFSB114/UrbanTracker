@@ -108,3 +108,41 @@ export interface MapEditorProps {
   onSave?: (waypoints: RouteWaypointRequest[], geometry: GeoJSON.Geometry) => void;
   onCancel?: () => void;
 }
+
+export interface RouteStatistics {
+  totalRoutes: number;
+  activeRoutes: number;
+  inactiveRoutes: number;
+  newThisMonth: number;
+}
+
+export interface PaginationData {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
+  startIndex: number;
+  endIndex: number;
+}
+
+export interface PaginationConfig {
+  page: number;
+  itemsPerPage: number;
+}
+
+export interface UseRoutesReturn {
+  routes: RouteResponse[];
+  filteredRoutes: RouteResponse[];
+  paginatedRoutes: RouteResponse[];
+  searchTerm: string;
+  statusFilter: string;
+  statistics: RouteStatistics;
+  pagination: PaginationData;
+  loading: boolean;
+  error: string | null;
+  setSearchTerm: (term: string) => void;
+  setStatusFilter: (filter: string) => void;
+  setPage: (page: number) => void;
+  setItemsPerPage: (itemsPerPage: number) => void;
+  fetchRoutes: () => Promise<void>;
+}

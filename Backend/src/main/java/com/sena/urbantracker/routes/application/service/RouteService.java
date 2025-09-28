@@ -144,9 +144,11 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
 
     @Override
     public CrudResponseDto<RouteResDto> deleteById(Long id) {
-        if (!routeRepository.existsById(id)) {
-            throw new EntityNotFoundException("Ruta no encontrada.");
-        }
+        RouteDomain route = routeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Ruta no encontrada."));
+
+        deleteIfExists(route.getOutboundImageUrl());
+        deleteIfExists(route.getReturnImageUrl());
 
         routeRepository.deleteById(id);
         return CrudResponseDto.success(RouteMapper.toDto(null, 0), "Ruta eliminada correctamente");
