@@ -13,10 +13,10 @@ export default function VerifyOTPPage() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const email = searchParams.get("email") || ""
+    // Removed errorMessage state, using error for all errors
 
     const handleOTPComplete = (otpValue: string) => {
         setOtp(otpValue)
-        setError("")
     }
 
     const handleVerify = async () => {
@@ -27,29 +27,53 @@ export default function VerifyOTPPage() {
 
         setIsLoading(true)
         setError("")
-
         try {
-            // Simular verificación del código
-            await new Promise((resolve) => setTimeout(resolve, 1500))
+            const response = await fetch("http://localhost:8080/api/v1/public/auth/validate-code", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, code: otp }),
+            })
 
-            // Simular código correcto (123456)
-            if (otp === "123456") {
-                router.push(`/reset-password?token=mock-reset-token&email=${encodeURIComponent(email)}`)
+            const data = await response.json()
+            if (data.token) {
+                router.push(`/reset-password?token=${data.token}&email=${encodeURIComponent(email)}`)
             } else {
-                setError("Código incorrecto. Inténtalo de nuevo.")
+                setError(data.message || "Error al validar el código")
             }
+
         } catch (error) {
-            setError("Error al verificar el código. Inténtalo de nuevo.")
+            console.error("Error sending reset email:", error)
+            setError("Error al conectar con el servidor")
         }
 
         setIsLoading(false)
     }
 
+    const [isEmailSent, setIsEmailSent] = useState(false)
+
+
     const handleResendCode = async () => {
-        setError("")
-        // Simular reenvío de código
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-        // Mostrar mensaje de éxito o manejar reenvío
+        try {
+            const response = await fetch("http://localhost:8080/api/v1/public/auth/forgot-password", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email }),
+            })
+
+            const data = await response.json()
+
+            if (data.success) {
+                setIsEmailSent(true)
+            } else {
+                setError(data.message)
+            }
+        } catch (error) {
+            setError("Error al conectar con el servidor")
+        }
     }
 
     return (
@@ -92,14 +116,15 @@ export default function VerifyOTPPage() {
                         <CardDescription className="text-center text-muted-foreground">Enviado a {email}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        {error && (
-                            <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md text-center">
-                                {error}
-                            </div>
-                        )}
-
                         <div className="space-y-4">
                             <OTPInput length={6} onComplete={handleOTPComplete} className="justify-center" />
+
+                            {error && (
+                                <p className="mt-2 text-sm text-red-500 text-center">
+                                    {error}
+                                </p>
+                            )}
+
 
                             <Button
                                 onClick={handleVerify}
@@ -125,13 +150,6 @@ export default function VerifyOTPPage() {
                             >
                                 Reenviar código
                             </button>
-                        </div>
-
-                        <div className="text-center text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg">
-                            <p className="font-medium mb-1">Para pruebas:</p>
-                            <p>
-                                Usa el código: <span className="font-mono font-bold">123456</span>
-                            </p>
                         </div>
                     </CardContent>
                 </Card>

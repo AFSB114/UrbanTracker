@@ -1,7 +1,7 @@
 package com.sena.urbantracker.security.application.service;
 
 import com.sena.urbantracker.security.application.dto.request.UserReqDto;
-import com.sena.urbantracker.security.application.dto.response.UserResDto;
+import com.sena.urbantracker.security.application.dto.request.UserResDto;
 import com.sena.urbantracker.security.application.mapper.UserMapper;
 import com.sena.urbantracker.security.domain.entity.RoleDomain;
 import com.sena.urbantracker.security.domain.entity.UserDomain;

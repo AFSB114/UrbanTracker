@@ -37,22 +37,4 @@ public class UserSecurityService {
         return new ResponseLoginDTO(token);
     }
 
-
-    public ResponseLoginDTO loginDriver(RequestLoginAdminDTO login) {
-        // Autenticar credenciales
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        login.getUserName(),
-                        login.getPassword()));
-
-        // Buscar usuario por userName
-        UserDomain user = userRepository.findByUserName(login.getUserName())
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con userName: " + login.getUserName()));
-
-        // Generar token
-        String token = jwtService.generateToken(user);
-
-        return new ResponseLoginDTO(token);
-    }
-
 }

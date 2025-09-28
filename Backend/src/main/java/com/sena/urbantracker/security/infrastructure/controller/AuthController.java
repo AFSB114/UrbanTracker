@@ -1,5 +1,6 @@
 package com.sena.urbantracker.security.infrastructure.controller;
 
+import com.sena.urbantracker.security.application.dto.request.ChangePasswordDTO;
 import com.sena.urbantracker.security.application.dto.request.ForgotPassword;
 import com.sena.urbantracker.security.application.dto.request.RecoveryCodeValidationDTO;
 import com.sena.urbantracker.security.application.dto.request.RequestLoginAdminDTO;
@@ -55,6 +56,23 @@ public class AuthController {
     @PostMapping("/validate-code")
     public ResponseEntity<?> validateCode(@RequestBody RecoveryCodeValidationDTO dto) {
         return recoveryService.validateRecoveryCode(dto);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTO dto) {
+        try {
+            return recoveryService.changePassword(dto);
+        } catch (UsernameNotFoundException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Usuario no encontrado");
+            error.put("message", "El email proporcionado no corresponde a ningún usuario");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Error interno del servidor");
+            error.put("message", "Por favor, intente nuevamente");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 
 }
