@@ -113,7 +113,7 @@ export default function MapView() {
       setRoute({ type: "FeatureCollection", features });
 
       if (outboundRoute) {
-        setRouteGeometry(outboundRoute.geometry as GeoJSON.Geometry);
+        setRouteGeometry(JSON.parse(JSON.stringify(outboundRoute.geometry)) as GeoJSON.Geometry);
         // Convertir distancia de metros a kilómetros y redondear a 2 decimales
         const outboundDistanceKm =
           Math.round((outboundRoute.distance / 1000) * 100) / 100;
@@ -124,7 +124,7 @@ export default function MapView() {
       }
 
       if (returnRoute) {
-        setRouteGeometryReturn(returnRoute.geometry as GeoJSON.Geometry);
+        setRouteGeometryReturn(JSON.parse(JSON.stringify(returnRoute.geometry)) as GeoJSON.Geometry);
         // Convertir distancia de metros a kilómetros y redondear a 2 decimales
         const returnDistanceKm =
           Math.round((returnRoute.distance / 1000) * 100) / 100;

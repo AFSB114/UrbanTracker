@@ -29,7 +29,7 @@ const MapEditor: React.FC<MapEditorProps> = ({
     resetMapEditor,
   } = useRouteMapEditor();
 
-  const { saveOutboundRoute, saveReturnRoute } = useRouteForm();
+  const { outboundRoute, returnRoute, saveOutboundRoute, saveReturnRoute } = useRouteForm();
 
   const [isLoading, setIsLoading] = useState(false);
   const [localWaypoints, setLocalWaypoints] = useState<RouteWaypointRequest[]>(initialWaypoints);
@@ -37,7 +37,7 @@ const MapEditor: React.FC<MapEditorProps> = ({
 
   // Initialize with initial data
   useEffect(() => {
-    if (initialWaypoints.length > 0) {
+    if (initialWaypoints.length > 0 && waypointList.length === 0) {
       setWaypointList(initialWaypoints);
     }
     if (initialGeometry) {
@@ -58,7 +58,7 @@ const MapEditor: React.FC<MapEditorProps> = ({
     } else {
       setDisplayMode('VIEW');
     }
-  }, [initialWaypoints, initialGeometry, routeType, setWaypointList, setRouteGeometry, setRouteGeometryReturn, setDisplayMode]);
+  }, [initialWaypoints, initialGeometry, routeType, waypointList.length, setWaypointList, setRouteGeometry, setRouteGeometryReturn, setDisplayMode]);
 
   const handleSave = async () => {
     if (waypointList.length < 2) {

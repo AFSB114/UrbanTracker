@@ -33,10 +33,17 @@ public class RouteController extends BaseController<RouteReqDto, RouteResDto, Lo
 
     @PostMapping("/with-images")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<RouteResDto>> create(
-            @ModelAttribute RouteReqDto dto) throws BadRequestException {
+    public ResponseEntity<CrudResponseDto<RouteResDto>> create(@ModelAttribute RouteReqDto dto) throws BadRequestException {
         return super.create(dto);
     }
+
+    @Override
+    @PostMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CrudResponseDto<RouteResDto>> update(@PathVariable Long id, @ModelAttribute RouteReqDto dto) throws BadRequestException {
+        return super.update(id, dto);
+    }
+
 
     @GetMapping("/{id}/{type}")
     @PreAuthorize("hasRole('ADMIN')")

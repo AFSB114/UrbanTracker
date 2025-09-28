@@ -17,7 +17,10 @@ export class RoutesApi {
     return apiClient.get<CrudResponse<RouteResponse[]>>(API_ENDPOINTS.ROUTES);
   }
 
-  static async getRouteById(id: number, type: "WAYPOINT" | "GEOMETRY"): Promise<CrudResponse<RouteDetailsResponse>> {
+  static async getRouteById(
+    id: number,
+    type: "WAYPOINT" | "GEOMETRY"
+  ): Promise<CrudResponse<RouteDetailsResponse>> {
     return apiClient.get<CrudResponse<RouteDetailsResponse>>(
       `${API_ENDPOINTS.ROUTES}/${id}/${type}`
     );
@@ -34,11 +37,13 @@ export class RoutesApi {
 
   static async updateRoute(
     id: number,
-    routeData: RouteRequest
+    routeData: CompleteRouteData
   ): Promise<CrudResponse<RouteResponse>> {
-    return apiClient.put<CrudResponse<RouteResponse>>(
+    const formData = this.createFormData(routeData);
+
+    return apiClient.postFormData<CrudResponse<RouteResponse>>(
       `${API_ENDPOINTS.ROUTES}/${id}`,
-      routeData
+      formData
     );
   }
 
@@ -48,35 +53,39 @@ export class RoutesApi {
     );
   }
 
-  static async createRouteWithWaypoints(
-    routeWithWaypointsData: RouteWithWaypointsRequest
-  ): Promise<CrudResponse<RouteResponse>> {
-    return apiClient.post<CrudResponse<RouteResponse>>(
-      `${API_ENDPOINTS.ROUTES}/with-waypoints`,
-      routeWithWaypointsData
-    );
-  }
-
   static async createRouteWithImages(
     routeData: CompleteRouteData
   ): Promise<CrudResponse<RouteResponse>> {
+    const formData = this.createFormData(routeData);
+
+    return apiClient.postFormData<CrudResponse<RouteResponse>>(
+      `${API_ENDPOINTS.ROUTES}/with-images`,
+      formData
+    );
+  }
+
+  private static createFormData(routeData: CompleteRouteData): FormData {
     const formData = new FormData();
 
     const waypointsGeometry: RouteWaypointRequest[] = [
-      ...(routeData.outboundRoute.geometry as GeoJSON.LineString)?.coordinates?.map((c, i) => ({
+      ...((
+        routeData.outboundRoute.geometry as GeoJSON.LineString
+      )?.coordinates?.map((c, i) => ({
         latitude: c[1],
         longitude: c[0],
         type: "GEOMETRY" as const,
         destine: "OUTBOUND" as const,
         sequence: i,
-      })) || [],
-      ...(routeData.returnRoute.geometry as GeoJSON.LineString)?.coordinates?.map((c, i) => ({
+      })) || []),
+      ...((
+        routeData.returnRoute.geometry as GeoJSON.LineString
+      )?.coordinates?.map((c, i) => ({
         latitude: c[1],
         longitude: c[0],
         type: "GEOMETRY" as const,
         destine: "RETURN" as const,
         sequence: i,
-      })) || [],
+      })) || []),
     ];
 
     const waypoints: RouteWaypointRequest[] = [
@@ -109,10 +118,6 @@ export class RoutesApi {
     if (routeData.returnImage) {
       formData.append("returnImage", routeData.returnImage);
     }
-
-    return apiClient.postFormData<CrudResponse<RouteResponse>>(
-      `${API_ENDPOINTS.ROUTES}/with-images`,
-      formData
-    );
+    return formData;
   }
 }

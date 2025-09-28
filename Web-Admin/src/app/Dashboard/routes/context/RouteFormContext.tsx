@@ -71,12 +71,12 @@ export const RouteFormProvider: React.FC<RouteFormProviderProps> = ({ children }
       returnImage: data.returnImage || null,
     })
     setOutboundRoute({
-      waypoints: data.waypoints.filter(w => w.destine === 'OUTBOUND'),
+      waypoints: data.waypoints.filter(w => w.destine === 'OUTBOUND').map(w => ({ ...w })),
       geometry: null,
       distance: 0,
     });
     setReturnRoute({
-      waypoints: data.waypoints.filter(w => w.destine === 'RETURN'),
+      waypoints: data.waypoints.filter(w => w.destine === 'RETURN').map(w => ({ ...w })),
       geometry: null,
       distance: 0,
     });

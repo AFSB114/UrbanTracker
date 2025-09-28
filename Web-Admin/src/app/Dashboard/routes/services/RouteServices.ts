@@ -37,19 +37,13 @@ export const useRouteService = () => {
 
   const updateRoute = async (
     id: number,
-    route: RouteRequest
+    route: CompleteRouteData
   ): Promise<CrudResponse<RouteResponse>> => {
     return handleApiCall(() => RoutesApi.updateRoute(id, route));
   };
 
   const deleteRoute = async (id: number): Promise<CrudResponse<void>> => {
     return handleApiCall(() => RoutesApi.deleteRoute(id));
-  };
-
-  const createRouteWithWaypoints = async (
-    routeWithWaypoints: RouteWithWaypointsRequest
-  ): Promise<CrudResponse<RouteResponse>> => {
-    return handleApiCall(() => RoutesApi.createRouteWithWaypoints(routeWithWaypoints));
   };
 
   const createRouteWithImages = async (
@@ -66,7 +60,6 @@ export const useRouteService = () => {
     createRoute,
     updateRoute,
     deleteRoute,
-    createRouteWithWaypoints,
     createRouteWithImages,
   };
 };

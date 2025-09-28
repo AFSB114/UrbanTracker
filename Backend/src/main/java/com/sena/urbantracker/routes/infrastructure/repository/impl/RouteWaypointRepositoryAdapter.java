@@ -78,8 +78,8 @@ public class RouteWaypointRepositoryAdapter implements RouteWaypointRepository {
 
     @Override
     public void deleteByRoute(RouteDomain routeDomain) {
-        RouteModel routeModel = RoutePersistenceMapper.toModel(routeDomain);
-        jpaRepository.deleteByRoute(routeModel);
+        jpaRepository.deleteAllByRoute_Id(routeDomain.getId());
+        System.out.println("Se han eliminado todos los waypoints de la ruta: " +  routeDomain.getId());
     }
 
     public List<RouteWaypointDomain> findByRouteAndType(RouteDomain route,  String type) {

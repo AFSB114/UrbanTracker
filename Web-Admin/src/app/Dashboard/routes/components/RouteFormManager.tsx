@@ -379,8 +379,7 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
             <MapEditor
               mode={mode === 'view' ? 'view' : currentView === 'both' ? 'view' : 'edit'}
               routeType={currentView}
-              initialWaypoints={currentView === 'outbound' ? outboundRoute.waypoints :
-                               currentView === 'return' ? returnRoute.waypoints : []}
+              initialWaypoints={[...outboundRoute.waypoints, ...returnRoute.waypoints]}
               initialGeometry={currentView === 'outbound' ? (outboundRoute.geometry ?? undefined) :
                               currentView === 'return' ? (returnRoute.geometry ?? undefined) : undefined}
               onSave={(waypoints, geometry) => {

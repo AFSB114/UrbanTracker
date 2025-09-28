@@ -15,13 +15,13 @@ export default function EditRoutePage() {
     router.push("/Dashboard/routes");
   };
 
-  const { createRouteWithImages } = useRouteService();
+  const { updateRoute } = useRouteService();
 
 
   const handleSave = async (data: CompleteRouteData) => {
     try {
-      await createRouteWithImages(data);
-      alert('Ruta creada correctamente');
+      await updateRoute(parseInt(id as string), data);
+      alert('Ruta actualizada correctamente');
       router.push("/Dashboard/routes");
     } catch (err) {
       console.error('Error creando ruta', err);
@@ -33,8 +33,8 @@ export default function EditRoutePage() {
     <div className="min-h-screen bg-zinc-900 p-4">
       <RouteFormManager
         onSave={handleSave}
-        mode="create"
-        id={id}
+        mode="edit"
+        id={id as string}
       />
     </div>
   );
