@@ -3,6 +3,7 @@ package com.sena.urbantracker.routes.application.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sena.urbantracker.mqtt.application.service.DynamicSubscriptionService;
 import com.sena.urbantracker.routes.application.dto.request.RouteReqDto;
 import com.sena.urbantracker.routes.application.dto.request.RouteWaypointReqDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteDetailsResDto;
@@ -39,6 +40,7 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
     private final RouteRepository routeRepository;
     private final RouteWaypointRepository routeWaypointRepository;
     private final ObjectMapper objectMapper;
+    private final DynamicSubscriptionService dynamicSubscriptionService;
 
     @Transactional(rollbackFor = BadRequestException.class)
     @Override
@@ -71,7 +73,13 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
 
         routeWaypointRepository.saveAll(waypoints);
 
-        return CrudResponseDto.success(RouteMapper.toDto(savedRoute, waypoints.size()), "Ruta creada correctamente");
+        // 3) crear el topic de la ruta
+        String routeTopic = "routes/" + savedRoute.getNumberRoute() + "/telemetry";
+
+        // 4) Suscribirse al topic de la ruta
+        dynamicSubscriptionService.subscribeToRouteTopic(routeTopic);
+
+        return CrudResponseDto.success(RouteMapper.toDto(savedRoute), "Ruta creada correctamente y suscrito al topic:" + routeTopic);
     }
 
 
