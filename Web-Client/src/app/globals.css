@@ -14,9 +14,8 @@ body {
   position: relative;
   height: 100%;
 }
-/* Panel animado: más lento y suave, y se detiene en el sidebar (80px) */
-/* Panel animado: nunca se sobrepone al sidebar */
-/* Animación para el panel fijo (FixedPanel) - solo una definición limpia */
+
+/* Animación para el panel fijo */
 .fixed-panel-anim-panel {
   position: absolute;
   left: 0;

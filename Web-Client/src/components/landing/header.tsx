@@ -13,7 +13,30 @@ export default function Header() {
     { id: "funciones", label: "Funciones" },
     { id: "como-funciona", label: "Cómo funciona" },
     { id: "equipo", label: "Equipo" },
+    { id: "privacidad", label: "Privacidad" },
   ];
+
+  // Animación suave personalizada para el scroll
+  const smoothScrollTo = (targetY: number, duration = 700) => {
+    const startY = window.scrollY || window.pageYOffset;
+    const distance = targetY - startY;
+    let startTime: number | null = null;
+
+    function animation(currentTime: number) {
+      if (!startTime) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+      // easeInOutQuad
+      const ease = progress < 0.5
+        ? 2 * progress * progress
+        : -1 + (4 - 2 * progress) * progress;
+      window.scrollTo(0, startY + distance * ease);
+      if (progress < 1) {
+        requestAnimationFrame(animation);
+      }
+    }
+    requestAnimationFrame(animation);
+  };
 
   // Función reutilizable para hacer scroll y cerrar menú móvil
   const handleNavClick = (sectionId: string) => {
@@ -22,7 +45,7 @@ export default function Header() {
       // Calcula la posición teniendo en cuenta el header fijo
       const yOffset = -80; // Ajusta según la altura de tu header
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: "smooth" });
+      smoothScrollTo(y, 700);
     }
     setIsMenuOpen(false);
   };

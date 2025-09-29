@@ -31,7 +31,7 @@ export default function Team() {
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-zinc-100 text-balance mb-4">Nuestro Equipo</h2>
           <p className="text-xl text-zinc-400 text-balance max-w-2xl mx-auto mb-8">
-            Aprendices del Tecnólogo en ADSO del SENA comprometidos con la innovación en transporte público
+            Aprendices del Tecnólogo en Análisis y Desarrollo de Software del SENA comprometidos con la innovación en transporte urbano
           </p>
         </div>
 

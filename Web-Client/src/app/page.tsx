@@ -4,6 +4,7 @@ import Header from "landing/header"
 import Hero from "landing/hero"
 import Features from "landing/features"
 import HowItWorks from "landing/how-it-works"
+import PrivacyInfo from "landing/privacy-info"
 import Team from "landing/team"
 import Footer from "landing/footer"
 
@@ -13,8 +14,9 @@ export default function Home() {
       <Header />
       <Hero />
       <Features />
-      <HowItWorks />
-      <Team />
+  <HowItWorks />
+  <Team />
+  <PrivacyInfo />
       <Footer />
     </main>
   )
