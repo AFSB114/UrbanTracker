@@ -112,8 +112,8 @@ export default function CompaniesPage() {
           <div className="text-center py-12">
             <div className="text-zinc-400 text-lg">
               {searchTerm
-                ? "No companies found with the applied filters"
-                : "No companies registered"}
+                ? "No se encontraron empresas con los filtros aplicados"
+                : "No hay empresas registradas aun."}
             </div>
             {!searchTerm && (
               <Button
