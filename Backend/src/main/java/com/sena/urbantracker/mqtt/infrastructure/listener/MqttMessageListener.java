@@ -15,8 +15,14 @@ public class MqttMessageListener {
         String topic = (String) message.getHeaders().get("mqtt_receivedTopic");
         String payload = message.getPayload().toString();
 
-        log.info("MQTT recibido | Topic: {} | Payload: {}", topic, payload);
+        log.info("📩 MQTT recibido | Topic: {} | Payload: {}", topic, payload);
 
-        // demás logica de alguna service de tracking
+        if (topic.startsWith("routes/")) {
+            String[] parts = topic.split("/");
+            String routeNumber = parts[1]; // ejemplo: routes/10/telemetry
+            log.info("➡️ Mensaje pertenece a la ruta número {}", routeNumber);
+
+            // Aquí ya puedes delegar a tu service para manejar la telemetría
+        }
     }
 }
