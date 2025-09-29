@@ -6,26 +6,26 @@ const features = [
     icon: Map,
     title: "Mapa Interactivo en Tiempo Real",
     description:
-      "Visualiza la ubicación exacta de todos los vehículos de transporte público en tiempo real con actualizaciones instantáneas.",
+      "Visualiza la ubicación exacta de todos los vehículos de transporte urbano en tiempo real.",
+  },
+  {
+    icon: Users,
+    title: "App Web para Usuarios",
+    description:
+      "Página web intuitiva para pasajeros donde pueden consultar rutas, visualizar vehículos de transporte y acceder a información relevante.",
   },
   {
     icon: Route,
     title: "Gestión de Rutas y Vehículos",
     description:
-      "Administra eficientemente todas las rutas, horarios y vehículos desde un panel de control centralizado.",
+      "Administra eficientemente todas las rutas, vehículos y operadores desde un panel de control centralizado.",
   },
   {
     icon: Car,
     title: "App para Conductores",
     description:
-      "Aplicación móvil especializada para conductores con navegación GPS y reportes de estado en tiempo real.",
-  },
-  {
-    icon: Users,
-    title: "App para Usuarios",
-    description:
-      "Aplicación intuitiva para pasajeros que permite consultar horarios, rutas y tiempos de llegada estimados.",
-  },
+      "Aplicación móvil especializada para conductores con gestión de trayectos en tiempo real.",
+  }
 ]
 
 export default function Features() {
@@ -35,7 +35,7 @@ export default function Features() {
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-zinc-100 text-balance mb-4">Funciones Principales</h2>
           <p className="text-xl text-zinc-400 text-balance max-w-2xl mx-auto">
-            Descubre las características que hacen de UrbanTracker la solución ideal para el transporte público
+            Descubre las características que hacen de UrbanTracker la solución ideal para el transporte urbano
           </p>
         </div>
 

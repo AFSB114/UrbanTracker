@@ -14,7 +14,7 @@ export default function Hero() {
               Transformando la <span className="text-primary">Movilidad Urbana</span>
             </h1>
             <p className="text-xl md:text-2xl text-zinc-400 text-balance mb-8">
-              Sistema de gestión y visualización de rutas de transporte público en tiempo real
+              Sistema de gestión y visualización de rutas de transporte urbano en tiempo real
             </p>
           </div>
 

@@ -16,6 +16,7 @@ export default function ResetPasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
   const router = useRouter()
   const searchParams = useSearchParams()
   const email = searchParams.get("email") || ""
@@ -36,15 +37,32 @@ export default function ResetPasswordPage() {
     }
 
     setIsLoading(true)
+    setError("")
+    setSuccessMessage("")
 
     try {
-      // Simular actualización de contraseña
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      const response = await fetch("http://localhost:8080/api/v1/public/auth/change-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ email, newPassword: password }),
+      })
 
-      // Redirigir al login con mensaje de éxito
-      router.push("/")
+      const data = await response.json()
+
+      if (data.success) {
+        setSuccessMessage(data.message || "Contraseña actualizada correctamente")
+        setTimeout(() => {
+          router.push("/")
+        }, 3000)
+      } else {
+        setError(data.message || "Error al actualizar la contraseña")
+      }
+
     } catch (error) {
-      setError("Error al actualizar la contraseña. Inténtalo de nuevo.")
+      setError("Error al conectar con el servidor")
     }
 
     setIsLoading(false)
@@ -91,8 +109,8 @@ export default function ResetPasswordPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">{error}</div>
+              {successMessage && (
+                <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md">{successMessage}</div>
               )}
 
               <div className="space-y-2">
@@ -118,6 +136,9 @@ export default function ResetPasswordPage() {
                   </button>
                 </div>
                 <p className="text-xs text-muted-foreground">Mínimo 8 caracteres</p>
+                {error && (
+                  <p className="text-sm text-red-500">{error}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -152,7 +173,7 @@ export default function ResetPasswordPage() {
                 {isLoading ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    Actualizando contraseña...
+                    Cambiando contraseña...
                   </div>
                 ) : (
                   "Actualizar contraseña"

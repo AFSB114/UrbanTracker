@@ -1,4 +1,4 @@
-package com.sena.urbantracker.security.application.dto.response;
+package com.sena.urbantracker.security.application.dto.request;
 
 import com.sena.urbantracker.shared.application.dto.response.ABaseResDto;
 import lombok.Data;

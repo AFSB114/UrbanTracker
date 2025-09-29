@@ -1,6 +1,5 @@
 package com.sena.urbantracker.security.application.dto.request;
 
-import com.sena.urbantracker.security.application.dto.response.UserResDto;
 import com.sena.urbantracker.shared.application.dto.response.ABaseResDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

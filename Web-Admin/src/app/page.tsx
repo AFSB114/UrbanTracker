@@ -29,11 +29,11 @@ export default function LoginPage() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ userName, password }),
+           
             })
 
             if (response.ok) {
                 const data = await response.json()
-                console.log("Login successful:", data.token)
                 localStorage.setItem("token", data.token)
                 router.push("/Dashboard")
             } else {
