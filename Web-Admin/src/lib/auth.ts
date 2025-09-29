@@ -21,3 +21,9 @@ export function getToken(): string | null {
   }
   return null;
 }
+
+export function logout() {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("token");
+  }
+}

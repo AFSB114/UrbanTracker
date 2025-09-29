@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { getToken, validateToken } from "@/lib/auth"
+import Image from "next/image"
+import whiteLogo from "@Public/white-logo.svg"
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -54,8 +56,16 @@ export function AuthGuard({ children }: AuthGuardProps) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Verificando autenticación...</p>
+          <div className="animate-pulse">
+            <Image
+              src="/white-logo.svg"
+              alt="UrbanTracker Logo"
+              className="mx-auto mb-6 opacity-80 w-72 h-auto"
+              width={72}
+              height={72}
+            />
+          </div>
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
         </div>
       </div>
     )

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { getToken, validateToken } from "@/lib/auth"
 
 export default function HomePage() {
@@ -34,8 +35,16 @@ export default function HomePage() {
     return (
         <div className="min-h-screen bg-background flex items-center justify-center">
             <div className="text-center">
-                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-muted-foreground">Verificando autenticación...</p>
+                <div className="animate-pulse">
+                    <Image
+                        src="/Logo completo blanco -UrbanTracker.svg"
+                        alt="UrbanTracker Logo"
+                        width={300}
+                        height={75}
+                        className="mx-auto mb-6 opacity-80"
+                    />
+                </div>
+                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
             </div>
         </div>
     )

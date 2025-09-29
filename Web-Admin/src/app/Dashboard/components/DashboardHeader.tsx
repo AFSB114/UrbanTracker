@@ -1,15 +1,23 @@
 "use client";
 
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { logout } from "@/lib/auth";
 
 export function DashboardHeader() {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const handleRefresh = () => {
     // Invalidate all dashboard queries
     queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+  };
+
+  const handleLogout = () => {
+    logout();
+    router.push("/auth/login");
   };
 
   return (
@@ -34,15 +42,26 @@ export function DashboardHeader() {
             </p>
           </div>
         </div>
-        <Button
-          onClick={handleRefresh}
-          variant="ghost"
-          size="sm"
-          className="text-white hover:bg-zinc-800"
-          aria-label="Actualizar datos del dashboard"
-        >
-          <RefreshCw className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={handleRefresh}
+            variant="ghost"
+            size="sm"
+            className="text-white hover:bg-zinc-800"
+            aria-label="Actualizar datos del dashboard"
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+          <Button
+            onClick={handleLogout}
+            variant="ghost"
+            size="sm"
+            className="text-white hover:bg-zinc-800"
+            aria-label="Cerrar sesión"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </header>
   );
