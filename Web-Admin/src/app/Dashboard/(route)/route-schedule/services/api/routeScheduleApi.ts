@@ -31,7 +31,7 @@ export class RouteScheduleApi {
   }
 
   static async createBulk(data: BulkRouteScheduleRequest): Promise<CrudResponse<RouteScheduleResponse[]>> {
-    return apiClient.post<CrudResponse<RouteScheduleResponse[]>>(`${API_ENDPOINTS.ROUTE_SCHEDULES}/bulk`, data);
+    return apiClient.post<CrudResponse<RouteScheduleResponse[]>>(`${API_ENDPOINTS.ROUTE_SCHEDULES}/bulk`, data.schedules);
   }
 
   static async updateBulk(routeId: number, data: BulkRouteScheduleRequest): Promise<CrudResponse<RouteScheduleResponse[]>> {

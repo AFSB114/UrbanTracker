@@ -102,6 +102,7 @@ public class RouteScheduleService implements CrudOperations<RouteScheduleReqDto,
     public CrudResponseDto<Boolean> existsById(Long id) {
         return CrudResponseDto.success(routeScheduleRepository.existsById(id), "Verificación de existencia completada");
     }
+
     public CrudResponseDto<List<RouteScheduleResDto>> updateAll(List<RouteScheduleReqDto> dtos, Long id) {
         List<RouteScheduleDomain> existing = routeScheduleRepository.findByRoute_Id(id);
 

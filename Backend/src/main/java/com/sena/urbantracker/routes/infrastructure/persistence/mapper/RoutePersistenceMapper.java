@@ -14,6 +14,9 @@ public class RoutePersistenceMapper {
                 .totalDistance(domain.getTotalDistance())
                 .outboundImageUrl(domain.getOutboundImageUrl())
                 .returnImageUrl(domain.getReturnImageUrl())
+                .active(domain.getActive())
+                .createdAt(domain.getCreatedAt())
+                .updatedAt(domain.getUpdatedAt())
                 .build();
     }
 
@@ -26,6 +29,9 @@ public class RoutePersistenceMapper {
                 .totalDistance(model.getTotalDistance())
                 .outboundImageUrl(model.getOutboundImageUrl())
                 .returnImageUrl(model.getReturnImageUrl())
+                .active(model.getActive())
+                .createdAt(model.getCreatedAt())
+                .updatedAt(model.getUpdatedAt())
                 .build();
     }
 }

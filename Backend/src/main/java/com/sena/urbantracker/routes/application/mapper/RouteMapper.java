@@ -17,6 +17,9 @@ public class RouteMapper {
                 .waypoints(numWaypoints)
                 .outboundImageUrl(entity.getOutboundImageUrl())
                 .returnImageUrl(entity.getReturnImageUrl())
+                .active(entity.getActive())
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt())
                 .build();
     }
 
@@ -29,6 +32,9 @@ public class RouteMapper {
                 .totalDistance(entity.getTotalDistance())
                 .outboundImageUrl(entity.getOutboundImageUrl())
                 .returnImageUrl(entity.getReturnImageUrl())
+                .active(entity.getActive())
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt())
                 .build();
     }
 
