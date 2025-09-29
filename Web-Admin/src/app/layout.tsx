@@ -1,6 +1,7 @@
 import type React from "react"
 import type { Metadata } from "next"
 import Image from "next/image"
+import { AuthGuard } from "@/components/AuthGuard"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -24,7 +25,9 @@ export default function RootLayout({
   return (
     <html lang="es" className="h-full">
       <body className="h-full">
-        {children}
+        <AuthGuard>
+          {children}
+        </AuthGuard>
       </body>
     </html>
   )

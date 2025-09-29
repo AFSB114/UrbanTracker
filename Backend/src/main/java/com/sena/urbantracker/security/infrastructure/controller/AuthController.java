@@ -9,12 +9,14 @@ import com.sena.urbantracker.security.application.dto.response.ResponseLoginDTO;
 import com.sena.urbantracker.security.application.service.RecoveryService;
 import com.sena.urbantracker.security.application.service.UserSecurityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -73,6 +75,30 @@ public class AuthController {
             error.put("message", "Por favor, intente nuevamente");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
+    }
+
+    @PostMapping("/validate-token")
+    public ResponseEntity<?> validateToken(
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader,
+            @RequestBody(required = false) Map<String, String> body
+    ) {
+        String token = null;
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        } else if (body != null && body.get("token") != null) {
+            token = body.get("token");
+        }
+
+        if (token == null || token.isBlank()) {
+            Map<String, Object> res = new HashMap<>();
+            res.put("valid", false);
+            res.put("message", "Token no provisto");
+            return ResponseEntity.badRequest().body(res);
+        }
+
+        Map<String, Object> res = userService.validateToken(token);
+        return ResponseEntity.ok(res);
     }
 
 }
