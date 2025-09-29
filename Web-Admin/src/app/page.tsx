@@ -37,7 +37,7 @@ export default function HomePage() {
             <div className="text-center">
                 <div className="animate-pulse">
                     <Image
-                        src="/Logo completo blanco -UrbanTracker.svg"
+                        src="/white-logo.svg"
                         alt="UrbanTracker Logo"
                         width={300}
                         height={75}

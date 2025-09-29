@@ -47,26 +47,11 @@ export function RouteScheduleCard({ routeWithSchedules, onEdit, onDelete }: Rout
             <div className="space-y-3 flex-1">
               <div className="flex items-center gap-3">
                 <h3 className="text-xl font-bold text-white">
-                  {route.numberRoute}
+                  Ruta {route.numberRoute}
                 </h3>
                 <Badge className="bg-blue-600 text-white hover:bg-blue-700">
                   {schedules.length} horario{schedules.length !== 1 ? 's' : ''}
                 </Badge>
-              </div>
-
-              {route.description && (
-                <div className="text-zinc-400">
-                  <span className="font-medium text-white">
-                    {route.description}
-                  </span>
-                </div>
-              )}
-
-              <div className="text-sm">
-                <span className="font-medium text-zinc-400">
-                  Distancia:{" "}
-                </span>
-                <span className="text-emerald-500">{route.totalDistance || 0} km</span>
               </div>
 
               {/* Schedule Grid */}

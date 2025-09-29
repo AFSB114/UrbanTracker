@@ -24,15 +24,6 @@ export function DashboardHeader() {
     <header className="h-20 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur-sm overflow-hidden">
       <div className="flex h-20 items-center justify-between px-8">
         <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="md:hidden text-white hover:bg-zinc-800"
-            aria-label="Menú de navegación"
-          >
-            <span className="sr-only">Menú</span>
-            <div className="h-4 w-4">☰</div>
-          </Button>
           <div>
             <h2 className="text-2xl font-bold text-white">
               Panel de Control
@@ -56,7 +47,7 @@ export function DashboardHeader() {
             onClick={handleLogout}
             variant="ghost"
             size="sm"
-            className="text-white hover:bg-zinc-800"
+            className="text-white hover:bg-red-700"
             aria-label="Cerrar sesión"
           >
             <LogOut className="h-4 w-4" />

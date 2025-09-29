@@ -52,7 +52,7 @@ export default function LoginPage() {
                 {/* Logo/Brand */}
                 <div className="text-center">
                     <div className="flex items-center justify-center mb-6">
-                        <Image src="/Logo completo blanco -UrbanTracker.svg" alt="Logo" width={200} height={50} />
+                        <Image src="/white-complete-logo.svg" alt="Logo" width={200} height={50} />
                     </div>
                     <h1 className="text-2xl font-bold text-foreground">Bienvenido</h1>
                     <p className="text-muted-foreground mt-2">Inicia sesión en tu cuenta</p>
