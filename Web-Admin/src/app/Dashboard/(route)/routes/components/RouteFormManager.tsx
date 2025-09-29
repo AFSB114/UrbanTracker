@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Upload, MapPin, Eye, Edit } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { RouteFormProvider, useRouteForm } from '../context/RouteFormContext';
 import { RouteMapEditorProvider } from '../context/RouteMapEditorContext';
 import { CompleteRouteData, RouteResponse } from '../types/routeTypes';
@@ -121,29 +124,28 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label className="text-zinc-400">
                   Número de Ruta *
-                </label>
-                <input
-                  type="text"
+                </Label>
+                <Input
                   value={formData.numberRoute}
                   onChange={(e) => updateFormData('numberRoute', e.target.value)}
                   placeholder="Ej: 001, 092"
-                  className="w-full px-3 py-2 border border-zinc-600 bg-zinc-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="bg-zinc-800 border-zinc-700 text-white"
                   maxLength={20}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                <Label className="text-zinc-400">
                   Descripción
-                </label>
+                </Label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => updateFormData('description', e.target.value)}
                   placeholder="Descripción de la ruta..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-zinc-600 bg-zinc-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-zinc-600 bg-zinc-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
             </div>
@@ -184,16 +186,16 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
                           id="outbound-image"
                         />
                       )}
-                      <label
-                        htmlFor="outbound-image"
-                        className={`inline-block px-4 py-2 rounded-md text-sm font-medium cursor-pointer ${
-                          mode === 'view'
-                            ? 'bg-zinc-700 text-zinc-500 cursor-not-allowed'
-                            : 'bg-blue-600 hover:bg-blue-700 text-white'
-                        }`}
+                      <Button
+                        asChild
+                        variant={mode === 'view' ? 'secondary' : 'default'}
+                        disabled={mode === 'view'}
+                        className={mode !== 'view' ? 'bg-emerald-600 hover:bg-emerald-700' : ''}
                       >
-                        Seleccionar Archivo
-                      </label>
+                        <label htmlFor="outbound-image" className="cursor-pointer">
+                          Seleccionar Archivo
+                        </label>
+                      </Button>
                     </>
                   )}
                 </div>
@@ -229,16 +231,16 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
                           id="return-image"
                         />
                       )}
-                      <label
-                        htmlFor="return-image"
-                        className={`inline-block px-4 py-2 rounded-md text-sm font-medium cursor-pointer ${
-                          mode === 'view'
-                            ? 'bg-zinc-700 text-zinc-500 cursor-not-allowed'
-                            : 'bg-blue-600 hover:bg-blue-700 text-white'
-                        }`}
+                      <Button
+                        asChild
+                        variant={mode === 'view' ? 'secondary' : 'default'}
+                        disabled={mode === 'view'}
+                        className={mode !== 'view' ? 'bg-emerald-600 hover:bg-emerald-700' : ''}
                       >
-                        Seleccionar Archivo
-                      </label>
+                        <label htmlFor="return-image" className="cursor-pointer">
+                          Seleccionar Archivo
+                        </label>
+                      </Button>
                     </>
                   )}
                 </div>
@@ -308,17 +310,18 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
           {/* Actions */}
           {mode !== 'view' && (
             <div className="flex gap-3">
-              <button
+              <Button
                 onClick={resetForm}
-                className="flex-1 px-4 py-2 text-zinc-300 bg-zinc-700 hover:bg-zinc-600 rounded-md transition-colors"
+                variant="outline"
+                className="flex-1 border-zinc-700 text-white hover:bg-zinc-800 hover:text-gray-100"
                 disabled={isLoading}
               >
                 Limpiar
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleSave}
                 disabled={!isFormValid || isLoading}
-                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>
@@ -331,7 +334,7 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
                     {mode === 'create' ? 'Crear Ruta' : 'Actualizar Ruta'}
                   </>
                 )}
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -340,38 +343,27 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
         <div className="lg:col-span-2">
           {/* View Tabs */}
           <div className="mb-4 flex gap-2">
-            <button
-              onClick={() => {
-                setCurrentView('outbound')
-              }}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                currentView === 'outbound'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
-              }`}
+            <Button
+              onClick={() => setCurrentView('outbound')}
+              variant={currentView === 'outbound' ? 'default' : 'secondary'}
+              className={currentView === 'outbound' ? 'bg-emerald-600 hover:bg-emerald-700' : ''}
             >
               Ruta de Ida
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setCurrentView('return')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                currentView === 'return'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
-              }`}
+              variant={currentView === 'return' ? 'default' : 'secondary'}
+              className={currentView === 'return' ? 'bg-emerald-600 hover:bg-emerald-700' : ''}
             >
               Ruta de Vuelta
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setCurrentView('both')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                currentView === 'both'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
-              }`}
+              variant={currentView === 'both' ? 'default' : 'secondary'}
+              className={currentView === 'both' ? 'bg-emerald-600 hover:bg-emerald-700' : ''}
             >
               Ambas Rutas
-            </button>
+            </Button>
           </div>
 
           {/* Map Editor */}

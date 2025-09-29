@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.sql.Time;
+import java.util.List;
 
 @Data
 @SuperBuilder

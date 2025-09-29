@@ -16,4 +16,10 @@ public interface RouteScheduleRepository {
     void deleteById(Long id);
 
     boolean existsById(Long id);
+
+    List<RouteScheduleDomain> saveAll(List<RouteScheduleDomain> domainList);
+
+    List<RouteScheduleDomain> findByRoute_Id(Long id);
+
+    void deleteAll(List<RouteScheduleDomain> missingInDto);
 }

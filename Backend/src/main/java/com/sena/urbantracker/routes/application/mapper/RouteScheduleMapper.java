@@ -4,6 +4,7 @@ import com.sena.urbantracker.routes.application.dto.request.RouteScheduleReqDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteScheduleResDto;
 import com.sena.urbantracker.routes.domain.entity.RouteDomain;
 import com.sena.urbantracker.routes.domain.entity.RouteScheduleDomain;
+import com.sena.urbantracker.routes.domain.valueobject.DayOfWeekType;
 
 public class RouteScheduleMapper {
 

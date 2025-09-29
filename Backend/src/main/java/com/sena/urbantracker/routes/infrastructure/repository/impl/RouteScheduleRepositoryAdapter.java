@@ -26,16 +26,12 @@ public class RouteScheduleRepositoryAdapter implements RouteScheduleRepository {
 
     @Override
     public Optional<RouteScheduleDomain> findById(Long id) {
-        return jpaRepository.findById(id)
-                .map(RouteSchedulePersistenceMapper::toDomain);
+        return jpaRepository.findById(id).map(RouteSchedulePersistenceMapper::toDomain);
     }
 
     @Override
     public List<RouteScheduleDomain> findAll() {
-        return jpaRepository.findAll()
-                .stream()
-                .map(RouteSchedulePersistenceMapper::toDomain)
-                .toList();
+        return jpaRepository.findAll().stream().map(RouteSchedulePersistenceMapper::toDomain).toList();
     }
 
     @Override
@@ -46,5 +42,21 @@ public class RouteScheduleRepositoryAdapter implements RouteScheduleRepository {
     @Override
     public boolean existsById(Long id) {
         return jpaRepository.existsById(id);
+    }
+
+    @Override
+    public List<RouteScheduleDomain> saveAll(List<RouteScheduleDomain> domainList) {
+        List<RouteScheduleModel> modelList = domainList.stream().map(RouteSchedulePersistenceMapper::toModel).toList();
+        return jpaRepository.saveAll(modelList).stream().map(RouteSchedulePersistenceMapper::toDomain).toList();
+    }
+
+    @Override
+    public List<RouteScheduleDomain> findByRoute_Id(Long id) {
+        return jpaRepository.findAllByRoute_Id(id).stream().map(RouteSchedulePersistenceMapper::toDomain).toList();
+    }
+
+    @Override
+    public void deleteAll(List<RouteScheduleDomain> missingInDto) {
+        jpaRepository.deleteAll(missingInDto.stream().map(RouteSchedulePersistenceMapper::toModel).toList());
     }
 }

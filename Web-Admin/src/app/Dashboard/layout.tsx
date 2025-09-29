@@ -8,8 +8,6 @@ import {
   ChevronDown,
   Clock,
   MapPin,
-  Menu,
-  RefreshCw,
   Route,
   Users
 } from "lucide-react";
@@ -59,12 +57,12 @@ const menuItems: MenuItem[] = [
       },
       {
         title: "Horarios de Rutas",
-        href: "/Dashboard/routeSchedule",
+        href: "/Dashboard/route-schedule",
         icon: Clock,
       },
       {
         title: "Trayectorias de Rutas",
-        href: "/Dashboard/routeTrajectory",
+        href: "/Dashboard/route-trajectory",
         icon: MapPin,
       },
     ],

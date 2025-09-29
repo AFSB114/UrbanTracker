@@ -28,7 +28,7 @@ export default function NewRoutePage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-900 p-4">
+    <div className="min-h-screen bg-black p-4">
       <RouteFormManager
         onSave={handleSave}
         mode="create"

@@ -5,7 +5,7 @@ import type {
   RouteWaypointRequest,
   RouteDetailsResponse,
 } from "../../types/routeTypes";
-import { ApiClient } from "../../../utils/apiClient";
+import { ApiClient } from "../../../../utils/apiClient";
 import { API_ENDPOINTS } from "./config";
 import type { CrudResponse } from "./types";
 
