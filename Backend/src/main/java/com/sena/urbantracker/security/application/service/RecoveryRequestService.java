@@ -1,7 +1,7 @@
 package com.sena.urbantracker.security.application.service;
 
 import com.sena.urbantracker.security.application.dto.request.RecoveryRequestReqDto;
-import com.sena.urbantracker.security.application.dto.response.RecoveryRequestResDto;
+import com.sena.urbantracker.security.application.dto.request.RecoveryRequestResDto;
 import com.sena.urbantracker.security.application.mapper.RecoveryRequestMapper;
 import com.sena.urbantracker.security.domain.entity.RecoveryRequestDomain;
 import com.sena.urbantracker.security.domain.entity.UserDomain;

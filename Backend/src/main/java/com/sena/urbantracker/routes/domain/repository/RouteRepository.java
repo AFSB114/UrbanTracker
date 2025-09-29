@@ -18,4 +18,6 @@ public interface RouteRepository {
     boolean existsById(Long id);
 
     boolean existsByNumberRoute(Integer numberRoute);
+
+    RouteDomain saveAndFlush(RouteDomain route);
 }

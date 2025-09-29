@@ -12,4 +12,6 @@ public class RouteDomain extends ABaseDomain {
     private Integer numberRoute;
     private String description;
     private Double totalDistance;
+    private String outboundImageUrl;
+    private String returnImageUrl;
 }

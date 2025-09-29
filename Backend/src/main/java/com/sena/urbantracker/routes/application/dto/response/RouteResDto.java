@@ -27,5 +27,9 @@ public class RouteResDto extends ABaseResDto {
     private Double totalDistance;
 
     @NotBlank(message = "Los puntos de ruta son obligatorios")
-    private List<RouteWaypointReqDto> waypoints;
+    private Integer waypoints;
+
+    private String outboundImageUrl;
+
+    private String returnImageUrl;
 }

@@ -19,6 +19,7 @@ const INITIAL_FORM_DATA: VehiculeFormData = {
   status: "ACTIVE",
   companyId: 0,
   vehicleTypeId: 0,
+  inService: true,
 };
 
 export function useVehicles(): UseVehiculesReturn {
@@ -165,6 +166,7 @@ export function useVehicles(): UseVehiculesReturn {
       status: vehicle.status,
       companyId: vehicle.companyId,
       vehicleTypeId: vehicle.vehicleTypeId,
+      inService: vehicle.inService,
     });
     setIsDialogOpen(true);
   }, []);
@@ -188,7 +190,7 @@ export function useVehicles(): UseVehiculesReturn {
 
   // Form data handler
   const updateFormData = useCallback(
-    (field: keyof VehiculeFormData, value: string | number) => {
+    (field: keyof VehiculeFormData, value: string | number | boolean) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
     },
     []

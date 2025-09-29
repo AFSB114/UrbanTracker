@@ -21,7 +21,6 @@ public class RouteScheduleModel extends BaseEntity {
     private RouteModel route;
 
     @Column(name = "day_of_week", nullable = false)
-    @Enumerated(EnumType.STRING)
     private DayOfWeekType dayOfWeek;
 
     @Column(name = "start_time", nullable = false)

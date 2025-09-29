@@ -6,6 +6,7 @@ import com.sena.urbantracker.shared.domain.enums.EntityType;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.vehicles.application.dto.request.VehicleTypeReqDto;
 import com.sena.urbantracker.vehicles.application.dto.response.VehicleTypeResDto;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class VehicleTypeController extends BaseController<VehicleTypeReqDto, Veh
     @Override
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<VehicleTypeResDto>> create(@Valid @RequestBody VehicleTypeReqDto dto) {
+    public ResponseEntity<CrudResponseDto<VehicleTypeResDto>> create(@Valid @RequestBody VehicleTypeReqDto dto) throws BadRequestException {
         return super.create(dto);
     }
 
@@ -50,7 +51,7 @@ public class VehicleTypeController extends BaseController<VehicleTypeReqDto, Veh
     @Override
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<VehicleTypeResDto>> update(@PathVariable Long id, @Valid @RequestBody VehicleTypeReqDto dto) {
+    public ResponseEntity<CrudResponseDto<VehicleTypeResDto>> update(@PathVariable Long id, @Valid @RequestBody VehicleTypeReqDto dto) throws BadRequestException {
         return super.update(id, dto);
     }
 

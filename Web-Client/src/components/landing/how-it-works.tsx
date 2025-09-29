@@ -7,7 +7,7 @@ const steps = [
     number: "01",
     title: "Crear Ruta",
     description:
-      "Los administradores crean y configuran nuevas rutas de transporte con paradas y horarios específicos.",
+      "Los administradores crean y configuran nuevas rutas de transporte.",
   },
   {
     icon: Play,
@@ -20,7 +20,7 @@ const steps = [
     icon: Eye,
     number: "03",
     title: "Usuarios Ven Posición",
-    description: "Los pasajeros pueden ver la ubicación exacta del vehículo y tiempos de llegada estimados en el mapa.",
+    description: "Los pasajeros pueden ver la ubicación exacta del vehículo en el mapa.",
   },
 ]
 
@@ -31,7 +31,7 @@ export default function HowItWorks() {
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-zinc-100 text-balance mb-4">¿Cómo Funciona?</h2>
           <p className="text-xl text-zinc-400 text-balance max-w-2xl mx-auto">
-            Proceso simple y eficiente en tres pasos para optimizar el transporte público
+            Proceso simple y eficiente en tres pasos para optimizar el transporte urbano
           </p>
         </div>
 

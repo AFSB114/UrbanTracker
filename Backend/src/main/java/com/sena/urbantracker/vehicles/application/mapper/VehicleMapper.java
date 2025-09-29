@@ -27,8 +27,8 @@ public class VehicleMapper {
     public static VehicleDomain toEntity(VehicleReqDto dto) {
         if (dto == null) return null;
         return VehicleDomain.builder()
-                .companyId(dto.getCompanyId())
-                .vehicleTypeId(dto.getVehicleTypeId())
+                .company(null)
+                .vehicleType(null)
                 .licencePlate(dto.getLicencePlate())
                 .brand(dto.getBrand())
                 .model(dto.getModel())

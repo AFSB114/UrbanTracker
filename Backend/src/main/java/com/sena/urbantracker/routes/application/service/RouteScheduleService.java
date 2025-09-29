@@ -3,8 +3,10 @@ package com.sena.urbantracker.routes.application.service;
 import com.sena.urbantracker.routes.application.dto.request.RouteScheduleReqDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteScheduleResDto;
 import com.sena.urbantracker.routes.application.mapper.RouteScheduleMapper;
+import com.sena.urbantracker.routes.domain.entity.RouteDomain;
 import com.sena.urbantracker.routes.domain.entity.RouteScheduleDomain;
 import com.sena.urbantracker.routes.domain.repository.RouteScheduleRepository;
+import com.sena.urbantracker.routes.domain.valueobject.DayOfWeekType;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
@@ -13,8 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,6 +36,12 @@ public class RouteScheduleService implements CrudOperations<RouteScheduleReqDto,
         RouteScheduleDomain entity = RouteScheduleMapper.toEntity(request);
         RouteScheduleDomain saved = routeScheduleRepository.save(entity);
         return CrudResponseDto.success(RouteScheduleMapper.toDto(saved), "Horario de ruta creado correctamente");
+    }
+
+    public CrudResponseDto<List<RouteScheduleResDto>> createAll(List<RouteScheduleReqDto> request) {
+        List<RouteScheduleDomain> entityList = request.stream().map(RouteScheduleMapper::toEntity).toList();
+        List<RouteScheduleDomain> savedList = routeScheduleRepository.saveAll(entityList);
+        return CrudResponseDto.success(savedList.stream().map(RouteScheduleMapper::toDto).toList(), "Horario de ruta creado correctamente");
     }
 
     @Override
@@ -92,5 +101,55 @@ public class RouteScheduleService implements CrudOperations<RouteScheduleReqDto,
     @Override
     public CrudResponseDto<Boolean> existsById(Long id) {
         return CrudResponseDto.success(routeScheduleRepository.existsById(id), "Verificación de existencia completada");
+    }
+    public CrudResponseDto<List<RouteScheduleResDto>> updateAll(List<RouteScheduleReqDto> dtos, Long id) {
+        List<RouteScheduleDomain> existing = routeScheduleRepository.findByRoute_Id(id);
+
+        // Índices por día
+        Set<DayOfWeekType> dtoDays = dtos.stream()
+                .map(RouteScheduleReqDto::getDayOfWeek)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        Map<DayOfWeekType, RouteScheduleDomain> existingByDay = existing.stream()
+                .filter(e -> e.getDayOfWeek() != null)
+                .collect(Collectors.toMap(RouteScheduleDomain::getDayOfWeek, e -> e));
+
+        // 1) updated: existentes que sí vienen en dto (coincide día)
+        List<RouteScheduleDomain> updated = new ArrayList<>();
+        for (RouteScheduleReqDto dto : dtos) {
+            if (dto.getDayOfWeek() == null) continue;
+            RouteScheduleDomain match = existingByDay.get(dto.getDayOfWeek());
+            if (match != null) {
+                match.setStartTime(dto.getStartTime());
+                match.setEndTime(dto.getEndTime());
+                updated.add(match);
+            }
+        }
+
+        List<RouteScheduleDomain> missingInDto = existing.stream()
+                .filter(e -> e.getDayOfWeek() != null && !dtoDays.contains(e.getDayOfWeek()))
+                .toList();
+
+        List<RouteScheduleDomain> newInDto = dtos.stream()
+                .filter(d -> d.getDayOfWeek() != null && !existingByDay.containsKey(d.getDayOfWeek()))
+                .map(d -> {
+                    RouteScheduleDomain ne = RouteScheduleMapper.toEntity(d);
+                    RouteDomain routeRef = new RouteDomain();
+                    routeRef.setId(id);
+                    ne.setRoute(routeRef);
+                    return ne;
+                })
+                .toList();
+
+        if (!updated.isEmpty()) routeScheduleRepository.saveAll(updated);
+        if (!missingInDto.isEmpty()) routeScheduleRepository.deleteAll(missingInDto);
+        if (!newInDto.isEmpty()) routeScheduleRepository.saveAll(newInDto);
+
+        List<RouteScheduleResDto> result = routeScheduleRepository.findByRoute_Id(id).stream()
+                .map(RouteScheduleMapper::toDto)
+                .toList();
+
+        return CrudResponseDto.success(result, "Horario actualizado correctamente");
     }
 }

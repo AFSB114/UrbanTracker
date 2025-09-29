@@ -15,8 +15,6 @@ public class RouteWaypointPersistenceMapper {
                 .longitude(domain.getLongitude())
                 .type(domain.getType())
                 .destine(domain.getDestine()) // Default or handle appropriately
-                .createdAt(domain.getCreatedAt())
-                .updatedAt(domain.getUpdatedAt())
                 .build();
     }
 

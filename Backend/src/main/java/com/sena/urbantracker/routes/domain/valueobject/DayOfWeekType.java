@@ -1,11 +1,11 @@
 package com.sena.urbantracker.routes.domain.valueobject;
 
 public enum DayOfWeekType {
-    DOMINGO,
-    LUNES,
-    MARTES,
-    MIERCOLES,
-    JUEVES,
-    VIERNES,
-    SABADO
+    SUNDAY,
+    MONDAY,
+    THURSDAY,
+    WEDNESDAY,
+    TUESDAY,
+    FRIDAY,
+    SATURDAY,
 }

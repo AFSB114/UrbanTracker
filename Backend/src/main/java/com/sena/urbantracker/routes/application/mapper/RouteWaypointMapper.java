@@ -19,10 +19,10 @@ public class RouteWaypointMapper {
                 .build();
     }
 
-    public static RouteWaypointDomain toEntity(RouteWaypointReqDto dto, RouteDomain route) {
+    public static RouteWaypointDomain toEntity(RouteWaypointReqDto dto, Long id) {
         if (dto == null) return null;
         return RouteWaypointDomain.builder()
-                .route(route)
+                .route(RouteDomain.builder().id(id).build())
                 .sequence(dto.getSequence())
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())

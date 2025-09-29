@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   BarChart3,
@@ -9,7 +8,6 @@ import {
   ChevronDown,
   Clock,
   MapPin,
-  Menu,
   Route,
   Users
 } from "lucide-react";
@@ -18,7 +16,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { DashboardHeader } from "./components/DashboardHeader";
 import "../globals.css";
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 10, // 10 minutes
+      retry: 3,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 interface SubMenuItem {
   title: string;
@@ -45,12 +57,12 @@ const menuItems: MenuItem[] = [
       },
       {
         title: "Horarios de Rutas",
-        href: "/Dashboard/routeSchedule",
+        href: "/Dashboard/route-schedule",
         icon: Clock,
       },
       {
         title: "Trayectorias de Rutas",
-        href: "/Dashboard/routeTrajectory",
+        href: "/Dashboard/route-trajectory",
         icon: MapPin,
       },
     ],
@@ -114,9 +126,10 @@ export default function DashboardLayout({
   };
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 z-50 w-72 bg-zinc-950 border-r border-zinc-800 shadow-2xl">
+    <QueryClientProvider client={queryClient}>
+      <div className="min-h-screen bg-black">
+        {/* Sidebar */}
+        <div className="fixed inset-y-0 left-0 z-50 w-72 bg-zinc-950 border-r border-zinc-800 shadow-2xl">
         <div className="flex h-20 items-center px-8 border-b border-zinc-800">
           <div className="flex items-center gap-3">
             <Image
@@ -258,34 +271,14 @@ export default function DashboardLayout({
 
       {/* Main content */}
       <div className="pl-72">
-        {/* Header */}
-        <header className="h-20 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur-sm overflow-hidden">
-          <div className="flex h-20 items-center justify-between px-8">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="md:hidden text-white hover:bg-zinc-800"
-              >
-                <Menu className="h-4 w-4" />
-              </Button>
-              <div>
-                <h2 className="text-2xl font-bold text-white">
-                  Panel de Control
-                </h2>
-                <p className="text-sm text-zinc-400">
-                  Gestiona tu flota de transporte
-                </p>
-              </div>
-            </div>
-          </div>
-        </header>
+        <DashboardHeader />
 
         {/* Page content */}
         <main className="p-8 bg-zinc-900 min-h-[calc(100vh-5rem)] relative overflow-y-auto">
           {children}
         </main>
       </div>
-    </div>
+      </div>
+    </QueryClientProvider>
   );
 }

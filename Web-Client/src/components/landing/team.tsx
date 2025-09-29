@@ -5,22 +5,22 @@ const teamMembers = [
   {
     name: "Brayan Estiven Carvajal Padilla",
     role: "Desarrollador Frontend",
-    image: "/brayan-img.jpg",
+    image: "/brayan-img.webp",
   },
   {
     name: "Andrés Felipe Suaza Bustos",
     role: "Desarrollador Full Stack",
-    image: "/foto-profesional.jpg",
+    image: "/andres-img.webp",
   },
   {
     name: "Diego Fernando Cuellar Hernandez",
     role: "Desarrollador Backend",
-    image: "/diego-img.jpg",
+    image: "/diego-img.webp",
   },
   {
     name: "Carlos Javier Rodriguez Manchola",
     role: "Desarrollador Full Stack",
-    image: "/foto-profesional.jpg",
+    image: "/carlos-img.webp",
   },
 ]
 
@@ -31,7 +31,7 @@ export default function Team() {
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-zinc-100 text-balance mb-4">Nuestro Equipo</h2>
           <p className="text-xl text-zinc-400 text-balance max-w-2xl mx-auto mb-8">
-            Aprendices del Tecnólogo en ADSO del SENA comprometidos con la innovación en transporte público
+            Aprendices del Tecnólogo en Análisis y Desarrollo de Software del SENA comprometidos con la innovación en transporte urbano
           </p>
         </div>
 

@@ -33,9 +33,9 @@ public class RouteWaypointService implements CrudOperations<RouteWaypointReqDto,
             throw new EntityAlreadyExistsException("Ya existe un punto de ruta con secuencia: " + dto.getSequence() + " para la ruta: " + route.getId());
         }
 
-        RouteWaypointDomain entity = RouteWaypointMapper.toEntity(dto, route);
+        RouteWaypointDomain entity = RouteWaypointMapper.toEntity(dto, route.getId());
         RouteWaypointDomain saved = routeWaypointRepository.save(entity);
-        System.out.println("Punto de ruta creado");
+
         return CrudResponseDto.success(RouteWaypointMapper.toDto(saved), "Punto de ruta creado correctamente");
     }
 

@@ -10,6 +10,7 @@ export interface Vehicle {
     status: string;
     companyId: number;
     vehicleTypeId: number;
+    inService: boolean;
 }
 
 export interface VehiculeFormData {
@@ -22,6 +23,7 @@ export interface VehiculeFormData {
     status: string;
     companyId: number;
     vehicleTypeId: number;
+    inService: boolean;
 }
 
 
@@ -79,7 +81,7 @@ export interface UseVehiculesReturn {
   openDeleteModal: (vehicule: Vehicle) => void;
   closeModal: () => void;
   closeDeleteModal: () => void;
-  updateFormData: (field: keyof VehiculeFormData, value: string | number) => void;
+  updateFormData: (field: keyof VehiculeFormData, value: string | number | boolean) => void;
   saveVehicle: () => Promise<void>;
   confirmDeleteVehicle: () => Promise<void>;
 }

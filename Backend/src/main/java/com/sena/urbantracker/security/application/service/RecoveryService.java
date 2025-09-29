@@ -1,6 +1,9 @@
 package com.sena.urbantracker.security.application.service;
 
+import com.sena.urbantracker.security.application.dto.request.ChangePasswordDTO;
+import com.sena.urbantracker.security.application.dto.request.ForgotPassword;
 import com.sena.urbantracker.security.application.dto.request.RecoveryCodeValidationDTO;
+import com.sena.urbantracker.security.application.dto.response.ForgotPasswordResponseDTO;
 import com.sena.urbantracker.security.application.dto.response.ResponseLoginDTO;
 import com.sena.urbantracker.security.domain.entity.RecoveryRequestDomain;
 import com.sena.urbantracker.security.domain.entity.UserDomain;
@@ -11,11 +14,14 @@ import com.sena.urbantracker.users.domain.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -31,13 +37,13 @@ public class RecoveryService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public ResponseEntity<?> generateRecoveryCode(String email) {
+    public ResponseEntity<ForgotPasswordResponseDTO> generateRecoveryCode(ForgotPassword forgot) {
 
-        Optional<UserProfileDomain> userOpt = userProfileRepository.findByEmail(email);
+        Optional<UserProfileDomain> userOpt = userProfileRepository.findByEmail(forgot.getEmail());
 
         if (!userOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("El email no existe");
+                    .body(new ForgotPasswordResponseDTO(false, "El email no existe", 404));
         }
 
         UserProfileDomain userProfile = userOpt.get();
@@ -54,21 +60,28 @@ public class RecoveryService {
         RecoveryRequestDomain request = RecoveryRequestDomain.builder()
                 .code(passwordEncoder.encode(code))
                 .expirationTime(expiration)
-                .user(user) // assuming user is UserDomain, but it's UserProfileDomain
+                .user(user)
                 .build();
         recoveryRequestRepository.save(request);
 
         // 3. Enviar correo
-        emailService.emailRecoveryPassword(userProfile.getEmail(), userProfile.getFirstName(), code);
+        try {
+            emailService.emailRecoveryPassword(userProfile.getEmail(), userProfile.getFirstName(), code);
+        } catch (Exception e) {
+            recoveryRequestRepository.delete(request);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ForgotPasswordResponseDTO(false, "Error al enviar el correo: " + e.getMessage(), 500));
+        }
 
-        return ResponseEntity.ok("Se ha enviado un código de verificación al correo.");
+        return ResponseEntity.ok(new ForgotPasswordResponseDTO(true, "Codigo enviado", null));
     }
 
     public ResponseEntity<?> validateRecoveryCode(RecoveryCodeValidationDTO dto) {
         Optional<UserProfileDomain> userProfileOpt = userProfileRepository.findByEmail(dto.getEmail());
 
         if (!userProfileOpt.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email no encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ForgotPasswordResponseDTO(false, "Email no encontrado.", 404));
         }
 
         UserProfileDomain userProfile = userProfileOpt.get();
@@ -78,20 +91,23 @@ public class RecoveryService {
                 recoveryRequestRepository.findTopByUserOrderByCreatedAtDesc(user);
 
         if (!recoveryRequestOpt.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró una solicitud de recuperación.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ForgotPasswordResponseDTO(false, "No se encontró una solicitud de recuperación.", 404));
         }
 
         RecoveryRequestDomain recoveryRequest = recoveryRequestOpt.get();
 
         // Validar que el código ingresado sea correcto (comparando contra el hash)
         if (!passwordEncoder.matches(dto.getCode(), recoveryRequest.getCode())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("El código es inválido.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ForgotPasswordResponseDTO(false, "El código es inválido.", 401));
         }
 
         if (recoveryRequest.getExpirationTime().isBefore(LocalDateTime.now())) {
             // código expirado y se elimina de la db
             recoveryRequestRepository.delete(recoveryRequest);
-            return ResponseEntity.status(HttpStatus.GONE).body("El código ha expirado.");
+            return ResponseEntity.status(HttpStatus.GONE)
+                    .body(new ForgotPasswordResponseDTO(false, "El código ha expirado.", 410));
         }
 
         // eliminamos el código verificado
@@ -101,5 +117,22 @@ public class RecoveryService {
         String token = jwtService.generateToken(user);
 
         return ResponseEntity.ok(new ResponseLoginDTO(token));
+    }
+
+    @Transactional
+    public ResponseEntity<Map<String, Object>> changePassword(ChangePasswordDTO dto) {
+        Optional<UserProfileDomain> userOpt = userProfileRepository.findByEmail(dto.getEmail());
+
+        if (!userOpt.isPresent()) {
+            throw new UsernameNotFoundException("Usuario no encontrado");
+        }
+
+        UserProfileDomain userProfile = userOpt.get();
+        UserDomain user = userProfile.getUser();
+
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("success", true, "message", "Contraseña actualizada correctamente"));
     }
 }

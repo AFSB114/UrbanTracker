@@ -1,7 +1,7 @@
 package com.sena.urbantracker.security.infrastructure.controller;
 
 import com.sena.urbantracker.security.application.dto.request.RecoveryRequestReqDto;
-import com.sena.urbantracker.security.application.dto.response.RecoveryRequestResDto;
+import com.sena.urbantracker.security.application.dto.request.RecoveryRequestResDto;
 import com.sena.urbantracker.shared.infrastructure.controller.BaseController;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;

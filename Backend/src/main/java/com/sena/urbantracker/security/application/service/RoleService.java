@@ -1,7 +1,7 @@
 package com.sena.urbantracker.security.application.service;
 
 import com.sena.urbantracker.security.application.dto.request.RoleReqDto;
-import com.sena.urbantracker.security.application.dto.response.RoleResDto;
+import com.sena.urbantracker.security.application.dto.request.RoleResDto;
 import com.sena.urbantracker.security.application.mapper.RoleMapper;
 import com.sena.urbantracker.security.domain.entity.RoleDomain;
 import com.sena.urbantracker.security.domain.repository.RoleRepository;

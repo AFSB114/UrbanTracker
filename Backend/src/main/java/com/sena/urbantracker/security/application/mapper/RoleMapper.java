@@ -1,7 +1,7 @@
 package com.sena.urbantracker.security.application.mapper;
 
 import com.sena.urbantracker.security.application.dto.request.RoleReqDto;
-import com.sena.urbantracker.security.application.dto.response.RoleResDto;
+import com.sena.urbantracker.security.application.dto.request.RoleResDto;
 import com.sena.urbantracker.security.domain.entity.RoleDomain;
 
 public class RoleMapper {
