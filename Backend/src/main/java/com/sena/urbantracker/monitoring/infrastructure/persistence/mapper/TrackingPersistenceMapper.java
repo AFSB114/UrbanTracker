@@ -2,6 +2,7 @@ package com.sena.urbantracker.monitoring.infrastructure.persistence.mapper;
 
 import com.sena.urbantracker.monitoring.domain.entity.TrackingDomain;
 import com.sena.urbantracker.monitoring.infrastructure.persistence.model.TrackingModel;
+import com.sena.urbantracker.vehicles.infrastructure.persistence.model.VehicleModel;
 
 public class TrackingPersistenceMapper {
 
@@ -9,14 +10,14 @@ public class TrackingPersistenceMapper {
         if (domain == null) return null;
         return TrackingModel.builder()
                 .id(domain.getId())
-                .vehicleId(domain.getVehicleId()) // Assuming vehicle is stored as ID
+                .vehicle(VehicleModel.builder().id(domain.getVehicleId()).build()) // Assuming vehicle is stored as ID
                 .timestamp(domain.getTimestamp())
                 .latitude(domain.getLatitude())
                 .longitude(domain.getLongitude())
                 .dataSource(domain.getDataSource())
-                .active(domain.getActive())
-                .createdAt(domain.getCreatedAt())
-                .updatedAt(domain.getUpdatedAt())
+//                .active(domain.getActive())
+//                .createdAt(domain.getCreatedAt())
+//                .updatedAt(domain.getUpdatedAt())
                 .build();
     }
 
@@ -29,9 +30,9 @@ public class TrackingPersistenceMapper {
                 .latitude(model.getLatitude())
                 .longitude(model.getLongitude())
                 .dataSource(model.getDataSource())
-                .active(model.getActive())
-                .createdAt(model.getCreatedAt())
-                .updatedAt(model.getUpdatedAt())
+//                .active(model.getActive())
+//                .createdAt(model.getCreatedAt())
+//                .updatedAt(model.getUpdatedAt())
                 .build();
     }
 }

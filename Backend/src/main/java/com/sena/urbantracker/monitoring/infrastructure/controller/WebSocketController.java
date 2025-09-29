@@ -1,6 +1,6 @@
 package com.sena.urbantracker.monitoring.infrastructure.controller;
 
-import com.sena.urbantracker.monitoring.application.dto.CoordinatesResponseDto;
+import com.sena.urbantracker.monitoring.application.dto.response.CoordinatesResponseDto;
 import com.sena.urbantracker.monitoring.application.dto.RouteStatusDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;

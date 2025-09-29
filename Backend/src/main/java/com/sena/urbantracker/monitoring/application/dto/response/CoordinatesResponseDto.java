@@ -1,4 +1,4 @@
-package com.sena.urbantracker.monitoring.application.dto;
+package com.sena.urbantracker.monitoring.application.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

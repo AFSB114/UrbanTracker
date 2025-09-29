@@ -1,7 +1,7 @@
 package com.sena.urbantracker.monitoring.infrastructure.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sena.urbantracker.monitoring.application.dto.CoordinatesResponseDto;
+import com.sena.urbantracker.monitoring.application.dto.response.CoordinatesResponseDto;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
