@@ -73,7 +73,7 @@ const menuItems: MenuItem[] = [
       },
       {
         title: "Asignación de Vehículos",
-        href: "/Dashboard/vehicleAssignments",
+        href: "/Dashboard/vehicleAssigments",
         icon: Car,
       },
     ],

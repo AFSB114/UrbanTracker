@@ -21,11 +21,9 @@ export default function EditRoutePage() {
   const handleSave = async (data: CompleteRouteData) => {
     try {
       await updateRoute(parseInt(id as string), data);
-      alert('Ruta actualizada correctamente');
-      router.push("/Dashboard/routes");
     } catch (err) {
       console.error('Error creando ruta', err);
-      alert('Error al crear la ruta');
+      alert('Error al actualizar la ruta');
     }
   };
 
@@ -33,6 +31,7 @@ export default function EditRoutePage() {
     <div className="min-h-screen bg-black p-4">
       <RouteFormManager
         onSave={handleSave}
+        onSuccess={() => router.push("/Dashboard/routes")}
         mode="edit"
         id={id as string}
       />

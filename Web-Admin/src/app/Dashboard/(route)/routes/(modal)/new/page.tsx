@@ -19,8 +19,6 @@ export default function NewRoutePage() {
   const handleSave = async (data: CompleteRouteData) => {
     try {
       await createRouteWithImages(data);
-      alert('Ruta creada correctamente');
-      router.push("/Dashboard/routes");
     } catch (err) {
       console.error('Error creando ruta', err);
       alert('Error al crear la ruta');
@@ -31,6 +29,7 @@ export default function NewRoutePage() {
     <div className="min-h-screen bg-black p-4">
       <RouteFormManager
         onSave={handleSave}
+        onSuccess={() => router.push("/Dashboard/routes")}
         mode="create"
       />
     </div>

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Upload, MapPin, Eye, Edit } from 'lucide-react';
+import { Save, Upload, MapPin, Eye, Edit, CheckCircle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { RouteFormProvider, useRouteForm } from '../context/RouteFormContext';
 import { RouteMapEditorProvider } from '../context/RouteMapEditorContext';
 import { CompleteRouteData, RouteResponse } from '../types/routeTypes';
@@ -12,6 +13,7 @@ import { get } from 'http';
 
 interface RouteFormManagerProps {
   onSave: (data: CompleteRouteData) => Promise<void>;
+  onSuccess?: () => void;
   editingRoute?: RouteResponse | null;
   mode?: 'create' | 'edit' | 'view';
   id?: string;
@@ -19,6 +21,7 @@ interface RouteFormManagerProps {
 
 const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
   onSave,
+  onSuccess,
   editingRoute,
   mode = 'create',
   id = ''
@@ -39,6 +42,7 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => { 
     if (id) {
@@ -77,9 +81,7 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
     setErrors([]);
     try {
       await onSave(completeData);
-      if (mode === 'create') {
-        resetForm();
-      }
+      setShowSuccessModal(true);
     } catch (error) {
       console.error('Error saving route:', error);
       setErrors(['Error al guardar la ruta']);
@@ -385,6 +387,32 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Success Modal */}
+      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <DialogContent className="bg-zinc-900 border-zinc-800">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-green-400">
+              <CheckCircle className="h-5 w-5" />
+              ¡Éxito!
+            </DialogTitle>
+            <DialogDescription className="text-zinc-300">
+              La ruta ha sido {mode === 'create' ? 'creada' : 'actualizada'} exitosamente.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end">
+            <Button
+              onClick={() => {
+                setShowSuccessModal(false);
+                onSuccess?.();
+              }}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              Aceptar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -95,38 +95,7 @@ export default function VehicleAssigmentsPage() {
       </header>
 
       {/* Statistics */}
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-white">
-            Estadísticas
-          </h2>
-          <Button
-            onClick={openCreateModal}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white transition-all duration-300 hover:scale-105"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Nueva asignación
-          </Button>
-        </div>
-        <StatisticsCards statistics={statistics} />
-      </div>
-
-      {/* Filters */}
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-white">
-            Filtros
-          </h2>
-          <Button
-            onClick={openCreateModal}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white transition-all duration-300 hover:scale-105"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Nueva asignación
-          </Button>
-        </div>
-        <StatisticsCards statistics={statistics} />
-      </div>
+      <StatisticsCards statistics={statistics} />
 
       {/* Vehicle list */}
       <section className="space-y-6">
@@ -134,8 +103,8 @@ export default function VehicleAssigmentsPage() {
           <div className="text-center py-12">
             <div className="text-zinc-400 text-lg">
               {searchTerm
-                ? "No vehicles found with the applied filters"
-                : "No vehicles registered"}
+                ? "No se encontraron vehículos con los filtros aplicados"
+                : "No hay vehiculos asignados aún"}
             </div>
             {!searchTerm && (
               <Button

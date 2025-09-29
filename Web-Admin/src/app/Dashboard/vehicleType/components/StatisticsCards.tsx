@@ -20,7 +20,7 @@ const StatisticsCards: React.FC<StatisticsCardsProps> = ({ statistics }) => {
   ];
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid grid-cols-2 gap-6 max-w-md mx-auto">
       {cards.map((card) => (
         <Card
           key={card.title}
