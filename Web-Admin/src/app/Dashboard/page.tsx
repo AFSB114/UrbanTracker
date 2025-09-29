@@ -80,57 +80,57 @@ function DashboardPage() {
           role="region"
           aria-labelledby="drivers-title"
         >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle id="drivers-title" className="text-sm font-medium text-zinc-400">
-                Total Conductores
-              </CardTitle>
-              <Users className="h-4 w-4 text-emerald-500 group-hover:scale-110 transition-transform" aria-hidden="true" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white" aria-label={`${dashboardData?.stats.totalDrivers || 0} conductores totales`}>
-                {dashboardData?.stats.totalDrivers || 0}
-              </div>
-              <p className="text-xs text-zinc-500">+{Math.floor((dashboardData?.stats.totalDrivers || 0) * 0.1)} nuevos este mes</p>
-            </CardContent>
-          </Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle id="drivers-title" className="text-sm font-medium text-zinc-400">
+              Total Conductores
+            </CardTitle>
+            <Users className="h-4 w-4 text-emerald-500 group-hover:scale-110 transition-transform" aria-hidden="true" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-white" aria-label={`${dashboardData?.stats.totalDrivers || 0} conductores totales`}>
+              {dashboardData?.stats.totalDrivers || 0}
+            </div>
+            <p className="text-xs text-zinc-500">+{Math.floor((dashboardData?.stats.totalDrivers || 0) * 0.1)} nuevos este mes</p>
+          </CardContent>
+        </Card>
 
-         <Card
-           className="bg-zinc-900 border-zinc-800 shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 hover:scale-105 transform hover:bg-zinc-800 group"
-           role="region"
-           aria-labelledby="vehicles-title"
-         >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle id="vehicles-title" className="text-sm font-medium text-zinc-400">
-                Vehículos Activos
-              </CardTitle>
-              <Car className="h-4 w-4 text-blue-500 group-hover:scale-110 transition-transform" aria-hidden="true" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white" aria-label={`${dashboardData?.stats.activeVehicles || 0} vehículos activos`}>
-                {dashboardData?.stats.activeVehicles || 0}
-              </div>
-              <p className="text-xs text-zinc-500">{dashboardData?.stats.totalVehicles ? Math.round((dashboardData.stats.activeVehicles / dashboardData.stats.totalVehicles) * 100) : 0}% de la flota operativa</p>
-            </CardContent>
-          </Card>
+        <Card
+          className="bg-zinc-900 border-zinc-800 shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 hover:scale-105 transform hover:bg-zinc-800 group"
+          role="region"
+          aria-labelledby="vehicles-title"
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle id="vehicles-title" className="text-sm font-medium text-zinc-400">
+              Vehículos Activos
+            </CardTitle>
+            <Car className="h-4 w-4 text-blue-500 group-hover:scale-110 transition-transform" aria-hidden="true" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-white" aria-label={`${dashboardData?.stats.activeVehicles || 0} vehículos activos`}>
+              {dashboardData?.stats.activeVehicles || 0}
+            </div>
+            <p className="text-xs text-zinc-500">{dashboardData?.stats.totalVehicles ? Math.round((dashboardData.stats.activeVehicles / dashboardData.stats.totalVehicles) * 100) : 0}% de la flota operativa</p>
+          </CardContent>
+        </Card>
 
-          <Card
-            className="bg-zinc-900 border-zinc-800 shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:scale-105 transform hover:bg-zinc-800 group"
-            role="region"
-            aria-labelledby="companies-title"
-          >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle id="companies-title" className="text-sm font-medium text-zinc-400">
-                Total Empresas
-              </CardTitle>
-              <Building2 className="h-4 w-4 text-purple-500 group-hover:scale-110 transition-transform" aria-hidden="true" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white" aria-label={`${dashboardData?.stats.totalCompanies || 0} empresas totales`}>
-                {dashboardData?.stats.totalCompanies || 0}
-              </div>
-              <p className="text-xs text-zinc-500">Empresas registradas</p>
-            </CardContent>
-          </Card>
+        <Card
+          className="bg-zinc-900 border-zinc-800 shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:scale-105 transform hover:bg-zinc-800 group"
+          role="region"
+          aria-labelledby="companies-title"
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle id="companies-title" className="text-sm font-medium text-zinc-400">
+              Total Empresas
+            </CardTitle>
+            <Building2 className="h-4 w-4 text-purple-500 group-hover:scale-110 transition-transform" aria-hidden="true" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-white" aria-label={`${dashboardData?.stats.totalCompanies || 0} empresas totales`}>
+              {dashboardData?.stats.totalCompanies || 0}
+            </div>
+            <p className="text-xs text-zinc-500">Empresas registradas</p>
+          </CardContent>
+        </Card>
       </div>
 
 

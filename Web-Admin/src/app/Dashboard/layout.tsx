@@ -62,13 +62,13 @@ const menuItems: MenuItem[] = [
     icon: Car,
     subItems: [
       {
-        title: "Vehículos",
-        href: "/Dashboard/vehicles",
+        title: "Tipos de Vehículos",
+        href: "/Dashboard/vehicleType",
         icon: Car,
       },
       {
-        title: "Tipos de Vehículos",
-        href: "/Dashboard/vehicleType",
+        title: "Vehículos",
+        href: "/Dashboard/vehicles",
         icon: Car,
       },
       {
@@ -273,7 +273,7 @@ export default function DashboardLayout({
           <DashboardHeader />
 
           {/* Page content */}
-          <main className="p-8 bg-zinc-900 min-h-[calc(100vh-5rem)] relative overflow-y-auto">
+          <main className="p-8 bg-zinc-900">
             {children}
           </main>
         </div>
