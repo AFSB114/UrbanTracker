@@ -22,19 +22,14 @@ export function StatisticsCard({ statistics }: StatisticsCardProps) {
             value: statistics.inactiveCompanies,
             description: "Agregados recientemente",
         },
-        {
-            title: "Empresas Nuevos este mes",
-            value: statistics.newThisMonth,
-            description: "Agregados recientemente",
-        },
     ];
 
     return (
-        <div className="grid gap-6 md:grid-cols-4">
+        <div className="flex justify-center gap-6 flex-wrap">
             {cards.map((card) => (
                 <Card
                     key={card.title}
-                    className="bg-zinc-900 border-zinc-800 hover:bg-zinc-800 transition-all duration-300 hover:scale-105"
+                    className="flex-1 bg-zinc-900 border-zinc-800 hover:bg-zinc-800 transition-all duration-300 hover:scale-105"
                 >
                     <CardContent>
                         <div className="text-2xl font-bold text-white">{card.value}</div>
