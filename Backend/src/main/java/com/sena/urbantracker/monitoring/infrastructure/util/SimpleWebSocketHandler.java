@@ -1,11 +1,14 @@
 package com.sena.urbantracker.monitoring.infrastructure.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sena.urbantracker.monitoring.application.dto.CoordinatesResponseDto;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.math.BigDecimal;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -14,6 +17,8 @@ public class SimpleWebSocketHandler extends TextWebSocketHandler {
 
     // Lista de sesiones conectadas
     private final Set<WebSocketSession> sessions = ConcurrentHashMap.newKeySet();
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     // Cuando alguien se conecta
     @Override
@@ -28,11 +33,12 @@ public class SimpleWebSocketHandler extends TextWebSocketHandler {
         String msg = message.getPayload();
         System.out.println("Mensaje recibido: " + msg);
 
-        // Echo: devolver el mismo mensaje
-        session.sendMessage(new TextMessage("Echo: " + msg));
+        // Crear coordenadas fijas
+        CoordinatesResponseDto coordinates = new CoordinatesResponseDto(new BigDecimal("-74.08175"), new BigDecimal("4.60971"));
+        String json = objectMapper.writeValueAsString(coordinates);
 
-        // O broadcast: enviar a todos
-        // broadcastMessage("Broadcast: " + msg);
+        // Enviar coordenadas a todos los clientes conectados
+        broadcastMessage(json);
     }
 
     // Cuando alguien se desconecta
