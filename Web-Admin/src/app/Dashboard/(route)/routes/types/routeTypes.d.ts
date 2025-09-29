@@ -35,6 +35,8 @@ export interface RouteResponse {
   description?: string;
   totalDistance: number;
   waypoints: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface RouteDetailsResponse {

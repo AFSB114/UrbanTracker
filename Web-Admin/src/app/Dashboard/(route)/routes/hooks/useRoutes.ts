@@ -78,7 +78,13 @@ export const useRoutes = (): UseRoutesReturn => {
     const totalRoutes = routes.length;
     const activeRoutes = routes.filter(route => route.active).length;
     const inactiveRoutes = totalRoutes - activeRoutes;
-    const newThisMonth = Math.floor(totalRoutes * 0.3); // Placeholder calculation
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const newThisMonth = routes.filter(route => {
+      const routeDate = new Date(route.createdAt);
+      return routeDate.getFullYear() === currentYear && routeDate.getMonth() === currentMonth;
+    }).length;
 
     return {
       totalRoutes,

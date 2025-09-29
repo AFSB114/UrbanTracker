@@ -1,0 +1,22 @@
+package com.sena.urbantracker.monitoring.application.mapper;
+
+import com.sena.urbantracker.monitoring.application.dto.request.TrackingReqDto;
+import com.sena.urbantracker.monitoring.application.dto.response.TrackingResDto;
+import com.sena.urbantracker.monitoring.domain.entity.TrackingDomain;
+
+public class TrackingMapper {
+
+    public static TrackingResDto toDto(TrackingDomain entity) {
+        if (entity == null) return null;
+        return TrackingResDto.builder()
+                // Map fields here
+                .build();
+    }
+
+    public static TrackingDomain toEntity(TrackingReqDto dto) {
+        if (dto == null) return null;
+        return TrackingDomain.builder()
+                // Map fields here
+                .build();
+    }
+}

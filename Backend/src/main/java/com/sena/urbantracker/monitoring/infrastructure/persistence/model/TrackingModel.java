@@ -1,4 +1,4 @@
-package com.sena.urbantracker.monitoring.domain.entity;
+package com.sena.urbantracker.monitoring.infrastructure.persistence.model;
 
 
 import com.sena.urbantracker.monitoring.domain.valueobject.DataSourceType;
@@ -18,7 +18,7 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @Data
 @Builder
-public class Tracking {
+public class TrackingModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
