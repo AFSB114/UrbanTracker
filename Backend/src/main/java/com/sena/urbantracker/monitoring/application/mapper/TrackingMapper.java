@@ -3,6 +3,7 @@ package com.sena.urbantracker.monitoring.application.mapper;
 import com.sena.urbantracker.monitoring.application.dto.request.TrackingReqDto;
 import com.sena.urbantracker.monitoring.application.dto.response.TrackingResDto;
 import com.sena.urbantracker.monitoring.domain.entity.TrackingDomain;
+import lombok.Builder;
 
 public class TrackingMapper {
 

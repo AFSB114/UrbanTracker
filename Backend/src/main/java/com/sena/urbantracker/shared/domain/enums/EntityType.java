@@ -17,7 +17,8 @@ public enum EntityType {
     USER("User", "users"),
     ADMIN("Admin", "admins"),
     ROLE("Role", "roles"),
-    RECOVERY_REQUEST("Recovery Request", "recoveryRequests");
+    RECOVERY_REQUEST("Recovery Request", "recoveryRequests"),
+    TRACKING("Tranking","Trankings");
 
     private final String displayName;
     private final String pluralName;
