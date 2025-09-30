@@ -41,6 +41,5 @@ public class TrackingModel {
     private BigDecimal  longitude;
 
     @Column(name = "data_source", length = 20)
-    @Enumerated(EnumType.STRING)
     private DataSourceType dataSource;
 }
