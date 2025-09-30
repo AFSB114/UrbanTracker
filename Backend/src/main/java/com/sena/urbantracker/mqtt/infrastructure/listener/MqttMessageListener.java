@@ -3,6 +3,7 @@ package com.sena.urbantracker.mqtt.infrastructure.listener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sena.urbantracker.monitoring.application.dto.request.TrackingReqDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.annotation.ServiceActivator;
@@ -23,26 +24,22 @@ public class MqttMessageListener {
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public void handleIncomingMessage(Message<?> message) throws JsonProcessingException {
         String topic = (String) message.getHeaders().get("mqtt_receivedTopic");
-        Object rawPayload = message.getPayload();
-        String payload;
+        String payload = message.getPayload().toString();
 
-        if (rawPayload instanceof byte[]) {
-            payload = new String((byte[]) rawPayload);
-        } else {
-            payload = rawPayload.toString();
-        }
+
 
         log.info("📩 MQTT recibido | Topic: {} | Payload: {}", topic, payload);
 
         if (topic.startsWith("routes/")) {
             String[] parts = topic.split("/");
-            String routeNumber = parts[1]; // ejemplo: routes/10/telemetry
-            log.info("➡️ Mensaje pertenece a la ruta número {}", routeNumber);
+            String routeNumber = parts[1];
 
-            // Enviar el mensaje de telemetría al topic WebSocket correspondiente
-            log.info("📤 Enviando a WebSocket /topic/route/{}/telemetry: {}", routeNumber, payload);
-            JsonNode jsonNode = objectMapper.readTree(payload);
-            messagingTemplate.convertAndSend("/topic/route/" + routeNumber + "/telemetry", jsonNode);
+            try {
+                TrackingReqDto telemetry = objectMapper.readValue(payload, TrackingReqDto.class);
+                messagingTemplate.convertAndSend("/topic/route/" + routeNumber + "/telemetry", telemetry);
+            } catch (Exception e) {
+                log.error("Error parseando payload MQTT", e);
+            }
         }
     }
 }
