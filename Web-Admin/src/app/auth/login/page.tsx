@@ -2,49 +2,15 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
+import { useLogin } from "./hooks/useLogin"
 
 export default function LoginPage() {
-    const [userName, setUserName] = useState("")
-    const [password, setPassword] = useState("")
-    const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState("")
-    const router = useRouter()
-
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setIsLoading(true)
-        setError("")
-
-        try {
-            const response = await fetch("http://localhost:8080/api/v1/public/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ userName, password }),
-
-            })
-
-            if (response.ok) {
-                const data = await response.json()
-                localStorage.setItem("token", data.token)
-                router.push("/Dashboard")
-            } else {
-                setError("Credenciales inválidas")
-            }
-        } catch (error) {
-            setError("Error al iniciar sesión")
-        }
-
-        setIsLoading(false)
-    }
+    const { userName, setUserName, password, setPassword, isLoading, error, handleLogin, router } = useLogin()
 
     return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4">

@@ -1,8 +1,6 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -10,46 +8,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ArrowLeft } from "lucide-react"
 import Image from "next/image"
+import { useForgotPassword } from "./hooks/useForgotPassword"
 
 export default function ForgotPasswordPage() {
-    const [email, setEmail] = useState("")
-    const [isLoading, setIsLoading] = useState(false)
-    const [isEmailSent, setIsEmailSent] = useState(false)
-    const [errorMessage, setErrorMessage] = useState("")
-    const router = useRouter()
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setIsLoading(true)
-        setErrorMessage("")
-
-        try {
-            const response = await fetch("http://localhost:8080/api/v1/public/auth/forgot-password", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email }),
-            })
-
-            const data = await response.json()
-
-            if (data.success) {
-                setIsEmailSent(true)
-            } else {
-                setErrorMessage(data.message)
-            }
-        } catch (error) {
-            console.error("Error sending reset email:", error)
-            setErrorMessage("Error al conectar con el servidor")
-        }
-
-        setIsLoading(false)
-    }
-
-    const handleContinue = () => {
-        router.push(`/verify-otp?email=${encodeURIComponent(email)}`)
-    }
+    const { email, setEmail, isLoading, isEmailSent, errorMessage, handleSubmit, handleContinue, handleResend, router } = useForgotPassword()
 
     return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -146,10 +108,7 @@ export default function ForgotPasswordPage() {
                                 </Button>
                                 <div className="text-center">
                                     <button
-                                        onClick={() => {
-                                            setIsEmailSent(false)
-                                            setErrorMessage("")
-                                        }}
+                                        onClick={handleResend}
                                         className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
                                     >
                                         ¿No recibiste el código? Reenviar

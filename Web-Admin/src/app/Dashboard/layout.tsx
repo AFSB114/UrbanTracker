@@ -93,8 +93,8 @@ const menuItems: MenuItem[] = [
         icon: Clock,
       },
       {
-        title: "Trayectorias de Rutas",
-        href: "/Dashboard/route-trajectory",
+        title: "Asignación de Rutas",
+        href: "/Dashboard/route-assign",
         icon: MapPin,
       },
     ],

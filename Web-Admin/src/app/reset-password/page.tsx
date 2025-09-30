@@ -1,72 +1,30 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Eye, EyeOff } from "lucide-react"
+import { useResetPassword } from "./hooks/useResetPassword"
 
 export default function ResetPasswordPage() {
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [successMessage, setSuccessMessage] = useState("")
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const email = searchParams.get("email") || ""
-  const token = searchParams.get("token") || ""
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-
-    if (password.length < 8) {
-      setError("La contraseña debe tener al menos 8 caracteres")
-      return
-    }
-
-    if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden")
-      return
-    }
-
-    setIsLoading(true)
-    setError("")
-    setSuccessMessage("")
-
-    try {
-      const response = await fetch("http://localhost:8080/api/v1/public/auth/change-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({ email, newPassword: password }),
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        setSuccessMessage(data.message || "Contraseña actualizada correctamente")
-        setTimeout(() => {
-          router.push("/")
-        }, 3000)
-      } else {
-        setError(data.message || "Error al actualizar la contraseña")
-      }
-
-    } catch (error) {
-      setError("Error al conectar con el servidor")
-    }
-
-    setIsLoading(false)
-  }
+  const {
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    showPassword,
+    setShowPassword,
+    showConfirmPassword,
+    setShowConfirmPassword,
+    isLoading,
+    error,
+    successMessage,
+    email,
+    handleSubmit,
+    router,
+  } = useResetPassword()
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">

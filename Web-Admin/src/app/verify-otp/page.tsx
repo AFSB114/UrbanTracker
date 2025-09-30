@@ -1,80 +1,12 @@
 "use client"
-import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { OTPInput } from "@/components/otp-input"
 import { ArrowLeft } from "lucide-react"
+import { useVerifyOtp } from "./hooks/useVerifyOtp"
 
 export default function VerifyOTPPage() {
-    const [otp, setOtp] = useState("")
-    const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState("")
-    const router = useRouter()
-    const searchParams = useSearchParams()
-    const email = searchParams.get("email") || ""
-    // Removed errorMessage state, using error for all errors
-
-    const handleOTPComplete = (otpValue: string) => {
-        setOtp(otpValue)
-    }
-
-    const handleVerify = async () => {
-        if (otp.length !== 6) {
-            setError("Por favor ingresa el código completo")
-            return
-        }
-
-        setIsLoading(true)
-        setError("")
-        try {
-            const response = await fetch("http://localhost:8080/api/v1/public/auth/validate-code", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, code: otp }),
-            })
-
-            const data = await response.json()
-            if (data.token) {
-                router.push(`/reset-password?token=${data.token}&email=${encodeURIComponent(email)}`)
-            } else {
-                setError(data.message || "Error al validar el código")
-            }
-
-        } catch (error) {
-            console.error("Error sending reset email:", error)
-            setError("Error al conectar con el servidor")
-        }
-
-        setIsLoading(false)
-    }
-
-    const [isEmailSent, setIsEmailSent] = useState(false)
-
-
-    const handleResendCode = async () => {
-        try {
-            const response = await fetch("http://localhost:8080/api/v1/public/auth/forgot-password", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email }),
-            })
-
-            const data = await response.json()
-
-            if (data.success) {
-                setIsEmailSent(true)
-            } else {
-                setError(data.message)
-            }
-        } catch (error) {
-            setError("Error al conectar con el servidor")
-        }
-    }
+    const { otp, isLoading, error, email, handleOTPComplete, handleVerify, handleResendCode, router } = useVerifyOtp()
 
     return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
