@@ -1,4 +1,6 @@
-//la dirección ip es la de uno
-const API_BASE_URL = "http://172.30.7.87:8085/api/v1";
+// Este archivo está deprecated. Usar @Config/api en su lugar.
+// Manteniendo para compatibilidad hacia atrás durante la transición.
 
-export const LOGIN_ENDPOINT = `${API_BASE_URL}/public/auth/login`;
+import { API_ENDPOINTS } from './api';
+
+export const LOGIN_ENDPOINT = API_ENDPOINTS.AUTH.LOGIN;

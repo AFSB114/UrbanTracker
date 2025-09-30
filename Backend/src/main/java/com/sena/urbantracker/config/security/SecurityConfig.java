@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/v1/public/**",
+                                "/api/mqtt/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
@@ -49,7 +50,8 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/ws/**",
                                 "/topic/**",
-                                "/app/**"
+                                "/app/**",
+                                "/ws/**"
                         ).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session

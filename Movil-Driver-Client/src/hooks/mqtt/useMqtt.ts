@@ -36,7 +36,7 @@ export const useMqttPublish = () => {
 
       // Convertir a JSON
       const message = typeof data === 'string' ? data : JSON.stringify(data);
-      
+
       // Validar que el JSON sea válido
       try {
         JSON.parse(message);
@@ -54,56 +54,14 @@ export const useMqttPublish = () => {
     }
   };
 
-  const publishLocation = (location: { latitude: number; longitude: number; timestamp: number }) => {
-    const message = {
-      lat: location.latitude,
-      lon: location.longitude,
-      timestamp: location.timestamp,
-    };
-    const success = publishSafely('user/123/location', message);
-    if (success) {
-      console.log('📍 Ubicación publicada exitosamente');
-    }
-    return success;
-  };
-
-  const publishRecorridoStatus = (isActive: boolean, startTime?: string, endTime?: string) => {
-    const message = {
-      type: 'recorrido_status',
-      isActive,
-      startTime,
-      endTime,
-      timestamp: new Date().toISOString(),
-    };
-    const success = publishSafely('driver/recorrido', message);
-    if (success) {
-      console.log('📊 Estado de recorrido publicado exitosamente');
-    }
-    return success;
-  };
-
-  const publishConnectionStatus = (clientId: string) => {
-    const message = {
-      type: 'connection_status',
-      status: 'connected',
-      timestamp: new Date().toISOString(),
-      clientId,
-    };
-    const success = publishSafely('driver/status', message);
-    if (success) {
-      console.log('🔗 Estado de conexión publicado exitosamente');
-    }
-    return success;
-  };
+  // Nota: Las funciones específicas de publicación ahora están en los servicios correspondientes
+  // Los componentes deben usar directamente los servicios en lugar de estas funciones del hook
 
   return {
     client,
     connectionStatus,
     publish,
     publishSafely,
-    publishLocation,
-    publishRecorridoStatus,
-    publishConnectionStatus,
   };
 };
 

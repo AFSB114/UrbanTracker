@@ -1,37 +1,37 @@
 // Configuración MQTT
 export const MQTT_CONFIG = {
   // Broker configuration
-  BROKER_URL: 'ws://172.30.7.183:9001',
-  BROKER_HOST: '172.30.7.183',
+  BROKER_URL: 'ws://192.168.0.106:9001',
+  BROKER_HOST: '192.168.0.106',
   BROKER_PORT: 9001,
-  
+
   // Client configuration
   CLIENT_ID_PREFIX: 'mobile_driver_',
   KEEPALIVE: 60,
   CONNECT_TIMEOUT: 30000,
   RECONNECT_PERIOD: 1000,
-  
+
   // QoS levels - Usar QoS 0 para evitar desconexiones
   QOS: {
-    AT_MOST_ONCE: 0,    // Fire and forget - Más estable
-    AT_LEAST_ONCE: 1,   // Acknowledged delivery
-    EXACTLY_ONCE: 2,    // Assured delivery
+    AT_MOST_ONCE: 0, // Fire and forget - Más estable
+    AT_LEAST_ONCE: 1, // Acknowledged delivery
+    EXACTLY_ONCE: 2, // Assured delivery
   },
-  
+
   // Topics
   TOPICS: {
     DRIVER_STATUS: 'driver/status',
     DRIVER_RECORRIDO: 'driver/recorrido',
-    USER_LOCATION: 'user/123/location',
+    USER_LOCATION: 'routes/123/telemetry',
   },
-  
+
   // Message types
   MESSAGE_TYPES: {
     CONNECTION_STATUS: 'connection_status',
     RECORRIDO_STATUS: 'recorrido_status',
     LOCATION_UPDATE: 'location_update',
   },
-  
+
   // Connection status
   CONNECTION_STATUS: {
     CONNECTED: 'Conectado',
@@ -39,14 +39,14 @@ export const MQTT_CONFIG = {
     RECONNECTING: 'Reconectando',
     ERROR: 'Error de conexión',
   },
-  
+
   // Timeouts - Aumentados para mayor estabilidad
   TIMEOUTS: {
-    CONNECTION: 20000,    // 20 segundos para conexión inicial
-    PUBLISH_DELAY: 3000,  // 3 segundos antes de publicar después de conectar
+    CONNECTION: 20000, // 20 segundos para conexión inicial
+    PUBLISH_DELAY: 3000, // 3 segundos antes de publicar después de conectar
     PUBLISH_INTERVAL: 1000, // 1 segundo entre publicaciones
   },
-  
+
   // Configuraciones de estabilidad
   STABILITY: {
     MAX_RECONNECT_ATTEMPTS: 5,
@@ -63,7 +63,7 @@ export const generateClientId = (): string => {
 };
 
 // Función para validar topic
-export const isValidTopic = (topic: string): boolean => {
+export const isValidTopic = (topic: string): boolean | string => {
   return topic && typeof topic === 'string' && topic.length > 0;
 };
 

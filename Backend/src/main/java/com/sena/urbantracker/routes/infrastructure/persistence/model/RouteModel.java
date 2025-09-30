@@ -33,4 +33,7 @@ public class RouteModel extends BaseEntity {
 
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
     private List<RouteWaypointModel> routeWaypoints;
+
+    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
+    private List<RouteScheduleModel> routeSchedules;
 }
