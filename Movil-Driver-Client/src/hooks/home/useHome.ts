@@ -1,8 +1,11 @@
 import { useAuth } from '@/hooks/auth';
 import { useLocation } from '@/hooks/location';
-import { useMqttPublish } from '@/hooks/mqtt/useMqtt';
+import { useMqtt, useMqttPublish } from '@/hooks/mqtt/useMqtt';
 import { useTracking } from '@/hooks/tracking';
 import { AuthService } from '@/services/api/authService';
+import { LocationService } from '@/services/api/locationService';
+import { TrackingService } from '@/services/api/trackingService';
+import { ReportService } from '@/services/api/reportService';
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 
@@ -10,7 +13,8 @@ export const useHome = () => {
   const { logout } = useAuth();
   const { isRecorridoActive, startTime, endTime, startRecorrido, endRecorrido } = useTracking();
   const { location, isTracking, toggleTracking } = useLocation();
-  const { connectionStatus, publishLocation, publishRecorridoStatus } = useMqttPublish();
+  const { connectionStatus } = useMqtt();
+  const { publishSafely } = useMqttPublish();
 
   // Estados para la modal
   const [modalVisible, setModalVisible] = useState(false);
@@ -80,24 +84,27 @@ export const useHome = () => {
     }
   };
 
-  const handleEnviarReporte = () => {
+  const handleEnviarReporte = async () => {
     if (!asunto || !description) {
       Alert.alert('Campos vacíos', 'Por favor, completa todos los campos para enviar el reporte.');
       return;
     }
-    console.log('Reporte Enviado:', { asunto, descripcion: description });
 
-    setAsunto('');
-    setDescription('');
-    setModalVisible(false);
-
-    Alert.alert('Reporte Enviado', 'Tu novedad ha sido enviada con éxito.');
+    const result = await ReportService.sendReport({ asunto, descripcion: description });
+    if (result.success) {
+      setAsunto('');
+      setDescription('');
+      setModalVisible(false);
+      Alert.alert('Reporte Enviado', 'Tu novedad ha sido enviada con éxito.');
+    } else {
+      Alert.alert('Error', result.error || 'No se pudo enviar el reporte.');
+    }
   };
 
-  // Publicación de ubicación vía MQTT
+  // Publicación de ubicación vía servicios
   useEffect(() => {
     if (location && connectionStatus === 'Conectado' && isRecorridoActive) {
-      const success = publishLocation(location);
+      const success = LocationService.publishLocationData(location, publishSafely);
       if (success) {
         console.log('📍 Nueva ubicación publicada:', {
           lat: location.latitude,
@@ -106,17 +113,22 @@ export const useHome = () => {
         });
       }
     }
-  }, [location, connectionStatus, isRecorridoActive, publishLocation]);
+  }, [location, connectionStatus, isRecorridoActive, publishSafely]);
 
   // Publicar estado cuando cambie el recorrido
   useEffect(() => {
     if (connectionStatus === 'Conectado') {
-      const success = publishRecorridoStatus(isRecorridoActive, startTime, endTime);
+      const status = {
+        isRecorridoActive,
+        startTime: startTime || undefined,
+        endTime: endTime || undefined
+      };
+      const success = TrackingService.publishRecorridoStatus(status, publishSafely);
       if (success) {
         console.log('📊 Estado de recorrido publicado:', isRecorridoActive ? 'Iniciado' : 'Finalizado');
       }
     }
-  }, [isRecorridoActive, startTime, endTime, connectionStatus, publishRecorridoStatus]);
+  }, [isRecorridoActive, startTime, endTime, connectionStatus, publishSafely]);
 
   return {
     // Estados

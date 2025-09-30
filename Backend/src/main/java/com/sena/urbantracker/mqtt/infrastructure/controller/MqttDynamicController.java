@@ -17,13 +17,13 @@ public class MqttDynamicController {
     @PostMapping("/subscribe")
     public String subscribe(@RequestParam String topic,
                             @RequestParam(defaultValue = "1") int qos) {
-        subscriptionService.subscribe(topic, qos);
+        subscriptionService.subscribeToRouteTopic(topic);
         return "✅ Suscrito dinámicamente a: " + topic;
     }
 
     @PostMapping("/unsubscribe")
     public String unsubscribe(@RequestParam String topic) {
-        subscriptionService.unsubscribe(topic);
+        subscriptionService.unsubscribeFromRouteTopic(topic);
         return "❌ Suscripción cancelada: " + topic;
     }
 }

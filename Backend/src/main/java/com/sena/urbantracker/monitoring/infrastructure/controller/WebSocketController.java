@@ -12,7 +12,7 @@ import org.springframework.stereotype.Controller;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
-@Controller
+@Controller("")
 public class WebSocketController {
 
     @Autowired
@@ -44,5 +44,11 @@ public class WebSocketController {
     public void sendStatus(String routeName, RouteStatusDto status) {
         System.out.println("WebSocket funcionando: Enviando status para ruta: " + routeName + " - " + status);
         messagingTemplate.convertAndSend("/topic/route/" + routeName + "/status", status);
+    }
+
+    // Método para publicar telemetría desde el servidor
+    public void sendTelemetry(String routeName, String telemetry) {
+        System.out.println("WebSocket funcionando: Enviando telemetría para ruta: " + routeName + " - " + telemetry);
+        messagingTemplate.convertAndSend("/topic/route/" + routeName + "/telemetry", telemetry);
     }
 }

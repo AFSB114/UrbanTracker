@@ -79,7 +79,7 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
         // 4) Suscribirse al topic de la ruta
         dynamicSubscriptionService.subscribeToRouteTopic(routeTopic);
 
-        return CrudResponseDto.success(RouteMapper.toDto(savedRoute), "Ruta creada correctamente y suscrito al topic:" + routeTopic);
+        return CrudResponseDto.success(RouteMapper.toDto(savedRoute, waypoints.size()), "Ruta creada correctamente y suscrito al topic:" + routeTopic);
     }
 
 

@@ -3,20 +3,45 @@
   "compilerOptions": {
     "strict": true,
     "jsx": "react-jsx",
-
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@App/*": ["./src/app/*"],
-      "@Assets/*": ["./src/assets/*"],
-      "@Components/*": ["./src/components/*"],
-      "@Config/*": ["./src/config/*"],
-      "@Contexts/*": ["./src/contexts/*"],
-      "@Hooks/*": ["./src/hooks/*"],
-      "@Providers/*": ["./src/providers/*"],
-      "@Services/*": ["./src/services/*"],
-      "@Types/*": ["./src/types/*"],
-      "@Utils/*": ["./src/utils/*"]
-    }
+      "@/*": [
+        "./src/*"
+      ],
+      "@App/*": [
+        "./src/app/*"
+      ],
+      "@Assets/*": [
+        "./src/assets/*"
+      ],
+      "@Components/*": [
+        "./src/components/*"
+      ],
+      "@Config/*": [
+        "./src/config/*"
+      ],
+      "@Contexts/*": [
+        "./src/contexts/*"
+      ],
+      "@Hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@Providers/*": [
+        "./src/providers/*"
+      ],
+      "@Services/*": [
+        "./src/services/*"
+      ],
+      "@Types/*": [
+        "./src/types/*"
+      ],
+      "@Utils/*": [
+        "./src/utils/*"
+      ]
+    },
+    "lib": [
+      "ES2015",
+      "DOM"
+    ]
   }
 }

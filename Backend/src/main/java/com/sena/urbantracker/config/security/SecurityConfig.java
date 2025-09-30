@@ -50,7 +50,8 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/ws/**",
                                 "/topic/**",
-                                "/app/**"
+                                "/app/**",
+                                "/ws/**"
                         ).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
