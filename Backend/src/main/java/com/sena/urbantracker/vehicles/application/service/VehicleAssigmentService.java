@@ -5,6 +5,9 @@ import com.sena.urbantracker.vehicles.application.dto.response.VehicleAssigmentR
 import com.sena.urbantracker.vehicles.application.mapper.VehicleAssignmentMapper;
 import com.sena.urbantracker.vehicles.domain.entity.VehicleAssignmentDomain;
 import com.sena.urbantracker.vehicles.domain.repository.VehicleAssignmentRepository;
+import com.sena.urbantracker.vehicles.domain.repository.VehicleRepository;
+import com.sena.urbantracker.users.domain.repository.DriverRepository;
+import com.sena.urbantracker.users.domain.repository.UserProfileRepository;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
@@ -19,10 +22,28 @@ import java.util.Optional;
 public class VehicleAssigmentService implements CrudOperations<VehicleAssignmentReqDto, VehicleAssigmentResDto, Long> {
 
     private final VehicleAssignmentRepository vehicleAssignmentRepository;
+    private final VehicleRepository vehicleRepository;
+    private final DriverRepository driverRepository;
+    private final UserProfileRepository userProfileRepository;
 
     @Override
     public CrudResponseDto<VehicleAssigmentResDto> create(VehicleAssignmentReqDto request) {
-        VehicleAssignmentDomain entity = VehicleAssignmentMapper.toEntity(request);
+        var vehicle = vehicleRepository.findById(request.getVehicleId())
+                .orElseThrow(() -> new EntityNotFoundException("Vehículo no encontrado"));
+        var driver = driverRepository.findById(request.getDriverId())
+                .orElseThrow(() -> new EntityNotFoundException("Conductor no encontrado"));
+        var profile = userProfileRepository.findByUserId(driver.getUser().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario no encontrado"));
+        driver.setProfile(profile);
+
+        VehicleAssignmentDomain entity = VehicleAssignmentDomain.builder()
+                .vehicle(vehicle)
+                .driver(driver)
+                .assignmentStatus(request.getAssignmentStatus())
+                .note(request.getNote())
+                .active(true)
+                .build();
+
         VehicleAssignmentDomain saved = vehicleAssignmentRepository.save(entity);
 
         return CrudResponseDto.success(VehicleAssignmentMapper.toDto(saved), "Asignación de vehículo creada correctamente");
@@ -33,6 +54,10 @@ public class VehicleAssigmentService implements CrudOperations<VehicleAssignment
         VehicleAssignmentDomain vehicleAssignment = vehicleAssignmentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Asignación de vehículo con id " + id + " no encontrada."));
 
+        var profile = userProfileRepository.findByUserId(vehicleAssignment.getDriver().getUser().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario no encontrado"));
+        vehicleAssignment.getDriver().setProfile(profile);
+
         return CrudResponseDto.success(Optional.of(VehicleAssignmentMapper.toDto(vehicleAssignment)), "Asignación de vehículo encontrada");
     }
 
@@ -40,6 +65,15 @@ public class VehicleAssigmentService implements CrudOperations<VehicleAssignment
     public CrudResponseDto<List<VehicleAssigmentResDto>> findAll() {
         List<VehicleAssigmentResDto> dtos = vehicleAssignmentRepository.findAll()
                 .stream()
+                .peek(vehicleAssignment -> {
+                    try {
+                        var profile = userProfileRepository.findByUserId(vehicleAssignment.getDriver().getUser().getId())
+                                .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario no encontrado"));
+                        vehicleAssignment.getDriver().setProfile(profile);
+                    } catch (EntityNotFoundException e) {
+                        // Handle or log the exception
+                    }
+                })
                 .map(VehicleAssignmentMapper::toDto)
                 .toList();
 
@@ -51,8 +85,16 @@ public class VehicleAssigmentService implements CrudOperations<VehicleAssignment
         VehicleAssignmentDomain vehicleAssignment = vehicleAssignmentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Asignación de vehículo no encontrada."));
 
-        vehicleAssignment.setVehicleId(request.getVehicleId());
-        vehicleAssignment.setDriverId(request.getDriverId());
+        var vehicle = vehicleRepository.findById(request.getVehicleId())
+                .orElseThrow(() -> new EntityNotFoundException("Vehículo no encontrado"));
+        var driver = driverRepository.findById(request.getDriverId())
+                .orElseThrow(() -> new EntityNotFoundException("Conductor no encontrado"));
+        var profile = userProfileRepository.findByUserId(driver.getUser().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario no encontrado"));
+        driver.setProfile(profile);
+
+        vehicleAssignment.setVehicle(vehicle);
+        vehicleAssignment.setDriver(driver);
         vehicleAssignment.setNote(request.getNote());
         vehicleAssignment.setAssignmentStatus(request.getAssignmentStatus());
 

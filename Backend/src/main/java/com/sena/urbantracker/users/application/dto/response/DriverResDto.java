@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class DriverResDto extends ABaseResDto {
-    private Long userId;
+    private String userId;
     private Boolean active;
     private UserProfileResDto userProfile;
 }

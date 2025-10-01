@@ -1,10 +1,10 @@
 package com.sena.urbantracker.vehicles.application.mapper;
 
-import com.sena.urbantracker.users.application.dto.response.DriverResDto;
+import com.sena.urbantracker.users.domain.entity.DriverDomain;
 import com.sena.urbantracker.vehicles.application.dto.request.VehicleAssignmentReqDto;
 import com.sena.urbantracker.vehicles.application.dto.response.VehicleAssigmentResDto;
-import com.sena.urbantracker.vehicles.application.dto.response.VehicleResDto;
 import com.sena.urbantracker.vehicles.domain.entity.VehicleAssignmentDomain;
+import com.sena.urbantracker.vehicles.domain.entity.VehicleDomain;
 
 public class VehicleAssignmentMapper {
 
@@ -12,8 +12,11 @@ public class VehicleAssignmentMapper {
         if (entity == null) return null;
         return VehicleAssigmentResDto.builder()
                 .id(entity.getId())
-                .vehicle(VehicleResDto.builder().id(entity.getVehicleId()).build())
-                .driver(DriverResDto.builder().id(entity.getDriverId()).build())
+                .vehicleId(entity.getVehicle().getId())
+                .vehiclePlate(entity.getVehicle().getLicencePlate())
+                .vehicleName(entity.getVehicle().getBrand() + " " + entity.getVehicle().getModel())
+                .driverId(entity.getDriver().getId())
+                .driverName(entity.getDriver().getProfile() != null ? entity.getDriver().getProfile().getFirstName() + " " + entity.getDriver().getProfile().getLastName() : "")
                 .assignmentStatus(entity.getAssignmentStatus())
                 .note(entity.getNote())
                 .build();
@@ -22,8 +25,8 @@ public class VehicleAssignmentMapper {
     public static VehicleAssignmentDomain toEntity(VehicleAssignmentReqDto dto) {
         if (dto == null) return null;
         return VehicleAssignmentDomain.builder()
-                .vehicleId(dto.getVehicleId())
-                .driverId(dto.getDriverId())
+                .vehicle(VehicleDomain.builder().id(dto.getVehicleId()).build())
+                .driver(DriverDomain.builder().id(dto.getDriverId()).build())
                 .assignmentStatus(dto.getAssignmentStatus())
                 .note(dto.getNote())
                 .active(true)

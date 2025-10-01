@@ -3,6 +3,7 @@ package com.sena.urbantracker.users.infrastructure.persistence.mapper;
 import com.sena.urbantracker.security.infrastructure.persistence.mapper.UserPersistenceMapper;
 import com.sena.urbantracker.users.domain.entity.DriverDomain;
 import com.sena.urbantracker.users.infrastructure.persistence.model.DriverModel;
+import com.sena.urbantracker.users.infrastructure.persistence.mapper.UserProfilePersistenceMapper;
 
 public class DriverPersistenceMapper {
 

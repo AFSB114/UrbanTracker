@@ -12,7 +12,7 @@ public class DriverMapper {
         if (entity == null) return null;
         return DriverResDto.builder()
                 .id(entity.getId())
-                .userId(entity.getUser().getId())
+                .userId(entity.getUser().getUsername())
                 .active(entity.getActive())
                 .userProfile(UserProfileMapper.toDto(userProfileDomain))
                 .build();

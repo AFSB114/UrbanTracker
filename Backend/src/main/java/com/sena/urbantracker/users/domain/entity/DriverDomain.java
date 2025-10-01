@@ -18,4 +18,6 @@ public class DriverDomain extends ABaseDomain {
     @JoinColumn(name = "user_id", nullable = false)
     private UserDomain user;
 
+    private UserProfileDomain profile;
+
 }
