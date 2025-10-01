@@ -3,6 +3,7 @@ import { Bus } from "lucide-react";
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { useVehiclePositions } from '../map/vehicle-context';
+import { useRoutePoints } from '../map/route-context';
 
 // Interface que define la estructura de una ruta de transporte público
 export interface Route {
@@ -37,6 +38,7 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
   const [telemetry, setTelemetry] = useState<string | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
   const { setVehiclePositions } = useVehiclePositions();
+  const { setOutboundPoints, setReturnPoints } = useRoutePoints();
 
   useEffect(() => {
     if (route.start) {
@@ -55,6 +57,22 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
         const waypoints = detail.waypoints;
         const first = waypoints.find((w: any) => w.sequence === 1);
         const last = waypoints.reduce((prev: any, curr: any) => curr.sequence > prev.sequence ? curr : prev);
+
+        // Separar puntos outbound y return
+        const outboundPoints = waypoints
+          .filter((w: any) => w.destine === 'OUTBOUND')
+          .sort((a: any, b: any) => a.sequence - b.sequence)
+          .map((w: any) => [w.longitude, w.latitude] as [number, number]);
+
+        const returnPoints = waypoints
+          .filter((w: any) => w.destine === 'RETURN')
+          .sort((a: any, b: any) => a.sequence - b.sequence)
+          .map((w: any) => [w.longitude, w.latitude] as [number, number]);
+
+        // Setear puntos de ruta en el contexto
+        setOutboundPoints(outboundPoints);
+        setReturnPoints(returnPoints);
+
         setFullRoute({
           ...route,
           start: `${first.latitude}, ${first.longitude}`,
@@ -72,7 +90,10 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
   }, [route]);
 
   useEffect(() => {
-    if (!fullRoute) return;
+    if (!fullRoute) {
+      // No limpiar los puntos para mantener las rutas visibles
+      return;
+    }
 
     // Limpiar posiciones anteriores al cambiar de ruta
     setVehiclePositions(new Map());
@@ -105,6 +126,7 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
       client.deactivate();
       // Limpiar posiciones al desmontar
       setVehiclePositions(new Map());
+      // No limpiar rutas para mantenerlas visibles
     };
   }, [fullRoute, setVehiclePositions]);
 
