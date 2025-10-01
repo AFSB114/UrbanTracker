@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: urbantracker-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - urbantracker-network
+
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: urbantracker-mosquitto
+    restart: unless-stopped
+    ports:
+      - "${MQTT_PORT}:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    networks:
+      - urbantracker-network
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: urbantracker-backend
+    restart: unless-stopped
+    environment:
+      DB_HOST: postgres
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      MQTT_HOST: mosquitto
+      MQTT_PORT: ${MQTT_PORT}
+    ports:
+      - "${BACKEND_PORT}:8080"
+    depends_on:
+      - postgres
+      - mosquitto
+    networks:
+      - urbantracker-network
+
+  web-client:
+    build:
+      context: ./Web-Client
+      dockerfile: Dockerfile
+    container_name: urbantracker-web-client
+    restart: unless-stopped
+    ports:
+      - "${WEB_CLIENT_PORT}:3000"
+    depends_on:
+      - backend
+    networks:
+      - urbantracker-network
+
+  web-admin:
+    build:
+      context: ./Web-Admin
+      dockerfile: Dockerfile
+    container_name: urbantracker-web-admin
+    restart: unless-stopped
+    ports:
+      - "${WEB_ADMIN_PORT}:3000"
+    depends_on:
+      - backend
+    networks:
+      - urbantracker-network
+
+volumes:
+  postgres_data:
+
+networks:
+  urbantracker-network:
+    driver: bridge

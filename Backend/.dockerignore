@@ -1,0 +1,7 @@
+target/
+*.log
+.git/
+.gitignore
+README.md
+mvnw
+mvnw.cmd

@@ -7,7 +7,8 @@ export class LocationService {
    */
   static publishLocationData(
     location: Location,
-    publishFunction?: (topic: string, data: any) => boolean
+    publishFunction?: (topic: string, data: any) => boolean,
+    vehicleId: string = "123-456"
   ): boolean {
     try {
       // Validar datos de ubicación
@@ -17,10 +18,11 @@ export class LocationService {
       }
 
       const message = {
-        lat: location.latitude,
-        lon: location.longitude,
-        timestamp: location.timestamp,
-        accuracy: location.accuracy,
+        vehicleId,
+        timestamp: new Date(location.timestamp).toISOString(),
+        latitude: location.latitude,
+        longitude: location.longitude,
+        source: "MOVILE",
       };
 
       // Si se proporciona función de publicación, usarla

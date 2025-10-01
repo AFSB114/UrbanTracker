@@ -35,3 +35,9 @@ export interface DriverApiResponse {
   userId: number;
   userProfile: UserProfile;
 }
+
+export interface ApiError {
+  message: string;
+  status?: number;
+  errors?: Record<string, string[]>;
+}

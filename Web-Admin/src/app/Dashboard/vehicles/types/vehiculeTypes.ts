@@ -48,6 +48,16 @@ export interface VehiculeStatistics {
     newThisMonth: number;
 }
 
+export interface Company {
+    id: number;
+    name: string;
+}
+
+export interface VehicleType {
+    id: number;
+    name: string;
+}
+
 export interface UseVehiculesReturn {
   filteredVehicles: Vehicle[];
   paginatedVehicles: Vehicle[];
@@ -68,8 +78,8 @@ export interface UseVehiculesReturn {
   isSaving: boolean;
 
   // Related data
-  companies: any[];
-  vehicleTypes: any[];
+  companies: Company[];
+  vehicleTypes: VehicleType[];
 
   // Actions
   setSearchTerm: (term: string) => void;

@@ -2,7 +2,9 @@
 import { useRef, useEffect, createContext, useContext } from "react";
 import Map, { MapRef } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { usePanelCollapse } from "components/panels/panel-collapse-context"
+import { usePanelCollapse } from "components/panels/panel-collapse-context";
+import { VehicleMarker } from "./vehicle-marker";
+import { useVehiclePositions } from "./vehicle-context";
 
 // Contexto para exponer el ref del mapa
 const MapboxRefContext = createContext<React.MutableRefObject<MapRef | null> | null>(null);
@@ -14,6 +16,7 @@ export function useMapboxRef() {
 
 export default function MapView({ children }: { children?: React.ReactNode }) {
   const { isPanelCollapsed } = usePanelCollapse();
+  const { vehiclePositions } = useVehiclePositions();
   const mapRef = useRef<MapRef | null>(null);
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -36,7 +39,11 @@ export default function MapView({ children }: { children?: React.ReactNode }) {
           }}
           mapStyle="mapbox://styles/mapbox/dark-v11"
           attributionControl={false}
-        />
+        >
+          {vehiclePositions && Array.from(vehiclePositions.values()).map(vehicle => (
+            <VehicleMarker key={vehicle.vehicleId} vehicle={vehicle} />
+          ))}
+        </Map>
         {children}
       </div>
     </MapboxRefContext.Provider>
