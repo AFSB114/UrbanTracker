@@ -3,8 +3,8 @@ import { vehicleAssigmentService } from "../services/vehicleAssigmentService";
 import type { VehicleAssigment, VehicleAssigmentFormData, UseVehicleAssigmentsReturn, PaginationData, PaginationConfig, VehicleAssigmentsStatistics } from "../types/VehicleAssigmentsType";
 
 const INITIAL_FORM_DATA: VehicleAssigmentFormData = {
-  vehicle_id: 0,
-  driver_id: 1,
+  vehicleId: 0,
+  driverId: 0,
   assignmentStatus: "",
   note: "",
 };
@@ -44,24 +44,24 @@ export const useVehicleAssigments = (): UseVehicleAssigmentsReturn => {
   }, []);
 
   useEffect(() => {
-      loadVehiclesAssignments();
-    }, [loadVehiclesAssignments]);
+    loadVehiclesAssignments();
+  }, [loadVehiclesAssignments]);
 
   const filteredVehicles = useMemo(() => {
     const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
-  
+
     if (!searchTerm.trim()) {
       return safeVehicles;
     }
-  
+
     const searchLower = searchTerm.toLowerCase().trim();
-  
+
     return vehicles.filter(vehicle =>
-        vehicle.assignmentStatus.toLowerCase().includes(searchLower) ||
-        vehicle.note.toLowerCase().includes(searchLower)
+      vehicle.assignmentStatus.toLowerCase().includes(searchLower) ||
+      vehicle.note.toLowerCase().includes(searchLower)
     );
   }, [vehicles, searchTerm]);
-  
+
   // Reset to page 1 when items per page changes
   useEffect(() => {
     setPaginationConfig((prev) => ({ ...prev, page: 1 }));
@@ -94,7 +94,7 @@ export const useVehicleAssigments = (): UseVehicleAssigmentsReturn => {
   const statistics = useMemo((): VehicleAssigmentsStatistics => {
     return {
       totalVehicles: vehicles.length,
-      newThisMonth: Math.floor(vehicles.length * 0.3), 
+      newThisMonth: Math.floor(vehicles.length * 0.3),
     };
   }, [vehicles.length]);
 
@@ -120,8 +120,8 @@ export const useVehicleAssigments = (): UseVehicleAssigmentsReturn => {
   const openEditModal = useCallback((vehicle: VehicleAssigment) => {
     setEditingVehicle(vehicle);
     setFormData({
-      vehicle_id: vehicle.vehicle_id,
-      driver_id: vehicle.driver_id,
+      vehicleId: vehicle.vehicleId,
+      driverId: vehicle.driverId,
       assignmentStatus: vehicle.assignmentStatus,
       note: vehicle.note,
     });
@@ -156,16 +156,16 @@ export const useVehicleAssigments = (): UseVehicleAssigmentsReturn => {
 
     try {
       // Client-side validation
-      if (!formData.vehicle_id.toFixed().trim() || !formData.driver_id.toFixed().trim()) {
+      if (!formData.vehicleId || !formData.driverId) {
         throw {
-          message: "El vehículo y la empresa son obligatorios",
+          message: "El vehículo y el conductor son obligatorios",
           status: 400,
-        } 
+        }
       }
 
       const vehicleAssignmentData = {
-        vehicle_id: Number(formData.vehicle_id),
-        driver_id: Number(formData.driver_id),
+        vehicleId: Number(formData.vehicleId),
+        driverId: Number(formData.driverId),
         assignmentStatus: formData.assignmentStatus.trim(),
         note: formData.note.trim(),
       };
@@ -179,27 +179,28 @@ export const useVehicleAssigments = (): UseVehicleAssigmentsReturn => {
       await loadVehiclesAssignments();
       closeModal();
     } catch (error) {
-      throw error; 
+      throw error;
     } finally {
       setIsSaving(false);
     }
-  }, [editingVehicle,formData,closeModal,isSaving, loadVehiclesAssignments]);
+  }, [editingVehicle, formData, closeModal, isSaving, loadVehiclesAssignments]);
 
   // Delete vehicle
-    const confirmDeleteVehicleAssigment = useCallback(async () => {
-      if (isDeleting) return;
-    
-      setIsDeleting(true);
-    
-      try {
-        await vehicleAssigmentService.delete(vehicleToDelete!.id);
-        closeDeleteModal();
-      } catch (error) {
-        throw error; 
-      } finally {
-        setIsDeleting(false);
-      }
-    }, [vehicleToDelete, closeDeleteModal, isDeleting, loadVehiclesAssignments]);
+  const confirmDeleteVehicleAssigment = useCallback(async () => {
+    if (isDeleting) return;
+
+    setIsDeleting(true);
+
+    try {
+      await vehicleAssigmentService.delete(vehicleToDelete!.id);
+      await loadVehiclesAssignments();
+      closeDeleteModal();
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [vehicleToDelete, closeDeleteModal, isDeleting, loadVehiclesAssignments]);
 
   return {
     // Data
@@ -233,5 +234,5 @@ export const useVehicleAssigments = (): UseVehicleAssigmentsReturn => {
     updateFormData,
     saveVehicleAssigment,
     confirmDeleteVehicleAssigment,
-};
+  };
 };

@@ -10,6 +10,17 @@ interface VehicleAssigmentCardProps {
   onDelete: (id: number) => void
 }
 
+const getStatusLabel = (status: string): string => {
+    switch (status) {
+        case 'ACTIVE':
+            return 'Activo';
+        case 'INACTIVE':
+            return 'Inactivo';
+        default:
+            return status;
+    }
+};
+
 export function VehicleAssigmentCard({ vehicleAssigment, onEdit, onDelete }: VehicleAssigmentCardProps) {
 
     return (
@@ -23,17 +34,21 @@ export function VehicleAssigmentCard({ vehicleAssigment, onEdit, onDelete }: Veh
                         <div className="space-y-3">
                             <div className="flex items-center gap-3">
                                 <h3 className="text-xl font-bold text-white">
-                                    {vehicleAssigment.vehicle_id}
+                                    {vehicleAssigment.vehiclePlate}
                                 </h3>
                                 <Badge className="bg-emerald-600">
-                                    {vehicleAssigment.driver_id}
+                                    {getStatusLabel(vehicleAssigment.assignmentStatus)}
                                 </Badge>
                             </div>
-                            <div className="text-zinc-400">
-                                <span className="font-medium text-white">
-                                    {vehicleAssigment.assignmentStatus}
-                                </span>
-                                <span className="text-emerald-500">{vehicleAssigment.note}</span>
+                            <div className="text-zinc-400 space-y-1">
+                                <div>
+                                    <span className="font-medium text-white">Conductor: </span>
+                                    <span className="text-emerald-500">{vehicleAssigment.driverName}</span>
+                                </div>
+                                <div>
+                                    <span className="font-medium text-white">Nota: </span>
+                                    <span className="text-zinc-300">{vehicleAssigment.note}</span>
+                                </div>
                             </div>
                         </div>
                     </div>

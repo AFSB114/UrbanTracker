@@ -35,7 +35,7 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
         <DialogHeader>
           <DialogTitle>Eliminar Asignación</DialogTitle>
           <DialogDescription>
-            ¿Estás seguro que deseas eliminar la asignación del conductor <span className="font-bold">{vehicleAssigment.driver_id}</span> al vehículo <span className="font-bold">{vehicleAssigment.vehicle_id}</span>?
+            ¿Estás seguro que deseas eliminar la asignación del conductor <span className="font-bold">{vehicleAssigment.driverName}</span> al vehículo <span className="font-bold">{vehicleAssigment.vehiclePlate}</span>?
           </DialogDescription>
         </DialogHeader>
         <div className="flex items-center gap-2 mb-4">

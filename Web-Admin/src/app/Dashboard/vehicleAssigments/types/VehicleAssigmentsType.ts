@@ -1,15 +1,18 @@
 
 export interface VehicleAssigment {
   id: number;
-  vehicle_id: number;
-  driver_id: number;
-  assignmentStatus: string;
+  active: boolean;
+  vehicleId: number;
+  vehiclePlate: string;
+  driverId: number;
+  driverName: string;
   note: string;
+  assignmentStatus: string;
 }
 
 export interface VehicleAssigmentFormData {
-  vehicle_id: number;
-  driver_id: number;
+  vehicleId: number;
+  driverId: number;
   assignmentStatus: string;
   note: string;
 }

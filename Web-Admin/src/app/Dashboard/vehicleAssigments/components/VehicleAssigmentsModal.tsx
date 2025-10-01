@@ -7,6 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle,} from "@/components/u
 import type { VehicleAssigmentFormData } from "../types/VehicleAssigmentsType"
 import { Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useVehicles } from "../../vehicles/hooks/useVehicles";
+import { useDrivers } from "../../drivers/hooks/useDrivers";
 
 interface VehicleAssigmentModalProps {
   isOpen: boolean
@@ -19,7 +21,7 @@ interface VehicleAssigmentModalProps {
   errors: Record<string, string>
 }
 
-export const VehicleAssigmentModal: React.FC<VehicleAssigmentModalProps> = ({ 
+export const VehicleAssigmentModal: React.FC<VehicleAssigmentModalProps> = ({
   isOpen,
   isEditing,
   formData,
@@ -29,35 +31,46 @@ export const VehicleAssigmentModal: React.FC<VehicleAssigmentModalProps> = ({
   }) => {
 
     const [isLoading, setIsLoading] = useState(false);
-    const [errors, setErrors] = useState<Partial<VehicleAssigmentFormData>>({});
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const { filteredVehicles: vehicles } = useVehicles();
+    const { filteredDrivers: drivers } = useDrivers();
   
     const validateForm = (): boolean => {
-      const newErrors: Partial<VehicleAssigmentFormData> = {};
-  
+      const newErrors: Record<string, string> = {};
+
+      if (!formData.vehicleId) {
+        newErrors.vehicleId = 'Vehículo requerido';
+      }
+
+      if (!formData.driverId) {
+        newErrors.driverId = 'Conductor requerido';
+      }
+
       if (!formData.assignmentStatus.trim()) {
         newErrors.assignmentStatus = 'Estado de asignación requerido';
       } else if (formData.assignmentStatus.trim().length < 2) {
         newErrors.assignmentStatus = 'Estado de asignación debe tener al menos 2 caracteres';
       }
-  
+
       if (!formData.note.trim()) {
         newErrors.note = 'Nota requerida';
       } else if (formData.note.trim().length < 2) {
         newErrors.note = 'Nota debe tener al menos 2 caracteres';
       }
-  
+
       setErrors(newErrors);
       return Object.keys(newErrors).length === 0;
     };
   
-    const handleInputChange = (field: keyof VehicleAssigmentFormData) => 
+    const handleInputChange = (field: keyof VehicleAssigmentFormData) =>
       (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         onFormChange(field, value);
-        
+
         // Clear error when user starts typing
         if (errors[field]) {
-          setErrors(prev => ({ ...prev, [field]: undefined }));
+          setErrors(prev => ({ ...prev, [field]: '' }));
         }
       };
   
@@ -79,26 +92,33 @@ export const VehicleAssigmentModal: React.FC<VehicleAssigmentModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-zinc-900  text-white max-w-2xl">
+      <DialogContent className="bg-zinc-900 text-white max-w-4xl">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Editar Asignación" : "Nueva Asignación"}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="vehicle_id" className="text-zinc-400">
-                Número de Vehículo *
+                Vehículo *
               </Label>
-              <Input
-                id="vehicle_id"
-                value={formData.vehicle_id}
-                onChange={handleInputChange("vehicle_id")}
-                className="bg-zinc-800 border-zinc-700 text-white"
-                placeholder="ABC-123"
-                disabled={isLoading}
-              />
+              <Select
+                value={formData.vehicleId ? formData.vehicleId.toString() : ""}
+                onValueChange={(value: string) => onFormChange("vehicleId", value)}
+              >
+                <SelectTrigger className="w-full bg-zinc-800 border-zinc-700 text-white">
+                  <SelectValue placeholder="Seleccione un vehículo" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-800 border-zinc-700 min-w-[300px]">
+                  {vehicles.map(vehicle => (
+                    <SelectItem key={vehicle.id} value={vehicle.id.toString()}>
+                      {vehicle.licencePlate}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.vehicle_id && (
                 <p className="text-sm text-red-500">{errors.vehicle_id}</p>
               )}
@@ -106,23 +126,30 @@ export const VehicleAssigmentModal: React.FC<VehicleAssigmentModalProps> = ({
 
             <div className="space-y-2">
               <Label htmlFor="driver_id" className="text-zinc-400">
-                Identificador del Conductor *
+                Conductor *
               </Label>
-              <Input
-                id="driver_id"
-                value={formData.driver_id}
-                onChange={handleInputChange("driver_id")}
-                className="bg-zinc-800 border-zinc-700 text-white"
-                placeholder="ABC-123"
-                disabled={isLoading}
-              />
+              <Select
+                value={formData.driverId ? formData.driverId.toString() : ""}
+                onValueChange={(value: string) => onFormChange("driverId", value)}
+              >
+                <SelectTrigger className="w-full bg-zinc-800 border-zinc-700 text-white">
+                  <SelectValue placeholder="Seleccione un conductor" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-800 border-zinc-700 min-w-[300px]">
+                  {drivers.map(driver => (
+                    <SelectItem key={driver.id} value={driver.id.toString()}>
+                      {driver.firstName} {driver.lastName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.driver_id && (
                 <p className="text-sm text-red-500">{errors.driver_id}</p>
               )}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="assignmentStatus" className="text-zinc-400">
                 Estado *
@@ -133,29 +160,34 @@ export const VehicleAssigmentModal: React.FC<VehicleAssigmentModalProps> = ({
                   onFormChange("assignmentStatus", value)
                 }
               >
-                <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
+                <SelectTrigger className="w-full bg-zinc-800 border-zinc-700 text-white">
                   <SelectValue placeholder="Seleccione el estado" />
                 </SelectTrigger>
-                <SelectContent className="bg-zinc-800 border-zinc-700">
-                  <SelectItem value="Assigned">Asignado</SelectItem>
-                  <SelectItem value="Unassigned">Sin Asignar</SelectItem>
+                <SelectContent className="bg-zinc-800 border-zinc-700 min-w-[200px]">
+                  <SelectItem value="ACTIVE">Activo</SelectItem>
+                  <SelectItem value="INACTIVE">Inactivo</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="note" className="text-zinc-400">
                 Nota *
               </Label>
-              <Input
+              <textarea
                 id="note"
                 value={formData.note}
-                onChange={handleInputChange("note")}
-                className="bg-zinc-800 border-zinc-700 text-white"
+                onChange={(event) => {
+                  const value = event.target.value;
+                  onFormChange("note", value);
+                  if (errors.note) {
+                    setErrors(prev => ({ ...prev, note: '' }));
+                  }
+                }}
+                className="w-full bg-zinc-800 border-zinc-700 text-white rounded px-3 py-2 resize-none"
                 placeholder="Nota de asignación"
                 disabled={isLoading}
+                rows={3}
               />
               {errors.note && (
                 <p className="text-sm text-red-500">{errors.note}</p>

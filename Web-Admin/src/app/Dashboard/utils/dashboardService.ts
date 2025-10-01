@@ -158,7 +158,7 @@ class DashboardService {
     // Get drivers not currently assigned
     const assignedDriverIds = new Set(assignments
       .filter(a => a.assignmentStatus === 'ACTIVE' || a.assignmentStatus === 'active')
-      .map(a => a.driver_id)
+      .map(a => a.driverId)
     );
 
     const availableDrivers = drivers
