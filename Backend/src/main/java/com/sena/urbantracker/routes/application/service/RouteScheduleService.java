@@ -1,6 +1,7 @@
 package com.sena.urbantracker.routes.application.service;
 
 import com.sena.urbantracker.routes.application.dto.request.RouteScheduleReqDto;
+import com.sena.urbantracker.routes.application.dto.request.SchedulesDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteScheduleResDto;
 import com.sena.urbantracker.routes.application.mapper.RouteScheduleMapper;
 import com.sena.urbantracker.routes.domain.entity.RouteDomain;
@@ -41,8 +42,8 @@ public class RouteScheduleService implements CrudOperations<RouteScheduleReqDto,
         return CrudResponseDto.success(RouteScheduleMapper.toDto(saved), "Horario de ruta creado correctamente");
     }
 
-    public CrudResponseDto<List<RouteScheduleResDto>> createAll(List<RouteScheduleReqDto> request) {
-        List<RouteScheduleDomain> entityList = request.stream()
+    public CrudResponseDto<List<RouteScheduleResDto>> createAll(SchedulesDto request) {
+        List<RouteScheduleDomain> entityList = request.getSchedules().stream()
             .peek(dto -> {
                 if (dto.getStartTime() == null || dto.getEndTime() == null || !dto.getStartTime().before(dto.getEndTime())) {
                     throw new IllegalArgumentException("Start time must be before end time");
@@ -50,6 +51,7 @@ public class RouteScheduleService implements CrudOperations<RouteScheduleReqDto,
             })
             .map(RouteScheduleMapper::toEntity)
             .toList();
+        System.out.println(request.getSchedules().toString());
         List<RouteScheduleDomain> savedList = routeScheduleRepository.saveAll(entityList);
         return CrudResponseDto.success(savedList.stream().map(RouteScheduleMapper::toDto).toList(), "Horario de ruta creado correctamente");
     }
@@ -116,22 +118,22 @@ public class RouteScheduleService implements CrudOperations<RouteScheduleReqDto,
         return CrudResponseDto.success(routeScheduleRepository.existsById(id), "Verificación de existencia completada");
     }
 
-    public CrudResponseDto<List<RouteScheduleResDto>> updateAll(List<RouteScheduleReqDto> dtos, Long id) {
+    public CrudResponseDto<List<RouteScheduleResDto>> updateAll(SchedulesDto dtos, Long id) {
         List<RouteScheduleDomain> existing = routeScheduleRepository.findByRoute_Id(id);
 
         // Índices por día
-        Set<DayOfWeekType> dtoDays = dtos.stream()
+        Set<String> dtoDays = dtos.getSchedules().stream()
                 .map(RouteScheduleReqDto::getDayOfWeek)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
-        Map<DayOfWeekType, RouteScheduleDomain> existingByDay = existing.stream()
+        Map<String, RouteScheduleDomain> existingByDay = existing.stream()
                 .filter(e -> e.getDayOfWeek() != null)
                 .collect(Collectors.toMap(RouteScheduleDomain::getDayOfWeek, e -> e));
 
         // 1) updated: existentes que sí vienen en dto (coincide día)
         List<RouteScheduleDomain> updated = new ArrayList<>();
-        for (RouteScheduleReqDto dto : dtos) {
+        for (RouteScheduleReqDto dto : dtos.getSchedules()) {
             if (dto.getDayOfWeek() == null) continue;
             if (dto.getStartTime() == null || dto.getEndTime() == null || !dto.getStartTime().before(dto.getEndTime())) {
                 throw new IllegalArgumentException("Start time must be before end time");
@@ -148,7 +150,7 @@ public class RouteScheduleService implements CrudOperations<RouteScheduleReqDto,
                 .filter(e -> e.getDayOfWeek() != null && !dtoDays.contains(e.getDayOfWeek()))
                 .toList();
 
-        List<RouteScheduleDomain> newInDto = dtos.stream()
+        List<RouteScheduleDomain> newInDto = dtos.getSchedules().stream()
                 .filter(d -> d.getDayOfWeek() != null && !existingByDay.containsKey(d.getDayOfWeek()))
                 .peek(d -> {
                     if (d.getStartTime() == null || d.getEndTime() == null || !d.getStartTime().before(d.getEndTime())) {

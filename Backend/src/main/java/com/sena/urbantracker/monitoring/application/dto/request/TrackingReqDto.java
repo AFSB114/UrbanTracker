@@ -18,7 +18,7 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 public class TrackingReqDto {
 
-    private Spring vehicleId;
+    private String vehicleId;
 
     private OffsetDateTime timestamp;
 
