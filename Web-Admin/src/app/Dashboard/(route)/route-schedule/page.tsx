@@ -76,6 +76,7 @@ export default function RouteSchedulePage() {
         const routeId = editingSchedules[0].routeId;
         await routeScheduleService.updateRouteSchedules(routeId, data);
       } else {
+        console.log('datos de los horarios a crear:', data); // Debug log
         // Para creación: crear nuevos horarios
         await routeScheduleService.createRouteSchedules(data);
       }

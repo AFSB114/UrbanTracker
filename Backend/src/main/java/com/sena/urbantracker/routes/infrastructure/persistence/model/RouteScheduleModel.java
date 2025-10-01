@@ -5,6 +5,8 @@ import com.sena.urbantracker.shared.application.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 
 import java.sql.Time;
 

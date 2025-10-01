@@ -33,13 +33,23 @@ public class RouteScheduleService implements CrudOperations<RouteScheduleReqDto,
 
     @Override
     public CrudResponseDto<RouteScheduleResDto> create(RouteScheduleReqDto request) {
+        if (request.getStartTime() == null || request.getEndTime() == null || !request.getStartTime().before(request.getEndTime())) {
+            throw new IllegalArgumentException("Start time must be before end time");
+        }
         RouteScheduleDomain entity = RouteScheduleMapper.toEntity(request);
         RouteScheduleDomain saved = routeScheduleRepository.save(entity);
         return CrudResponseDto.success(RouteScheduleMapper.toDto(saved), "Horario de ruta creado correctamente");
     }
 
     public CrudResponseDto<List<RouteScheduleResDto>> createAll(List<RouteScheduleReqDto> request) {
-        List<RouteScheduleDomain> entityList = request.stream().map(RouteScheduleMapper::toEntity).toList();
+        List<RouteScheduleDomain> entityList = request.stream()
+            .peek(dto -> {
+                if (dto.getStartTime() == null || dto.getEndTime() == null || !dto.getStartTime().before(dto.getEndTime())) {
+                    throw new IllegalArgumentException("Start time must be before end time");
+                }
+            })
+            .map(RouteScheduleMapper::toEntity)
+            .toList();
         List<RouteScheduleDomain> savedList = routeScheduleRepository.saveAll(entityList);
         return CrudResponseDto.success(savedList.stream().map(RouteScheduleMapper::toDto).toList(), "Horario de ruta creado correctamente");
     }
@@ -64,6 +74,9 @@ public class RouteScheduleService implements CrudOperations<RouteScheduleReqDto,
     public CrudResponseDto<RouteScheduleResDto> update(RouteScheduleReqDto request, Long id) {
         RouteScheduleDomain routeSchedule = routeScheduleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Horario de ruta no encontrado."));
+        if (request.getStartTime() == null || request.getEndTime() == null || !request.getStartTime().before(request.getEndTime())) {
+            throw new IllegalArgumentException("Start time must be before end time");
+        }
         routeSchedule.setDayOfWeek(request.getDayOfWeek());
         routeSchedule.setStartTime(request.getStartTime());
         routeSchedule.setEndTime(request.getEndTime());
@@ -120,6 +133,9 @@ public class RouteScheduleService implements CrudOperations<RouteScheduleReqDto,
         List<RouteScheduleDomain> updated = new ArrayList<>();
         for (RouteScheduleReqDto dto : dtos) {
             if (dto.getDayOfWeek() == null) continue;
+            if (dto.getStartTime() == null || dto.getEndTime() == null || !dto.getStartTime().before(dto.getEndTime())) {
+                throw new IllegalArgumentException("Start time must be before end time");
+            }
             RouteScheduleDomain match = existingByDay.get(dto.getDayOfWeek());
             if (match != null) {
                 match.setStartTime(dto.getStartTime());
@@ -134,6 +150,11 @@ public class RouteScheduleService implements CrudOperations<RouteScheduleReqDto,
 
         List<RouteScheduleDomain> newInDto = dtos.stream()
                 .filter(d -> d.getDayOfWeek() != null && !existingByDay.containsKey(d.getDayOfWeek()))
+                .peek(d -> {
+                    if (d.getStartTime() == null || d.getEndTime() == null || !d.getStartTime().before(d.getEndTime())) {
+                        throw new IllegalArgumentException("Start time must be before end time");
+                    }
+                })
                 .map(d -> {
                     RouteScheduleDomain ne = RouteScheduleMapper.toEntity(d);
                     RouteDomain routeRef = new RouteDomain();

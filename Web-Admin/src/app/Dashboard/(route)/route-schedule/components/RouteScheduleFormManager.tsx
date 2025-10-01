@@ -208,9 +208,7 @@ const RouteScheduleFormManager: React.FC<RouteScheduleFormManagerProps> = ({
             disabled={isLoadingRoutes}
           >
             <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
-              <SelectValue placeholder="Selecciona una ruta">
-                Selecciona una ruta
-              </SelectValue>
+              <SelectValue placeholder="Selecciona una ruta" />
             </SelectTrigger>
             <SelectContent className="bg-zinc-900 border-zinc-700">
               {routes.map((route) => (
@@ -258,10 +256,9 @@ const RouteScheduleFormManager: React.FC<RouteScheduleFormManagerProps> = ({
                 key={daySchedule.day}
                 className={`
                   flex items-center p-3 rounded-lg border-2 cursor-pointer transition-all duration-200
-                  ${
-                    daySchedule.selected
-                      ? "bg-emerald-600/20 border-emerald-500 text-emerald-100"
-                      : "bg-zinc-800 border-zinc-600 text-zinc-300 hover:bg-zinc-700 hover:border-zinc-500"
+                  ${daySchedule.selected
+                    ? "bg-emerald-600/20 border-emerald-500 text-emerald-100"
+                    : "bg-zinc-800 border-zinc-600 text-zinc-300 hover:bg-zinc-700 hover:border-zinc-500"
                   }
                 `}
               >
@@ -274,11 +271,10 @@ const RouteScheduleFormManager: React.FC<RouteScheduleFormManagerProps> = ({
                 <div
                   className={`
                   w-5 h-5 rounded border-2 mr-3 flex items-center justify-center transition-all duration-200
-                  ${
-                    daySchedule.selected
+                  ${daySchedule.selected
                       ? "bg-emerald-500 border-emerald-500"
                       : "border-zinc-400"
-                  }
+                    }
                 `}
                 >
                   {daySchedule.selected && (
@@ -402,8 +398,8 @@ const RouteScheduleFormManager: React.FC<RouteScheduleFormManagerProps> = ({
             {isLoading
               ? "Guardando..."
               : mode === "create"
-              ? "Crear Horario"
-              : "Actualizar Horario"}
+                ? "Crear Horario"
+                : "Actualizar Horario"}
           </Button>
         </div>
       </div>

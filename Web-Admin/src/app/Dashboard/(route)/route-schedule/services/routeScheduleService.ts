@@ -20,6 +20,7 @@ export const routeScheduleService = {
 
   async createRouteSchedule(data: RouteScheduleRequest): Promise<RouteScheduleResponse> {
     const response = await RouteScheduleApi.create(data);
+    console.log('Create Response:', response); // Debug log
     if (response.success && response.data) {
       return response.data;
     }
