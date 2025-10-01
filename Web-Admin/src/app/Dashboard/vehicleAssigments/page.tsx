@@ -27,7 +27,6 @@ export default function VehicleAssigmentsPage() {
     isDeleting,
     isSaving,
     setSearchTerm,
-    setStatusFilter,
     setPage,
     setItemsPerPage,
     openCreateModal,
@@ -36,8 +35,8 @@ export default function VehicleAssigmentsPage() {
     closeModal,
     closeDeleteModal,
     updateFormData,
-    saveVehicleAssignment,
-    confirmDeleteVehicleAssignment,
+    saveVehicleAssigment,
+    confirmDeleteVehicleAssigment,
   } = useVehicleAssigments()
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
@@ -45,7 +44,7 @@ export default function VehicleAssigmentsPage() {
   const handleSaveVehicleAssignment = async () => {
     setFormErrors({})
     try {
-      await saveVehicleAssignment()
+      await saveVehicleAssigment()
     } catch (error) {
       if (error instanceof Error) {
         setFormErrors({ general: error.message })
@@ -154,7 +153,7 @@ export default function VehicleAssigmentsPage() {
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
-        onConfirm={confirmDeleteVehicleAssignment}
+        onConfirm={confirmDeleteVehicleAssigment}
         vehicleAssigment={vehicleToDelete}
         isDeleting={isDeleting}
       />

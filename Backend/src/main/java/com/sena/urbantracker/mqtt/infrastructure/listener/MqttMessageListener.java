@@ -26,8 +26,6 @@ public class MqttMessageListener {
         String topic = (String) message.getHeaders().get("mqtt_receivedTopic");
         String payload = message.getPayload().toString();
 
-
-
         log.info("📩 MQTT recibido | Topic: {} | Payload: {}", topic, payload);
 
         if (topic.startsWith("routes/")) {

@@ -104,12 +104,15 @@ export const useHome = () => {
   // Publicación de ubicación vía servicios
   useEffect(() => {
     if (location && connectionStatus === 'Conectado' && isRecorridoActive) {
-      const success = LocationService.publishLocationData(location, publishSafely);
+      // TODO: Obtener vehicleId dinámicamente del contexto de vehículo
+      const vehicleId = "123-456"; // Hardcodeado por ahora, debe ser dinámico
+      const success = LocationService.publishLocationData(location, publishSafely, vehicleId);
       if (success) {
         console.log('📍 Nueva ubicación publicada:', {
-          lat: location.latitude,
-          lon: location.longitude,
-          timestamp: location.timestamp,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          timestamp: new Date(location.timestamp).toISOString(),
+          vehicleId,
         });
       }
     }

@@ -11,7 +11,7 @@ const INITIAL_FORM_DATA: VehicleAssigmentFormData = {
 
 const DEFAULT_ITEMS_PER_PAGE = 5;
 
-export const useVehicleAssigments = (): any => {
+export const useVehicleAssigments = (): UseVehicleAssigmentsReturn => {
 
   const [vehicles, setVehicles] = useState<VehicleAssigment[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -149,7 +149,7 @@ export const useVehicleAssigments = (): any => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   }, []);
 
-  const saveVehicleAssignment = useCallback(async () => {
+  const saveVehicleAssigment = useCallback(async () => {
     if (isSaving) return;
 
     setIsSaving(true);
@@ -186,7 +186,7 @@ export const useVehicleAssigments = (): any => {
   }, [editingVehicle,formData,closeModal,isSaving, loadVehiclesAssignments]);
 
   // Delete vehicle
-    const confirmDeleteVehicleAssignment = useCallback(async () => {
+    const confirmDeleteVehicleAssigment = useCallback(async () => {
       if (isDeleting) return;
     
       setIsDeleting(true);
@@ -231,7 +231,7 @@ export const useVehicleAssigments = (): any => {
     closeModal,
     closeDeleteModal,
     updateFormData,
-    saveVehicleAssignment,
-    confirmDeleteVehicleAssignment,
+    saveVehicleAssigment,
+    confirmDeleteVehicleAssigment,
 };
 };

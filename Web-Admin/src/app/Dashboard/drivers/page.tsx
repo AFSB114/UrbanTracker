@@ -142,7 +142,7 @@ export default function DriversPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {(apiError.status === 0 || apiError.status >= 500) && (
+              {(apiError.status === 0 || (apiError.status && apiError.status >= 500)) && (
                 <Button
                   variant="ghost"
                   size="sm"

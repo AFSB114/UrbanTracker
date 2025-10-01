@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Bus } from "lucide-react";
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { useVehiclePositions } from '../map/vehicle-context';
 
 // Interface que define la estructura de una ruta de transporte público
 export interface Route {
@@ -19,12 +20,23 @@ export interface Route {
   endDetail: string;
 }
 
+// Interface para mensajes de telemetría de vehículos
+export interface VehicleTelemetryMessage {
+ vehicleId: string;
+ timestamp: string;
+ latitude: number;
+ longitude: number;
+ source: string;
+}
+
 // Componente que muestra el detalle de una ruta seleccionada
 export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => void }) {
   const [fullRoute, setFullRoute] = useState<Route | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [telemetry, setTelemetry] = useState<string | null>(null);
+  const [parseError, setParseError] = useState<string | null>(null);
+  const { setVehiclePositions } = useVehiclePositions();
 
   useEffect(() => {
     if (route.start) {
@@ -52,7 +64,7 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
+      } finally {0 
         setLoading(false);
       }
     };
@@ -62,13 +74,24 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
   useEffect(() => {
     if (!fullRoute) return;
 
+    // Limpiar posiciones anteriores al cambiar de ruta
+    setVehiclePositions(new Map());
+
     const client = new Client({
       webSocketFactory: () => new SockJS('http://localhost:8080/ws/connect'),
       onConnect: () => {
         console.log('Connected to WebSocket');
         client.subscribe(`/topic/route/${fullRoute.name}/telemetry`, (message) => {
-          console.log('Received telemetry:', message);
+          console.log('Received telemetry:', message.body);
           setTelemetry(message.body);
+          try {
+            const telemetryData: VehicleTelemetryMessage = JSON.parse(message.body);
+            setVehiclePositions(prev => new Map(prev.set(telemetryData.vehicleId, telemetryData)));
+            setParseError(null); // Limpiar error si se parsea correctamente
+          } catch (err) {
+            console.error('Error parsing telemetry JSON:', err);
+            setParseError('Error al parsear mensaje de telemetría: formato JSON inválido');
+          }
         });
       },
       onStompError: (frame) => {
@@ -80,8 +103,10 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
 
     return () => {
       client.deactivate();
+      // Limpiar posiciones al desmontar
+      setVehiclePositions(new Map());
     };
-  }, [fullRoute]);
+  }, [fullRoute, setVehiclePositions]);
 
   if (loading) return <div className="text-zinc-100">Cargando detalle...</div>;
   if (error) return <div className="text-red-500">Error: {error}</div>;
@@ -150,6 +175,13 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
         <div className="bg-zinc-800 border border-zinc-700 rounded-xl p-4 mt-4">
           <h4 className="font-semibold text-zinc-100 mb-2">Telemetría</h4>
           <p className="text-xs text-zinc-100">{telemetry}</p>
+        </div>
+      )}
+      {/* Mostrar error de parsing */}
+      {parseError && (
+        <div className="bg-red-800 border border-red-700 rounded-xl p-4 mt-4">
+          <h4 className="font-semibold text-red-100 mb-2">Error de Telemetría</h4>
+          <p className="text-xs text-red-100">{parseError}</p>
         </div>
       )}
     </div>

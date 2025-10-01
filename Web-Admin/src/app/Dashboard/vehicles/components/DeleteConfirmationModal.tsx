@@ -35,7 +35,7 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
         <DialogHeader>
           <DialogTitle>Eliminar Vehículo</DialogTitle>
           <DialogDescription>
-            ¿Estás seguro que deseas eliminar el vehículo <span className="font-bold">{vehicle.licensePlate}</span>?
+            ¿Estás seguro que deseas eliminar el vehículo <span className="font-bold">{vehicle.licencePlate}</span>?
           </DialogDescription>
         </DialogHeader>
         <div className="flex items-center gap-2 mb-4">

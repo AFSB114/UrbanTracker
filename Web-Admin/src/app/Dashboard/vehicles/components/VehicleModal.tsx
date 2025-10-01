@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle,} from "@/components/ui/dialog"
-import type { VehiculeFormData } from "../types/vehiculeTypes"
+import type { VehiculeFormData, Company, VehicleType } from "../types/vehiculeTypes"
 import { Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -17,8 +17,8 @@ interface VehicleModalProps {
   onFormChange: (field: keyof VehiculeFormData, value: string | number | boolean) => void
   isSaving: boolean;
   errors: Record<string, string>
-  companies: any[]
-  vehicleTypes: any[]
+  companies: Company[]
+  vehicleTypes: VehicleType[]
 }
 
 type VehicleStatus = string;
