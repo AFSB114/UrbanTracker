@@ -85,12 +85,13 @@ export default function TrackingProvider({ children }: TrackingProviderProps) {
         return;
       }
 
-      // Crear payload - incluir routeId siempre (null si no existe)
+      // Crear payload - incluir routeId y trajectoryStatus siempre
       const payload = {
         driverId: user.id,
         vehicleId: user.vehicleId ? parseInt(user.vehicleId, 10) : 1,
         startTime: startTime,
         routeId: user.routeId ?? null, // ✅ Siempre incluir routeId
+        trajectoryStatus: 'ACTIVE', // ✅ Estado inicial ACTIVE
       };
 
       console.log('📍 Payload a enviar para crear trayectoria:', payload);
@@ -150,6 +151,7 @@ export default function TrackingProvider({ children }: TrackingProviderProps) {
       if (state.routeTrajectorieId) {
         const updateResult = await RouteTrajectorieService.update(state.routeTrajectorieId, {
           endTime: endTime,
+          trajectoryStatus: 'INACTIVE', // ✅ Cambiar estado a INACTIVE
         });
 
         if (updateResult.success) {

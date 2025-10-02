@@ -6,10 +6,12 @@ export interface RouteTrajectorieCreateData {
   vehicleId: number;
   routeId?: string | null;
   startTime: string;
+  trajectoryStatus: string;
 }
 
 export interface RouteTrajectorieUpdateData {
   endTime: string;
+  trajectoryStatus: string;
 }
 
 export interface RouteTrajectorieResponse {
@@ -23,7 +25,6 @@ export interface RouteTrajectorieResponse {
 }
 
 export class RouteTrajectorieService {
-
   static async create(
     data: RouteTrajectorieCreateData
   ): Promise<{ success: boolean; data?: RouteTrajectorieResponse; error?: string }> {
