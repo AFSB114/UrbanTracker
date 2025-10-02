@@ -157,14 +157,6 @@ export default function Home() {
           ))}
         </View>
 
-        {/* --- Botón de Reportes --- */}
-        <TouchableOpacity
-          onPress={() => setModalVisible(true)}
-          className="mb-6 flex-row items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800 py-4">
-          <Icon name="message-alert-outline" size={20} color="#f4f4f5" style={{ marginRight: 8 }} />
-          <Text className="text-base font-semibold text-zinc-100">Reportes</Text>
-        </TouchableOpacity>
-
         {/* --- Footer --- */}
         <View className="my-8 items-center">
           <Text className="text-zinc-500">UrbanTracker Driver</Text>
@@ -172,58 +164,6 @@ export default function Home() {
         </View>
       </ScrollView>
 
-      {/* --- MODAL --- */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}>
-        <View className="flex-1 items-center justify-center bg-zinc-950/80">
-          <View className="w-11/12 rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-lg">
-            <Text className="mb-4 text-xl font-bold text-zinc-100">Crear Reporte</Text>
-
-            <Text className="mb-1 text-zinc-400">Asunto</Text>
-            <TextInput
-              className="mb-4 rounded-lg border border-zinc-700 bg-zinc-800 p-3 text-zinc-100"
-              placeholder="Ej: Falla mecánica, Tráfico inesperado"
-              placeholderTextColor="#71717a"
-              value={asunto}
-              onChangeText={setAsunto}
-            />
-
-            <Text className="mb-1 text-zinc-400">Descripción</Text>
-            <TextInput
-              className="text-top h-24 rounded-lg border border-zinc-700 bg-zinc-800 p-3 text-zinc-100"
-              placeholder="Describe la novedad detalladamente..."
-              placeholderTextColor="#71717a"
-              multiline={true}
-              textAlignVertical="top"
-              value={description}
-              onChangeText={setDescription}
-            />
-
-            <View className="mt-6 flex-row justify-end">
-              <TouchableOpacity
-                onPress={() => {
-                  setModalVisible(false);
-                  setAsunto('');
-                  setDescription('');
-                }}
-                className="mr-2 px-4 py-2">
-                <Text className="font-semibold text-zinc-400">Cancelar</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={handleEnviarReporte}
-                className="rounded-lg border border-green-500 bg-green-600 px-6 py-2">
-                <Text className="font-bold text-zinc-100">Enviar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }

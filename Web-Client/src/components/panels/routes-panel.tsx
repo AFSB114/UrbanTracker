@@ -14,7 +14,7 @@ interface RouteResDto {
 }
 
 // Componente principal que muestra la lista de rutas o el detalle de una ruta seleccionada
-export function RoutesPanel({ showTitle = false, selected, setSelected }: { showTitle?: boolean, selected: number | null, setSelected: (idx: number | null) => void }) {
+export function RoutesPanel({ showTitle = false, selected, setSelected }: { showTitle?: boolean, selected: number | null, setSelected: (routeId: number | null) => void }) {
   const [routes, setRoutes] = useState<Route[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -75,12 +75,12 @@ export function RoutesPanel({ showTitle = false, selected, setSelected }: { show
       {/* Si no hay ruta seleccionada, mostrar la lista de rutas */}
       {selected === null ? (
         <div className="space-y-3">
-          {routes.map((route, idx) => (
+          {routes.map((route) => (
             // Tarjeta resumen de cada ruta
             <div
               key={route.id}
               className="bg-zinc-800 text-zinc-100 p-4 rounded-xl w-full font-sans border border-zinc-700 flex flex-col shadow-sm transition-all duration-200 hover:shadow-xl hover:scale-[1.02] cursor-pointer"
-              onClick={() => setSelected(idx)}
+              onClick={() => setSelected(route.id)}
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex flex-col">
@@ -112,7 +112,7 @@ export function RoutesPanel({ showTitle = false, selected, setSelected }: { show
         </div>
       ) : (
         // Si hay una ruta seleccionada, mostrar el detalle usando el componente importado
-        <RoutesDetail route={routes[selected]} onBack={() => setSelected(null)} />
+        <RoutesDetail route={routes.find(r => r.id === selected)!} onBack={() => setSelected(null)} />
       )}
     </div>
   );

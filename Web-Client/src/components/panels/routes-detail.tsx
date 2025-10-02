@@ -130,6 +130,14 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
     };
   }, [fullRoute, setVehiclePositions]);
 
+  // Limpiar puntos de ruta al desmontar el componente (cuando se deselecciona la ruta)
+  useEffect(() => {
+    return () => {
+      setOutboundPoints(null);
+      setReturnPoints(null);
+    };
+  }, [setOutboundPoints, setReturnPoints]);
+
   if (loading) return <div className="text-zinc-100">Cargando detalle...</div>;
   if (error) return <div className="text-red-500">Error: {error}</div>;
   if (!fullRoute) return null;
@@ -192,20 +200,6 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
           </div>
         </div>
       </div>
-      {/* Mostrar telemetría */}
-      {telemetry && (
-        <div className="bg-zinc-800 border border-zinc-700 rounded-xl p-4 mt-4">
-          <h4 className="font-semibold text-zinc-100 mb-2">Telemetría</h4>
-          <p className="text-xs text-zinc-100">{telemetry}</p>
-        </div>
-      )}
-      {/* Mostrar error de parsing */}
-      {parseError && (
-        <div className="bg-red-800 border border-red-700 rounded-xl p-4 mt-4">
-          <h4 className="font-semibold text-red-100 mb-2">Error de Telemetría</h4>
-          <p className="text-xs text-red-100">{parseError}</p>
-        </div>
-      )}
     </div>
   );
 }

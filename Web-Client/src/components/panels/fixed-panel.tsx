@@ -7,23 +7,34 @@ import { StopInfoPanel } from "./stop-info-panel"
 import { GeneralInfoPanel } from "./general-info-panel"
 import { usePanelActive } from "components/panels/panel-active-context"
 import { usePanelCollapse } from "components/panels/panel-collapse-context"
-import { useState } from "react"
+import { useRoute } from "components/map/route-context"
+import { useRouter } from "next/navigation"
 
 export function FixedPanel() {
   const { activePanel } = usePanelActive();
   const { isPanelCollapsed, togglePanelCollapse } = usePanelCollapse();
-  const [selectedRoute, setSelectedRoute] = useState<number | null>(null);
+  const { selectedRoute, setSelectedRoute } = useRoute();
+  const router = useRouter();
+
+  const handleRouteSelection = (routeId: number | null) => {
+    setSelectedRoute(routeId);
+    if (routeId !== null) {
+      router.push(`/map/routes/${routeId}`);
+    } else {
+      router.push("/map/routes");
+    }
+  };
 
   const renderPanel = () => {
     switch (activePanel) {
       case "routes":
-        return <RoutesPanel showTitle selected={selectedRoute} setSelected={setSelectedRoute} />
+        return <RoutesPanel showTitle selected={selectedRoute} setSelected={handleRouteSelection} />
       case "stop-info":
         return <StopInfoPanel />
       case "general-info":
         return <GeneralInfoPanel />
       default:
-        return <RoutesPanel showTitle selected={selectedRoute} setSelected={setSelectedRoute} />
+        return <RoutesPanel showTitle selected={selectedRoute} setSelected={handleRouteSelection} />
     }
   }
 
