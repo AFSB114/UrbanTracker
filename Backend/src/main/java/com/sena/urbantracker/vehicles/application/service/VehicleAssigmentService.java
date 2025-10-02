@@ -144,4 +144,40 @@ public class VehicleAssigmentService implements CrudOperations<VehicleAssignment
         return CrudResponseDto.success(VehicleAssignmentMapper.toDto(domain), "Asignación activa encontrada");
     }
 
+    public CrudResponseDto<List<VehicleAssigmentResDto>> findByRouteId(Long routeId) {
+        List<VehicleAssigmentResDto> dtos = vehicleAssignmentRepository.findByRouteId(routeId)
+                .stream()
+                .peek(vehicleAssignment -> {
+                    try {
+                        var profile = userProfileRepository.findByUserId(vehicleAssignment.getDriver().getUser().getId())
+                                .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario no encontrado"));
+                        vehicleAssignment.getDriver().setProfile(profile);
+                    } catch (EntityNotFoundException e) {
+                        // Handle or log the exception
+                    }
+                })
+                .map(VehicleAssignmentMapper::toDto)
+                .toList();
+
+        return CrudResponseDto.success(dtos, "Asignaciones encontradas por ruta");
+    }
+
+    public CrudResponseDto<List<VehicleAssigmentResDto>> findByVehicleId(Long vehicleId) {
+        List<VehicleAssigmentResDto> dtos = vehicleAssignmentRepository.findByVehicleId(vehicleId)
+                .stream()
+                .peek(vehicleAssignment -> {
+                    try {
+                        var profile = userProfileRepository.findByUserId(vehicleAssignment.getDriver().getUser().getId())
+                                .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario no encontrado"));
+                        vehicleAssignment.getDriver().setProfile(profile);
+                    } catch (EntityNotFoundException e) {
+                        // Handle or log the exception
+                    }
+                })
+                .map(VehicleAssignmentMapper::toDto)
+                .toList();
+
+        return CrudResponseDto.success(dtos, "Asignaciones encontradas por vehículo");
+    }
+
 }

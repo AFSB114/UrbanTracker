@@ -1,5 +1,6 @@
 {
     "java.dependency.syncWithFolderExplorer": false,
     "java.dependency.packagePresentation": "hierarchical",
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "svg.preview.background": "dark-transparent"
 }

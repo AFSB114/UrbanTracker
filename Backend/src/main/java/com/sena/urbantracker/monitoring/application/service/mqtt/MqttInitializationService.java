@@ -1,4 +1,4 @@
-package com.sena.urbantracker.mqtt.application.service;
+package com.sena.urbantracker.monitoring.application.service.mqtt;
 
 import com.sena.urbantracker.routes.domain.entity.RouteDomain;
 import com.sena.urbantracker.routes.domain.repository.RouteRepository;

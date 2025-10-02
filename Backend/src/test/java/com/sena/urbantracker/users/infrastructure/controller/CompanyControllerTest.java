@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
+import com.sena.urbantracker.shared.domain.enums.OperationType;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import com.sena.urbantracker.users.application.dto.request.CompanyReqDto;
 import com.sena.urbantracker.users.application.dto.response.CompanyResDto;
@@ -36,7 +37,8 @@ class CompanyControllerTest {
     private ServiceFactory serviceFactory;
 
     @MockBean
-    private CrudOperations<CompanyReqDto, CompanyResDto, Long> crudOperations;
+    @SuppressWarnings("rawtypes")
+    private CrudOperations crudOperations;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -66,9 +68,9 @@ class CompanyControllerTest {
                 .country("Colombia")
                 .build();
 
-        successResponse = CrudResponseDto.success(resDto, "CREATED", "COMPANY");
-        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), "READ", "COMPANY");
-        findAllResponse = CrudResponseDto.success(List.of(resDto), "READ", "COMPANY");
+        successResponse = CrudResponseDto.success(resDto, com.sena.urbantracker.shared.domain.enums.OperationType.CREATE, EntityType.COMPANY.getDisplayName());
+        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), com.sena.urbantracker.shared.domain.enums.OperationType.READ, EntityType.COMPANY.getDisplayName());
+        findAllResponse = CrudResponseDto.success(List.of(resDto), com.sena.urbantracker.shared.domain.enums.OperationType.READ, EntityType.COMPANY.getDisplayName());
 
         when(serviceFactory.getService(EntityType.COMPANY, CompanyReqDto.class)).thenReturn(crudOperations);
     }
@@ -108,7 +110,7 @@ class CompanyControllerTest {
 
     @Test
     void update_ShouldReturnOk_WhenValidRequest() throws Exception {
-        CrudResponseDto<CompanyResDto> updateResponse = CrudResponseDto.success(resDto, "UPDATED", "COMPANY");
+        CrudResponseDto<CompanyResDto> updateResponse = CrudResponseDto.success(resDto, com.sena.urbantracker.shared.domain.enums.OperationType.UPDATE, EntityType.COMPANY.getDisplayName());
         when(crudOperations.update(validReqDto, 1L)).thenReturn(updateResponse);
 
         mockMvc.perform(put("/api/v1/public/company/1")
@@ -121,7 +123,7 @@ class CompanyControllerTest {
 
     @Test
     void delete_ShouldReturnOk() throws Exception {
-        CrudResponseDto<CompanyResDto> deleteResponse = CrudResponseDto.success(null, "DELETED", "COMPANY");
+        CrudResponseDto<CompanyResDto> deleteResponse = CrudResponseDto.success(null, com.sena.urbantracker.shared.domain.enums.OperationType.DELETE, EntityType.COMPANY.getDisplayName());
         when(crudOperations.deleteById(1L)).thenReturn(deleteResponse);
 
         mockMvc.perform(delete("/api/v1/public/company/1")

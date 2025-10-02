@@ -60,7 +60,7 @@ class TrackingControllerTest {
 
         resDto = TrackingResDto.builder()
                 .id(1L)
-                .routeId(1L)
+                .routeId("1")
                 .vehicleId("1")
                 .latitude(BigDecimal.valueOf(4.60971))
                 .longitude(BigDecimal.valueOf(-74.08175))

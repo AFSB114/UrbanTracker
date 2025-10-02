@@ -1,6 +1,6 @@
-package com.sena.urbantracker.mqtt.infrastructure.controller;
+package com.sena.urbantracker.monitoring.infrastructure.controller.mqtt;
 
-import com.sena.urbantracker.mqtt.application.service.MqttPublisherService;
+import com.sena.urbantracker.monitoring.application.service.mqtt.MqttPublisherService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

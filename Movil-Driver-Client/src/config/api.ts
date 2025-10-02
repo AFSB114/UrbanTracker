@@ -1,6 +1,7 @@
 // Configuración de API
+import Constants from 'expo-constants';
 export const API_CONFIG = {
-  BASE_URL: 'http://172.30.6.33:8080/api/v1',
+  BASE_URL: (Constants.expoConfig?.extra?.apiUrl as string) || 'http://172.30.6.33:8080/api/v1',
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
 } as const;

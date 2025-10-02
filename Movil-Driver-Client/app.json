@@ -22,6 +22,11 @@
     "experiments": {
       "tsconfigPaths": true
     },
+    "extra": {
+      "apiUrl": "http://172.30.6.33:8080/api/v1",
+      "mqttHost": "172.30.6.33",
+      "mqttPort": 9001
+    },
     "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
     "plugins": [
       [

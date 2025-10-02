@@ -3,7 +3,7 @@ package com.sena.urbantracker.routes.application.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sena.urbantracker.mqtt.application.service.DynamicSubscriptionService;
+import com.sena.urbantracker.monitoring.application.service.mqtt.DynamicSubscriptionService;
 import com.sena.urbantracker.routes.application.dto.request.RouteReqDto;
 import com.sena.urbantracker.routes.application.dto.request.RouteWaypointReqDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteDetailsResDto;
