@@ -30,6 +30,7 @@ export default function NewRoutePage() {
       <RouteFormManager
         onSave={handleSave}
         onSuccess={() => router.push("/Dashboard/routes")}
+        onClose={handleClose}
         mode="create"
       />
     </div>

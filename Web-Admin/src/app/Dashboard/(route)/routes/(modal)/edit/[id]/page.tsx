@@ -32,6 +32,7 @@ export default function EditRoutePage() {
       <RouteFormManager
         onSave={handleSave}
         onSuccess={() => router.push("/Dashboard/routes")}
+        onClose={handleClose}
         mode="edit"
         id={id as string}
       />

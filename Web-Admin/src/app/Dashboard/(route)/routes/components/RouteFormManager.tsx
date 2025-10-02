@@ -14,6 +14,7 @@ import { get } from 'http';
 interface RouteFormManagerProps {
   onSave: (data: CompleteRouteData) => Promise<void>;
   onSuccess?: () => void;
+  onClose?: () => void;
   editingRoute?: RouteResponse | null;
   mode?: 'create' | 'edit' | 'view';
   id?: string;
@@ -22,6 +23,7 @@ interface RouteFormManagerProps {
 const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
   onSave,
   onSuccess,
+  onClose,
   editingRoute,
   mode = 'create',
   id = ''
@@ -313,12 +315,12 @@ const RouteFormManagerContent: React.FC<RouteFormManagerProps> = ({
           {mode !== 'view' && (
             <div className="flex gap-3">
               <Button
-                onClick={resetForm}
+                onClick={onClose}
                 variant="outline"
                 className="flex-1 border-zinc-700 text-white hover:bg-zinc-800 hover:text-gray-100"
                 disabled={isLoading}
               >
-                Limpiar
+                Cancelar
               </Button>
               <Button
                 onClick={handleSave}

@@ -51,29 +51,6 @@ export function RouteScheduleFilters({
           <SelectItem value="SUNDAY">Domingo</SelectItem>
         </SelectContent>
       </Select>
-
-      <Select value={routeFilter} onValueChange={onRouteFilterChange}>
-        <SelectTrigger className="w-48 bg-zinc-900 border-zinc-700 text-white">
-          <Filter className="h-4 w-4 mr-2" />
-          <SelectValue placeholder="Todas las rutas" />
-        </SelectTrigger>
-        <SelectContent className="bg-zinc-900 border-zinc-700">
-          <SelectItem value="all">Todas las rutas</SelectItem>
-          {/* TODO: Load routes dynamically */}
-        </SelectContent>
-      </Select>
-
-      <Select value={statusFilter} onValueChange={onStatusFilterChange}>
-        <SelectTrigger className="w-48 bg-zinc-900 border-zinc-700 text-white">
-          <Filter className="h-4 w-4 mr-2" />
-          <SelectValue placeholder="Todos los estados" />
-        </SelectTrigger>
-        <SelectContent className="bg-zinc-900 border-zinc-700">
-          <SelectItem value="all">Todos los estados</SelectItem>
-          <SelectItem value="active">Activos</SelectItem>
-          <SelectItem value="inactive">Inactivos</SelectItem>
-        </SelectContent>
-      </Select>
     </div>
   )
 }

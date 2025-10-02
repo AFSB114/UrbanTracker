@@ -59,19 +59,23 @@ export function RouteScheduleCard({ routeWithSchedules, onEdit, onDelete }: Rout
                 <div className="text-sm font-medium text-zinc-400">Horarios:</div>
                 <div className="grid grid-cols-7 gap-2">
                   {['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'].map(day => {
-                    const daySchedule = sortedSchedules.find(s => s.dayOfWeek === day)
+                    const daySchedules = sortedSchedules.filter(s => s.dayOfWeek === day)
                     return (
                       <div key={day} className="text-center">
                         <div className="text-xs text-zinc-500 mb-1">{getDayName(day)}</div>
-                        {daySchedule ? (
-                          <div className={`p-2 rounded text-xs ${
-                            daySchedule.active
-                              ? 'bg-green-600/20 text-green-400 border border-green-600/30'
-                              : 'bg-red-600/20 text-red-400 border border-red-600/30'
-                          }`}>
-                            <div className="font-medium">{formatTime(daySchedule.startTime)}</div>
-                            <div className="text-zinc-400">-</div>
-                            <div className="font-medium">{formatTime(daySchedule.endTime)}</div>
+                        {daySchedules.length > 0 ? (
+                          <div className="space-y-1">
+                            {daySchedules.map(schedule => (
+                              <div key={schedule.id} className={`p-2 rounded text-xs ${
+                                schedule.active
+                                  ? 'bg-green-600/20 text-green-400 border border-green-600/30'
+                                  : 'bg-red-600/20 text-red-400 border border-red-600/30'
+                              }`}>
+                                <div className="font-medium">{formatTime(schedule.startTime)}</div>
+                                <div className="text-zinc-400">-</div>
+                                <div className="font-medium">{formatTime(schedule.endTime)}</div>
+                              </div>
+                            ))}
                           </div>
                         ) : (
                           <div className="p-2 rounded bg-zinc-800/50 border border-zinc-700/50 text-zinc-600 text-xs">

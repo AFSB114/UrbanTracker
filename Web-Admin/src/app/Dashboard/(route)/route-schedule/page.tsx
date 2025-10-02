@@ -80,8 +80,8 @@ export default function RouteSchedulePage() {
         // Para creación: crear nuevos horarios
         await routeScheduleService.createRouteSchedules(data);
       }
-      handleCloseFormModal();
       await fetchRouteSchedules();
+      handleCloseFormModal();
     } catch (error) {
       console.error('Error saving schedules:', error);
       throw error;
