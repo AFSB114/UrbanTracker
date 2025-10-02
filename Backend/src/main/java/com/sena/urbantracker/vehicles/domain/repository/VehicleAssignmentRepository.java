@@ -19,4 +19,8 @@ public interface VehicleAssignmentRepository {
     boolean existsById(Long id);
 
     Optional<VehicleAssignmentDomain> findActiveByUserId(Long userId, AssigmentStatusType status);
+
+    List<VehicleAssignmentDomain> findByRouteId(Long routeId);
+
+    List<VehicleAssignmentDomain> findByVehicleId(Long vehicleId);
 }

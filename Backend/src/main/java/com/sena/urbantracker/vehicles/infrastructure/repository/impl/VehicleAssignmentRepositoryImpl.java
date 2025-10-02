@@ -55,4 +55,20 @@ public class VehicleAssignmentRepositoryImpl implements VehicleAssignmentReposit
         return jpaRepository.findActiveByUserId(userId, status)
                 .map(VehicleAssignmentPersistenceMapper::toDomain);
     }
+
+    @Override
+    public List<VehicleAssignmentDomain> findByRouteId(Long routeId) {
+        return jpaRepository.findByRouteId(routeId)
+                .stream()
+                .map(VehicleAssignmentPersistenceMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<VehicleAssignmentDomain> findByVehicleId(Long vehicleId) {
+        return jpaRepository.findByVehicleId(vehicleId)
+                .stream()
+                .map(VehicleAssignmentPersistenceMapper::toDomain)
+                .toList();
+    }
 }

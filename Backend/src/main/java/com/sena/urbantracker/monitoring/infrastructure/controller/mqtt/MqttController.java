@@ -1,6 +1,6 @@
-package com.sena.urbantracker.mqtt.infrastructure.controller;
+package com.sena.urbantracker.monitoring.infrastructure.controller.mqtt;
 
-import com.sena.urbantracker.mqtt.application.service.MqttPublisherService;
+import com.sena.urbantracker.monitoring.application.service.mqtt.MqttPublisherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

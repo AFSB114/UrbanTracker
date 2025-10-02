@@ -1,9 +1,14 @@
 // Configuración MQTT
+import Constants from 'expo-constants';
+
+const MQTT_HOST = (Constants.expoConfig?.extra?.mqttHost as string) || '172.30.6.33';
+const MQTT_PORT = (Constants.expoConfig?.extra?.mqttPort as number) || 9001;
+
 export const MQTT_CONFIG = {
   // Broker configuration
-  BROKER_URL: 'ws://172.30.6.33:9001',
-  BROKER_HOST: '172.30.6.33',
-  BROKER_PORT: 9001,
+  BROKER_URL: `ws://${MQTT_HOST}:${MQTT_PORT}`,
+  BROKER_HOST: MQTT_HOST,
+  BROKER_PORT: MQTT_PORT,
 
   // Client configuration
   CLIENT_ID_PREFIX: 'mobile_driver_',

@@ -1,4 +1,4 @@
-package com.sena.urbantracker.mqtt.application.service;
+package com.sena.urbantracker.monitoring.application.service.mqtt;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

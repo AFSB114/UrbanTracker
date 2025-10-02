@@ -1,4 +1,4 @@
-package com.sena.urbantracker.mqtt.infrastructure.listener;
+package com.sena.urbantracker.monitoring.infrastructure.listener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

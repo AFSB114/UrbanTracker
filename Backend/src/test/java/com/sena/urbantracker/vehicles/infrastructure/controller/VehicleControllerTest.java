@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
+import com.sena.urbantracker.shared.domain.enums.OperationType;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import com.sena.urbantracker.vehicles.application.dto.request.VehicleReqDto;
 import com.sena.urbantracker.vehicles.application.dto.response.VehicleResDto;
@@ -74,9 +75,9 @@ class VehicleControllerTest {
                 .status("ACTIVE")
                 .build();
 
-        successResponse = CrudResponseDto.success(resDto, "CREATED", "VEHICLE");
-        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), "READ", "VEHICLE");
-        findAllResponse = CrudResponseDto.success(List.of(resDto), "READ", "VEHICLE");
+        successResponse = CrudResponseDto.success(resDto, OperationType.CREATE, EntityType.VEHICLE.getDisplayName());
+        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), OperationType.READ, EntityType.VEHICLE.getDisplayName());
+        findAllResponse = CrudResponseDto.success(List.of(resDto), OperationType.READ, EntityType.VEHICLE.getDisplayName());
 
         when(serviceFactory.getService(EntityType.VEHICLE, VehicleReqDto.class)).thenReturn(crudOperations);
     }
@@ -139,7 +140,7 @@ class VehicleControllerTest {
 
     @Test
     void update_ShouldReturnOk_WhenValidRequest() throws Exception {
-        CrudResponseDto<VehicleResDto> updateResponse = CrudResponseDto.success(resDto, "UPDATED", "VEHICLE");
+        CrudResponseDto<VehicleResDto> updateResponse = CrudResponseDto.success(resDto, OperationType.UPDATE, EntityType.VEHICLE.getDisplayName());
         when(crudOperations.update(validReqDto, 1L)).thenReturn(updateResponse);
 
         mockMvc.perform(put("/api/v1/public/vehicle/1")
@@ -165,7 +166,7 @@ class VehicleControllerTest {
 
     @Test
     void delete_ShouldReturnOk() throws Exception {
-        CrudResponseDto<VehicleResDto> deleteResponse = CrudResponseDto.success(null, "DELETED", "VEHICLE");
+        CrudResponseDto<VehicleResDto> deleteResponse = CrudResponseDto.success(null, OperationType.DELETE, EntityType.VEHICLE.getDisplayName());
         when(crudOperations.deleteById(1L)).thenReturn(deleteResponse);
 
         mockMvc.perform(delete("/api/v1/public/vehicle/1")
