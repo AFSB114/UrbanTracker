@@ -23,7 +23,7 @@ public class RouteScheduleModel extends BaseEntity {
     private RouteModel route;
 
     @Column(name = "day_of_week", nullable = false)
-    private DayOfWeekType dayOfWeek;
+    private String dayOfWeek;
 
     @Column(name = "start_time", nullable = false)
     private Time startTime;

@@ -11,6 +11,7 @@ public enum EntityType {
     USER_IDENTIFICATION("User Identification", "userIdentifications"),
     USER_PROFILE("User Profile", "userProfiles"),
     ROUTE("Route", "routes"),
+    ROUTE_ASSIGNMENT("Route Assignment", "routeAssignments"),
     ROUTE_WAYPOINT("Route Waypoint", "routeWaypoints"),
     ROUTE_SCHEDULE("Route Schedule", "routeSchedules"),
     ROUTE_TRAJECTORY("Route Trajectory", "routeTrajectories"),

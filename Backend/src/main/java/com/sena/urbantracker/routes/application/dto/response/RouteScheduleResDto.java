@@ -1,5 +1,6 @@
 package com.sena.urbantracker.routes.application.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sena.urbantracker.routes.domain.valueobject.DayOfWeekType;
 import com.sena.urbantracker.shared.application.dto.response.ABaseResDto;
 import lombok.*;
@@ -14,7 +15,9 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class RouteScheduleResDto extends ABaseResDto {
     private Long routeId;
-    private DayOfWeekType dayOfWeek;
+    private String dayOfWeek;
+    @JsonFormat(pattern = "HH:mm:ss")
     private Time startTime;
+    @JsonFormat(pattern = "HH:mm:ss")
     private Time endTime;
 }

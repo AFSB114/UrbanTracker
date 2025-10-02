@@ -13,7 +13,7 @@ import java.sql.Time;
 @EqualsAndHashCode(callSuper = true)
 public class RouteScheduleDomain extends ABaseDomain {
     private RouteDomain route;
-    private DayOfWeekType dayOfWeek;
+    private String dayOfWeek;
     private Time startTime;
     private Time endTime;
 }

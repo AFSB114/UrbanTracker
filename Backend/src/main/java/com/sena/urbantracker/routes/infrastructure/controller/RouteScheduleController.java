@@ -1,6 +1,7 @@
 package com.sena.urbantracker.routes.infrastructure.controller;
 
 import com.sena.urbantracker.routes.application.dto.request.RouteScheduleReqDto;
+import com.sena.urbantracker.routes.application.dto.request.SchedulesDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteScheduleResDto;
 import com.sena.urbantracker.routes.application.service.RouteScheduleService;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
@@ -30,13 +31,14 @@ public class RouteScheduleController extends BaseController<RouteScheduleReqDto,
     @PostMapping("/bulk")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CrudResponseDto<List<RouteScheduleResDto>>> createAll(@RequestBody List<RouteScheduleReqDto> dto) throws BadRequestException {
+    public ResponseEntity<CrudResponseDto<List<RouteScheduleResDto>>> createAll(@RequestBody SchedulesDto dto) throws BadRequestException {
         CrudResponseDto<List<RouteScheduleResDto>>  res = routeScheduleService.createAll(dto);
         return  ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
     @PutMapping("/bulk/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<List<RouteScheduleResDto>>> updateAll(@PathVariable Long id, @RequestBody List<RouteScheduleReqDto> dto) throws BadRequestException {
+    public ResponseEntity<CrudResponseDto<List<RouteScheduleResDto>>> updateAll(@PathVariable Long id, @RequestBody SchedulesDto dto) throws BadRequestException {
         CrudResponseDto<List<RouteScheduleResDto>>  res = routeScheduleService.updateAll(dto, id);
         return  ResponseEntity.status(HttpStatus.ACCEPTED).body(res);
     }
