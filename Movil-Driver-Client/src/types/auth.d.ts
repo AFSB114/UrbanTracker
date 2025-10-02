@@ -1,9 +1,11 @@
 export interface User {
-  id: string;
+  id: number;
   identificacion: string;
   nombre?: string;
   email?: string;
   role?: string;
+  vehicleId?: string;
+  routeId?: string;
 }
 
 export interface LoginCredentials {
@@ -16,6 +18,7 @@ export interface AuthState {
   user: User | null;
   token: string | null;
   isLoading: boolean;
+  driverInfoFetched?: boolean;
 }
 
 export interface AuthContextType {

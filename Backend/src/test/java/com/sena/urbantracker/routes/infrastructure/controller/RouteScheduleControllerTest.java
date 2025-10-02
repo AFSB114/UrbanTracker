@@ -7,6 +7,7 @@ import com.sena.urbantracker.routes.application.service.RouteScheduleService;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
+import com.sena.urbantracker.shared.domain.enums.OperationType;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,9 +70,9 @@ class RouteScheduleControllerTest {
                 .endTime(Time.valueOf("18:00:00"))
                 .build();
 
-        successResponse = CrudResponseDto.success(resDto, "CREATED", "ROUTE_SCHEDULE");
-        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), "READ", "ROUTE_SCHEDULE");
-        findAllResponse = CrudResponseDto.success(List.of(resDto), "READ", "ROUTE_SCHEDULE");
+        successResponse = CrudResponseDto.success(resDto, OperationType.CREATE, EntityType.ROUTE_SCHEDULE.getDisplayName());
+        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), OperationType.READ, EntityType.ROUTE_SCHEDULE.getDisplayName());
+        findAllResponse = CrudResponseDto.success(List.of(resDto), OperationType.READ, EntityType.ROUTE_SCHEDULE.getDisplayName());
 
         when(serviceFactory.getService(EntityType.ROUTE_SCHEDULE, RouteScheduleReqDto.class)).thenReturn(crudOperations);
     }
@@ -111,7 +112,7 @@ class RouteScheduleControllerTest {
 
     @Test
     void update_ShouldReturnOk_WhenValidRequest() throws Exception {
-        CrudResponseDto<RouteScheduleResDto> updateResponse = CrudResponseDto.success(resDto, "UPDATED", "ROUTE_SCHEDULE");
+        CrudResponseDto<RouteScheduleResDto> updateResponse = CrudResponseDto.success(resDto, OperationType.UPDATE, EntityType.ROUTE_SCHEDULE.getDisplayName());
         when(crudOperations.update(validReqDto, 1L)).thenReturn(updateResponse);
 
         mockMvc.perform(put("/api/v1/route-schedule/1")
@@ -124,7 +125,7 @@ class RouteScheduleControllerTest {
 
     @Test
     void delete_ShouldReturnOk() throws Exception {
-        CrudResponseDto<RouteScheduleResDto> deleteResponse = CrudResponseDto.success(null, "DELETED", "ROUTE_SCHEDULE");
+        CrudResponseDto<RouteScheduleResDto> deleteResponse = CrudResponseDto.success(null, OperationType.DELETE, EntityType.ROUTE_SCHEDULE.getDisplayName());
         when(crudOperations.deleteById(1L)).thenReturn(deleteResponse);
 
         mockMvc.perform(delete("/api/v1/route-schedule/1")
@@ -136,7 +137,7 @@ class RouteScheduleControllerTest {
     @Test
     void createAll_ShouldReturnCreated() throws Exception {
         List<RouteScheduleReqDto> dtoList = List.of(validReqDto);
-        CrudResponseDto<List<RouteScheduleResDto>> response = CrudResponseDto.success(List.of(resDto), "CREATED", "ROUTE_SCHEDULE");
+        CrudResponseDto<List<RouteScheduleResDto>> response = CrudResponseDto.success(List.of(resDto), OperationType.CREATE, EntityType.ROUTE_SCHEDULE.getDisplayName());
 
         when(routeScheduleService.createAll(dtoList)).thenReturn(response);
 
@@ -151,7 +152,7 @@ class RouteScheduleControllerTest {
     @Test
     void updateAll_ShouldReturnAccepted() throws Exception {
         List<RouteScheduleReqDto> dtoList = List.of(validReqDto);
-        CrudResponseDto<List<RouteScheduleResDto>> response = CrudResponseDto.success(List.of(resDto), "UPDATED", "ROUTE_SCHEDULE");
+        CrudResponseDto<List<RouteScheduleResDto>> response = CrudResponseDto.success(List.of(resDto), OperationType.UPDATE, EntityType.ROUTE_SCHEDULE.getDisplayName());
 
         when(routeScheduleService.updateAll(dtoList, 1L)).thenReturn(response);
 

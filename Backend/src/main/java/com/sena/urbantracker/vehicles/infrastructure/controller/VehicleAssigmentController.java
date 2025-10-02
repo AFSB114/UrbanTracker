@@ -6,6 +6,7 @@ import com.sena.urbantracker.shared.domain.enums.EntityType;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.vehicles.application.dto.request.VehicleAssignmentReqDto;
 import com.sena.urbantracker.vehicles.application.dto.response.VehicleAssigmentResDto;
+import com.sena.urbantracker.vehicles.application.service.VehicleAssigmentService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,8 +20,11 @@ import java.util.Optional;
 @RequestMapping("/api/v1/vehicle-assigment")
 public class VehicleAssigmentController extends BaseController<VehicleAssignmentReqDto, VehicleAssigmentResDto, Long> {
 
-    public VehicleAssigmentController(ServiceFactory serviceFactory) {
+    private final VehicleAssigmentService vehicleAssigmentService;
+
+    public VehicleAssigmentController(ServiceFactory serviceFactory, VehicleAssigmentService vehicleAssigmentService) {
         super(serviceFactory, EntityType.VEHICLE_ASSIGMENT, VehicleAssignmentReqDto.class, VehicleAssigmentResDto.class);
+        this.vehicleAssigmentService = vehicleAssigmentService;
     }
 
     protected Class<VehicleAssigmentResDto> getDtoClass() {
@@ -53,5 +57,11 @@ public class VehicleAssigmentController extends BaseController<VehicleAssignment
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CrudResponseDto<VehicleAssigmentResDto>> delete(@PathVariable Long id) {
         return super.delete(id);
+    }
+
+    @GetMapping("/user/{userId}")
+    @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
+    public ResponseEntity<CrudResponseDto<VehicleAssigmentResDto>> findActiveByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(vehicleAssigmentService.findActiveByUserId(userId));
     }
 }

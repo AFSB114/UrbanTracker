@@ -7,6 +7,7 @@ import com.sena.urbantracker.routes.application.service.RouteAssignmentService;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
+import com.sena.urbantracker.shared.domain.enums.OperationType;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import com.sena.urbantracker.vehicles.domain.valueobject.AssigmentStatusType;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,9 +72,9 @@ class RouteAssignmentControllerTest {
                 .note("Test assignment")
                 .build();
 
-        successResponse = CrudResponseDto.success(resDto, "CREATED", "ROUTE_ASSIGNMENT");
-        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), "READ", "ROUTE_ASSIGNMENT");
-        findAllResponse = CrudResponseDto.success(List.of(resDto), "READ", "ROUTE_ASSIGNMENT");
+        successResponse = CrudResponseDto.success(resDto, OperationType.CREATE, EntityType.ROUTE_ASSIGNMENT.getDisplayName());
+        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), OperationType.READ, EntityType.ROUTE_ASSIGNMENT.getDisplayName());
+        findAllResponse = CrudResponseDto.success(List.of(resDto), OperationType.READ, EntityType.ROUTE_ASSIGNMENT.getDisplayName());
 
         when(serviceFactory.getService(EntityType.ROUTE_ASSIGNMENT, RouteAssignmentReqDto.class)).thenReturn(crudOperations);
     }
@@ -126,7 +127,7 @@ class RouteAssignmentControllerTest {
 
     @Test
     void update_ShouldReturnOk_WhenValidRequest() throws Exception {
-        CrudResponseDto<RouteAssignmentResDto> updateResponse = CrudResponseDto.success(resDto, "UPDATED", "ROUTE_ASSIGNMENT");
+        CrudResponseDto<RouteAssignmentResDto> updateResponse = CrudResponseDto.success(resDto, OperationType.UPDATE, EntityType.ROUTE_ASSIGNMENT.getDisplayName());
         when(routeAssignmentService.update(validReqDto, 1L)).thenReturn(updateResponse);
 
         mockMvc.perform(put("/api/v1/route-assignment/1")
@@ -139,7 +140,7 @@ class RouteAssignmentControllerTest {
 
     @Test
     void delete_ShouldReturnOk() throws Exception {
-        CrudResponseDto<RouteAssignmentResDto> deleteResponse = CrudResponseDto.success(null, "DELETED", "ROUTE_ASSIGNMENT");
+        CrudResponseDto<RouteAssignmentResDto> deleteResponse = CrudResponseDto.success(null, OperationType.DELETE, EntityType.ROUTE_ASSIGNMENT.getDisplayName());
         when(routeAssignmentService.deleteById(1L)).thenReturn(deleteResponse);
 
         mockMvc.perform(delete("/api/v1/route-assignment/1")
@@ -150,7 +151,7 @@ class RouteAssignmentControllerTest {
 
     @Test
     void findByRouteId_ShouldReturnOk() throws Exception {
-        CrudResponseDto<List<RouteAssignmentResDto>> response = CrudResponseDto.success(List.of(resDto), "READ", "ROUTE_ASSIGNMENT");
+        CrudResponseDto<List<RouteAssignmentResDto>> response = CrudResponseDto.success(List.of(resDto), OperationType.READ, EntityType.ROUTE_ASSIGNMENT.getDisplayName());
         when(routeAssignmentService.findByRouteId(1L)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/route-assignment/route/1"))
@@ -160,7 +161,7 @@ class RouteAssignmentControllerTest {
 
     @Test
     void findByVehicleId_ShouldReturnOk() throws Exception {
-        CrudResponseDto<List<RouteAssignmentResDto>> response = CrudResponseDto.success(List.of(resDto), "READ", "ROUTE_ASSIGNMENT");
+        CrudResponseDto<List<RouteAssignmentResDto>> response = CrudResponseDto.success(List.of(resDto), OperationType.READ, EntityType.ROUTE_ASSIGNMENT.getDisplayName());
         when(routeAssignmentService.findByVehicleId(1L)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/route-assignment/vehicle/1"))
@@ -170,7 +171,7 @@ class RouteAssignmentControllerTest {
 
     @Test
     void activate_ShouldReturnOk() throws Exception {
-        CrudResponseDto<RouteAssignmentResDto> response = CrudResponseDto.success(resDto, "UPDATED", "ROUTE_ASSIGNMENT");
+        CrudResponseDto<RouteAssignmentResDto> response = CrudResponseDto.success(resDto, OperationType.UPDATE, EntityType.ROUTE_ASSIGNMENT.getDisplayName());
         when(routeAssignmentService.activateById(1L)).thenReturn(response);
 
         mockMvc.perform(patch("/api/v1/route-assignment/1/activate")
@@ -181,7 +182,7 @@ class RouteAssignmentControllerTest {
 
     @Test
     void deactivate_ShouldReturnOk() throws Exception {
-        CrudResponseDto<RouteAssignmentResDto> response = CrudResponseDto.success(resDto, "UPDATED", "ROUTE_ASSIGNMENT");
+        CrudResponseDto<RouteAssignmentResDto> response = CrudResponseDto.success(resDto, OperationType.UPDATE, EntityType.ROUTE_ASSIGNMENT.getDisplayName());
         when(routeAssignmentService.deactivateById(1L)).thenReturn(response);
 
         mockMvc.perform(patch("/api/v1/route-assignment/1/deactivate")

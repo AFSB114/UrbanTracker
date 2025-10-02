@@ -2,6 +2,7 @@ package com.sena.urbantracker.monitoring.infrastructure.persistence.mapper;
 
 import com.sena.urbantracker.monitoring.domain.entity.TrackingDomain;
 import com.sena.urbantracker.monitoring.infrastructure.persistence.model.TrackingModel;
+import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteModel;
 import com.sena.urbantracker.vehicles.infrastructure.persistence.model.VehicleModel;
 import com.sena.urbantracker.vehicles.infrastructure.persistence.model.VehicleModel;
 
@@ -11,7 +12,7 @@ public class TrackingPersistenceMapper {
         if (domain == null) return null;
         return TrackingModel.builder()
                 .id(domain.getId())
-                .vehicle(VehicleModel.builder().id(domain.getVehicleId()).build()) // Assuming vehicle is stored as ID
+                .route(RouteModel.builder().id(domain.getRouteId()).build())
                 .vehicle(VehicleModel.builder().id(domain.getVehicleId()).build()) // Assuming vehicle is stored as ID
                 .timestamp(domain.getTimestamp())
                 .latitude(domain.getLatitude())
@@ -24,6 +25,7 @@ public class TrackingPersistenceMapper {
         if (model == null) return null;
         return TrackingDomain.builder()
                 .id(model.getId())
+                .routeId(model.getRoute().getId())
                 .vehicleId(model.getVehicle() != null ? model.getVehicle().getId() : null)
                 .timestamp(model.getTimestamp())
                 .latitude(model.getLatitude())

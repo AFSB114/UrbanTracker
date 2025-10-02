@@ -2,9 +2,11 @@ package com.sena.urbantracker.users.application.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class DriverReqDto {
     //datos de user
     @NotBlank(message = "El numero de identificación es obligatorio")

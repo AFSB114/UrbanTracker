@@ -18,6 +18,8 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 public class TrackingReqDto {
 
+    private Long routeId;
+
     private String vehicleId;
 
     private OffsetDateTime timestamp;

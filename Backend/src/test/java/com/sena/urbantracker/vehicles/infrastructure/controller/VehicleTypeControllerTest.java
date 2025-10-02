@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
+import com.sena.urbantracker.shared.domain.enums.OperationType;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import com.sena.urbantracker.vehicles.application.dto.request.VehicleTypeReqDto;
 import com.sena.urbantracker.vehicles.application.dto.response.VehicleTypeResDto;
@@ -60,9 +61,9 @@ class VehicleTypeControllerTest {
                 .description("Tipo de vehículo sedan")
                 .build();
 
-        successResponse = CrudResponseDto.success(resDto, "CREATED", "VEHICLE_TYPE");
-        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), "READ", "VEHICLE_TYPE");
-        findAllResponse = CrudResponseDto.success(List.of(resDto), "READ", "VEHICLE_TYPE");
+        successResponse = CrudResponseDto.success(resDto, OperationType.CREATE, EntityType.VEHICLE_TYPE.getDisplayName());
+        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), OperationType.READ, EntityType.VEHICLE_TYPE.getDisplayName());
+        findAllResponse = CrudResponseDto.success(List.of(resDto), OperationType.READ, EntityType.VEHICLE_TYPE.getDisplayName());
 
         when(serviceFactory.getService(EntityType.VEHICLE_TYPE, VehicleTypeReqDto.class)).thenReturn(crudOperations);
     }
@@ -105,7 +106,7 @@ class VehicleTypeControllerTest {
 
     @Test
     void findById_ShouldReturnNotFound_WhenEntityDoesNotExist() throws Exception {
-        CrudResponseDto<Optional<VehicleTypeResDto>> notFoundResponse = CrudResponseDto.error("Entity not found", null, "VEHICLE_TYPE");
+        CrudResponseDto<Optional<VehicleTypeResDto>> notFoundResponse = CrudResponseDto.error("Entity not found", null, EntityType.VEHICLE_TYPE.getDisplayName());
         when(crudOperations.findById(1L)).thenReturn(notFoundResponse);
 
         mockMvc.perform(get("/api/v1/vehicle-type/1"))
@@ -125,7 +126,7 @@ class VehicleTypeControllerTest {
 
     @Test
     void update_ShouldReturnOk_WhenValidRequest() throws Exception {
-        CrudResponseDto<VehicleTypeResDto> updateResponse = CrudResponseDto.success(resDto, "UPDATED", "VEHICLE_TYPE");
+        CrudResponseDto<VehicleTypeResDto> updateResponse = CrudResponseDto.success(resDto, OperationType.UPDATE, EntityType.VEHICLE_TYPE.getDisplayName());
         when(crudOperations.update(validReqDto, 1L)).thenReturn(updateResponse);
 
         mockMvc.perform(put("/api/v1/vehicle-type/1")
@@ -151,7 +152,7 @@ class VehicleTypeControllerTest {
 
     @Test
     void delete_ShouldReturnOk() throws Exception {
-        CrudResponseDto<VehicleTypeResDto> deleteResponse = CrudResponseDto.success(null, "DELETED", "VEHICLE_TYPE");
+        CrudResponseDto<VehicleTypeResDto> deleteResponse = CrudResponseDto.success(null, OperationType.DELETE, EntityType.VEHICLE_TYPE.getDisplayName());
         when(crudOperations.deleteById(1L)).thenReturn(deleteResponse);
 
         mockMvc.perform(delete("/api/v1/vehicle-type/1")

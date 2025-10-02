@@ -102,7 +102,7 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
       webSocketFactory: () => new SockJS('http://localhost:8080/ws/connect'),
       onConnect: () => {
         console.log('Connected to WebSocket');
-        client.subscribe(`/topic/route/${fullRoute.name}/telemetry`, (message) => {
+        client.subscribe(`/topic/route/${route.id}/telemetry`, (message) => {
           console.log('Received telemetry:', message.body);
           setTelemetry(message.body);
           try {

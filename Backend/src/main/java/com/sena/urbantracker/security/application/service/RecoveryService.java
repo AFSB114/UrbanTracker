@@ -116,7 +116,7 @@ public class RecoveryService {
         // Generar nuevo token
         String token = jwtService.generateToken(user);
 
-        return ResponseEntity.ok(new ResponseLoginDTO(token));
+        return ResponseEntity.ok(new ResponseLoginDTO(token, null));
     }
 
     @Transactional

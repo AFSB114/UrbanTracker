@@ -73,13 +73,13 @@ public class RouteService implements CrudOperations<RouteReqDto, RouteResDto, Lo
 
         routeWaypointRepository.saveAll(waypoints);
 
-        // 3) crear el topic de la ruta
-        String routeTopic = "routes/" + savedRoute.getNumberRoute() + "/telemetry";
+        // 3) crear el topic de la ruta usando el ID en lugar del número
+        String routeTopic = "route/" + savedRoute.getId();
 
         // 4) Suscribirse al topic de la ruta
         dynamicSubscriptionService.subscribeToRouteTopic(routeTopic);
 
-        return CrudResponseDto.success(RouteMapper.toDto(savedRoute, waypoints.size()), "Ruta creada correctamente y suscrito al topic:" + routeTopic);
+        return CrudResponseDto.success(RouteMapper.toDto(savedRoute, waypoints.size()), "Ruta creada correctamente y suscrito al topic: " + routeTopic);
     }
 
 

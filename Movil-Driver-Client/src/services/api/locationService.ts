@@ -1,5 +1,5 @@
 import type { Location } from '@/types/location';
-import { MQTT_CONFIG } from '@/config/mqtt';
+import { MQTT_CONFIG, generateLocationTopic } from '@/config/mqtt';
 
 export class LocationService {
   /**
@@ -8,6 +8,7 @@ export class LocationService {
   static publishLocationData(
     location: Location,
     publishFunction?: (topic: string, data: any) => boolean,
+    routeId?: string,
     vehicleId: string = "123-456"
   ): boolean {
     try {
@@ -17,8 +18,13 @@ export class LocationService {
         return false;
       }
 
+      // Generar topic dinámico basado en routeId
+      const topic = generateLocationTopic(routeId || 'default');
+      console.log('📍 Publicando ubicación en topic:', topic);
+
       const message = {
         vehicleId,
+        routeId: routeId || null,
         timestamp: new Date(location.timestamp).toISOString(),
         latitude: location.latitude,
         longitude: location.longitude,
@@ -27,15 +33,15 @@ export class LocationService {
 
       // Si se proporciona función de publicación, usarla
       if (publishFunction) {
-        const success = publishFunction(MQTT_CONFIG.TOPICS.USER_LOCATION, message);
+        const success = publishFunction(topic, message);
         if (success) {
-          console.log('📍 Ubicación publicada exitosamente:', message);
+          console.log('📍 Ubicación publicada exitosamente en topic:', topic, message);
         }
         return success;
       }
 
       // Si no hay función de publicación, simular éxito para compatibilidad
-      console.log('📍 Ubicación preparada para publicación (sin MQTT):', message);
+      console.log('📍 Ubicación preparada para publicación (sin MQTT) en topic:', topic, message);
       return true;
     } catch (error) {
       console.error('❌ Error publicando ubicación:', error);

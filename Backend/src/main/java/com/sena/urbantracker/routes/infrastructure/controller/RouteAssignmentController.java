@@ -34,7 +34,7 @@ public class RouteAssignmentController extends BaseController<RouteAssignmentReq
     }
 
     @GetMapping("/vehicle/{vehicleId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('DRIVER') or hasRole('ADMIN')")
     public ResponseEntity<CrudResponseDto<List<RouteAssignmentResDto>>> findByVehicleId(@PathVariable Long vehicleId) {
         return ResponseEntity.ok(routeAssignmentService.findByVehicleId(vehicleId));
     }

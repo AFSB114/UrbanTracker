@@ -28,15 +28,16 @@ public class MqttMessageListener {
 
         log.info("📩 MQTT recibido | Topic: {} | Payload: {}", topic, payload);
 
-        if (topic.startsWith("routes/")) {
+        if (topic.startsWith("route/")) {
             String[] parts = topic.split("/");
-            String routeNumber = parts[1];
+            String routeId = parts[1];
 
             try {
                 TrackingReqDto telemetry = objectMapper.readValue(payload, TrackingReqDto.class);
-                messagingTemplate.convertAndSend("/topic/route/" + routeNumber + "/telemetry", telemetry);
+                messagingTemplate.convertAndSend("/topic/route/" + routeId + "/telemetry", telemetry);
+                log.info("📡 Telemetría enviada vía WebSocket para routeId: {}", routeId);
             } catch (Exception e) {
-                log.error("Error parseando payload MQTT", e);
+                log.error("Error parseando payload MQTT para routeId: {}", routeId, e);
             }
         }
     }

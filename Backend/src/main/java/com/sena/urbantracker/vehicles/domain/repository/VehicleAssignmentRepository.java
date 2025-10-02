@@ -1,6 +1,7 @@
 package com.sena.urbantracker.vehicles.domain.repository;
 
 import com.sena.urbantracker.vehicles.domain.entity.VehicleAssignmentDomain;
+import com.sena.urbantracker.vehicles.domain.valueobject.AssigmentStatusType;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,4 +17,6 @@ public interface VehicleAssignmentRepository {
     void deleteById(Long id);
 
     boolean existsById(Long id);
+
+    Optional<VehicleAssignmentDomain> findActiveByUserId(Long userId, AssigmentStatusType status);
 }

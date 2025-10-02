@@ -2,6 +2,7 @@ package com.sena.urbantracker.monitoring.infrastructure.persistence.model;
 
 
 import com.sena.urbantracker.monitoring.domain.valueobject.DataSourceType;
+import com.sena.urbantracker.routes.infrastructure.persistence.model.RouteModel;
 import com.sena.urbantracker.vehicles.infrastructure.persistence.model.VehicleModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,10 @@ public class TrackingModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "route_id", nullable = false)
+    private RouteModel route;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_id", nullable = false)

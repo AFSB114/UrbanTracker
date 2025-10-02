@@ -41,7 +41,14 @@ public class UserSecurityService {
         // Generar token
         String token = jwtService.generateToken(user);
 
-        return new ResponseLoginDTO(token);
+        // Crear información del usuario para la respuesta
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("id", user.getId());
+        userInfo.put("identificacion", user.getUsername());
+        userInfo.put("email", null); // Email no disponible en UserDomain
+        userInfo.put("role", user.getRole() != null ? user.getRole().getName() : null);
+
+        return new ResponseLoginDTO(token, userInfo);
     }
 
     public Map<String, Object> validateToken(String token) {

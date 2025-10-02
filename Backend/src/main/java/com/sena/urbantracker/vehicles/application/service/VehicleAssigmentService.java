@@ -6,6 +6,7 @@ import com.sena.urbantracker.vehicles.application.mapper.VehicleAssignmentMapper
 import com.sena.urbantracker.vehicles.domain.entity.VehicleAssignmentDomain;
 import com.sena.urbantracker.vehicles.domain.repository.VehicleAssignmentRepository;
 import com.sena.urbantracker.vehicles.domain.repository.VehicleRepository;
+import com.sena.urbantracker.vehicles.domain.valueobject.AssigmentStatusType;
 import com.sena.urbantracker.users.domain.repository.DriverRepository;
 import com.sena.urbantracker.users.domain.repository.UserProfileRepository;
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
@@ -127,6 +128,20 @@ public class VehicleAssigmentService implements CrudOperations<VehicleAssignment
     @Override
     public CrudResponseDto<Boolean> existsById(Long id) {
         return CrudResponseDto.success(vehicleAssignmentRepository.existsById(id), "Verificación de existencia completada");
+    }
+
+    public CrudResponseDto<VehicleAssigmentResDto> findActiveByUserId(Long userId) {
+        var assignment = vehicleAssignmentRepository.findActiveByUserId(userId, AssigmentStatusType.ACTIVE);
+        if (assignment.isEmpty()) {
+            return CrudResponseDto.success(null, "No se encontró asignación activa para el usuario");
+        }
+
+        var domain = assignment.get();
+        var profile = userProfileRepository.findByUserId(domain.getDriver().getUser().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Perfil de usuario no encontrado"));
+        domain.getDriver().setProfile(profile);
+
+        return CrudResponseDto.success(VehicleAssignmentMapper.toDto(domain), "Asignación activa encontrada");
     }
 
 }

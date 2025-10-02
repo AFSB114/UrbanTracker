@@ -20,6 +20,16 @@ export const API_ENDPOINTS = {
     END: `${API_CONFIG.BASE_URL}/tracking/end`,
     STATUS: `${API_CONFIG.BASE_URL}/tracking/status`,
   },
+  ROUTE_TRAJECTORIE: {
+    CREATE: `${API_CONFIG.BASE_URL}/public/route-trajectorie`,
+    UPDATE: (id: string) => `${API_CONFIG.BASE_URL}/public/route-trajectorie/${id}`,
+  },
+  VEHICLE_ASSIGNMENT: {
+    GET_BY_USER: (userId: number) => `${API_CONFIG.BASE_URL}/vehicle-assigment/user/${userId}`,
+  },
+  ROUTE_ASSIGNMENT: {
+    GET_BY_VEHICLE: (vehicleId: string) => `${API_CONFIG.BASE_URL}/route-assignment/vehicle/${vehicleId}`,
+  },
 } as const;
 
 // Headers comunes para las peticiones

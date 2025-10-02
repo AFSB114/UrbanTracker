@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
+import com.sena.urbantracker.shared.domain.enums.OperationType;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import com.sena.urbantracker.users.application.dto.request.UserProfileReqDto;
 import com.sena.urbantracker.users.application.dto.response.UserProfileResDto;
@@ -66,9 +67,9 @@ class UserProfileControllerTest {
                 .userId(1L)
                 .build();
 
-        successResponse = CrudResponseDto.success(resDto, "CREATED", "USER_PROFILE");
-        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), "READ", "USER_PROFILE");
-        findAllResponse = CrudResponseDto.success(List.of(resDto), "READ", "USER_PROFILE");
+        successResponse = CrudResponseDto.success(resDto, OperationType.CREATE, EntityType.USER_PROFILE.getDisplayName());
+        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), OperationType.READ, EntityType.USER_PROFILE.getDisplayName());
+        findAllResponse = CrudResponseDto.success(List.of(resDto), OperationType.READ, EntityType.USER_PROFILE.getDisplayName());
 
         when(serviceFactory.getService(EntityType.USER_PROFILE, UserProfileReqDto.class)).thenReturn(crudOperations);
     }
@@ -108,7 +109,7 @@ class UserProfileControllerTest {
 
     @Test
     void update_ShouldReturnOk_WhenValidRequest() throws Exception {
-        CrudResponseDto<UserProfileResDto> updateResponse = CrudResponseDto.success(resDto, "UPDATED", "USER_PROFILE");
+        CrudResponseDto<UserProfileResDto> updateResponse = CrudResponseDto.success(resDto, OperationType.UPDATE, EntityType.USER_PROFILE.getDisplayName());
         when(crudOperations.update(validReqDto, 1L)).thenReturn(updateResponse);
 
         mockMvc.perform(put("/api/v1/user-profile/1")
@@ -121,7 +122,7 @@ class UserProfileControllerTest {
 
     @Test
     void delete_ShouldReturnOk() throws Exception {
-        CrudResponseDto<UserProfileResDto> deleteResponse = CrudResponseDto.success(null, "DELETED", "USER_PROFILE");
+        CrudResponseDto<UserProfileResDto> deleteResponse = CrudResponseDto.success(null, OperationType.DELETE, EntityType.USER_PROFILE.getDisplayName());
         when(crudOperations.deleteById(1L)).thenReturn(deleteResponse);
 
         mockMvc.perform(delete("/api/v1/user-profile/1")

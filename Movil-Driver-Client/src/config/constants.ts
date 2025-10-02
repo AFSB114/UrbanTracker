@@ -15,7 +15,7 @@ export const LOCATION_CONFIG = {
 
 // Configuración de MQTT
 export const MQTT_TOPICS = {
-  LOCATION: 'user/123/location',
+  // LOCATION ahora es dinámico: route/{routeId}
   TRACKING_STATUS: 'driver/recorrido',
   CONNECTION_STATUS: 'driver/status',
   REPORTS: 'driver/reports',

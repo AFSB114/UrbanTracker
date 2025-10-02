@@ -2,6 +2,7 @@
 export * from './auth';
 export * from './location';
 export * from './mqtt';
+export * from './driver';
 
 // Tipos comunes de la aplicación
 export interface ApiResponse<T = any> {

@@ -13,6 +13,7 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class TrackingDomain extends ABaseDomain {
+    private Long routeId;
     private Long vehicleId; // Assuming vehicle is referenced by ID in domain
     private OffsetDateTime timestamp;
     private BigDecimal latitude;

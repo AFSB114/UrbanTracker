@@ -4,6 +4,8 @@ import com.sena.urbantracker.routes.application.dto.response.RouteDetailsResDto;
 import com.sena.urbantracker.routes.application.dto.response.RouteResDto;
 import com.sena.urbantracker.routes.application.service.RouteService;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
+import com.sena.urbantracker.shared.domain.enums.EntityType;
+import com.sena.urbantracker.shared.domain.enums.OperationType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,31 +32,31 @@ class RoutePublicControllerTest {
     void viewEdit_WithGeometry_ShouldReturnRouteDetails() throws Exception {
         RouteDetailsResDto details = RouteDetailsResDto.builder()
                 .id(1L)
-                .name("Test Route")
+                .numberRoute("Test Route")
                 .build();
-        CrudResponseDto<RouteDetailsResDto> response = CrudResponseDto.success(details, "READ", "ROUTE");
+        CrudResponseDto<RouteDetailsResDto> response = CrudResponseDto.success(details, OperationType.READ, EntityType.ROUTE.getDisplayName());
 
         when(routeService.findByIdType(1L, "GEOMETRY")).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/public/route/1/GEOMETRY"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.name").value("Test Route"));
+                .andExpect(jsonPath("$.data.numberRoute").value("Test Route"));
     }
 
     @Test
     void viewEdit_ShouldReturnAllRoutes() throws Exception {
         RouteResDto route = RouteResDto.builder()
                 .id(1L)
-                .name("Test Route")
+                .numberRoute("Test Route")
                 .build();
-        CrudResponseDto<List<RouteResDto>> response = CrudResponseDto.success(List.of(route), "READ", "ROUTE");
+        CrudResponseDto<List<RouteResDto>> response = CrudResponseDto.success(List.of(route), OperationType.READ, EntityType.ROUTE.getDisplayName());
 
         when(routeService.findAll()).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/public/route"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data[0].name").value("Test Route"));
+                .andExpect(jsonPath("$.data[0].numberRoute").value("Test Route"));
     }
 }

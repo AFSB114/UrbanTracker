@@ -6,6 +6,7 @@ import com.sena.urbantracker.routes.application.dto.response.RouteTrajectoryResD
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
+import com.sena.urbantracker.shared.domain.enums.OperationType;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,20 +52,18 @@ class RouteTrajectoryControllerTest {
     void setUp() {
         validReqDto = RouteTrajectoryReqDto.builder()
                 .routeId(1L)
-                .latitude(4.60971)
-                .longitude(-74.08175)
+                .vehicleId(1L)
                 .build();
 
         resDto = RouteTrajectoryResDto.builder()
                 .id(1L)
                 .routeId(1L)
-                .latitude(4.60971)
-                .longitude(-74.08175)
+                .vehicleId(1L)
                 .build();
 
-        successResponse = CrudResponseDto.success(resDto, "CREATED", "ROUTE_TRAJECTORY");
-        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), "READ", "ROUTE_TRAJECTORY");
-        findAllResponse = CrudResponseDto.success(List.of(resDto), "READ", "ROUTE_TRAJECTORY");
+        successResponse = CrudResponseDto.success(resDto, OperationType.CREATE, EntityType.ROUTE_TRAJECTORY.getDisplayName());
+        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), OperationType.READ, EntityType.ROUTE_TRAJECTORY.getDisplayName());
+        findAllResponse = CrudResponseDto.success(List.of(resDto), OperationType.READ, EntityType.ROUTE_TRAJECTORY.getDisplayName());
 
         when(serviceFactory.getService(EntityType.ROUTE_TRAJECTORY, RouteTrajectoryReqDto.class)).thenReturn(crudOperations);
     }
@@ -79,7 +78,7 @@ class RouteTrajectoryControllerTest {
                         .with(csrf()))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.latitude").value(4.60971));
+                .andExpect(jsonPath("$.data.routeId").value(1));
     }
 
     @Test
@@ -89,7 +88,7 @@ class RouteTrajectoryControllerTest {
         mockMvc.perform(get("/api/v1/public/route-trajectorie/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.latitude").value(4.60971));
+                .andExpect(jsonPath("$.data.routeId").value(1));
     }
 
     @Test
@@ -99,12 +98,12 @@ class RouteTrajectoryControllerTest {
         mockMvc.perform(get("/api/v1/public/route-trajectorie"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data[0].latitude").value(4.60971));
+                .andExpect(jsonPath("$.data[0].routeId").value(1));
     }
 
     @Test
     void update_ShouldReturnOk_WhenValidRequest() throws Exception {
-        CrudResponseDto<RouteTrajectoryResDto> updateResponse = CrudResponseDto.success(resDto, "UPDATED", "ROUTE_TRAJECTORY");
+        CrudResponseDto<RouteTrajectoryResDto> updateResponse = CrudResponseDto.success(resDto, OperationType.UPDATE, EntityType.ROUTE_TRAJECTORY.getDisplayName());
         when(crudOperations.update(validReqDto, 1L)).thenReturn(updateResponse);
 
         mockMvc.perform(put("/api/v1/public/route-trajectorie/1")
@@ -117,7 +116,7 @@ class RouteTrajectoryControllerTest {
 
     @Test
     void delete_ShouldReturnOk() throws Exception {
-        CrudResponseDto<RouteTrajectoryResDto> deleteResponse = CrudResponseDto.success(null, "DELETED", "ROUTE_TRAJECTORY");
+        CrudResponseDto<RouteTrajectoryResDto> deleteResponse = CrudResponseDto.success(null, OperationType.DELETE, EntityType.ROUTE_TRAJECTORY.getDisplayName());
         when(crudOperations.deleteById(1L)).thenReturn(deleteResponse);
 
         mockMvc.perform(delete("/api/v1/public/route-trajectorie/1")

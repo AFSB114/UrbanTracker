@@ -4,6 +4,7 @@ export interface TrackingState {
   isRecorridoActive: boolean;
   startTime: string | null;
   endTime: string | null;
+  routeTrajectorieId: string | null;
 }
 
 export interface TrackingContextType {
@@ -11,7 +12,8 @@ export interface TrackingContextType {
   isRecorridoActive: boolean;
   startTime: string | null;
   endTime: string | null;
-  
+  routeTrajectorieId: string | null;
+
   // Métodos
   startRecorrido: () => void;
   endRecorrido: () => void;

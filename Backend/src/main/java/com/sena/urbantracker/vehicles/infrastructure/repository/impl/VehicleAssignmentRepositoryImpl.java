@@ -2,6 +2,7 @@ package com.sena.urbantracker.vehicles.infrastructure.repository.impl;
 
 import com.sena.urbantracker.vehicles.domain.entity.VehicleAssignmentDomain;
 import com.sena.urbantracker.vehicles.domain.repository.VehicleAssignmentRepository;
+import com.sena.urbantracker.vehicles.domain.valueobject.AssigmentStatusType;
 import com.sena.urbantracker.vehicles.infrastructure.persistence.mapper.VehicleAssignmentPersistenceMapper;
 import com.sena.urbantracker.vehicles.infrastructure.persistence.model.VehicleAssignmentModel;
 import com.sena.urbantracker.vehicles.infrastructure.repository.jpa.VehicleAssignmentJpaRepository;
@@ -47,5 +48,11 @@ public class VehicleAssignmentRepositoryImpl implements VehicleAssignmentReposit
     @Override
     public boolean existsById(Long id) {
         return jpaRepository.existsById(id);
+    }
+
+    @Override
+    public Optional<VehicleAssignmentDomain> findActiveByUserId(Long userId, AssigmentStatusType status) {
+        return jpaRepository.findActiveByUserId(userId, status)
+                .map(VehicleAssignmentPersistenceMapper::toDomain);
     }
 }

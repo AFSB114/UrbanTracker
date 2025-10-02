@@ -22,7 +22,8 @@ export const MQTT_CONFIG = {
   TOPICS: {
     DRIVER_STATUS: 'driver/status',
     DRIVER_RECORRIDO: 'driver/recorrido',
-    USER_LOCATION: 'routes/123/telemetry',
+    // USER_LOCATION ahora es dinámico basado en routeId
+    // Se genera como: route/{routeId}
   },
 
   // Message types
@@ -104,11 +105,20 @@ export const createRecorridoStatusMessage = (
 
 // Función para crear mensaje de ubicación
 export const createLocationMessage = (
-  latitude: number, 
-  longitude: number, 
+  latitude: number,
+  longitude: number,
   timestamp: number
 ) => ({
   lat: latitude,
   lon: longitude,
   timestamp,
 });
+
+// Función para generar topic de ubicación basado en routeId
+export const generateLocationTopic = (routeId: string): string => {
+  if (!routeId) {
+    console.warn('⚠️ generateLocationTopic: routeId vacío, usando topic por defecto');
+    return 'routes/default/telemetry';
+  }
+  return `routes/${routeId}/telemetry`;
+};

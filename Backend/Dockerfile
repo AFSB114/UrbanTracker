@@ -1,5 +1,5 @@
 # Usar una imagen base con Maven y JDK 17 para construir la aplicación
-FROM maven:3.9.4-eclipse-temurin-17-alpine AS build
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 # Establecer el directorio de trabajo
 WORKDIR /app
@@ -12,10 +12,10 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 
 # Construir la aplicación
-RUN mvn clean package -DskipTests
+RUN mvn clean package -Dmaven.test.skip=true
 
 # Usar una imagen base más ligera para ejecutar la aplicación
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre
 
 # Establecer el directorio de trabajo
 WORKDIR /app

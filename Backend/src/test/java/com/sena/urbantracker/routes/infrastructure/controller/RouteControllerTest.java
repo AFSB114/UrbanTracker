@@ -8,6 +8,7 @@ import com.sena.urbantracker.routes.application.service.RouteService;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
+import com.sena.urbantracker.shared.domain.enums.OperationType;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,19 +56,21 @@ class RouteControllerTest {
     @BeforeEach
     void setUp() {
         validReqDto = RouteReqDto.builder()
-                .name("Test Route")
+                .numberRoute("Test Route")
                 .description("A test route")
+                .totalDistance("10km")
+                .waypoints("[]")
                 .build();
 
         resDto = RouteResDto.builder()
                 .id(1L)
-                .name("Test Route")
+                .numberRoute("Test Route")
                 .description("A test route")
                 .build();
 
-        successResponse = CrudResponseDto.success(resDto, "CREATED", "ROUTE");
-        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), "READ", "ROUTE");
-        findAllResponse = CrudResponseDto.success(List.of(resDto), "READ", "ROUTE");
+        successResponse = CrudResponseDto.success(resDto, OperationType.CREATE, EntityType.ROUTE.getDisplayName());
+        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), OperationType.READ, EntityType.ROUTE.getDisplayName());
+        findAllResponse = CrudResponseDto.success(List.of(resDto), OperationType.READ, EntityType.ROUTE.getDisplayName());
 
         when(serviceFactory.getService(EntityType.ROUTE, RouteReqDto.class)).thenReturn(crudOperations);
     }
@@ -82,7 +85,7 @@ class RouteControllerTest {
                         .with(csrf()))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.name").value("Test Route"));
+                .andExpect(jsonPath("$.data.numberRoute").value("Test Route"));
     }
 
     @Test
@@ -92,7 +95,7 @@ class RouteControllerTest {
         mockMvc.perform(get("/api/v1/route/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.name").value("Test Route"));
+                .andExpect(jsonPath("$.data.numberRoute").value("Test Route"));
     }
 
     @Test
@@ -102,12 +105,12 @@ class RouteControllerTest {
         mockMvc.perform(get("/api/v1/route"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data[0].name").value("Test Route"));
+                .andExpect(jsonPath("$.data[0].numberRoute").value("Test Route"));
     }
 
     @Test
     void update_ShouldReturnOk_WhenValidRequest() throws Exception {
-        CrudResponseDto<RouteResDto> updateResponse = CrudResponseDto.success(resDto, "UPDATED", "ROUTE");
+        CrudResponseDto<RouteResDto> updateResponse = CrudResponseDto.success(resDto, OperationType.UPDATE, EntityType.ROUTE.getDisplayName());
         when(crudOperations.update(validReqDto, 1L)).thenReturn(updateResponse);
 
         mockMvc.perform(put("/api/v1/route/1")
@@ -120,7 +123,7 @@ class RouteControllerTest {
 
     @Test
     void delete_ShouldReturnOk() throws Exception {
-        CrudResponseDto<RouteResDto> deleteResponse = CrudResponseDto.success(null, "DELETED", "ROUTE");
+        CrudResponseDto<RouteResDto> deleteResponse = CrudResponseDto.success(null, OperationType.DELETE, EntityType.ROUTE.getDisplayName());
         when(crudOperations.deleteById(1L)).thenReturn(deleteResponse);
 
         mockMvc.perform(delete("/api/v1/route/1")
@@ -133,15 +136,15 @@ class RouteControllerTest {
     void viewEdit_ShouldReturnRouteDetails() throws Exception {
         RouteDetailsResDto details = RouteDetailsResDto.builder()
                 .id(1L)
-                .name("Test Route")
+                .numberRoute("Test Route")
                 .build();
-        CrudResponseDto<RouteDetailsResDto> response = CrudResponseDto.success(details, "READ", "ROUTE");
+        CrudResponseDto<RouteDetailsResDto> response = CrudResponseDto.success(details, OperationType.READ, EntityType.ROUTE.getDisplayName());
 
         when(routeService.findByIdType(1L, "GEOMETRY")).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/route/1/GEOMETRY"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.name").value("Test Route"));
+                .andExpect(jsonPath("$.data.numberRoute").value("Test Route"));
     }
 }

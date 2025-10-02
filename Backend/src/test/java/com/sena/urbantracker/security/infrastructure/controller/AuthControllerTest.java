@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.web.servlet.MockMvc;
@@ -52,12 +53,11 @@ class AuthControllerTest {
     @BeforeEach
     void setUp() {
         loginDto = new RequestLoginAdminDTO();
-        loginDto.setEmail("admin@example.com");
+        loginDto.setUserName("admin@example.com");
         loginDto.setPassword("password");
 
         loginResponse = new ResponseLoginDTO();
         loginResponse.setToken("jwt-token");
-        loginResponse.setEmail("admin@example.com");
 
         forgotPassword = new ForgotPassword();
         forgotPassword.setEmail("admin@example.com");
@@ -99,7 +99,7 @@ class AuthControllerTest {
 
     @Test
     void forgot_ShouldReturnOk() throws Exception {
-        when(recoveryService.generateRecoveryCode(forgotPassword)).thenReturn(forgotResponse);
+        when(recoveryService.generateRecoveryCode(forgotPassword)).thenReturn(ResponseEntity.ok(forgotResponse));
 
         mockMvc.perform(post("/api/v1/public/auth/forgot-password")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -112,7 +112,7 @@ class AuthControllerTest {
     void validateCode_ShouldReturnOk() throws Exception {
         Map<String, String> response = new HashMap<>();
         response.put("message", "Code validated");
-        when(recoveryService.validateRecoveryCode(validationDto)).thenReturn(response);
+        when(recoveryService.validateRecoveryCode(validationDto)).thenReturn(ResponseEntity.ok(response));
 
         mockMvc.perform(post("/api/v1/public/auth/validate-code")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -125,7 +125,7 @@ class AuthControllerTest {
     void changePassword_ShouldReturnOk() throws Exception {
         Map<String, String> response = new HashMap<>();
         response.put("message", "Password changed");
-        when(recoveryService.changePassword(changePasswordDto)).thenReturn(response);
+        when(recoveryService.changePassword(changePasswordDto)).thenReturn(ResponseEntity.ok(response));
 
         mockMvc.perform(post("/api/v1/public/auth/change-password")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -149,7 +149,7 @@ class AuthControllerTest {
     void validateToken_ShouldReturnOk_WhenTokenProvidedInHeader() throws Exception {
         Map<String, Object> response = new HashMap<>();
         response.put("valid", true);
-        when(userService.validateToken("valid-token")).thenReturn(response);
+        when(userService.validateToken("valid-token")).thenReturn(ResponseEntity.ok(response));
 
         mockMvc.perform(post("/api/v1/public/auth/validate-token")
                         .header("Authorization", "Bearer valid-token"))

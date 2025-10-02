@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 
 export const useHome = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const { isRecorridoActive, startTime, endTime, startRecorrido, endRecorrido } = useTracking();
   const { location, isTracking, toggleTracking } = useLocation();
   const { connectionStatus } = useMqtt();
@@ -104,19 +104,28 @@ export const useHome = () => {
   // Publicación de ubicación vía servicios
   useEffect(() => {
     if (location && connectionStatus === 'Conectado' && isRecorridoActive) {
-      // TODO: Obtener vehicleId dinámicamente del contexto de vehículo
-      const vehicleId = "123-456"; // Hardcodeado por ahora, debe ser dinámico
-      const success = LocationService.publishLocationData(location, publishSafely, vehicleId);
+      // Obtener routeId del usuario autenticado
+      const routeId = user?.routeId;
+      const vehicleId = user?.vehicleId || "default-vehicle";
+
+      console.log('📍 Publicando ubicación con datos del usuario:', {
+        routeId,
+        vehicleId,
+        userId: user?.id
+      });
+
+      const success = LocationService.publishLocationData(location, publishSafely, routeId, vehicleId);
       if (success) {
         console.log('📍 Nueva ubicación publicada:', {
           latitude: location.latitude,
           longitude: location.longitude,
           timestamp: new Date(location.timestamp).toISOString(),
+          routeId,
           vehicleId,
         });
       }
     }
-  }, [location, connectionStatus, isRecorridoActive, publishSafely]);
+  }, [location, connectionStatus, isRecorridoActive, publishSafely, user]);
 
   // Publicar estado cuando cambie el recorrido
   useEffect(() => {

@@ -50,11 +50,19 @@ export class AuthService {
 
       // Aceptar distintas formas de respuesta
       const token = rawData?.token;
-      const user = rawData?.user || rawData?.data?.user || null;
+      let user = rawData?.user || rawData?.data?.user || null;
 
       if (!token) {
         console.warn('⚠️ AuthService.login: no se encontró token en la respuesta');
         return { success: false, error: 'Respuesta inválida del servidor' };
+      }
+
+      // Asegurar que el user tenga el id como number si existe
+      if (user && user.id) {
+        user = {
+          ...user,
+          id: typeof user.id === 'string' ? parseInt(user.id, 10) : user.id
+        };
       }
 
       await AsyncStorage.setItem(TOKEN_KEY, String(token));
@@ -102,7 +110,14 @@ export class AuthService {
   static async getUser(): Promise<User | null> {
     try {
       const userString = await AsyncStorage.getItem(USER_KEY);
-      return userString ? JSON.parse(userString) : null;
+      if (!userString) return null;
+
+      const user = JSON.parse(userString);
+      // Asegurar que el id sea number
+      if (user && user.id) {
+        user.id = typeof user.id === 'string' ? parseInt(user.id, 10) : user.id;
+      }
+      return user;
     } catch (error) {
       console.error('Error obteniendo usuario:', error);
       return null;

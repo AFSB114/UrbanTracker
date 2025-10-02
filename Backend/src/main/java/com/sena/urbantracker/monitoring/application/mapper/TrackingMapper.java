@@ -10,7 +10,12 @@ public class TrackingMapper {
     public static TrackingResDto toDto(TrackingDomain entity) {
         if (entity == null) return null;
         return TrackingResDto.builder()
-                // Map fields here
+                .id(entity.getId())
+                .routeId(entity.getRouteId().toString())
+                .vehicleId(entity.getVehicleId().toString())
+                .timestamp(entity.getTimestamp())
+                .latitude(entity.getLatitude())
+                .longitude(entity.getLongitude())
                 .build();
     }
 

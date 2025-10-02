@@ -26,7 +26,7 @@ public class MqttInitializationService {
                 .toList();
 
         for (RouteDomain route : activeRoutes) {
-            String routeTopic = "routes/" + route.getNumberRoute() + "/telemetry";
+            String routeTopic = "routes/" + route.getId() + "/telemetry";
             try {
                 dynamicSubscriptionService.subscribeToRouteTopic(routeTopic);
                 log.info("✅ Suscrito al topic: {}", routeTopic);

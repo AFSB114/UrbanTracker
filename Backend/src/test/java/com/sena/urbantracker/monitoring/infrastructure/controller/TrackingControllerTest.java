@@ -6,6 +6,7 @@ import com.sena.urbantracker.monitoring.application.dto.response.TrackingResDto;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
+import com.sena.urbantracker.shared.domain.enums.OperationType;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +38,7 @@ class TrackingControllerTest {
     private ServiceFactory serviceFactory;
 
     @MockBean
-    private CrudOperations<TrackingReqDto, TrackingResDto, Long> crudOperations;
+    private CrudOperations crudOperations;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -51,22 +53,22 @@ class TrackingControllerTest {
     void setUp() {
         validReqDto = TrackingReqDto.builder()
                 .routeId(1L)
-                .vehicleId(1L)
-                .latitude(4.60971)
-                .longitude(-74.08175)
+                .vehicleId("1")
+                .latitude(BigDecimal.valueOf(4.60971))
+                .longitude(BigDecimal.valueOf(-74.08175))
                 .build();
 
         resDto = TrackingResDto.builder()
                 .id(1L)
                 .routeId(1L)
-                .vehicleId(1L)
-                .latitude(4.60971)
-                .longitude(-74.08175)
+                .vehicleId("1")
+                .latitude(BigDecimal.valueOf(4.60971))
+                .longitude(BigDecimal.valueOf(-74.08175))
                 .build();
 
-        successResponse = CrudResponseDto.success(resDto, "CREATED", "TRACKING");
-        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), "READ", "TRACKING");
-        findAllResponse = CrudResponseDto.success(List.of(resDto), "READ", "TRACKING");
+        successResponse = CrudResponseDto.success(resDto, OperationType.CREATE, EntityType.TRACKING.getDisplayName());
+        findByIdResponse = CrudResponseDto.success(Optional.of(resDto), OperationType.READ, EntityType.TRACKING.getDisplayName());
+        findAllResponse = CrudResponseDto.success(List.of(resDto), OperationType.READ, EntityType.TRACKING.getDisplayName());
 
         when(serviceFactory.getService(EntityType.TRACKING, TrackingReqDto.class)).thenReturn(crudOperations);
     }
@@ -106,7 +108,7 @@ class TrackingControllerTest {
 
     @Test
     void update_ShouldReturnOk_WhenValidRequest() throws Exception {
-        CrudResponseDto<TrackingResDto> updateResponse = CrudResponseDto.success(resDto, "UPDATED", "TRACKING");
+        CrudResponseDto<TrackingResDto> updateResponse = CrudResponseDto.success(resDto, OperationType.UPDATE, EntityType.TRACKING.getDisplayName());
         when(crudOperations.update(validReqDto, 1L)).thenReturn(updateResponse);
 
         mockMvc.perform(put("/api/v1/tracking/1")
@@ -119,7 +121,7 @@ class TrackingControllerTest {
 
     @Test
     void delete_ShouldReturnOk() throws Exception {
-        CrudResponseDto<TrackingResDto> deleteResponse = CrudResponseDto.success(null, "DELETED", "TRACKING");
+        CrudResponseDto<TrackingResDto> deleteResponse = CrudResponseDto.success(null, OperationType.DELETE, EntityType.TRACKING.getDisplayName());
         when(crudOperations.deleteById(1L)).thenReturn(deleteResponse);
 
         mockMvc.perform(delete("/api/v1/tracking/1")
