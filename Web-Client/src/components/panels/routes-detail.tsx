@@ -130,6 +130,14 @@ export function RoutesDetail({ route, onBack }: { route: Route; onBack: () => vo
     };
   }, [fullRoute, setVehiclePositions]);
 
+  // Limpiar puntos de ruta al desmontar el componente (cuando se deselecciona la ruta)
+  useEffect(() => {
+    return () => {
+      setOutboundPoints(null);
+      setReturnPoints(null);
+    };
+  }, [setOutboundPoints, setReturnPoints]);
+
   if (loading) return <div className="text-zinc-100">Cargando detalle...</div>;
   if (error) return <div className="text-red-500">Error: {error}</div>;
   if (!fullRoute) return null;
