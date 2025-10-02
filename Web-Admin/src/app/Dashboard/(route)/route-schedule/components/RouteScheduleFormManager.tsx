@@ -68,7 +68,7 @@ const RouteScheduleFormManager: React.FC<RouteScheduleFormManagerProps> = ({
 
       // Marcar días seleccionados y sus horarios
       const updatedDaySchedules = daySchedules.map(daySchedule => {
-        const matchingSchedule = editingSchedules.find(s => s.dayOfWeek === daySchedule.day);
+        const matchingSchedule = editingSchedules.find(s => s.dayOfWeek.toUpperCase() === daySchedule.day);
         if (matchingSchedule) {
           return {
             ...daySchedule,

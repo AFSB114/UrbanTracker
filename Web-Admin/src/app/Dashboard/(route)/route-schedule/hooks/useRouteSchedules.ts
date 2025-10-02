@@ -68,7 +68,12 @@ export const useRouteSchedules = (): UseRouteSchedulesReturn => {
       setLoading(true);
       setError(null);
       const data = await routeScheduleService.getAllRouteSchedules();
-      setRouteSchedules(data);
+      // Normalize dayOfWeek to uppercase
+      const normalizedData = data.map(schedule => ({
+        ...schedule,
+        dayOfWeek: schedule.dayOfWeek.toUpperCase()
+      }));
+      setRouteSchedules(normalizedData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error fetching route schedules');
     } finally {

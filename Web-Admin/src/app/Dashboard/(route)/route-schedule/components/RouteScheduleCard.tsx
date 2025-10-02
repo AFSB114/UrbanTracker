@@ -23,7 +23,7 @@ export function RouteScheduleCard({ routeWithSchedules, onEdit, onDelete }: Rout
       'SATURDAY': 'S',
       'SUNDAY': 'D'
     }
-    return days[dayOfWeek as keyof typeof days] || dayOfWeek
+    return days[dayOfWeek.toUpperCase() as keyof typeof days] || dayOfWeek
   }
 
   const formatTime = (time: string) => {
@@ -33,7 +33,7 @@ export function RouteScheduleCard({ routeWithSchedules, onEdit, onDelete }: Rout
   // Sort schedules by day of week
   const sortedSchedules = [...schedules].sort((a, b) => {
     const dayOrder = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
-    return dayOrder.indexOf(a.dayOfWeek) - dayOrder.indexOf(b.dayOfWeek)
+    return dayOrder.indexOf(a.dayOfWeek.toUpperCase()) - dayOrder.indexOf(b.dayOfWeek.toUpperCase())
   })
 
   return (
@@ -59,7 +59,7 @@ export function RouteScheduleCard({ routeWithSchedules, onEdit, onDelete }: Rout
                 <div className="text-sm font-medium text-zinc-400">Horarios:</div>
                 <div className="grid grid-cols-7 gap-2">
                   {['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'].map(day => {
-                    const daySchedules = sortedSchedules.filter(s => s.dayOfWeek === day)
+                    const daySchedules = sortedSchedules.filter(s => s.dayOfWeek.toUpperCase() === day)
                     return (
                       <div key={day} className="text-center">
                         <div className="text-xs text-zinc-500 mb-1">{getDayName(day)}</div>
