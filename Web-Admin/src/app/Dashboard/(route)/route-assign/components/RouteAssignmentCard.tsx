@@ -10,12 +10,12 @@ interface RouteAssignmentCardProps {
   onDelete: (id: number) => void
 }
 
-const getStatusLabel = (active: boolean): string => {
-    return active ? 'Activo' : 'Inactivo';
+const getStatusLabel = (assignmentStatus: string): string => {
+    return assignmentStatus === 'ACTIVE' ? 'Activo' : 'Inactivo';
 };
 
-const getStatusColor = (active: boolean): string => {
-    return active ? 'bg-green-600' : 'bg-red-600';
+const getStatusColor = (assignmentStatus: string): string => {
+    return assignmentStatus === 'ACTIVE' ? 'bg-green-600' : 'bg-red-600';
 };
 
 export function RouteAssignmentCard({ routeAssignment, onEdit, onDelete }: RouteAssignmentCardProps) {
@@ -31,10 +31,10 @@ export function RouteAssignmentCard({ routeAssignment, onEdit, onDelete }: Route
                         <div className="space-y-3">
                             <div className="flex items-center gap-3">
                                 <h3 className="text-xl font-bold text-white">
-                                    Ruta {routeAssignment.routeId} - Vehículo {routeAssignment.vehicleId}
+                                    Ruta {routeAssignment.routeNumber} - Vehículo {routeAssignment.vehiclePlate}
                                 </h3>
-                                <Badge className={getStatusColor(routeAssignment.active)}>
-                                    {getStatusLabel(routeAssignment.active)}
+                                <Badge className={getStatusColor(routeAssignment.assignmentStatus)}>
+                                    {getStatusLabel(routeAssignment.assignmentStatus)}
                                 </Badge>
                             </div>
                             <div className="text-zinc-400 space-y-1">
@@ -45,8 +45,20 @@ export function RouteAssignmentCard({ routeAssignment, onEdit, onDelete }: Route
                                     </div>
                                 )}
                                 <div>
-                                    <span className="font-medium text-white">Asignado: </span>
-                                    <span className="text-zinc-300">{new Date(routeAssignment.assignedAt).toLocaleDateString()}</span>
+                                    <span className="font-medium text-white">Estado: </span>
+                                    <span className={`font-medium ${routeAssignment.assignmentStatus === 'ACTIVE' ? 'text-green-400' : 'text-red-400'}`}>
+                                        {routeAssignment.assignmentStatus === 'ACTIVE' ? 'Activo' : 'Inactivo'}
+                                    </span>
+                                </div>
+                                {routeAssignment.note && (
+                                    <div>
+                                        <span className="font-medium text-white">Nota: </span>
+                                        <span className="text-zinc-300">{routeAssignment.note}</span>
+                                    </div>
+                                )}
+                                <div>
+                                    <span className="font-medium text-white">Creado: </span>
+                                    <span className="text-zinc-300">{new Date(routeAssignment.createdAt).toLocaleDateString()}</span>
                                 </div>
                             </div>
                         </div>

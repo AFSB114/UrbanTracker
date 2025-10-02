@@ -6,6 +6,8 @@ const INITIAL_FORM_DATA: RouteAssignmentFormData = {
   routeId: 0,
   vehicleId: 0,
   driverId: undefined,
+  note: '',
+  assignmentStatus: 'ACTIVE',
 };
 
 const DEFAULT_ITEMS_PER_PAGE = 5;
@@ -94,8 +96,8 @@ export const useRouteAssignments = (): UseRouteAssignmentsReturn => {
   const statistics = useMemo((): RouteAssignmentStatistics => {
     return {
       totalAssignments: assignments.length,
-      activeAssignments: assignments.filter(a => a.active).length,
-      inactiveAssignments: assignments.length - assignments.filter(a => a.active).length,
+      activeAssignments: assignments.filter(a => a.assignmentStatus === 'ACTIVE').length,
+      inactiveAssignments: assignments.filter(a => a.assignmentStatus === 'INACTIVE').length,
     };
   }, [assignments]);
 
@@ -124,6 +126,8 @@ export const useRouteAssignments = (): UseRouteAssignmentsReturn => {
       routeId: assignment.routeId,
       vehicleId: assignment.vehicleId,
       driverId: assignment.driverId,
+      note: assignment.note || '',
+      assignmentStatus: assignment.assignmentStatus,
     });
     setIsDialogOpen(true);
   }, []);
@@ -167,6 +171,8 @@ export const useRouteAssignments = (): UseRouteAssignmentsReturn => {
         routeId: Number(formData.routeId),
         vehicleId: Number(formData.vehicleId),
         driverId: formData.driverId ? Number(formData.driverId) : undefined,
+        note: formData.note?.trim() || undefined,
+        assignmentStatus: formData.assignmentStatus,
       };
 
       if (editingAssignment) {

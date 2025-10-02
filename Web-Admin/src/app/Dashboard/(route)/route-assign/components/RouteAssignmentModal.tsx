@@ -141,6 +141,46 @@ export const RouteAssignmentModal: React.FC<RouteAssignmentModalProps> = ({
             </div>
           </div>
 
+          <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="status" className="text-zinc-400">
+                Estado *
+              </Label>
+              <Select
+                value={formData.assignmentStatus}
+                onValueChange={(value: string) => onFormChange("assignmentStatus", value as 'ACTIVE' | 'INACTIVE')}
+              >
+                <SelectTrigger className="w-full bg-zinc-800 border-zinc-700 text-white">
+                  <SelectValue placeholder="Seleccione el estado" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-800 border-zinc-700 min-w-[200px]">
+                  <SelectItem value="ACTIVE">Activo</SelectItem>
+                  <SelectItem value="INACTIVE">Inactivo</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="note" className="text-zinc-400">
+                Nota
+              </Label>
+              <textarea
+                id="note"
+                value={formData.note || ''}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  onFormChange("note", value);
+                }}
+                className="w-full bg-zinc-800 border-zinc-700 text-white rounded px-3 py-2 resize-none"
+                placeholder="Nota de asignación (opcional)"
+                disabled={isLoading}
+                rows={3}
+              />
+            </div>
+          </div>
+
           <div className="flex justify-end gap-3 pt-6">
             <Button
               type="button"

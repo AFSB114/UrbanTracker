@@ -1,8 +1,12 @@
 export interface RouteAssignment {
   id: number;
   routeId: number;
+  routeNumber: string;
   vehicleId: number;
+  vehiclePlate: string;
   driverId?: number;
+  note?: string;
+  assignmentStatus: 'ACTIVE' | 'INACTIVE';
   assignedAt: string;
   createdAt: string;
   updatedAt: string;
@@ -13,6 +17,8 @@ export interface RouteAssignmentRequest {
   routeId: number;
   vehicleId: number;
   driverId?: number;
+  note?: string;
+  assignmentStatus: 'ACTIVE' | 'INACTIVE';
 }
 
 export interface RouteAssignmentStatistics {
@@ -25,6 +31,8 @@ export interface RouteAssignmentFormData {
   routeId: number;
   vehicleId: number;
   driverId?: number;
+  note?: string;
+  assignmentStatus: 'ACTIVE' | 'INACTIVE';
 }
 
 export interface PaginationData {

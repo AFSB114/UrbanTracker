@@ -13,7 +13,7 @@ public class RouteAssignmentMapper {
         return RouteAssignmentResDto.builder()
                 .id(entity.getId())
                 .routeId(entity.getRoute() != null ? entity.getRoute().getId() : null)
-                .routeNumber(entity.getRoute() != null ? entity.getRoute().getNumberRoute().toString() : null)
+                .routeNumber(entity.getRoute() != null && entity.getRoute().getNumberRoute() != null ? entity.getRoute().getNumberRoute().toString() : null)
                 .vehicleId(entity.getVehicle() != null ? entity.getVehicle().getId() : null)
                 .vehiclePlate(entity.getVehicle() != null ? entity.getVehicle().getLicencePlate() : null)
                 .assignmentStatus(entity.getAssignmentStatus())
