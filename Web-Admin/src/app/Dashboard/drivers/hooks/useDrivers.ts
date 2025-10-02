@@ -90,11 +90,11 @@ export const useDrivers = (): UseDriversReturn => {
 
   useEffect(() => {
     setPaginationConfig((prev) => ({ ...prev, page: 1 }));
-  }, [paginationConfig.itemsPerPage]);
+  }, [paginationConfig.itemsPerPage, searchTerm]);
 
   // Calculate pagination data (now using server data)
   const pagination = useMemo((): PaginationData => {
-    const totalItems = drivers.length;
+    const totalItems = filteredDrivers.length;
     const totalPages = Math.ceil(totalItems / paginationConfig.itemsPerPage);
     const currentPage = Math.min(paginationConfig.page, Math.max(1, totalPages));
     const startIndex = (currentPage - 1) * paginationConfig.itemsPerPage;
@@ -108,12 +108,12 @@ export const useDrivers = (): UseDriversReturn => {
       startIndex,
       endIndex,
     };
-  }, [drivers.length, paginationConfig]);
+  }, [filteredDrivers.length, paginationConfig]);
 
   const paginatedDrivers = useMemo(() => {
     const { startIndex, endIndex } = pagination;
-    return drivers.slice(startIndex, endIndex);
-  }, [drivers, pagination]);
+    return filteredDrivers.slice(startIndex, endIndex);
+  }, [filteredDrivers, pagination]);
 
   // Calculate statistics
   const statistics = useMemo((): DriverStatistics => {

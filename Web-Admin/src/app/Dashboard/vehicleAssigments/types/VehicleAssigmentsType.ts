@@ -1,9 +1,12 @@
 
 export interface VehicleAssigment {
   id: number;
+  createdAt: string;
+  updatedAt: string;
   active: boolean;
   vehicleId: number;
   vehiclePlate: string;
+  vehicleName: string;
   driverId: number;
   driverName: string;
   note: string;
@@ -34,30 +37,31 @@ export interface PaginationConfig {
 
 export interface VehicleAssigmentsStatistics {
   totalVehicles: number;
-  newThisMonth: number;
 }
 
 export interface UseVehicleAssigmentsReturn {
   filteredVehicles: VehicleAssigment[];
   paginatedVehicles: VehicleAssigment[];
   searchTerm: string;
+  statusFilter: string;
   statistics: VehicleAssigmentsStatistics;
   pagination: PaginationData;
-  
+
   // Modal states
   isDialogOpen: boolean;
   isDeleteModalOpen: boolean;
   editingVehicle: VehicleAssigment | null;
   vehicleToDelete: VehicleAssigment | null;
   formData: VehicleAssigmentFormData;
-  
+
   // Loading states
   isLoading: boolean;
   isDeleting: boolean;
   isSaving: boolean;
-  
+
   // Actions
   setSearchTerm: (term: string) => void;
+  setStatusFilter: (filter: string) => void;
   setPage: (page: number) => void;
   setItemsPerPage: (itemsPerPage: number) => void;
   openCreateModal: () => void;

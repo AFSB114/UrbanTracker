@@ -54,6 +54,7 @@ export interface UseRouteAssignmentsReturn {
   filteredAssignments: RouteAssignment[];
   paginatedAssignments: RouteAssignment[];
   searchTerm: string;
+  statusFilter: string;
   statistics: RouteAssignmentStatistics;
   pagination: PaginationData;
 
@@ -71,6 +72,7 @@ export interface UseRouteAssignmentsReturn {
 
   // Actions
   setSearchTerm: (term: string) => void;
+  setStatusFilter: (filter: string) => void;
   setPage: (page: number) => void;
   setItemsPerPage: (itemsPerPage: number) => void;
   openCreateModal: () => void;

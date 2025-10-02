@@ -21,6 +21,14 @@ const getStatusLabel = (status: string): string => {
     }
 };
 
+const getStatusStyles = (status: string) => {
+    const styles: Record<string, string> = {
+      "ACTIVE": "bg-green-600 text-white hover:bg-green-700",
+      "INACTIVE": "bg-red-600 text-white hover:bg-red-700"
+    }
+    return styles[status] || "bg-gray-600 text-white hover:bg-gray-700"
+}
+
 export function VehicleAssigmentCard({ vehicleAssigment, onEdit, onDelete }: VehicleAssigmentCardProps) {
 
     return (
@@ -36,7 +44,7 @@ export function VehicleAssigmentCard({ vehicleAssigment, onEdit, onDelete }: Veh
                                 <h3 className="text-xl font-bold text-white">
                                     {vehicleAssigment.vehiclePlate}
                                 </h3>
-                                <Badge className="bg-emerald-600">
+                                <Badge className={getStatusStyles(vehicleAssigment.assignmentStatus)}>
                                     {getStatusLabel(vehicleAssigment.assignmentStatus)}
                                 </Badge>
                             </div>

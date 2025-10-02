@@ -6,6 +6,7 @@ import { Plus, Loader2 } from "lucide-react"
 import { useRouteAssignments } from "./hooks/useRouteAssignments";
 import { RouteAssignmentCard } from "./components/RouteAssignmentCard";
 import { StatisticsCards } from "./components/StatisticsCards";
+import { RouteAssignmentFilters } from "./components/RouteAssignmentFilters";
 import { RouteAssignmentModal } from "./components/RouteAssignmentModal";
 import { Pagination } from "./components/Pagination";
 import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
@@ -16,6 +17,7 @@ export default function RouteAssignPage() {
     paginatedAssignments,
     filteredAssignments,
     searchTerm,
+    statusFilter,
     statistics,
     pagination,
     isDialogOpen,
@@ -27,6 +29,7 @@ export default function RouteAssignPage() {
     isDeleting,
     isSaving,
     setSearchTerm,
+    setStatusFilter,
     setPage,
     setItemsPerPage,
     openCreateModal,
@@ -94,6 +97,14 @@ export default function RouteAssignPage() {
 
       {/* Statistics */}
       <StatisticsCards statistics={statistics} />
+
+      {/* Filters */}
+      <RouteAssignmentFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+      />
 
       {/* Route assignments list */}
       <section className="space-y-6">

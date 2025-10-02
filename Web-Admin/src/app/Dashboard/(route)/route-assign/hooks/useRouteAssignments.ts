@@ -16,6 +16,7 @@ export const useRouteAssignments = (): UseRouteAssignmentsReturn => {
 
   const [assignments, setAssignments] = useState<RouteAssignment[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [assignmentToDelete, setAssignmentToDelete] = useState<RouteAssignment | null>(null);
@@ -51,27 +52,23 @@ export const useRouteAssignments = (): UseRouteAssignmentsReturn => {
   const filteredAssignments = useMemo(() => {
     const safeAssignments = Array.isArray(assignments) ? assignments : [];
 
-    if (!searchTerm.trim()) {
-      return safeAssignments;
-    }
-
     const searchLower = searchTerm.toLowerCase().trim();
 
-    return assignments.filter(assignment =>
-      // Aquí puedes agregar filtros por nombre de ruta, vehículo, etc.
-      // Por ahora, solo búsqueda básica
-      assignment.id.toString().includes(searchLower)
-    );
-  }, [assignments, searchTerm]);
+    return assignments.filter(assignment => {
+      const matchesSearch = !searchTerm.trim() || assignment.routeNumber.toLowerCase().includes(searchLower) || assignment.vehiclePlate.toLowerCase().includes(searchLower);
+      const matchesStatus = statusFilter === "all" || assignment.assignmentStatus === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [assignments, searchTerm, statusFilter]);
 
-  // Reset to page 1 when items per page changes
+  // Reset to page 1 when items per page changes or search term/status changes
   useEffect(() => {
     setPaginationConfig((prev) => ({ ...prev, page: 1 }));
-  }, [paginationConfig.itemsPerPage]);
+  }, [paginationConfig.itemsPerPage, searchTerm, statusFilter]);
 
   // Calculate pagination data
   const pagination = useMemo((): PaginationData => {
-    const totalItems = assignments.length;
+    const totalItems = filteredAssignments.length;
     const totalPages = Math.ceil(totalItems / paginationConfig.itemsPerPage);
     const currentPage = Math.min(paginationConfig.page, Math.max(1, totalPages));
     const startIndex = (currentPage - 1) * paginationConfig.itemsPerPage;
@@ -85,12 +82,12 @@ export const useRouteAssignments = (): UseRouteAssignmentsReturn => {
       startIndex,
       endIndex,
     };
-  }, [assignments.length, paginationConfig]);
+  }, [filteredAssignments.length, paginationConfig]);
 
   const paginatedAssignments = useMemo(() => {
     const { startIndex, endIndex } = pagination;
-    return assignments.slice(startIndex, endIndex);
-  }, [assignments, pagination]);
+    return filteredAssignments.slice(startIndex, endIndex);
+  }, [filteredAssignments, pagination]);
 
   // Calculate statistics
   const statistics = useMemo((): RouteAssignmentStatistics => {
@@ -212,6 +209,7 @@ export const useRouteAssignments = (): UseRouteAssignmentsReturn => {
     filteredAssignments,
     paginatedAssignments,
     searchTerm,
+    statusFilter,
     statistics,
     pagination,
 
@@ -229,6 +227,7 @@ export const useRouteAssignments = (): UseRouteAssignmentsReturn => {
 
     // Actions
     setSearchTerm,
+    setStatusFilter,
     setPage,
     setItemsPerPage,
     openCreateModal,
