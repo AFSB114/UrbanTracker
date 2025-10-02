@@ -1,5 +1,5 @@
-import { createContext } from "react";
-import type { LocationContextType } from "@Types/location";
+import { createContext } from 'react';
+import type { LocationContextType } from '@Types/location';
 
 const locationContext = createContext<LocationContextType | null>(null);
 

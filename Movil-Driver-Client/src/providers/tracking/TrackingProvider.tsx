@@ -1,5 +1,8 @@
 import React, { useReducer, useMemo, useContext } from 'react';
-import TrackingContext, { TrackingState, TrackingContextType } from '@Contexts/tracking/trackingContext';
+import TrackingContext, {
+  TrackingState,
+  TrackingContextType,
+} from '@Contexts/tracking/trackingContext';
 import { RouteTrajectorieService } from '@/services/api/routeTrajectorieService';
 import { AuthService } from '@/services/api/authService';
 import AuthContext from '@/contexts/auth/authContext';
@@ -63,7 +66,7 @@ export default function TrackingProvider({ children }: TrackingProviderProps) {
       const displayTime = now.toLocaleTimeString('es-CO', {
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit'
+        second: '2-digit',
       });
 
       console.log('🚀 Iniciando recorrido a las:', displayTime);
@@ -71,22 +74,29 @@ export default function TrackingProvider({ children }: TrackingProviderProps) {
       // Obtener información del usuario para el registro
       const user = await AuthService.getUser();
       if (!user?.id) {
-        console.warn('⚠️ No se pudo obtener información del usuario para el registro de trayectoria');
+        console.warn(
+          '⚠️ No se pudo obtener información del usuario para el registro de trayectoria'
+        );
         // Continuar con el flujo normal sin bloquear
         dispatch({
           type: 'START_RECORRIDO',
-          payload: { startTime: displayTime }
+          payload: { startTime: displayTime },
         });
         return;
       }
 
-      // Crear registro en la API
-      const createResult = await RouteTrajectorieService.create({
+      // Crear payload - incluir routeId siempre (null si no existe)
+      const payload = {
         driverId: user.id,
-        vehicleId: user.vehicleId || "1",
-        routeId: user.routeId,
+        vehicleId: user.vehicleId ? parseInt(user.vehicleId, 10) : 1,
         startTime: startTime,
-      });
+        routeId: user.routeId ?? null, // ✅ Siempre incluir routeId
+      };
+
+      console.log('📍 Payload a enviar para crear trayectoria:', payload);
+
+      // Crear registro en la API
+      const createResult = await RouteTrajectorieService.create(payload);
 
       if (createResult.success && createResult.data) {
         console.log('✅ Registro de trayectoria creado:', createResult.data.id);
@@ -94,15 +104,18 @@ export default function TrackingProvider({ children }: TrackingProviderProps) {
           type: 'START_RECORRIDO',
           payload: {
             startTime: displayTime,
-            routeTrajectorieId: createResult.data.id
-          }
+            routeTrajectorieId: createResult.data.id,
+          },
         });
       } else {
-        console.warn('⚠️ Error creando registro de trayectoria, continuando con flujo normal:', createResult.error);
+        console.warn(
+          '⚠️ Error creando registro de trayectoria, continuando con flujo normal:',
+          createResult.error
+        );
         // Continuar con el flujo normal sin bloquear
         dispatch({
           type: 'START_RECORRIDO',
-          payload: { startTime: displayTime }
+          payload: { startTime: displayTime },
         });
       }
     } catch (error) {
@@ -112,11 +125,11 @@ export default function TrackingProvider({ children }: TrackingProviderProps) {
       const displayTime = now.toLocaleTimeString('es-CO', {
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit'
+        second: '2-digit',
       });
       dispatch({
         type: 'START_RECORRIDO',
-        payload: { startTime: displayTime }
+        payload: { startTime: displayTime },
       });
     }
   };
@@ -128,7 +141,7 @@ export default function TrackingProvider({ children }: TrackingProviderProps) {
       const displayTime = now.toLocaleTimeString('es-CO', {
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit'
+        second: '2-digit',
       });
 
       console.log('🏁 Finalizando recorrido a las:', displayTime);
@@ -151,7 +164,7 @@ export default function TrackingProvider({ children }: TrackingProviderProps) {
 
       dispatch({
         type: 'END_RECORRIDO',
-        payload: { endTime: displayTime }
+        payload: { endTime: displayTime },
       });
     } catch (error) {
       console.error('❌ Error en endRecorrido:', error);
@@ -160,11 +173,11 @@ export default function TrackingProvider({ children }: TrackingProviderProps) {
       const displayTime = now.toLocaleTimeString('es-CO', {
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit'
+        second: '2-digit',
       });
       dispatch({
         type: 'END_RECORRIDO',
-        payload: { endTime: displayTime }
+        payload: { endTime: displayTime },
       });
     }
   };
@@ -187,9 +200,5 @@ export default function TrackingProvider({ children }: TrackingProviderProps) {
     [state]
   );
 
-  return (
-    <TrackingContext.Provider value={contextValue}>
-      {children}
-    </TrackingContext.Provider>
-  );
+  return <TrackingContext.Provider value={contextValue}>{children}</TrackingContext.Provider>;
 }

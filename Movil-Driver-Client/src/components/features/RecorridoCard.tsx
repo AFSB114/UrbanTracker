@@ -9,12 +9,7 @@ interface RecorridoCardProps {
   onToggle: () => void;
 }
 
-export const RecorridoCard = ({
-  isActive,
-  startTime,
-  endTime,
-  onToggle,
-}: RecorridoCardProps) => {
+export const RecorridoCard = ({ isActive, startTime, endTime, onToggle }: RecorridoCardProps) => {
   return (
     <View className="mb-6">
       {/* Botón Principal */}

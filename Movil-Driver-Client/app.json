@@ -15,19 +15,14 @@
       "tabletResizeMode": "contain",
       "tabletBackgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "experiments": {
       "tsconfigPaths": true
     },
-    "permissions": [
-      "ACCESS_COARSE_LOCATION",
-      "ACCESS_FINE_LOCATION"
-    ],
+    "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
     "plugins": [
       [
         "expo-location",

@@ -1,4 +1,5 @@
 import React, { useEffect, useReducer, useMemo } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthService } from '@Services/api/authService';
 import { DriverService } from '@Services/api/driverService';
 import { AuthContextType, AuthState, LoginCredentials, User } from '@/types/auth';
@@ -47,11 +48,13 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
     case 'UPDATE_DRIVER_INFO':
       return {
         ...state,
-        user: state.user ? {
-          ...state.user,
-          vehicleId: action.payload.vehicleId,
-          routeId: action.payload.routeId,
-        } : null,
+        user: state.user
+          ? {
+              ...state.user,
+              vehicleId: action.payload.vehicleId,
+              routeId: action.payload.routeId,
+            }
+          : null,
       };
     case 'SET_DRIVER_INFO_FETCHED':
       return {
@@ -83,7 +86,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Consultar información del conductor después del login exitoso (solo una vez)
   useEffect(() => {
     if (state.isAuthenticated && state.user && !state.driverInfoFetched) {
-      console.log('🔄 [AuthProvider] Usuario autenticado, consultando información del conductor...');
+      console.log(
+        '🔄 [AuthProvider] Usuario autenticado, consultando información del conductor...'
+      );
       fetchDriverInfoAfterLogin();
       requestLocationPermissionsAfterLogin();
     }
@@ -133,21 +138,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchDriverInfoAfterLogin = async () => {
     try {
-      console.log('🔍 [AuthProvider.fetchDriverInfoAfterLogin] Iniciando consulta de información del conductor...');
+      console.log(
+        '🔍 [AuthProvider.fetchDriverInfoAfterLogin] Iniciando consulta de información del conductor...'
+      );
       console.log('👤 [AuthProvider.fetchDriverInfoAfterLogin] Usuario actual:', {
         id: state.user?.id,
         identificacion: state.user?.identificacion,
-        idType: typeof state.user?.id
+        idType: typeof state.user?.id,
       });
 
       if (!state.user?.id || state.user.id === 0) {
-        console.log('ℹ️ [AuthProvider.fetchDriverInfoAfterLogin] No hay usuario válido para consultar información del conductor');
+        console.log(
+          'ℹ️ [AuthProvider.fetchDriverInfoAfterLogin] No hay usuario válido para consultar información del conductor'
+        );
         console.log('   - user.id:', state.user?.id);
         console.log('   - condición:', !state.user?.id || state.user.id === 0);
         return;
       }
 
-      console.log('🚗 [AuthProvider.fetchDriverInfoAfterLogin] Consultando asignación de vehículo para userId:', state.user.id);
+      console.log(
+        '🚗 [AuthProvider.fetchDriverInfoAfterLogin] Consultando asignación de vehículo para userId:',
+        state.user.id
+      );
 
       // Consultar asignación de vehículo
       const vehicleResult = await DriverService.getVehicleAssignment(state.user.id);
@@ -159,14 +171,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (vehicleResult.success && vehicleResult.data) {
         const vehicleId = vehicleResult.data.vehicleId;
-        console.log('✅ [AuthProvider.fetchDriverInfoAfterLogin] Vehículo asignado encontrado:', vehicleId);
+        console.log(
+          '✅ [AuthProvider.fetchDriverInfoAfterLogin] Vehículo asignado encontrado:',
+          vehicleId
+        );
 
         // Si hay vehículo asignado, consultar rutas
         if (vehicleId) {
-          console.log('🛣️ [AuthProvider.fetchDriverInfoAfterLogin] Consultando rutas para vehicleId:', vehicleId);
+          console.log(
+            '🛣️ [AuthProvider.fetchDriverInfoAfterLogin] Consultando rutas para vehicleId:',
+            vehicleId
+          );
           const routeResult = await DriverService.getRouteAssignments(vehicleId);
 
-          console.log('📊 [AuthProvider.fetchDriverInfoAfterLogin] Resultado de consulta de rutas:');
+          console.log(
+            '📊 [AuthProvider.fetchDriverInfoAfterLogin] Resultado de consulta de rutas:'
+          );
           console.log('   - success:', routeResult.success);
           console.log('   - error:', routeResult.error);
           console.log('   - hasData:', !!routeResult.data);
@@ -174,28 +194,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           if (routeResult.success && routeResult.data && routeResult.data.length > 0) {
             const routeId = routeResult.data[0].routeId; // Tomar la primera ruta activa
-            console.log('✅ [AuthProvider.fetchDriverInfoAfterLogin] Ruta asignada encontrada:', routeId);
+            console.log(
+              '✅ [AuthProvider.fetchDriverInfoAfterLogin] Ruta asignada encontrada:',
+              routeId
+            );
 
             // Actualizar el estado con la información del conductor
             const updatePayload = { vehicleId, routeId };
-            console.log('🔄 [AuthProvider.fetchDriverInfoAfterLogin] Actualizando estado del usuario:', updatePayload);
+            console.log(
+              '🔄 [AuthProvider.fetchDriverInfoAfterLogin] Actualizando estado del usuario:',
+              updatePayload
+            );
 
             dispatch({
               type: 'UPDATE_DRIVER_INFO',
               payload: updatePayload,
             });
 
-            console.log('✅ [AuthProvider.fetchDriverInfoAfterLogin] Información del conductor actualizada en el estado');
+            // Guardar el usuario actualizado en AsyncStorage
+            const updatedUser = {
+              ...state.user,
+              vehicleId,
+              routeId,
+            };
+            await AsyncStorage.setItem('auth_user', JSON.stringify(updatedUser));
+
+            console.log(
+              '✅ [AuthProvider.fetchDriverInfoAfterLogin] Información del conductor actualizada en el estado y AsyncStorage'
+            );
             console.log('   - Nuevo estado del usuario:', {
               id: state.user.id,
               vehicleId: vehicleId,
-              routeId: routeId
+              routeId: routeId,
             });
 
             // Marcar que se completó la consulta de información del conductor
             dispatch({ type: 'SET_DRIVER_INFO_FETCHED', payload: true });
           } else {
-            console.log('⚠️ [AuthProvider.fetchDriverInfoAfterLogin] No se encontraron rutas asignadas al vehículo');
+            console.log(
+              '⚠️ [AuthProvider.fetchDriverInfoAfterLogin] No se encontraron rutas asignadas al vehículo'
+            );
             console.log('   - Actualizando solo con vehicleId');
 
             const updatePayload = { vehicleId };
@@ -204,27 +242,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               payload: updatePayload,
             });
 
-            console.log('✅ [AuthProvider.fetchDriverInfoAfterLogin] Estado actualizado solo con vehicleId');
+            // Guardar el usuario actualizado en AsyncStorage
+            const updatedUser = {
+              ...state.user,
+              vehicleId,
+            };
+            await AsyncStorage.setItem('auth_user', JSON.stringify(updatedUser));
+
+            console.log(
+              '✅ [AuthProvider.fetchDriverInfoAfterLogin] Estado actualizado solo con vehicleId'
+            );
 
             // Marcar que se completó la consulta de información del conductor
             dispatch({ type: 'SET_DRIVER_INFO_FETCHED', payload: true });
           }
         } else {
-          console.log('⚠️ [AuthProvider.fetchDriverInfoAfterLogin] Conductor no tiene vehículo asignado');
+          console.log(
+            '⚠️ [AuthProvider.fetchDriverInfoAfterLogin] Conductor no tiene vehículo asignado'
+          );
         }
 
         // Marcar que se completó la consulta de información del conductor
         dispatch({ type: 'SET_DRIVER_INFO_FETCHED', payload: true });
       } else {
-        console.log('⚠️ [AuthProvider.fetchDriverInfoAfterLogin] No se encontró asignación de vehículo activa para el conductor');
+        console.log(
+          '⚠️ [AuthProvider.fetchDriverInfoAfterLogin] No se encontró asignación de vehículo activa para el conductor'
+        );
         console.log('   - Error:', vehicleResult.error);
 
         // Marcar que se completó la consulta (aunque sin resultados)
         dispatch({ type: 'SET_DRIVER_INFO_FETCHED', payload: true });
       }
     } catch (error) {
-      console.error('❌ [AuthProvider.fetchDriverInfoAfterLogin] Error consultando información del conductor:', error);
-      console.error('❌ [AuthProvider.fetchDriverInfoAfterLogin] Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
+      console.error(
+        '❌ [AuthProvider.fetchDriverInfoAfterLogin] Error consultando información del conductor:',
+        error
+      );
+      console.error(
+        '❌ [AuthProvider.fetchDriverInfoAfterLogin] Stack trace:',
+        error instanceof Error ? error.stack : 'No stack trace'
+      );
 
       // Marcar que se completó la consulta (aunque con error)
       dispatch({ type: 'SET_DRIVER_INFO_FETCHED', payload: true });
@@ -264,7 +321,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async (credentials: LoginCredentials): Promise<{ success: boolean; error?: string }> => {
+  const login = async (
+    credentials: LoginCredentials
+  ): Promise<{ success: boolean; error?: string }> => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
       const result = await AuthService.login(credentials);

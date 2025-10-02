@@ -1,3 +1,5 @@
+import { MQTT_CONFIG } from '@/config/mqtt';
+
 export interface TrackingData {
   type: string;
   isActive: boolean;
@@ -11,8 +13,6 @@ export interface RecorridoStatus {
   startTime?: string;
   endTime?: string;
 }
-
-import { MQTT_CONFIG } from '@/config/mqtt';
 
 export class TrackingService {
   /**

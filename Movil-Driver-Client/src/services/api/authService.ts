@@ -7,30 +7,37 @@ const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'auth_user';
 
 // Simular delay de red
-const mockDelay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const mockDelay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export class AuthService {
   /**
    * Realiza login con credenciales
    */
-  static async login(credentials: LoginCredentials): Promise<{ success: boolean; token?: string; user?: User; error?: string }> {
+  static async login(
+    credentials: LoginCredentials
+  ): Promise<{ success: boolean; token?: string; user?: User; error?: string }> {
     try {
-
       // Adaptar payload al backend: userName en lugar de identificacion
       const payload = { userName: credentials.identificacion, password: credentials.password };
-      console.log('🔐 AuthService.login ->', { endpoint: LOGIN_ENDPOINT, payload: { ...payload, password: '***' } });
+      console.log('🔐 AuthService.login ->', {
+        endpoint: LOGIN_ENDPOINT,
+        payload: { ...payload, password: '***' },
+      });
 
       const resp = await fetch(LOGIN_ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(payload),
       });
 
       const isJson = resp.headers.get('content-type')?.includes('application/json');
-      console.log('🔐 AuthService.login <- respuesta', { status: resp.status, ok: resp.ok, isJson });
+      console.log('🔐 AuthService.login <- respuesta', {
+        status: resp.status,
+        ok: resp.ok,
+        isJson,
+      });
 
       if (!resp.ok) {
-
         let errorMessage = 'Credenciales inválidas';
 
         if (isJson) {
@@ -45,7 +52,7 @@ export class AuthService {
         return { success: false, error: errorMessage };
       }
 
-      const rawData = isJson ? await resp.json() : await resp.text().then(t => JSON.parse(t));
+      const rawData = isJson ? await resp.json() : await resp.text().then((t) => JSON.parse(t));
       console.log('🔐 AuthService.login <- success body keys', rawData ? Object.keys(rawData) : []);
 
       // Aceptar distintas formas de respuesta
@@ -61,7 +68,7 @@ export class AuthService {
       if (user && user.id) {
         user = {
           ...user,
-          id: typeof user.id === 'string' ? parseInt(user.id, 10) : user.id
+          id: typeof user.id === 'string' ? parseInt(user.id, 10) : user.id,
         };
       }
 
@@ -71,12 +78,11 @@ export class AuthService {
       }
 
       return { success: true, token: String(token), user: user || undefined };
-
     } catch (error) {
       console.error('Error en login:', error);
       return {
         success: false,
-        error: 'Error de conexión'
+        error: 'Error de conexión',
       };
     }
   }
@@ -127,7 +133,11 @@ export class AuthService {
   /**
    * Verifica si hay una sesión válida
    */
-  static async checkAuthStatus(): Promise<{ isAuthenticated: boolean; user?: User; token?: string }> {
+  static async checkAuthStatus(): Promise<{
+    isAuthenticated: boolean;
+    user?: User;
+    token?: string;
+  }> {
     try {
       const token = await this.getToken();
       const user = await this.getUser();
@@ -135,7 +145,7 @@ export class AuthService {
       console.log('🔍 Verificando estado de autenticación:', {
         tokenExists: !!token,
         userExists: !!user,
-        tokenPreview: token ? token.substring(0, 20) + '...' : 'null'
+        tokenPreview: token ? token.substring(0, 20) + '...' : 'null',
       });
 
       if (token && user) {
@@ -144,7 +154,7 @@ export class AuthService {
         return {
           isAuthenticated: true,
           user,
-          token
+          token,
         };
       }
 

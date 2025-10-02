@@ -28,7 +28,7 @@ public class MqttMessageListener {
 
         log.info("📩 MQTT recibido | Topic: {} | Payload: {}", topic, payload);
 
-        if (topic.startsWith("route/")) {
+        if (topic.startsWith("routes/")) {
             String[] parts = topic.split("/");
             String routeId = parts[1];
 

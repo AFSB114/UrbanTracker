@@ -11,7 +11,7 @@ export default function Layout() {
     <AuthProvider>
       <ConditionalProvidersWrapper>
         <SafeAreaView className="flex-1 bg-black">
-          <StatusBar barStyle='dark-content' backgroundColor='#000' />
+          <StatusBar barStyle="dark-content" backgroundColor="#000" />
           <Slot />
         </SafeAreaView>
       </ConditionalProvidersWrapper>

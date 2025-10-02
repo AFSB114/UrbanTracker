@@ -80,14 +80,14 @@ export const getFirstValidationError = (errors: string[]): string | null => {
  * Combina múltiples validaciones
  */
 export const combineValidations = (
-  ...validations: Array<{ isValid: boolean; error: string }>
+  ...validations: { isValid: boolean; error: string }[]
 ): { isValid: boolean; errors: string[] } => {
   const errors = validations
-    .filter(validation => !validation.isValid)
-    .map(validation => validation.error);
+    .filter((validation) => !validation.isValid)
+    .map((validation) => validation.error);
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 };

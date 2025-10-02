@@ -9,7 +9,7 @@ export class LocationService {
     location: Location,
     publishFunction?: (topic: string, data: any) => boolean,
     routeId?: string,
-    vehicleId: string = "123-456"
+    vehicleId: string = '123-456'
   ): boolean {
     try {
       // Validar datos de ubicación
@@ -28,7 +28,7 @@ export class LocationService {
         timestamp: new Date(location.timestamp).toISOString(),
         latitude: location.latitude,
         longitude: location.longitude,
-        source: "MOVILE",
+        source: 'MOVILE',
       };
 
       // Si se proporciona función de publicación, usarla

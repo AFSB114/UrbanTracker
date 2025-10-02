@@ -1,8 +1,8 @@
 // Configuración MQTT
 export const MQTT_CONFIG = {
   // Broker configuration
-  BROKER_URL: 'ws://192.168.0.106:9001',
-  BROKER_HOST: '192.168.0.106',
+  BROKER_URL: 'ws://172.30.6.33:9001',
+  BROKER_HOST: '172.30.6.33',
   BROKER_PORT: 9001,
 
   // Client configuration
@@ -92,8 +92,8 @@ export const createConnectionStatusMessage = (clientId: string) => ({
 
 // Función para crear mensaje de estado de recorrido
 export const createRecorridoStatusMessage = (
-  isActive: boolean, 
-  startTime?: string, 
+  isActive: boolean,
+  startTime?: string,
   endTime?: string
 ) => ({
   type: MQTT_CONFIG.MESSAGE_TYPES.RECORRIDO_STATUS,
@@ -104,11 +104,7 @@ export const createRecorridoStatusMessage = (
 });
 
 // Función para crear mensaje de ubicación
-export const createLocationMessage = (
-  latitude: number,
-  longitude: number,
-  timestamp: number
-) => ({
+export const createLocationMessage = (latitude: number, longitude: number, timestamp: number) => ({
   lat: latitude,
   lon: longitude,
   timestamp,

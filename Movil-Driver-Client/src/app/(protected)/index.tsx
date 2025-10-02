@@ -163,7 +163,6 @@ export default function Home() {
           <Text className="text-zinc-500">Versión 1.0.0</Text>
         </View>
       </ScrollView>
-
     </View>
   );
 }

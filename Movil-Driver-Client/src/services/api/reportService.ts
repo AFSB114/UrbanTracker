@@ -15,14 +15,16 @@ export class ReportService {
   /**
    * Envía un reporte de novedad
    */
-  static async sendReport(reportData: Omit<ReportData, 'timestamp'>): Promise<{ success: boolean; error?: string }> {
+  static async sendReport(
+    reportData: Omit<ReportData, 'timestamp'>
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       // Validar datos del reporte
       const validation = this.validateReportData(reportData);
       if (!validation.isValid) {
         return {
           success: false,
-          error: `Datos inválidos: ${validation.errors.join(', ')}`
+          error: `Datos inválidos: ${validation.errors.join(', ')}`,
         };
       }
 
@@ -38,14 +40,14 @@ export class ReportService {
       console.log('📋 Reporte preparado para envío:', report);
 
       // Simular delay de red
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       return { success: true };
     } catch (error) {
       console.error('❌ Error enviando reporte:', error);
       return {
         success: false,
-        error: 'Error interno del servidor'
+        error: 'Error interno del servidor',
       };
     }
   }
@@ -53,7 +55,9 @@ export class ReportService {
   /**
    * Valida los datos de un reporte
    */
-  static validateReportData(reportData: Omit<ReportData, 'timestamp' | 'tipo' | 'prioridad'>): ReportValidationResult {
+  static validateReportData(
+    reportData: Omit<ReportData, 'timestamp' | 'tipo' | 'prioridad'>
+  ): ReportValidationResult {
     const errors: string[] = [];
 
     // Validar asunto
@@ -76,7 +80,7 @@ export class ReportService {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -111,15 +115,16 @@ export class ReportService {
   } {
     return {
       asunto: report.asunto,
-      descripcion: report.descripcion.length > 100
-        ? `${report.descripcion.substring(0, 100)}...`
-        : report.descripcion,
+      descripcion:
+        report.descripcion.length > 100
+          ? `${report.descripcion.substring(0, 100)}...`
+          : report.descripcion,
       fecha: new Date(report.timestamp).toLocaleDateString('es-CO', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       }),
       prioridad: report.prioridad || 'media',
       tipo: report.tipo || 'novedad',

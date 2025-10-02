@@ -106,15 +106,20 @@ export const useHome = () => {
     if (location && connectionStatus === 'Conectado' && isRecorridoActive) {
       // Obtener routeId del usuario autenticado
       const routeId = user?.routeId;
-      const vehicleId = user?.vehicleId || "default-vehicle";
+      const vehicleId = user?.vehicleId || 'default-vehicle';
 
       console.log('📍 Publicando ubicación con datos del usuario:', {
         routeId,
         vehicleId,
-        userId: user?.id
+        userId: user?.id,
       });
 
-      const success = LocationService.publishLocationData(location, publishSafely, routeId, vehicleId);
+      const success = LocationService.publishLocationData(
+        location,
+        publishSafely,
+        routeId,
+        vehicleId
+      );
       if (success) {
         console.log('📍 Nueva ubicación publicada:', {
           latitude: location.latitude,
@@ -133,11 +138,14 @@ export const useHome = () => {
       const status = {
         isRecorridoActive,
         startTime: startTime || undefined,
-        endTime: endTime || undefined
+        endTime: endTime || undefined,
       };
       const success = TrackingService.publishRecorridoStatus(status, publishSafely);
       if (success) {
-        console.log('📊 Estado de recorrido publicado:', isRecorridoActive ? 'Iniciado' : 'Finalizado');
+        console.log(
+          '📊 Estado de recorrido publicado:',
+          isRecorridoActive ? 'Iniciado' : 'Finalizado'
+        );
       }
     }
   }, [isRecorridoActive, startTime, endTime, connectionStatus, publishSafely]);

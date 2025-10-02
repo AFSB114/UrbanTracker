@@ -59,9 +59,7 @@ export const formatDuration = (minutes: number): string => {
  * Formatea coordenadas geográficas
  */
 export const formatCoordinate = (coordinate: number, type: 'lat' | 'lon'): string => {
-  const direction = type === 'lat'
-    ? (coordinate >= 0 ? 'N' : 'S')
-    : (coordinate >= 0 ? 'E' : 'W');
+  const direction = type === 'lat' ? (coordinate >= 0 ? 'N' : 'S') : coordinate >= 0 ? 'E' : 'W';
 
   return `${Math.abs(coordinate).toFixed(6)}° ${direction}`;
 };
@@ -122,7 +120,7 @@ export const capitalizeWords = (text: string): string => {
   return text
     .toLowerCase()
     .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 };
 

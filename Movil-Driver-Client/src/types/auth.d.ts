@@ -27,7 +27,7 @@ export interface AuthContextType {
   user: User | null;
   token: string | null;
   isLoading: boolean;
-  
+
   // Métodos
   login: (credentials: LoginCredentials) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;

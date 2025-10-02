@@ -3,10 +3,10 @@ import 'react-native-get-random-values';
 
 // Buffer polyfill
 import { Buffer } from 'buffer';
-global.Buffer = global.Buffer || Buffer;
 
 // Events polyfill
 import { EventEmitter } from 'events';
+global.Buffer = global.Buffer || Buffer;
 global.EventEmitter = global.EventEmitter || EventEmitter;
 
 // Process polyfill

@@ -79,7 +79,7 @@ const MapViewComponent = ({ children }: { children?: React.ReactNode }) => {
             latitude: 2.9342900126616227,
             zoom: 15,
           }}
-          mapStyle="mapbox://styles/mapbox/dark-v11"
+          mapStyle="mapbox://styles/afsb114/cmf7eaden003301s563d81iss"
           attributionControl={false}
         >
           {vehicleMarkers}
@@ -92,7 +92,7 @@ const MapViewComponent = ({ children }: { children?: React.ReactNode }) => {
                 paint={{
                   "line-color": "#5BE201",
                   "line-width": 4,
-                }}
+                }}i
               />
             </Source>
           )}

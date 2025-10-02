@@ -55,8 +55,8 @@ export const UI_CONFIG = {
 export const STATUS_COLORS = {
   SUCCESS: '#10b981', // green-500
   WARNING: '#f59e0b', // yellow-500
-  ERROR: '#ef4444',   // red-500
-  INFO: '#3b82f6',    // blue-500
+  ERROR: '#ef4444', // red-500
+  INFO: '#3b82f6', // blue-500
   NEUTRAL: '#6b7280', // gray-500
 } as const;
 

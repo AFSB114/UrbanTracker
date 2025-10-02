@@ -8,41 +8,41 @@ export const COLORS = {
 
   // Colores de fondo
   BACKGROUND: {
-    PRIMARY: '#000000',      // Negro puro
-    SECONDARY: '#111111',    // Gris muy oscuro
-    TERTIARY: '#1a1a1a',     // Gris oscuro
-    CARD: '#0f0f0f',         // Gris muy oscuro para tarjetas
+    PRIMARY: '#000000', // Negro puro
+    SECONDARY: '#111111', // Gris muy oscuro
+    TERTIARY: '#1a1a1a', // Gris oscuro
+    CARD: '#0f0f0f', // Gris muy oscuro para tarjetas
   },
 
   // Colores de texto
   TEXT: {
-    PRIMARY: '#ffffff',      // Blanco
-    SECONDARY: '#a1a1aa',    // Gris claro
-    MUTED: '#71717a',        // Gris medio
-    ACCENT: '#f4f4f5',       // Blanco zinc
+    PRIMARY: '#ffffff', // Blanco
+    SECONDARY: '#a1a1aa', // Gris claro
+    MUTED: '#71717a', // Gris medio
+    ACCENT: '#f4f4f5', // Blanco zinc
   },
 
   // Colores de estado
   STATUS: {
-    SUCCESS: '#10b981',      // Verde
-    WARNING: '#f59e0b',      // Amarillo
-    ERROR: '#ef4444',        // Rojo
-    INFO: '#3b82f6',         // Azul
-    NEUTRAL: '#6b7280',      // Gris
+    SUCCESS: '#10b981', // Verde
+    WARNING: '#f59e0b', // Amarillo
+    ERROR: '#ef4444', // Rojo
+    INFO: '#3b82f6', // Azul
+    NEUTRAL: '#6b7280', // Gris
   },
 
   // Colores de borde
   BORDER: {
-    LIGHT: '#27272a',        // Gris claro para bordes
-    MEDIUM: '#3f3f46',       // Gris medio
-    STRONG: '#52525b',       // Gris fuerte
+    LIGHT: '#27272a', // Gris claro para bordes
+    MEDIUM: '#3f3f46', // Gris medio
+    STRONG: '#52525b', // Gris fuerte
   },
 
   // Colores específicos de la app
   BRAND: {
-    PRIMARY: '#22c55e',      // Verde brillante
-    SECONDARY: '#16a34a',    // Verde oscuro
-    ACCENT: '#84cc16',       // Verde lima
+    PRIMARY: '#22c55e', // Verde brillante
+    SECONDARY: '#16a34a', // Verde oscuro
+    ACCENT: '#84cc16', // Verde lima
   },
 } as const;
 
@@ -106,7 +106,7 @@ export const SHADOWS = {
   LG: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.30,
+    shadowOpacity: 0.3,
     shadowRadius: 4.65,
     elevation: 8,
   },

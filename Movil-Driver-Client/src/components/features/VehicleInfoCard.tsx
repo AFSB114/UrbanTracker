@@ -6,10 +6,7 @@ interface VehicleInfoCardProps {
   numeroInterno: string;
 }
 
-export const VehicleInfoCard = ({
-  placas,
-  numeroInterno,
-}: VehicleInfoCardProps) => {
+export const VehicleInfoCard = ({ placas, numeroInterno }: VehicleInfoCardProps) => {
   return (
     <View className="mb-6">
       <Text className="mb-3 text-sm font-bold text-zinc-300">Información del vehículo</Text>

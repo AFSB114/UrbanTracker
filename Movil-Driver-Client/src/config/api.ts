@@ -1,6 +1,6 @@
 // Configuración de API
 export const API_CONFIG = {
-  BASE_URL: 'http://192.168.0.106:8080/api/v1',
+  BASE_URL: 'http://172.30.6.33:8080/api/v1',
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
 } as const;
@@ -28,15 +28,16 @@ export const API_ENDPOINTS = {
     GET_BY_USER: (userId: number) => `${API_CONFIG.BASE_URL}/vehicle-assigment/user/${userId}`,
   },
   ROUTE_ASSIGNMENT: {
-    GET_BY_VEHICLE: (vehicleId: string) => `${API_CONFIG.BASE_URL}/route-assignment/vehicle/${vehicleId}`,
+    GET_BY_VEHICLE: (vehicleId: string) =>
+      `${API_CONFIG.BASE_URL}/route-assignment/vehicle/${vehicleId}`,
   },
 } as const;
 
 // Headers comunes para las peticiones
 export const getCommonHeaders = (token?: string) => ({
   'Content-Type': 'application/json',
-  'Accept': 'application/json',
-  ...(token && { 'Authorization': `Bearer ${token}` }),
+  Accept: 'application/json',
+  ...(token && { Authorization: `Bearer ${token}` }),
 });
 
 // Configuración de manejo de errores

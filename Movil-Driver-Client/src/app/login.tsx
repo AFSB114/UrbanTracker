@@ -21,7 +21,6 @@ export default function Login() {
 
   return (
     <View className="flex-1 items-center justify-center bg-black px-7">
-
       {/* Logo */}
       <View className="mb-10 h-60 w-60">
         <Image
@@ -74,11 +73,10 @@ export default function Login() {
       )}
 
       {/* Botón de Iniciar Sesión */}
-      <TouchableOpacity 
-        onPress={handleLogin} 
+      <TouchableOpacity
+        onPress={handleLogin}
         disabled={isLoading}
-        className={`mb-4 rounded-full px-16 py-4 ${isLoading ? 'bg-gray-400' : 'bg-gray-200'}`}
-      >
+        className={`mb-4 rounded-full px-16 py-4 ${isLoading ? 'bg-gray-400' : 'bg-gray-200'}`}>
         <Text className="text-center text-lg font-bold text-black">
           {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
         </Text>

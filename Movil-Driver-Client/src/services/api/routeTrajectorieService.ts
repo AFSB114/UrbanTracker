@@ -3,8 +3,8 @@ import { AuthService } from './authService';
 
 export interface RouteTrajectorieCreateData {
   driverId: number;
-  vehicleId: string;
-  routeId?: string;
+  vehicleId: number;
+  routeId?: string | null;
   startTime: string;
 }
 
@@ -23,10 +23,10 @@ export interface RouteTrajectorieResponse {
 }
 
 export class RouteTrajectorieService {
-  /**
-   * Crea un nuevo registro de trayectoria de ruta
-   */
-  static async create(data: RouteTrajectorieCreateData): Promise<{ success: boolean; data?: RouteTrajectorieResponse; error?: string }> {
+
+  static async create(
+    data: RouteTrajectorieCreateData
+  ): Promise<{ success: boolean; data?: RouteTrajectorieResponse; error?: string }> {
     try {
       const token = await AuthService.getToken();
       if (!token) {
@@ -53,14 +53,17 @@ export class RouteTrajectorieService {
       return { success: true, data: result };
     } catch (error) {
       console.error('❌ Error en create route trajectorie:', error);
-      return { success: false, error: error instanceof Error ? error.message : 'Error desconocido' };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Error desconocido',
+      };
     }
   }
 
-  /**
-   * Actualiza un registro de trayectoria de ruta existente
-   */
-  static async update(id: string, data: RouteTrajectorieUpdateData): Promise<{ success: boolean; data?: RouteTrajectorieResponse; error?: string }> {
+  static async update(
+    id: string,
+    data: RouteTrajectorieUpdateData
+  ): Promise<{ success: boolean; data?: RouteTrajectorieResponse; error?: string }> {
     try {
       const token = await AuthService.getToken();
       if (!token) {
@@ -87,7 +90,10 @@ export class RouteTrajectorieService {
       return { success: true, data: result };
     } catch (error) {
       console.error('❌ Error en update route trajectorie:', error);
-      return { success: false, error: error instanceof Error ? error.message : 'Error desconocido' };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Error desconocido',
+      };
     }
   }
 }
