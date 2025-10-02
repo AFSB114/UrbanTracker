@@ -29,7 +29,7 @@ public class RouteScheduleController extends BaseController<RouteScheduleReqDto,
 
     @PostMapping("/bulk")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CrudResponseDto<List<RouteScheduleResDto>>> createAll(List<RouteScheduleReqDto> dto) throws BadRequestException {
+    public ResponseEntity<CrudResponseDto<List<RouteScheduleResDto>>> createAll(@RequestBody List<RouteScheduleReqDto> dto) throws BadRequestException {
         CrudResponseDto<List<RouteScheduleResDto>>  res = routeScheduleService.createAll(dto);
         return  ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
