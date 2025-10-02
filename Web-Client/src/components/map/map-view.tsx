@@ -1,11 +1,11 @@
 
-import { useRef, useEffect, createContext, useContext } from "react";
-import Map, { MapRef, Source, Layer } from "react-map-gl/mapbox";
-import "mapbox-gl/dist/mapbox-gl.css";
+import React, { createContext, useContext, useEffect, useRef, useMemo } from "react";
 import { usePanelCollapse } from "components/panels/panel-collapse-context";
-import { VehicleMarker } from "./vehicle-marker";
-import { useVehiclePositions } from "./vehicle-context";
+import "mapbox-gl/dist/mapbox-gl.css";
+import Map, { Layer, MapRef, Source } from "react-map-gl/mapbox";
 import { useRoutePoints } from "./route-context";
+import { useVehiclePositions } from "./vehicle-context";
+import { VehicleMarker } from "./vehicle-marker";
 
 // Contexto para exponer el ref del mapa
 const MapboxRefContext = createContext<React.MutableRefObject<MapRef | null> | null>(null);
@@ -15,17 +15,58 @@ export function useMapboxRef() {
   return ctx;
 }
 
-export default function MapView({ children }: { children?: React.ReactNode }) {
+const MapViewComponent = ({ children }: { children?: React.ReactNode }) => {
   const { isPanelCollapsed } = usePanelCollapse();
   const { vehiclePositions } = useVehiclePositions();
   const { outboundPoints, returnPoints } = useRoutePoints();
   const mapRef = useRef<MapRef | null>(null);
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+
   useEffect(() => {
     if (mapRef.current) {
       mapRef.current.resize();
     }
   }, [isPanelCollapsed]);
+
+  // Memoizar los datos del mapa para evitar re-renderizados innecesarios
+  const outboundSource = useMemo(() => {
+    if (!outboundPoints || outboundPoints.length < 2) return null;
+    return {
+      id: "outbound-route",
+      type: "geojson" as const,
+      data: {
+        type: "Feature" as const,
+        properties: {},
+        geometry: {
+          type: "LineString" as const,
+          coordinates: outboundPoints,
+        },
+      },
+    };
+  }, [outboundPoints]);
+
+  const returnSource = useMemo(() => {
+    if (!returnPoints || returnPoints.length < 2) return null;
+    return {
+      id: "return-route",
+      type: "geojson" as const,
+      data: {
+        type: "Feature" as const,
+        properties: {},
+        geometry: {
+          type: "LineString" as const,
+          coordinates: returnPoints,
+        },
+      },
+    };
+  }, [returnPoints]);
+
+  const vehicleMarkers = useMemo(() => {
+    if (!vehiclePositions) return [];
+    return Array.from(vehiclePositions.values()).map((vehicle) => (
+      <VehicleMarker key={vehicle.vehicleId} vehicle={vehicle} />
+    ));
+  }, [vehiclePositions]);
 
   return (
     <MapboxRefContext.Provider value={mapRef}>
@@ -41,53 +82,29 @@ export default function MapView({ children }: { children?: React.ReactNode }) {
           mapStyle="mapbox://styles/mapbox/dark-v11"
           attributionControl={false}
         >
-          {vehiclePositions && Array.from(vehiclePositions.values()).map(vehicle => (
-            <VehicleMarker key={vehicle.vehicleId} vehicle={vehicle} />
-          ))}
-          {outboundPoints && outboundPoints.length > 1 && (
-            <Source
-              id="outbound-route"
-              type="geojson"
-              data={{
-                type: 'Feature',
-                properties: {},
-                geometry: {
-                  type: 'LineString',
-                  coordinates: outboundPoints
-                }
-              }}
-            >
+          {vehicleMarkers}
+          {outboundSource && (
+            <Source {...outboundSource}>
               <Layer
                 id="outbound-route-layer"
                 type="line"
                 source="outbound-route"
                 paint={{
-                  'line-color': '#10b981',
-                  'line-width': 4
+                  "line-color": "#5BE201",
+                  "line-width": 4,
                 }}
               />
             </Source>
           )}
-          {returnPoints && returnPoints.length > 1 && (
-            <Source
-              id="return-route"
-              type="geojson"
-              data={{
-                type: 'Feature',
-                properties: {},
-                geometry: {
-                  type: 'LineString',
-                  coordinates: returnPoints
-                }
-              }}
-            >
+          {returnSource && (
+            <Source {...returnSource}>
               <Layer
                 id="return-route-layer"
                 type="line"
                 source="return-route"
                 paint={{
-                  'line-color': '#ef4444',
-                  'line-width': 4
+                  "line-color": "#FF0000",
+                  "line-width": 4,
                 }}
               />
             </Source>
@@ -97,4 +114,8 @@ export default function MapView({ children }: { children?: React.ReactNode }) {
       </div>
     </MapboxRefContext.Provider>
   );
-}
+};
+
+// Memoizar el componente para evitar re-renderizados innecesarios
+const MapView = React.memo(MapViewComponent);
+export default MapView;
