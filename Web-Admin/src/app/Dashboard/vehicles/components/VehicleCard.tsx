@@ -11,6 +11,17 @@ interface VehicleCardProps {
 }
 
 export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
+  const getStatusInSpanish = (status: string): string => {
+    switch (status) {
+      case 'ACTIVE':
+        return 'Activo';
+      case 'INACTIVE':
+        return 'Inactivo';
+      default:
+        return status;
+    }
+  };
+
   const getStatusStyles = (status: Vehicle['status']) => {
     const styles: Record<string, string> = {
       "ACTIVE": "bg-green-600 text-white hover:bg-green-700",
@@ -33,7 +44,7 @@ export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
                   {vehicle.licencePlate}
                 </h3>
                 <Badge className={getStatusStyles(vehicle.status)}>
-                  {vehicle.status}
+                  {getStatusInSpanish(vehicle.status)}
                 </Badge>
               </div>
               <div className="text-zinc-400">

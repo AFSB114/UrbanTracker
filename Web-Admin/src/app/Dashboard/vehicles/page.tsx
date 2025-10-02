@@ -18,6 +18,7 @@ export default function VehiclesPage() {
     filteredVehicles,
     pagination,
     searchTerm,
+    statusFilter,
     statistics,
     isDialogOpen,
     isDeleteModalOpen,
@@ -105,7 +106,7 @@ export default function VehiclesPage() {
       <VehicleFilters
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
-        statusFilter="all"
+        statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
       />
 

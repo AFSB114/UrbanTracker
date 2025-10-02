@@ -33,9 +33,8 @@ export function VehicleFilters({
         </SelectTrigger>
         <SelectContent className="bg-zinc-900 border-zinc-700">
           <SelectItem value="all">Todos los estados</SelectItem>
-          <SelectItem value="Operational">Operational</SelectItem>
-          <SelectItem value="On Route">En Ruta</SelectItem>
-          <SelectItem value="Out of Service">Fuera de Servicio</SelectItem>
+          <SelectItem value="active">Activo</SelectItem>
+          <SelectItem value="inactive">Inactivo</SelectItem>
         </SelectContent>
       </Select>
     </div>

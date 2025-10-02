@@ -24,16 +24,9 @@ export function StatisticsCards({ statistics }: StatisticsCardsProps) {
       iconColor: "text-green-500"
     },
     {
-      title: "Nuevos este mes",
-      value: statistics.newThisMonth,
-      description: "Agregados recientemente",
-      icon: Car,
-      iconColor: "text-blue-500"
-    },
-    {
-      title: "vehículos Desactivados",
+      title: "Vehículos Inactivos",
       value: statistics.inactiveVehicules,
-      description: "Agregados recientemente",
+      description: "Fuera de servicio",
       icon: Car,
       iconColor: "text-red-500"
     }

@@ -23,10 +23,15 @@ interface VehicleModalProps {
 
 type VehicleStatus = string;
 
+const VEHICLE_STATUSES = [
+  { value: 'ACTIVE', label: 'Activo' },
+  { value: 'INACTIVE', label: 'Inactivo' }
+] as const;
 
-const VEHICLE_STATUSES: VehicleStatus[] = [
-  'ACTIVE', 'INACTIVE'
-]
+const getStatusLabel = (status: string): string => {
+  const statusObj = VEHICLE_STATUSES.find(s => s.value === status);
+  return statusObj ? statusObj.label : status;
+};
 
 export const VehicleModal: React.FC<VehicleModalProps> = ({
   isOpen,
@@ -292,12 +297,14 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
               }
             >
               <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
-                <SelectValue />
+                <SelectValue placeholder="Seleccione el estado">
+                  {formData.status ? getStatusLabel(formData.status) : "Seleccione el estado"}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-zinc-800 border-zinc-700">
                 {VEHICLE_STATUSES.map((status) => (
-                  <SelectItem key={status} value={status}>
-                    {status}
+                  <SelectItem key={status.value} value={status.value}>
+                    {status.label}
                   </SelectItem>
                 ))}
               </SelectContent>

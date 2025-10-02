@@ -9,6 +9,18 @@ import type { VehicleType } from "../../vehicleType/types/vehicleTypes";
 
 const DEFAULT_ITEMS_PER_PAGE = 5;
 
+// Helper function to convert status to Spanish
+const getStatusInSpanish = (status: string): string => {
+  switch (status) {
+    case 'ACTIVE':
+      return 'Activo';
+    case 'INACTIVE':
+      return 'Inactivo';
+    default:
+      return status;
+  }
+};
+
 const INITIAL_FORM_DATA: VehiculeFormData = {
   licencePlate: "",
   brand: "",
@@ -77,29 +89,32 @@ export function useVehicles(): UseVehiculesReturn {
     loadRelatedData();
   }, [loadVehicles, loadRelatedData]);
 
-  // Filter vehicles based on search term
+  // Filter vehicles based on search term and status
   const filteredVehicles = useMemo(() => {
     const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
 
-    if (!searchTerm.trim()) {
-      return safeVehicles;
-    }
+    let filtered = safeVehicles;
 
-    const searchLower = searchTerm.toLowerCase().trim();
-
-    if (statusFilter === "all") {
-      return vehicles.filter(vehicle =>
+    // Apply search filter
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase().trim();
+      filtered = filtered.filter(vehicle =>
         vehicle.licencePlate.toLowerCase().includes(searchLower) ||
         vehicle.brand.toLowerCase().includes(searchLower) ||
         vehicle.model.toLowerCase().includes(searchLower)
       );
     }
 
-    return vehicles.filter(vehicle =>
-        vehicle.licencePlate.toLowerCase().includes(searchLower) ||
-        vehicle.brand.toLowerCase().includes(searchLower) ||
-        vehicle.model.toLowerCase().includes(searchLower)
-    );
+    // Apply status filter
+    if (statusFilter !== "all") {
+      if (statusFilter === "active") {
+        filtered = filtered.filter(vehicle => vehicle.status === "ACTIVE");
+      } else if (statusFilter === "inactive") {
+        filtered = filtered.filter(vehicle => vehicle.status === "INACTIVE");
+      }
+    }
+
+    return filtered;
   }, [vehicles, searchTerm, statusFilter]);
 
   // Calculate pagination data
@@ -127,13 +142,15 @@ export function useVehicles(): UseVehiculesReturn {
 
   // Calculate statistics
   const statistics = useMemo((): VehiculeStatistics => {
+    const activeVehicules = vehicles.filter(vehicle => vehicle.status === "ACTIVE").length;
+    const inactiveVehicules = vehicles.filter(vehicle => vehicle.status === "INACTIVE").length;
+
     return {
       totalVehicules: vehicles.length,
-      activeVehicules: vehicles.length, 
-      inactiveVehicules: vehicles.length,
-      newThisMonth: Math.floor(vehicles.length * 0.3),
+      activeVehicules: activeVehicules,
+      inactiveVehicules: inactiveVehicules,
     };
-  }, [vehicles.length]);
+  }, [vehicles]);
 
   const setPage = useCallback((page: number) => {
     setPaginationConfig((prev) => ({ ...prev, page }));
@@ -275,6 +292,7 @@ export function useVehicles(): UseVehiculesReturn {
     filteredVehicles,
     paginatedVehicles,
     searchTerm,
+    statusFilter,
     statistics,
     pagination,
 
@@ -303,5 +321,6 @@ export function useVehicles(): UseVehiculesReturn {
     updateFormData,
     saveVehicle,
     confirmDeleteVehicle,
+    getStatusInSpanish,
   };
 };
