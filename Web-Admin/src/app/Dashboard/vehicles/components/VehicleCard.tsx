@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Car, Edit, Trash2 } from "lucide-react"
+import { Car, Edit, Trash2, Calendar, Users } from "lucide-react"
 import { Vehicle } from "../types/vehiculeTypes"
 
 interface VehicleCardProps {
@@ -48,17 +48,18 @@ export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
                 </Badge>
               </div>
               <div className="text-zinc-400">
-                <span className="font-medium text-white">
-                  {vehicle.brand} {vehicle.model}
+                <span className="font-medium text-white flex items-center gap-2">
+                  <Car className="h-4 w-4 text-white" /> Marca/Modelo: {vehicle.brand} {vehicle.model}
                 </span>
-                <span className="mx-2">•</span>
-                <span>{vehicle.year}</span>
+
+                <span className="font-medium text-white flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-white" /> Año: {vehicle.year}
+                </span>
               </div>
               <div className="text-sm">
-                <span className="font-medium text-zinc-400">
-                  Capacidad:{" "}
+                <span className="font-medium text-white flex items-center gap-2">
+                  <Users className="h-4 w-4 text-white" /> <span className="text-emerald-500">Capacidad: {vehicle.passengerCapacity} pasajeros</span>
                 </span>
-                <span className="text-emerald-500">{vehicle.passengerCapacity} pasajeros</span>
               </div>
             </div>
           </div>

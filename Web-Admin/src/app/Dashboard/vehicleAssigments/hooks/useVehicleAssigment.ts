@@ -15,6 +15,7 @@ export const useVehicleAssigments = (): UseVehicleAssigmentsReturn => {
 
   const [vehicles, setVehicles] = useState<VehicleAssigment[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [vehicleToDelete, setVehicleToDelete] = useState<VehicleAssigment | null>(null);
@@ -50,26 +51,23 @@ export const useVehicleAssigments = (): UseVehicleAssigmentsReturn => {
   const filteredVehicles = useMemo(() => {
     const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
 
-    if (!searchTerm.trim()) {
-      return safeVehicles;
-    }
-
     const searchLower = searchTerm.toLowerCase().trim();
 
-    return vehicles.filter(vehicle =>
-      vehicle.assignmentStatus.toLowerCase().includes(searchLower) ||
-      vehicle.note.toLowerCase().includes(searchLower)
-    );
-  }, [vehicles, searchTerm]);
+    return vehicles.filter(vehicle => {
+      const matchesSearch = !searchTerm.trim() || vehicle.vehiclePlate.toLowerCase().includes(searchLower);
+      const matchesStatus = statusFilter === "all" || vehicle.assignmentStatus === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [vehicles, searchTerm, statusFilter]);
 
-  // Reset to page 1 when items per page changes
+  // Reset to page 1 when items per page changes or search term changes
   useEffect(() => {
     setPaginationConfig((prev) => ({ ...prev, page: 1 }));
-  }, [paginationConfig.itemsPerPage]);
+  }, [paginationConfig.itemsPerPage, searchTerm]);
 
   // Calculate pagination data (now using server data)
   const pagination = useMemo((): PaginationData => {
-    const totalItems = vehicles.length;
+    const totalItems = filteredVehicles.length;
     const totalPages = Math.ceil(totalItems / paginationConfig.itemsPerPage);
     const currentPage = Math.min(paginationConfig.page, Math.max(1, totalPages));
     const startIndex = (currentPage - 1) * paginationConfig.itemsPerPage;
@@ -83,18 +81,17 @@ export const useVehicleAssigments = (): UseVehicleAssigmentsReturn => {
       startIndex,
       endIndex,
     };
-  }, [vehicles.length, paginationConfig]);
+  }, [filteredVehicles.length, paginationConfig]);
 
   const paginatedVehicles = useMemo(() => {
     const { startIndex, endIndex } = pagination;
-    return vehicles.slice(startIndex, endIndex);
-  }, [vehicles, pagination]);
+    return filteredVehicles.slice(startIndex, endIndex);
+  }, [filteredVehicles, pagination]);
 
   // Calculate statistics
   const statistics = useMemo((): VehicleAssigmentsStatistics => {
     return {
       totalVehicles: vehicles.length,
-      newThisMonth: Math.floor(vehicles.length * 0.3),
     };
   }, [vehicles.length]);
 
@@ -207,6 +204,7 @@ export const useVehicleAssigments = (): UseVehicleAssigmentsReturn => {
     filteredVehicles,
     paginatedVehicles,
     searchTerm,
+    statusFilter,
     statistics,
     pagination,
 
@@ -224,6 +222,7 @@ export const useVehicleAssigments = (): UseVehicleAssigmentsReturn => {
 
     // Actions
     setSearchTerm,
+    setStatusFilter,
     setPage,
     setItemsPerPage,
     openCreateModal,

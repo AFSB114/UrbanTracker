@@ -10,23 +10,16 @@ interface StatisticsCardsProps {
 export function StatisticsCards({ statistics }: StatisticsCardsProps) {
   const cards = [
     {
-      title: "Total de Tipos de Vehículos",
+      title: "Total de Asignaciones",
       value: statistics.totalVehicles,
       description: "En la plataforma",
       icon: Car,
       iconColor: "text-emerald-500"
     },
-    {
-      title: "Nuevos este mes",
-      value: statistics.newThisMonth,
-      description: "Agregados recientemente",
-      icon: Car,
-      iconColor: "text-blue-500"
-    },
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-6 max-w-md mx-auto">
+    <div className="grid grid-cols-1 gap-6 max-w-sm mx-auto">
       {cards.map((card) => (
         <Card
           key={card.title}

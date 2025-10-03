@@ -6,6 +6,7 @@ import { Plus, Loader2 } from "lucide-react"
 import { useVehicleAssigments } from "./hooks/useVehicleAssigment";
 import { VehicleAssigmentCard } from "./components/VehicleAssigmentCard";
 import { StatisticsCards } from "./components/StatisticsCards";
+import { VehicleAssigmentFilters } from "./components/VehicleAssigmentFilters";
 import { VehicleAssigmentModal } from "./components/VehicleAssigmentsModal";
 import { Pagination } from "./components/Pagination";
 import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
@@ -16,6 +17,7 @@ export default function VehicleAssigmentsPage() {
     paginatedVehicles,
     filteredVehicles,
     searchTerm,
+    statusFilter,
     statistics,
     pagination,
     isDialogOpen,
@@ -27,6 +29,7 @@ export default function VehicleAssigmentsPage() {
     isDeleting,
     isSaving,
     setSearchTerm,
+    setStatusFilter,
     setPage,
     setItemsPerPage,
     openCreateModal,
@@ -95,6 +98,14 @@ export default function VehicleAssigmentsPage() {
 
       {/* Statistics */}
       <StatisticsCards statistics={statistics} />
+
+      {/* Filters */}
+      <VehicleAssigmentFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+      />
 
       {/* Vehicle list */}
       <section className="space-y-6">

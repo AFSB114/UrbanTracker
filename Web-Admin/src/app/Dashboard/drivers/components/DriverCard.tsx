@@ -1,13 +1,13 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Users, Edit, Trash2 } from "lucide-react"
+import { Users, Edit, Trash2, CreditCard, Smartphone, Mail } from "lucide-react"
 import type { Driver } from "../types/driverTypes"
 
 interface DriverCardProps {
-  driver: Driver
-  onEdit: (driver: Driver) => void
-  onDelete: (id: number) => void
+    driver: Driver
+    onEdit: (driver: Driver) => void
+    onDelete: (id: number) => void
 }
 
 export function DriverCard({ driver, onEdit, onDelete }: DriverCardProps) {
@@ -26,17 +26,17 @@ export function DriverCard({ driver, onEdit, onDelete }: DriverCardProps) {
                                 </h3>
                             </div>
                             <div className="text-zinc-400">
-                                <span className="font-medium text-white">
-                                    {driver.idNumber}
+                                <span className="font-medium text-white flex items-center gap-2">
+                                    <CreditCard className="h-4 w-4 text-white" /> N° Identificación: {driver.idNumber}
                                 </span>
-                                <span className="mx-2">•</span>
-                                <span>{driver.phone}</span>
-                            </div>
-                            <div className="text-sm">
-                                <span className="font-medium text-zinc-400 mr-1">
-                                    Email:
+
+                                <span className="font-medium text-white flex items-center gap-2">
+                                    <Smartphone className="h-4 w-4 text-white" /> Teléfono: {driver.phone}
                                 </span>
-                                <span className="text-emerald-500">{driver.email}</span>
+
+                                <span className="font-medium text-white flex items-center gap-2">
+                                    <Mail className="h-4 w-4 text-white" /> Correo: <span className="text-emerald-500"> {driver.email}</span>
+                                </span>
                             </div>
                         </div>
                     </div>

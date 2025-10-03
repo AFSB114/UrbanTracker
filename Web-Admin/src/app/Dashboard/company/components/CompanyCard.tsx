@@ -1,13 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Building, Edit, Trash2 } from "lucide-react"
+import { Building, Edit, Trash2, CreditCard, Smartphone, Mail } from "lucide-react"
 import { Company } from "../types/companyTypes"
 
 interface CompanyCardProps {
-  company: Company
-  onEdit: (company: Company) => void
-  onDelete: (id: number) => void
+    company: Company
+    onEdit: (company: Company) => void
+    onDelete: (id: number) => void
 }
 
 export function CompanyCard({ company, onEdit, onDelete }: CompanyCardProps) {
@@ -30,17 +30,17 @@ export function CompanyCard({ company, onEdit, onDelete }: CompanyCardProps) {
                                 </Badge>
                             </div>
                             <div className="text-zinc-400">
-                                <span className="font-medium text-white">
-                                    {company.nit}
+                                <span className="font-medium text-white flex items-center gap-2">
+                                    <CreditCard className="h-4 w-4 text-white" /> Nit: {company.nit}
                                 </span>
-                                <span className="mx-2">•</span>
-                                <span>{company.phone}</span>
+                                <span className="flex items-center gap-2">
+                                    <Smartphone className="h-4 w-4 text-white" /> Telefono: {company.phone}
+                                </span>
                             </div>
                             <div className="text-sm">
-                                <span className="font-medium text-zinc-400 mr-1">
-                                    Contacto:
+                                <span className="font-medium text-white flex items-center gap-2">
+                                    <Mail className="h-4 w-4 text-white" /> Correo: <span className="text-emerald-500">{company.email}</span>
                                 </span>
-                                <span className="text-emerald-500">{company.email}</span>
                             </div>
                         </div>
                     </div>
