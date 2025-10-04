@@ -31,37 +31,28 @@ export const CompanyModal: React.FC<CompanyModalProps> = ({
   
     const validateForm = (): boolean => {
       const newErrors: Partial<CompanyFormData> = {};
-  
+ 
       if (!formData.name.trim()) {
         newErrors.name = 'Nombre requerido';
       } else if (formData.name.trim().length < 2) {
         newErrors.name = 'Nombre debe tener al menos 2 caracteres';
       }
-  
+ 
       if (!formData.nit.trim()) {
         newErrors.nit = 'NIT requerido';
       } else if (formData.nit.trim().length < 4) {
         newErrors.nit = 'NIT debe tener al menos 4 caracteres';
       }
-  
-      if (!formData.phone.trim()) {
-        newErrors.phone = 'Teléfono requerido';
-      } else if (formData.phone.trim().length < 8) {
-        newErrors.phone = 'Teléfono debe tener al menos 8 caracteres';
-      }
-  
+ 
       if (!formData.email.trim()) {
         newErrors.email = 'Email requerido';
-      } else if (formData.email.trim().length < 8) {
-        newErrors.email = 'Email debe tener al menos 8 caracteres';
+      } else {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email.trim())) {
+          newErrors.email = 'Email debe tener un formato válido';
+        }
       }
-  
-      if (!formData.country.trim()) {
-        newErrors.country = 'País requerido';
-      } else if (formData.country.trim().length < 2) {
-        newErrors.country = 'País debe tener al menos 2 caracteres';
-      }
-  
+ 
       setErrors(newErrors);
       return Object.keys(newErrors).length === 0;
     };
@@ -138,7 +129,7 @@ export const CompanyModal: React.FC<CompanyModalProps> = ({
 
             <div className="space-y-2">
               <Label htmlFor="phone" className="text-zinc-400">
-                Teléfono *
+                Teléfono
               </Label>
               <Input
                 id="phone"
@@ -172,7 +163,7 @@ export const CompanyModal: React.FC<CompanyModalProps> = ({
 
             <div className="space-y-2">
               <Label htmlFor="country" className="text-zinc-400">
-                País *
+                País
               </Label>
               <Input
                 id="country"

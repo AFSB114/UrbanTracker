@@ -4,6 +4,7 @@ import com.sena.urbantracker.shared.application.dto.request.ABaseReqDto;
 import com.sena.urbantracker.vehicles.domain.valueobject.VehicleStatusType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ public class VehicleReqDto extends ABaseReqDto {
     private Long vehicleTypeId;
 
     @NotBlank(message = "La placa del vehículo es obligatoria")
+    @Pattern(regexp = "^[A-Z]{3}-\\d{3}$", message = "La placa debe tener formato AAA-123")
     private String licencePlate;
 
     @NotBlank(message = "La marca es obligatoria")

@@ -15,7 +15,9 @@
       "tabletResizeMode": "contain",
       "tabletBackgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
     },
@@ -23,11 +25,20 @@
       "tsconfigPaths": true
     },
     "extra": {
-      "apiUrl": "http://172.30.6.33:8080/api/v1",
-      "mqttHost": "172.30.6.33",
-      "mqttPort": 9001
+      "apiUrl": "http://192.168.0.110:8080/api/v1",
+      "mqttHost": "192.168.0.110",
+      "mqttPort": 9001,
+      "router": {
+        "root": "./src/app"
+      },
+      "eas": {
+        "projectId": "425ae1a2-e353-4305-b0ed-13c6dc9b4b41"
+      }
     },
-    "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
+    "permissions": [
+      "ACCESS_COARSE_LOCATION",
+      "ACCESS_FINE_LOCATION"
+    ],
     "plugins": [
       [
         "expo-location",
@@ -72,10 +83,16 @@
       },
       "networkSecurityConfig": {
         "domainConfig": {
-          "domain": ["*"],
+          "domain": [
+            "*"
+          ],
           "cleartextTrafficPermitted": true
         }
-      }
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     }
   }
 }

@@ -54,8 +54,8 @@ export const VehicleModal: React.FC<VehicleModalProps> = ({
       newErrors.licencePlate = 'Número de matrícula requerido';
     } else if (formData.licencePlate.trim().length < 4) {
       newErrors.licencePlate = 'Número de matrícula debe tener al menos 4 caracteres';
-    } else if (!/^[a-zA-Z0-9]+$/.test(formData.licencePlate.trim())) {
-      newErrors.licencePlate = 'Número de matrícula debe ser alfanumérico';
+    } else if (!/^[A-Z]{3}-\d{3}$/.test(formData.licencePlate.trim())) {
+      newErrors.licencePlate = 'Número de matrícula debe tener formato AAA-123';
     }
 
     if (!formData.brand.trim()) {

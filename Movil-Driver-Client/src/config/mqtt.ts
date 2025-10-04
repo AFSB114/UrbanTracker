@@ -1,7 +1,7 @@
 // Configuración MQTT
 import Constants from 'expo-constants';
 
-const MQTT_HOST = (Constants.expoConfig?.extra?.mqttHost as string) || '172.30.6.33';
+const MQTT_HOST = (Constants.expoConfig?.extra?.mqttHost as string) || '192.168.0.110';
 const MQTT_PORT = (Constants.expoConfig?.extra?.mqttPort as number) || 9001;
 
 export const MQTT_CONFIG = {

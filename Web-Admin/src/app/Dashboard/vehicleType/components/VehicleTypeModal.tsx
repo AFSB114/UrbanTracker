@@ -36,9 +36,6 @@ const VehicleTypeModal: React.FC<VehicleTypeModalProps> = ({
     } else if (formData.name.trim().length < 2) {
       newErrors.name = "Nombre debe tener al menos 2 caracteres";
     }
-    if (!formData.description.trim()) {
-      newErrors.description = "Descripción requerida";
-    }
     setLocalErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -86,7 +83,7 @@ const VehicleTypeModal: React.FC<VehicleTypeModalProps> = ({
             </div>
             <div className="space-y-2">
               <Label htmlFor="description" className="text-zinc-400">
-                Descripción *
+                Descripción
               </Label>
               <Input
                 id="description"
