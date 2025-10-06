@@ -60,7 +60,7 @@ public class RouteTrajectoryService implements CrudOperations<RouteTrajectoryReq
             throw new EntityNotFoundException("Trayectoria de ruta no encontrada.");
         }
         routeTrajectoryRepository.deleteById(id);
-        return CrudResponseDto.success(RouteTrajectoryMapper.toDto(null), "Trayectoria de ruta eliminada correctamente");
+        return CrudResponseDto.success(null, "Trayectoria de ruta eliminada correctamente");
     }
 
     @Override

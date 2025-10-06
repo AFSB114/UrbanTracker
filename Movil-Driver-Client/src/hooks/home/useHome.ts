@@ -6,8 +6,11 @@ import { AuthService } from '@/services/api/authService';
 import { LocationService } from '@/services/api/locationService';
 import { TrackingService } from '@/services/api/trackingService';
 import { ReportService } from '@/services/api/reportService';
+import { DriverService, VehicleAssignment } from '@/services/api/driverService';
+import { TripService } from '@/services/api/tripService';
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
+import * as ExpoLocation from 'expo-location';
 
 export const useHome = () => {
   const { logout, user } = useAuth();
@@ -21,8 +24,30 @@ export const useHome = () => {
   const [asunto, setAsunto] = useState('');
   const [description, setDescription] = useState('');
 
-  const handleToggleTrayecto = () => {
+  // Estados para datos dinámicos
+  const [vehicleData, setVehicleData] = useState<VehicleAssignment | null>(null);
+  const [tripHistory, setTripHistory] = useState<Array<{
+    id: string;
+    fecha: string;
+    inicio: string;
+    fin: string;
+  }>>([]);
+  const [isLoadingVehicle, setIsLoadingVehicle] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+
+  // Estado para controlar la alerta de GPS
+  const [gpsAlertVisible, setGpsAlertVisible] = useState(false);
+
+  const handleToggleTrayecto = async () => {
     if (!isRecorridoActive) {
+      // Verificar si el GPS está habilitado antes de iniciar el recorrido
+      const gpsEnabled = await checkGpsEnabled();
+      if (!gpsEnabled) {
+        console.log('❌ GPS no está habilitado, mostrando alerta...');
+        showGpsRequiredAlert();
+        return;
+      }
+
       // Iniciar trayecto directamente sin alerta de confirmación
       console.log('🚚 Iniciando trayecto completo...');
       // Iniciar el recorrido primero
@@ -101,6 +126,82 @@ export const useHome = () => {
     }
   };
 
+  // Función para obtener datos del vehículo asignado
+  const fetchVehicleData = async () => {
+    if (!user?.id) return;
+
+    setIsLoadingVehicle(true);
+    try {
+      const result = await DriverService.getVehicleAssignment(user.id);
+      if (result.success && result.data) {
+        setVehicleData(result.data);
+      } else {
+        console.warn('No se pudo obtener datos del vehículo:', result.error);
+      }
+    } catch (error) {
+      console.error('Error obteniendo datos del vehículo:', error);
+    } finally {
+      setIsLoadingVehicle(false);
+    }
+  };
+
+  // Función para obtener historial de viajes
+  const fetchTripHistory = async () => {
+    if (!user?.id || !vehicleData?.vehicleId) return;
+
+    setIsLoadingHistory(true);
+    try {
+      const result = await TripService.getTripHistoryByVehicle(vehicleData.vehicleId);
+      if (result.success && result.data) {
+        const formattedHistory = TripService.formatTripHistoryForDisplay(result.data);
+        setTripHistory(formattedHistory);
+      } else {
+        console.warn('No se pudo obtener historial de viajes:', result.error);
+      }
+    } catch (error) {
+      console.error('Error obteniendo historial de viajes:', error);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
+  // Función para verificar si el GPS está habilitado
+  const checkGpsEnabled = async (): Promise<boolean> => {
+    try {
+      const enabled = await ExpoLocation.hasServicesEnabledAsync();
+      return enabled;
+    } catch (error) {
+      console.error('Error verificando estado del GPS:', error);
+      return false;
+    }
+  };
+
+  // Función para mostrar alerta persistente de GPS
+  const showGpsRequiredAlert = () => {
+    setGpsAlertVisible(true);
+    Alert.alert(
+      'GPS Requerido',
+      'El GPS debe estar activado para iniciar el recorrido. Por favor, activa el GPS en la configuración de tu dispositivo.',
+      [
+        {
+          text: 'Verificar GPS',
+          onPress: async () => {
+            const isEnabled = await checkGpsEnabled();
+            if (isEnabled) {
+              setGpsAlertVisible(false);
+              // Reintentar iniciar el recorrido
+              handleToggleTrayecto();
+            } else {
+              // Mantener la alerta visible
+              showGpsRequiredAlert();
+            }
+          },
+        },
+      ],
+      { cancelable: false } // Hace que la alerta no se pueda cerrar tocando fuera
+    );
+  };
+
   // Publicación de ubicación vía servicios
   useEffect(() => {
     if (location && connectionStatus === 'Conectado' && isRecorridoActive) {
@@ -150,6 +251,47 @@ export const useHome = () => {
     }
   }, [isRecorridoActive, startTime, endTime, connectionStatus, publishSafely]);
 
+  // Obtener datos del vehículo cuando el usuario esté disponible
+  useEffect(() => {
+    if (user?.id) {
+      fetchVehicleData();
+    }
+  }, [user?.id]);
+
+  // Obtener historial de viajes cuando tengamos datos del vehículo
+  useEffect(() => {
+    if (vehicleData?.vehicleId) {
+      fetchTripHistory();
+    }
+  }, [vehicleData?.vehicleId]);
+
+  // Listener para verificar GPS cuando la alerta está visible
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+
+    if (gpsAlertVisible) {
+      // Verificar cada 2 segundos si el GPS se activó
+      intervalId = setInterval(async () => {
+        const isEnabled = await checkGpsEnabled();
+        if (isEnabled) {
+          console.log('✅ GPS activado automáticamente, cerrando alerta...');
+          setGpsAlertVisible(false);
+          // Limpiar el intervalo
+          if (intervalId) {
+            clearInterval(intervalId);
+          }
+        }
+      }, 2000);
+    }
+
+    // Cleanup
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [gpsAlertVisible]);
+
   return {
     // Estados
     modalVisible,
@@ -160,6 +302,11 @@ export const useHome = () => {
     endTime,
     isTracking,
     connectionStatus,
+    vehicleData,
+    tripHistory,
+    isLoadingVehicle,
+    isLoadingHistory,
+    gpsAlertVisible,
 
     // Setters
     setModalVisible,
@@ -171,5 +318,7 @@ export const useHome = () => {
     handleClearSession,
     handleLogout,
     handleEnviarReporte,
+    fetchVehicleData,
+    fetchTripHistory,
   };
 };

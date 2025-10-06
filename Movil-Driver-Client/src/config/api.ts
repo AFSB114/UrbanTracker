@@ -6,6 +6,9 @@ export const API_CONFIG = {
   RETRY_ATTEMPTS: 3,
 } as const;
 
+// Alias para compatibilidad
+export const API_BASE_URL = API_CONFIG.BASE_URL;
+
 // Endpoints de la API
 export const API_ENDPOINTS = {
   AUTH: {

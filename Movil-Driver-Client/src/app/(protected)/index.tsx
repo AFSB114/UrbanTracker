@@ -2,17 +2,7 @@ import { Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'reac
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useHome } from '@/hooks/home/useHome';
 
-// --- Datos de ejemplo ---
-const vehicleInfo = {
-  placas: 'CUM-666',
-  numeroInterno: '123-456',
-};
-
-const historyData = [
-  { id: '1', fecha: '14/03/2025', inicio: '03:00', fin: '19:00' },
-  { id: '2', fecha: '15/03/2025', inicio: '03:10', fin: '18:40' },
-  { id: '3', fecha: '16/03/2025', inicio: '03:05', fin: '19:15' },
-];
+// Los datos ahora vienen del hook useHome
 
 export default function Home() {
   const {
@@ -24,6 +14,10 @@ export default function Home() {
     endTime,
     isTracking,
     connectionStatus,
+    vehicleData,
+    tripHistory,
+    isLoadingVehicle,
+    isLoadingHistory,
     setModalVisible,
     setAsunto,
     setDescription,
@@ -130,31 +124,45 @@ export default function Home() {
         {/* --- Información del vehículo --- */}
         <Text className="mb-3 text-sm font-bold text-zinc-300">Información del vehículo</Text>
         <View className="mb-6 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-          <View className="mb-3 border-b border-zinc-700 pb-3">
-            <Text className="text-zinc-400">Placas</Text>
-            <Text className="text-base font-semibold text-zinc-100">{vehicleInfo.placas}</Text>
-          </View>
-          <View>
-            <Text className="text-zinc-400">Número interno</Text>
-            <Text className="text-base font-semibold text-zinc-100">
-              {vehicleInfo.numeroInterno}
-            </Text>
-          </View>
+          {isLoadingVehicle ? (
+            <Text className="text-zinc-400">Cargando información del vehículo...</Text>
+          ) : vehicleData ? (
+            <>
+              <View className="mb-3 border-b border-zinc-700 pb-3">
+                <Text className="text-zinc-400">Placas</Text>
+                <Text className="text-base font-semibold text-zinc-100">{vehicleData.vehiclePlate}</Text>
+              </View>
+              <View>
+                <Text className="text-zinc-400">Vehículo</Text>
+                <Text className="text-base font-semibold text-zinc-100">
+                  {vehicleData.vehicleName}
+                </Text>
+              </View>
+            </>
+          ) : (
+            <Text className="text-zinc-400">No se pudo cargar la información del vehículo</Text>
+          )}
         </View>
 
         {/* --- Historial de recorridos --- */}
         <Text className="mb-3 text-sm font-bold text-zinc-300">Historial de recorridos</Text>
         <View className="mb-6 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-          {historyData.map((item, index) => (
-            <View
-              key={item.id}
-              className={`py-3 ${index < historyData.length - 1 ? 'border-b border-zinc-700' : ''}`}>
-              <Text className="font-semibold text-zinc-100">{item.fecha}</Text>
-              <Text className="text-zinc-400">
-                {item.inicio} - {item.fin}
-              </Text>
-            </View>
-          ))}
+          {isLoadingHistory ? (
+            <Text className="text-zinc-400">Cargando historial de recorridos...</Text>
+          ) : tripHistory.length > 0 ? (
+            tripHistory.map((item, index) => (
+              <View
+                key={item.id}
+                className={`py-3 ${index < tripHistory.length - 1 ? 'border-b border-zinc-700' : ''}`}>
+                <Text className="font-semibold text-zinc-100">{item.fecha}</Text>
+                <Text className="text-zinc-400">
+                  {item.inicio} - {item.fin}
+                </Text>
+              </View>
+            ))
+          ) : (
+            <Text className="text-zinc-400">No hay recorridos registrados</Text>
+          )}
         </View>
 
         {/* --- Footer --- */}
