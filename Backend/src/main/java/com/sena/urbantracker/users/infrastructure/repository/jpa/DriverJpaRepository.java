@@ -19,8 +19,8 @@ public interface DriverJpaRepository extends JpaRepository<DriverModel, Long> {
            "FROM DriverModel d " +
            "JOIN VehicleAssignmentModel va ON d.id = va.driver.id AND va.assignmentStatus = 'ACTIVE' " +
            "JOIN VehicleModel v ON va.vehicle.id = v.id " +
-           "LEFT JOIN RouteTrajectoryModel rt ON v.id = rt.vehicle.id AND rt.trajectoryStatus = 'ACTIVE' " +
-           "LEFT JOIN RouteModel r ON rt.route.id = r.id " +
+           "LEFT JOIN RouteAssignmentModel ra ON v.id = ra.vehicle.id AND ra.assignmentStatus = 'ACTIVE' " +
+           "LEFT JOIN RouteModel r ON ra.route.id = r.id " +
            "WHERE d.id = :driverId")
     Optional<DriverAssignedVehicleRouteResDto> findAssignedVehicleAndRouteByDriverId(@Param("driverId") Long driverId);
 }
