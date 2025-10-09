@@ -93,4 +93,12 @@ public class RouteTrajectoryService implements CrudOperations<RouteTrajectoryReq
                 .toList();
         return CrudResponseDto.success(dtos, "Trayectorias de ruta por conductor");
     }
+
+    public CrudResponseDto<List<RouteTrajectoryResDto>> findByVehicleId(Long vehicleId) {
+        List<RouteTrajectoryResDto> dtos = routeTrajectoryRepository.findByVehicleId(vehicleId)
+                .stream()
+                .map(RouteTrajectoryMapper::toDto)
+                .toList();
+        return CrudResponseDto.success(dtos, "Trayectorias de ruta por vehículo");
+    }
 }

@@ -16,14 +16,19 @@ export class TripService {
   /**
     * Obtiene el historial de viajes para un conductor
     */
-   static async getTripHistory(driverId: number): Promise<{ success: boolean; data?: TripHistory[]; error?: string }> {
+   static async getTripHistory(vehicleId: number): Promise<{ success: boolean; data?: TripHistory[]; error?: string }> {
+     console.log('🔍 [TripService.getTripHistory] Iniciando consulta para vehicleId:', vehicleId);
      try {
        const token = await this.getAuthToken();
        if (!token) {
+         console.log('❌ [TripService.getTripHistory] No hay token disponible');
          return { success: false, error: 'No autenticado' };
        }
 
-       const response = await fetch(`${API_BASE_URL}/route-trajectorie/driver/${driverId}`, {
+       const url = `${API_BASE_URL}/route-trajectorie/vehicle/${vehicleId}`;
+       console.log('📡 [TripService.getTripHistory] URL:', url);
+
+       const response = await fetch(url, {
          method: 'GET',
          headers: {
            'Authorization': `Bearer ${token}`,
@@ -31,21 +36,27 @@ export class TripService {
          },
        });
 
+       console.log('📡 [TripService.getTripHistory] Respuesta HTTP:', response.status);
+
        if (!response.ok) {
+         console.log('❌ [TripService.getTripHistory] Error HTTP:', response.status);
          throw new Error(`Error HTTP: ${response.status}`);
        }
 
        const result = await response.json();
+       console.log('📊 [TripService.getTripHistory] Resultado JSON:', result);
 
        if (result.success && result.data) {
          // Filtrar solo viajes completados
          const completedTrips = result.data.filter((trip: TripHistory) => trip.active === false);
+         console.log('✅ [TripService.getTripHistory] Viajes completados filtrados:', completedTrips.length);
          return { success: true, data: completedTrips };
        } else {
+         console.log('⚠️ [TripService.getTripHistory] Respuesta sin éxito:', result);
          return { success: false, error: result.message || 'No se pudo obtener el historial de viajes' };
        }
      } catch (error) {
-       console.error('Error obteniendo historial de viajes:', error);
+       console.error('❌ [TripService.getTripHistory] Error:', error);
        return {
          success: false,
          error: error instanceof Error ? error.message : 'Error desconocido'
@@ -53,49 +64,6 @@ export class TripService {
      }
    }
 
-  /**
-   * Obtiene el historial de viajes para un vehículo específico
-   */
-  static async getTripHistoryByVehicle(vehicleId: number): Promise<{ success: boolean; data?: TripHistory[]; error?: string }> {
-    try {
-      const token = await this.getAuthToken();
-      if (!token) {
-        return { success: false, error: 'No autenticado' };
-      }
-
-      // Por ahora, obtenemos todas las trayectorias y filtramos por vehicleId
-      // TODO: Implementar endpoint específico para obtener trayectorias por vehículo
-      const response = await fetch(`${API_BASE_URL}/route-trajectorie`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error HTTP: ${response.status}`);
-      }
-
-      const result = await response.json();
-
-      if (result.success && result.data) {
-        const filteredTrips = result.data.filter((trip: TripHistory) =>
-          trip.vehicleId === vehicleId && trip.active === false
-        );
-
-        return { success: true, data: filteredTrips };
-      } else {
-        return { success: false, error: result.message || 'No se pudo obtener el historial de viajes' };
-      }
-    } catch (error) {
-      console.error('Error obteniendo historial de viajes por vehículo:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
 
   /**
    * Formatea los datos del historial para mostrar en la UI

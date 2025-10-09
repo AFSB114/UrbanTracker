@@ -10,4 +10,6 @@ import java.util.List;
 public interface RouteTrajectoryJpaRepository extends JpaRepository<RouteTrajectoryModel, Long> {
     @Query("SELECT rt FROM RouteTrajectoryModel rt JOIN rt.vehicle v JOIN v.vehicleAssignments va WHERE va.driver.id = :driverId AND va.assignmentStatus = 'ACTIVE'")
     List<RouteTrajectoryModel> findByDriverId(@Param("driverId") Long driverId);
+
+    List<RouteTrajectoryModel> findByVehicleId(Long vehicleId);
 }

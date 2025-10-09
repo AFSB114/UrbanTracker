@@ -26,6 +26,10 @@ export default function Home() {
     handleEnviarReporte,
   } = useHome();
 
+  console.log('📱 [Home] Componente renderizado');
+  console.log('📊 [Home] tripHistory actual:', tripHistory);
+  console.log('⏳ [Home] isLoadingHistory:', isLoadingHistory);
+
   return (
     <View className="flex-1 bg-zinc-950">
       {/* --- Header --- */}

@@ -29,4 +29,9 @@ public class RouteTrajectoryController extends BaseController<RouteTrajectoryReq
     public ResponseEntity<CrudResponseDto<List<RouteTrajectoryResDto>>> findByDriverId(@PathVariable Long driverId) {
         return ResponseEntity.ok(routeTrajectoryService.findByDriverId(driverId));
     }
+
+    @GetMapping("/vehicle/{vehicleId}")
+    public ResponseEntity<CrudResponseDto<List<RouteTrajectoryResDto>>> findByVehicleId(@PathVariable Long vehicleId) {
+        return ResponseEntity.ok(routeTrajectoryService.findByVehicleId(vehicleId));
+    }
 }

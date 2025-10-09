@@ -56,4 +56,12 @@ public class RouteTrajectoryRepositoryAdapter implements RouteTrajectoryReposito
                 .map(RouteTrajectoryPersistenceMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<RouteTrajectoryDomain> findByVehicleId(Long vehicleId) {
+        return jpaRepository.findByVehicleId(vehicleId)
+                .stream()
+                .map(RouteTrajectoryPersistenceMapper::toDomain)
+                .toList();
+    }
 }

@@ -13,11 +13,14 @@ import { Alert } from 'react-native';
 import * as ExpoLocation from 'expo-location';
 
 export const useHome = () => {
+  console.log('🏠 [useHome] Hook inicializado');
   const { logout, user } = useAuth();
   const { isRecorridoActive, startTime, endTime, startRecorrido, endRecorrido } = useTracking();
   const { location, isTracking, toggleTracking } = useLocation();
   const { connectionStatus } = useMqtt();
   const { publishSafely } = useMqttPublish();
+
+  console.log('👤 [useHome] User actual:', user);
 
   // Estados para la modal
   const [modalVisible, setModalVisible] = useState(false);
@@ -26,6 +29,7 @@ export const useHome = () => {
 
   // Estados para datos dinámicos
   const [assignedData, setAssignedData] = useState<DriverAssignedVehicleRoute | null>(null);
+  const [vehicleData, setVehicleData] = useState<{ vehicleId: number } | null>(null);
   const [tripHistory, setTripHistory] = useState<Array<{
     id: string;
     fecha: string;
@@ -126,6 +130,18 @@ export const useHome = () => {
     }
   };
 
+  // Función para obtener datos del vehículo asignado
+  const fetchVehicleData = async () => {
+    if (!user?.vehicleId) {
+      console.log('⚠️ [useHome.fetchVehicleData] User no tiene vehicleId asignado');
+      setVehicleData(null);
+      return;
+    }
+
+    console.log('✅ [useHome.fetchVehicleData] VehicleId obtenido del user:', user.vehicleId);
+    setVehicleData({ vehicleId: parseInt(user.vehicleId) });
+  };
+
   // Función para obtener datos del vehículo y ruta asignados
   const fetchAssignedData = async () => {
     if (!user?.id) return;
@@ -149,19 +165,27 @@ export const useHome = () => {
 
   // Función para obtener historial de viajes
   const fetchTripHistory = async () => {
-    if (!user?.id) return;
+    if (!vehicleData?.vehicleId) {
+      console.log('⚠️ [useHome.fetchTripHistory] No hay vehicleId disponible');
+      return;
+    }
 
+    console.log('🔍 [useHome.fetchTripHistory] Iniciando consulta para vehicleId:', vehicleData.vehicleId);
     setIsLoadingHistory(true);
     try {
-      const result = await TripService.getTripHistory(user.id);
+      const result = await TripService.getTripHistory(vehicleData.vehicleId);
+      console.log('📊 [useHome.fetchTripHistory] Resultado del servicio:', result);
       if (result.success && result.data) {
         const formattedHistory = TripService.formatTripHistoryForDisplay(result.data);
+        console.log('✅ [useHome.fetchTripHistory] Historial formateado:', formattedHistory);
         setTripHistory(formattedHistory);
       } else {
-        console.warn('No se pudo obtener historial de viajes:', result.error);
+        console.warn('⚠️ [useHome.fetchTripHistory] No se pudo obtener historial de viajes:', result.error);
+        setTripHistory([]);
       }
     } catch (error) {
-      console.error('Error obteniendo historial de viajes:', error);
+      console.error('❌ [useHome.fetchTripHistory] Error obteniendo historial de viajes:', error);
+      setTripHistory([]);
     } finally {
       setIsLoadingHistory(false);
     }
@@ -255,17 +279,26 @@ export const useHome = () => {
 
   // Obtener datos asignados cuando el usuario esté disponible
   useEffect(() => {
+    console.log('🔄 [useHome.useEffect] Ejecutando useEffect inicial');
     if (user?.id) {
+      console.log('✅ [useHome.useEffect] User disponible, llamando fetchAssignedData y fetchVehicleData');
       fetchAssignedData();
+      fetchVehicleData();
+    } else {
+      console.log('⚠️ [useHome.useEffect] User no disponible aún');
     }
-  }, [user?.id]);
+  }, []); // Solo ejecutar una vez al montar
 
-  // Obtener historial de viajes cuando tengamos el usuario
+  // Obtener historial de viajes cuando tengamos los datos del vehículo
   useEffect(() => {
-    if (user?.id) {
+    console.log('🔄 [useHome.useEffect] Ejecutando useEffect para vehicleData:', vehicleData);
+    if (vehicleData?.vehicleId) {
+      console.log('✅ [useHome.useEffect] VehicleData disponible, llamando fetchTripHistory');
       fetchTripHistory();
+    } else {
+      console.log('⚠️ [useHome.useEffect] VehicleData no disponible aún');
     }
-  }, [user?.id]);
+  }, [vehicleData?.vehicleId]);
 
   // Listener para verificar GPS cuando la alerta está visible
   useEffect(() => {
@@ -305,6 +338,7 @@ export const useHome = () => {
     isTracking,
     connectionStatus,
     assignedData,
+    vehicleData,
     tripHistory,
     isLoadingAssigned,
     isLoadingHistory,
@@ -321,6 +355,7 @@ export const useHome = () => {
     handleLogout,
     handleEnviarReporte,
     fetchAssignedData,
+    fetchVehicleData,
     fetchTripHistory,
   };
 };

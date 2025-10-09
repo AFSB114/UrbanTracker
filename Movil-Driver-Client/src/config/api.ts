@@ -25,8 +25,8 @@ export const API_ENDPOINTS = {
     STATUS: `${API_CONFIG.BASE_URL}/tracking/status`,
   },
   ROUTE_TRAJECTORIE: {
-    CREATE: `${API_CONFIG.BASE_URL}/public/route-trajectorie`,
-    UPDATE: (id: string) => `${API_CONFIG.BASE_URL}/public/route-trajectorie/${id}`,
+    CREATE: `${API_CONFIG.BASE_URL}/route-trajectorie`,
+    UPDATE: (id: string) => `${API_CONFIG.BASE_URL}/route-trajectorie/${id}`,
   },
   VEHICLE_ASSIGNMENT: {
     GET_BY_USER: (userId: number) => `${API_CONFIG.BASE_URL}/vehicle-assigment/user/${userId}`,

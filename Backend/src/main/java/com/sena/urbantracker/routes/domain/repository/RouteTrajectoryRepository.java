@@ -18,4 +18,6 @@ public interface RouteTrajectoryRepository {
     boolean existsById(Long id);
 
     List<RouteTrajectoryDomain> findByDriverId(Long driverId);
+
+    List<RouteTrajectoryDomain> findByVehicleId(Long vehicleId);
 }
