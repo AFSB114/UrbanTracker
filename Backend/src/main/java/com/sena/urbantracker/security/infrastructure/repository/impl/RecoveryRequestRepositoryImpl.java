@@ -20,6 +20,12 @@ public class RecoveryRequestRepositoryImpl implements RecoveryRequestRepository 
 
     private final RecoveryRequestJpaRepository jpaRepository;
 
+    public String newMethodo (){
+       RecoveryRequestModel model = new RecoveryRequestModel();
+
+        return model.newMetho();
+    }
+
     @Override
     public RecoveryRequestDomain save(RecoveryRequestDomain domain) {
         RecoveryRequestModel model = RecoveryRequestPersistenceMapper.toModel(domain);

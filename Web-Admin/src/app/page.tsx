@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { getToken, validateToken } from "@/lib/auth"
+import { Button } from "@/components/ui/button"
 
 export default function HomePage() {
     const router = useRouter()

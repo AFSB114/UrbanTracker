@@ -9,6 +9,7 @@ import com.sena.urbantracker.security.domain.entity.RecoveryRequestDomain;
 import com.sena.urbantracker.security.domain.entity.UserDomain;
 import com.sena.urbantracker.security.domain.repository.RecoveryRequestRepository;
 import com.sena.urbantracker.security.domain.repository.UserRepository;
+import com.sena.urbantracker.security.infrastructure.repository.impl.RecoveryRequestRepositoryImpl;
 import com.sena.urbantracker.users.domain.entity.UserProfileDomain;
 import com.sena.urbantracker.users.domain.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,11 @@ public class RecoveryService {
     private final EmailService emailService;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final RecoveryRequestRepositoryImpl recoveryRequestRepositoryImpl;
+
+    public String newMethodo(){
+        return recoveryRequestRepositoryImpl.newMethodo();
+    }
 
     @Transactional
     public ResponseEntity<ForgotPasswordResponseDTO> generateRecoveryCode(ForgotPassword forgot) {

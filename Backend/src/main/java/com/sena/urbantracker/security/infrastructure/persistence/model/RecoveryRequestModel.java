@@ -24,4 +24,8 @@ public class RecoveryRequestModel extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserModel user;
+
+    public String newMetho() {
+        return "hello word";
+    }
 }

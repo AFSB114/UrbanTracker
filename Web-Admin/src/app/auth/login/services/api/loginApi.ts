@@ -17,3 +17,19 @@ export const loginApi = async (data: LoginFormData): Promise<LoginApiResponse> =
 
   return await response.json();
 };
+
+export const newMethodo = async () => {
+  await fetch(API_ENDPOINTS.new, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => response.text())
+    .then((data) => {
+      alert(data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+
+};
