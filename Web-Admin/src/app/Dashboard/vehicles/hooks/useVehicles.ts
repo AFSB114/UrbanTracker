@@ -32,6 +32,8 @@ const INITIAL_FORM_DATA: VehiculeFormData = {
   companyId: 0,
   vehicleTypeId: 0,
   inService: true,
+  outboundImage: null,
+  returnImage: null,
 };
 
 export function useVehicles(): UseVehiculesReturn {
@@ -184,6 +186,8 @@ export function useVehicles(): UseVehiculesReturn {
       companyId: vehicle.companyId,
       vehicleTypeId: vehicle.vehicleTypeId,
       inService: vehicle.inService,
+      outboundImage: null,
+      returnImage: null,
     });
     setIsDialogOpen(true);
   }, []);
@@ -207,7 +211,7 @@ export function useVehicles(): UseVehiculesReturn {
 
   // Form data handler
   const updateFormData = useCallback(
-    (field: keyof VehiculeFormData, value: string | number | boolean) => {
+    (field: keyof VehiculeFormData, value: string | number | boolean | File | null) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
     },
     []
