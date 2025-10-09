@@ -93,8 +93,65 @@ export class TripService {
   }
 
   /**
-   * Obtiene el token de autenticación almacenado
-   */
+    * Finaliza la trayectoria activa de un vehículo
+    */
+  static async finishActiveTrajectory(vehicleId: number): Promise<{ success: boolean; data?: TripHistory; error?: string }> {
+    console.log('🔍 [TripService.finishActiveTrajectory] Finalizando trayectoria para vehicleId:', vehicleId);
+    try {
+      const token = await this.getAuthToken();
+      if (!token) {
+        console.log('❌ [TripService.finishActiveTrajectory] No hay token disponible');
+        return { success: false, error: 'No autenticado' };
+      }
+
+      const url = `${API_BASE_URL}/route-trajectorie/finish-active/${vehicleId}`;
+      console.log('📡 [TripService.finishActiveTrajectory] URL:', url);
+
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('📡 [TripService.finishActiveTrajectory] Respuesta HTTP:', response.status);
+
+      if (!response.ok) {
+        console.log('❌ [TripService.finishActiveTrajectory] Error HTTP:', response.status);
+        // Intentar obtener el mensaje de error del backend
+        try {
+          const errorData = await response.json();
+          console.log('❌ [TripService.finishActiveTrajectory] Error del backend:', errorData);
+          throw new Error(errorData.message || `Error HTTP: ${response.status}`);
+        } catch (parseError) {
+          // Si no se puede parsear el JSON, usar el status
+          throw new Error(`Error HTTP: ${response.status}`);
+        }
+      }
+
+      const result = await response.json();
+      console.log('📊 [TripService.finishActiveTrajectory] Resultado JSON:', result);
+
+      if (result.success && result.data) {
+        console.log('✅ [TripService.finishActiveTrajectory] Trayectoria finalizada correctamente');
+        return { success: true, data: result.data };
+      } else {
+        console.log('⚠️ [TripService.finishActiveTrajectory] Respuesta sin éxito:', result);
+        return { success: false, error: result.message || 'No se pudo finalizar la trayectoria' };
+      }
+    } catch (error) {
+      console.error('❌ [TripService.finishActiveTrajectory] Error:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+    * Obtiene el token de autenticación almacenado
+    */
   private static async getAuthToken(): Promise<string | null> {
     try {
       const AsyncStorage = require('@react-native-async-storage/async-storage').default;

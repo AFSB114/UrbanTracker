@@ -101,4 +101,16 @@ public class RouteTrajectoryService implements CrudOperations<RouteTrajectoryReq
                 .toList();
         return CrudResponseDto.success(dtos, "Trayectorias de ruta por vehículo");
     }
+
+    public CrudResponseDto<RouteTrajectoryResDto> finishActiveTrajectory(Long vehicleId) {
+        RouteTrajectoryDomain activeTrajectory = routeTrajectoryRepository.findActiveByVehicleId(vehicleId)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró una trayectoria activa para el vehículo " + vehicleId));
+
+        // Finalizar la trayectoria
+        activeTrajectory.setEndTime(java.time.LocalDateTime.now());
+        activeTrajectory.setActive(false);
+
+        RouteTrajectoryDomain finished = routeTrajectoryRepository.save(activeTrajectory);
+        return CrudResponseDto.success(RouteTrajectoryMapper.toDto(finished), "Trayectoria finalizada correctamente");
+    }
 }

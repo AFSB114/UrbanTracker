@@ -20,4 +20,6 @@ public interface RouteTrajectoryRepository {
     List<RouteTrajectoryDomain> findByDriverId(Long driverId);
 
     List<RouteTrajectoryDomain> findByVehicleId(Long vehicleId);
+
+    Optional<RouteTrajectoryDomain> findActiveByVehicleId(Long vehicleId);
 }

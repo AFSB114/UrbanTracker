@@ -34,4 +34,9 @@ public class RouteTrajectoryController extends BaseController<RouteTrajectoryReq
     public ResponseEntity<CrudResponseDto<List<RouteTrajectoryResDto>>> findByVehicleId(@PathVariable Long vehicleId) {
         return ResponseEntity.ok(routeTrajectoryService.findByVehicleId(vehicleId));
     }
+
+    @PutMapping("/finish-active/{vehicleId}")
+    public ResponseEntity<CrudResponseDto<RouteTrajectoryResDto>> finishActiveTrajectory(@PathVariable Long vehicleId) {
+        return ResponseEntity.ok(routeTrajectoryService.finishActiveTrajectory(vehicleId));
+    }
 }

@@ -8,6 +8,7 @@ import { TrackingService } from '@/services/api/trackingService';
 import { ReportService } from '@/services/api/reportService';
 import { DriverService, DriverAssignedVehicleRoute } from '@/services/api/driverService';
 import { TripService } from '@/services/api/tripService';
+import { RouteTrajectorieService } from '@/services/api/routeTrajectorieService';
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import * as ExpoLocation from 'expo-location';
@@ -54,8 +55,35 @@ export const useHome = () => {
 
       // Iniciar trayecto directamente sin alerta de confirmación
       console.log('🚚 Iniciando trayecto completo...');
-      // Iniciar el recorrido primero
+
+      // Crear trayectoria en el backend primero
+      if (vehicleData?.vehicleId && user?.id) {
+        console.log('📡 Creando trayectoria en backend...');
+        const trajectoryData = {
+          driverId: user.id,
+          vehicleId: vehicleData.vehicleId,
+          routeId: user.routeId || null,
+          startTime: new Date().toISOString(),
+          trajectoryStatus: 'ACTIVE',
+        };
+
+        const createResult = await RouteTrajectorieService.create(trajectoryData);
+        if (createResult.success) {
+          console.log('✅ Trayectoria creada en backend correctamente:', createResult.data?.id);
+        } else {
+          console.error('❌ Error creando trayectoria en backend:', createResult.error);
+          Alert.alert('Error', 'No se pudo iniciar el viaje en el servidor. Inténtalo de nuevo.');
+          return;
+        }
+      } else {
+        console.log('⚠️ No hay vehicleId o userId disponible para crear trayectoria');
+        Alert.alert('Error', 'No se puede iniciar el viaje. Datos del vehículo no disponibles.');
+        return;
+      }
+
+      // Iniciar el recorrido localmente
       startRecorrido();
+
       // Activar el tracking automáticamente después de un breve delay
       setTimeout(() => {
         if (!isTracking) {
@@ -66,7 +94,7 @@ export const useHome = () => {
     } else {
       Alert.alert(
         'Finalizar Trayecto',
-        '¿Estás seguro de que quieres finalizar el trayecto? Esto detendrá el tracking y desconectará del servidor.',
+        '¿Estás seguro de que quieres finalizar el trayecto? Esto detendrá el tracking y finalizará el viaje.',
         [
           {
             text: 'Cancelar',
@@ -75,13 +103,32 @@ export const useHome = () => {
           {
             text: 'Finalizar',
             style: 'destructive',
-            onPress: () => {
+            onPress: async () => {
               console.log('🏁 Finalizando trayecto completo...');
-              // Desactivar el tracking primero
+
+              // Finalizar la trayectoria en el backend primero
+              if (vehicleData?.vehicleId) {
+                console.log('📡 Finalizando trayectoria en backend para vehicleId:', vehicleData.vehicleId);
+                const result = await TripService.finishActiveTrajectory(vehicleData.vehicleId);
+                if (result.success) {
+                  console.log('✅ Trayectoria finalizada en backend correctamente');
+                  // Actualizar el historial después de finalizar
+                  await fetchTripHistory();
+                } else {
+                  console.error('❌ Error finalizando trayectoria en backend:', result.error);
+                  console.error('❌ Detalles del error:', result);
+                  Alert.alert('Error', `No se pudo finalizar el viaje en el servidor: ${result.error}\n\nSe detendrá localmente.`);
+                }
+              } else {
+                console.log('⚠️ No hay vehicleId disponible para finalizar trayectoria');
+              }
+
+              // Desactivar el tracking
               if (isTracking) {
                 toggleTracking();
               }
-              // Finalizar el recorrido
+
+              // Finalizar el recorrido localmente
               endRecorrido();
             },
           },

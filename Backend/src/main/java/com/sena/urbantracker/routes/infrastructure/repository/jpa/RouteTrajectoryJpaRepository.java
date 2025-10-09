@@ -6,10 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RouteTrajectoryJpaRepository extends JpaRepository<RouteTrajectoryModel, Long> {
     @Query("SELECT rt FROM RouteTrajectoryModel rt JOIN rt.vehicle v JOIN v.vehicleAssignments va WHERE va.driver.id = :driverId AND va.assignmentStatus = 'ACTIVE'")
     List<RouteTrajectoryModel> findByDriverId(@Param("driverId") Long driverId);
 
     List<RouteTrajectoryModel> findByVehicleId(Long vehicleId);
+
+    Optional<RouteTrajectoryModel> findFirstByVehicleIdAndActiveOrderByCreatedAtDesc(Long vehicleId, Boolean active);
 }

@@ -64,4 +64,10 @@ public class RouteTrajectoryRepositoryAdapter implements RouteTrajectoryReposito
                 .map(RouteTrajectoryPersistenceMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public Optional<RouteTrajectoryDomain> findActiveByVehicleId(Long vehicleId) {
+        return jpaRepository.findFirstByVehicleIdAndActiveOrderByCreatedAtDesc(vehicleId, true)
+                .map(RouteTrajectoryPersistenceMapper::toDomain);
+    }
 }
