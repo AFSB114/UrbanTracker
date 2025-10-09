@@ -8,7 +8,9 @@ import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExists
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
+import com.sena.urbantracker.users.application.dto.request.DriverAssignedVehicleRouteReqDto;
 import com.sena.urbantracker.users.application.dto.request.DriverReqDto;
+import com.sena.urbantracker.users.application.dto.response.DriverAssignedVehicleRouteResDto;
 import com.sena.urbantracker.users.application.dto.response.DriverResDto;
 import com.sena.urbantracker.users.application.mapper.DriverMapper;
 import com.sena.urbantracker.users.domain.entity.DriverDomain;
@@ -187,5 +189,14 @@ public class DriverService implements CrudOperations<DriverReqDto, DriverResDto,
             return CrudResponseDto.success(true, "Conductor con id " + aLong + " existe.");
         }
         return CrudResponseDto.success(false, "Conductor con id " + aLong + " no existe.");
+    }
+
+    public CrudResponseDto<DriverAssignedVehicleRouteResDto> getAssignedVehicleAndRoute(DriverAssignedVehicleRouteReqDto request) {
+        if (!driverRepository.existsById(request.getDriverId())) {
+            throw new EntityNotFoundException("Conductor con id " + request.getDriverId() + " no encontrado.");
+        }
+
+        Optional<DriverAssignedVehicleRouteResDto> result = driverRepository.findAssignedVehicleAndRouteByDriverId(request.getDriverId());
+        return CrudResponseDto.success(result.orElse(null), "Información del vehículo y ruta asignados obtenida correctamente");
     }
 }

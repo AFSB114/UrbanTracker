@@ -1,5 +1,6 @@
 package com.sena.urbantracker.users.domain.repository;
 
+import com.sena.urbantracker.users.application.dto.response.DriverAssignedVehicleRouteResDto;
 import com.sena.urbantracker.users.domain.entity.DriverDomain;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface DriverRepository {
     boolean existsById(Long id);
 
     boolean existsByUserId(Long userId);
+
+    Optional<DriverAssignedVehicleRouteResDto> findAssignedVehicleAndRouteByDriverId(Long driverId);
 }

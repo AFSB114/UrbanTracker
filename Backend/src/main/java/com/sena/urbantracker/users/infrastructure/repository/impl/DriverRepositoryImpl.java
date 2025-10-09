@@ -1,5 +1,6 @@
 package com.sena.urbantracker.users.infrastructure.repository.impl;
 
+import com.sena.urbantracker.users.application.dto.response.DriverAssignedVehicleRouteResDto;
 import com.sena.urbantracker.users.domain.entity.DriverDomain;
 import com.sena.urbantracker.users.domain.repository.DriverRepository;
 import com.sena.urbantracker.users.infrastructure.persistence.mapper.DriverPersistenceMapper;
@@ -52,5 +53,10 @@ public class DriverRepositoryImpl implements DriverRepository {
     @Override
     public boolean existsByUserId(Long userId) {
         return jpaRepository.existsByUserId(userId);
+    }
+
+    @Override
+    public Optional<DriverAssignedVehicleRouteResDto> findAssignedVehicleAndRouteByDriverId(Long driverId) {
+        return jpaRepository.findAssignedVehicleAndRouteByDriverId(driverId);
     }
 }
