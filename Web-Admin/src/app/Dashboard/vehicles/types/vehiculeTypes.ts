@@ -24,6 +24,8 @@ export interface VehiculeFormData {
     companyId: number;
     vehicleTypeId: number;
     inService: boolean;
+    outboundImage: File | null;
+    returnImage: File | null;
 }
 
 
@@ -91,7 +93,7 @@ export interface UseVehiculesReturn {
     openDeleteModal: (vehicule: Vehicle) => void;
     closeModal: () => void;
     closeDeleteModal: () => void;
-    updateFormData: (field: keyof VehiculeFormData, value: string | number | boolean) => void;
+    updateFormData: (field: keyof VehiculeFormData, value: string | number | boolean | File | null) => void;
     saveVehicle: () => Promise<void>;
     confirmDeleteVehicle: () => Promise<void>;
     getStatusInSpanish: (status: string) => string;
