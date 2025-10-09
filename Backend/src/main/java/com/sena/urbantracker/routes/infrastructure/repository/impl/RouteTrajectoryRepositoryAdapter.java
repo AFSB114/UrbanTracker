@@ -48,4 +48,12 @@ public class RouteTrajectoryRepositoryAdapter implements RouteTrajectoryReposito
     public boolean existsById(Long id) {
         return jpaRepository.existsById(id);
     }
+
+    @Override
+    public List<RouteTrajectoryDomain> findByDriverId(Long driverId) {
+        return jpaRepository.findByDriverId(driverId)
+                .stream()
+                .map(RouteTrajectoryPersistenceMapper::toDomain)
+                .toList();
+    }
 }

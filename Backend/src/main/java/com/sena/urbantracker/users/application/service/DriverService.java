@@ -8,7 +8,6 @@ import com.sena.urbantracker.shared.infrastructure.exception.EntityAlreadyExists
 import com.sena.urbantracker.shared.infrastructure.exception.EntityNotFoundException;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
 import com.sena.urbantracker.shared.domain.repository.CrudOperations;
-import com.sena.urbantracker.users.application.dto.request.DriverAssignedVehicleRouteReqDto;
 import com.sena.urbantracker.users.application.dto.request.DriverReqDto;
 import com.sena.urbantracker.users.application.dto.response.DriverAssignedVehicleRouteResDto;
 import com.sena.urbantracker.users.application.dto.response.DriverResDto;
@@ -191,12 +190,23 @@ public class DriverService implements CrudOperations<DriverReqDto, DriverResDto,
         return CrudResponseDto.success(false, "Conductor con id " + aLong + " no existe.");
     }
 
-    public CrudResponseDto<DriverAssignedVehicleRouteResDto> getAssignedVehicleAndRoute(DriverAssignedVehicleRouteReqDto request) {
-        if (!driverRepository.existsById(request.getDriverId())) {
-            throw new EntityNotFoundException("Conductor con id " + request.getDriverId() + " no encontrado.");
+    public CrudResponseDto<DriverAssignedVehicleRouteResDto> getAssignedVehicleAndRoute(Long driverId) {
+        if (!driverRepository.existsById(driverId)) {
+            throw new EntityNotFoundException("Conductor con id " + driverId + " no encontrado.");
         }
 
-        Optional<DriverAssignedVehicleRouteResDto> result = driverRepository.findAssignedVehicleAndRouteByDriverId(request.getDriverId());
+        Optional<DriverAssignedVehicleRouteResDto> result = driverRepository.findAssignedVehicleAndRouteByDriverId(driverId);
         return CrudResponseDto.success(result.orElse(null), "Información del vehículo y ruta asignados obtenida correctamente");
+    }
+
+    public CrudResponseDto<DriverAssignedVehicleRouteResDto> getAssignedVehicleAndRouteByUserId(Long userId) {
+        Long driverId = getDriverIdByUserId(userId);
+        return getAssignedVehicleAndRoute(driverId);
+    }
+
+    private Long getDriverIdByUserId(Long userId) {
+        return driverRepository.findByUserId(userId)
+            .map(DriverDomain::getId)
+            .orElseThrow(() -> new EntityNotFoundException("Conductor no encontrado para userId: " + userId));
     }
 }

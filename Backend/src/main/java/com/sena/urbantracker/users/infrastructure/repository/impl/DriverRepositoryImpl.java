@@ -56,6 +56,11 @@ public class DriverRepositoryImpl implements DriverRepository {
     }
 
     @Override
+    public Optional<DriverDomain> findByUserId(Long userId) {
+        return jpaRepository.findByUserId(userId).map(DriverPersistenceMapper::toDomain);
+    }
+
+    @Override
     public Optional<DriverAssignedVehicleRouteResDto> findAssignedVehicleAndRouteByDriverId(Long driverId) {
         return jpaRepository.findAssignedVehicleAndRouteByDriverId(driverId);
     }

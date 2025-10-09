@@ -6,7 +6,7 @@ import { AuthService } from '@/services/api/authService';
 import { LocationService } from '@/services/api/locationService';
 import { TrackingService } from '@/services/api/trackingService';
 import { ReportService } from '@/services/api/reportService';
-import { DriverService, VehicleAssignment } from '@/services/api/driverService';
+import { DriverService, DriverAssignedVehicleRoute } from '@/services/api/driverService';
 import { TripService } from '@/services/api/tripService';
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
@@ -25,14 +25,14 @@ export const useHome = () => {
   const [description, setDescription] = useState('');
 
   // Estados para datos dinámicos
-  const [vehicleData, setVehicleData] = useState<VehicleAssignment | null>(null);
+  const [assignedData, setAssignedData] = useState<DriverAssignedVehicleRoute | null>(null);
   const [tripHistory, setTripHistory] = useState<Array<{
     id: string;
     fecha: string;
     inicio: string;
     fin: string;
   }>>([]);
-  const [isLoadingVehicle, setIsLoadingVehicle] = useState(false);
+  const [isLoadingAssigned, setIsLoadingAssigned] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
 
   // Estado para controlar la alerta de GPS
@@ -126,32 +126,34 @@ export const useHome = () => {
     }
   };
 
-  // Función para obtener datos del vehículo asignado
-  const fetchVehicleData = async () => {
+  // Función para obtener datos del vehículo y ruta asignados
+  const fetchAssignedData = async () => {
     if (!user?.id) return;
 
-    setIsLoadingVehicle(true);
+    setIsLoadingAssigned(true);
     try {
-      const result = await DriverService.getVehicleAssignment(user.id);
+      const result = await DriverService.getAssignedVehicleAndRoute(user.id);
       if (result.success && result.data) {
-        setVehicleData(result.data);
+        setAssignedData(result.data);
       } else {
-        console.warn('No se pudo obtener datos del vehículo:', result.error);
+        console.warn('No se pudo obtener datos asignados:', result.error);
+        setAssignedData(null);
       }
     } catch (error) {
-      console.error('Error obteniendo datos del vehículo:', error);
+      console.error('Error obteniendo datos asignados:', error);
+      setAssignedData(null);
     } finally {
-      setIsLoadingVehicle(false);
+      setIsLoadingAssigned(false);
     }
   };
 
   // Función para obtener historial de viajes
   const fetchTripHistory = async () => {
-    if (!user?.id || !vehicleData?.vehicleId) return;
+    if (!user?.id) return;
 
     setIsLoadingHistory(true);
     try {
-      const result = await TripService.getTripHistoryByVehicle(vehicleData.vehicleId);
+      const result = await TripService.getTripHistory(user.id);
       if (result.success && result.data) {
         const formattedHistory = TripService.formatTripHistoryForDisplay(result.data);
         setTripHistory(formattedHistory);
@@ -251,19 +253,19 @@ export const useHome = () => {
     }
   }, [isRecorridoActive, startTime, endTime, connectionStatus, publishSafely]);
 
-  // Obtener datos del vehículo cuando el usuario esté disponible
+  // Obtener datos asignados cuando el usuario esté disponible
   useEffect(() => {
     if (user?.id) {
-      fetchVehicleData();
+      fetchAssignedData();
     }
   }, [user?.id]);
 
-  // Obtener historial de viajes cuando tengamos datos del vehículo
+  // Obtener historial de viajes cuando tengamos el usuario
   useEffect(() => {
-    if (vehicleData?.vehicleId) {
+    if (user?.id) {
       fetchTripHistory();
     }
-  }, [vehicleData?.vehicleId]);
+  }, [user?.id]);
 
   // Listener para verificar GPS cuando la alerta está visible
   useEffect(() => {
@@ -302,9 +304,9 @@ export const useHome = () => {
     endTime,
     isTracking,
     connectionStatus,
-    vehicleData,
+    assignedData,
     tripHistory,
-    isLoadingVehicle,
+    isLoadingAssigned,
     isLoadingHistory,
     gpsAlertVisible,
 
@@ -318,7 +320,7 @@ export const useHome = () => {
     handleClearSession,
     handleLogout,
     handleEnviarReporte,
-    fetchVehicleData,
+    fetchAssignedData,
     fetchTripHistory,
   };
 };

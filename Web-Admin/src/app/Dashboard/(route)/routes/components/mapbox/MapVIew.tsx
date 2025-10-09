@@ -19,6 +19,9 @@ export default function MapView() {
 
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
+  console.log('MapView: accessToken:', accessToken ? 'present' : 'missing');
+  console.log('MapView: waypointList length:', waypointList?.length || 0);
+
   const [route, setRoute] = useState<FeatureCollection>({
     type: "FeatureCollection",
     features: [

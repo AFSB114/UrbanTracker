@@ -4,7 +4,6 @@ import com.sena.urbantracker.shared.infrastructure.controller.BaseController;
 import com.sena.urbantracker.shared.application.service.ServiceFactory;
 import com.sena.urbantracker.shared.domain.enums.EntityType;
 import com.sena.urbantracker.shared.application.dto.CrudResponseDto;
-import com.sena.urbantracker.users.application.dto.request.DriverAssignedVehicleRouteReqDto;
 import com.sena.urbantracker.users.application.dto.request.DriverReqDto;
 import com.sena.urbantracker.users.application.dto.response.DriverAssignedVehicleRouteResDto;
 import com.sena.urbantracker.users.application.dto.response.DriverResDto;
@@ -14,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/public/driver")
+@RequestMapping("/api/v1/driver")
 public class DriverController extends BaseController<DriverReqDto, DriverResDto, Long> {
 
     private final DriverService driverService;
@@ -24,9 +23,9 @@ public class DriverController extends BaseController<DriverReqDto, DriverResDto,
         this.driverService = driverService;
     }
 
-    @PostMapping("/assigned-vehicle-route")
-    public ResponseEntity<CrudResponseDto<DriverAssignedVehicleRouteResDto>> getAssignedVehicleAndRoute(@Valid @RequestBody DriverAssignedVehicleRouteReqDto request) {
-        CrudResponseDto<DriverAssignedVehicleRouteResDto> response = driverService.getAssignedVehicleAndRoute(request);
+    @GetMapping("/assigned-vehicle-route/{userId}")
+    public ResponseEntity<CrudResponseDto<DriverAssignedVehicleRouteResDto>> getAssignedVehicleAndRoute(@PathVariable Long userId) {
+        CrudResponseDto<DriverAssignedVehicleRouteResDto> response = driverService.getAssignedVehicleAndRouteByUserId(userId);
         return ResponseEntity.ok(response);
     }
 

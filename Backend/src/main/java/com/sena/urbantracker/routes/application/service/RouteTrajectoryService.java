@@ -85,4 +85,12 @@ public class RouteTrajectoryService implements CrudOperations<RouteTrajectoryReq
     public CrudResponseDto<Boolean> existsById(Long id) {
         return CrudResponseDto.success(routeTrajectoryRepository.existsById(id), "Verificación de existencia completada");
     }
+
+    public CrudResponseDto<List<RouteTrajectoryResDto>> findByDriverId(Long driverId) {
+        List<RouteTrajectoryResDto> dtos = routeTrajectoryRepository.findByDriverId(driverId)
+                .stream()
+                .map(RouteTrajectoryMapper::toDto)
+                .toList();
+        return CrudResponseDto.success(dtos, "Trayectorias de ruta por conductor");
+    }
 }

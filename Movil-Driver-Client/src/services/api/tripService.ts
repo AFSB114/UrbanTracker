@@ -14,52 +14,44 @@ export interface TripHistory {
 
 export class TripService {
   /**
-   * Obtiene el historial de viajes para un conductor
-   * Nota: Actualmente usa el endpoint general, pero debería filtrarse por conductor
-   */
-  static async getTripHistory(driverId: number): Promise<{ success: boolean; data?: TripHistory[]; error?: string }> {
-    try {
-      const token = await this.getAuthToken();
-      if (!token) {
-        return { success: false, error: 'No autenticado' };
-      }
+    * Obtiene el historial de viajes para un conductor
+    */
+   static async getTripHistory(driverId: number): Promise<{ success: boolean; data?: TripHistory[]; error?: string }> {
+     try {
+       const token = await this.getAuthToken();
+       if (!token) {
+         return { success: false, error: 'No autenticado' };
+       }
 
-      // Por ahora, obtenemos todas las trayectorias
-      // TODO: Implementar endpoint específico para obtener trayectorias por conductor
-      const response = await fetch(`${API_BASE_URL}/public/route-trajectorie`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+       const response = await fetch(`${API_BASE_URL}/route-trajectorie/driver/${driverId}`, {
+         method: 'GET',
+         headers: {
+           'Authorization': `Bearer ${token}`,
+           'Content-Type': 'application/json',
+         },
+       });
 
-      if (!response.ok) {
-        throw new Error(`Error HTTP: ${response.status}`);
-      }
+       if (!response.ok) {
+         throw new Error(`Error HTTP: ${response.status}`);
+       }
 
-      const result = await response.json();
+       const result = await response.json();
 
-      if (result.success && result.data) {
-        // Filtrar trayectorias que podrían pertenecer al conductor
-        // Esto es temporal hasta que se implemente el endpoint específico
-        const filteredTrips = result.data.filter((trip: TripHistory) => {
-          // Aquí podríamos agregar lógica para filtrar por vehicleId si está disponible
-          return trip.active === false; // Solo mostrar viajes completados
-        });
-
-        return { success: true, data: filteredTrips };
-      } else {
-        return { success: false, error: result.message || 'No se pudo obtener el historial de viajes' };
-      }
-    } catch (error) {
-      console.error('Error obteniendo historial de viajes:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      };
-    }
-  }
+       if (result.success && result.data) {
+         // Filtrar solo viajes completados
+         const completedTrips = result.data.filter((trip: TripHistory) => trip.active === false);
+         return { success: true, data: completedTrips };
+       } else {
+         return { success: false, error: result.message || 'No se pudo obtener el historial de viajes' };
+       }
+     } catch (error) {
+       console.error('Error obteniendo historial de viajes:', error);
+       return {
+         success: false,
+         error: error instanceof Error ? error.message : 'Error desconocido'
+       };
+     }
+   }
 
   /**
    * Obtiene el historial de viajes para un vehículo específico
@@ -73,7 +65,7 @@ export class TripService {
 
       // Por ahora, obtenemos todas las trayectorias y filtramos por vehicleId
       // TODO: Implementar endpoint específico para obtener trayectorias por vehículo
-      const response = await fetch(`${API_BASE_URL}/public/route-trajectorie`, {
+      const response = await fetch(`${API_BASE_URL}/route-trajectorie`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -138,7 +130,7 @@ export class TripService {
   private static async getAuthToken(): Promise<string | null> {
     try {
       const AsyncStorage = require('@react-native-async-storage/async-storage').default;
-      return await AsyncStorage.getItem('authToken');
+      return await AsyncStorage.getItem('auth_token');
     } catch (error) {
       console.error('Error obteniendo token:', error);
       return null;

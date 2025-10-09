@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface DriverJpaRepository extends JpaRepository<DriverModel, Long> {
     boolean existsByUserId(Long userId);
 
+    Optional<DriverModel> findByUserId(Long userId);
+
     @Query("SELECT new com.sena.urbantracker.users.application.dto.response.DriverAssignedVehicleRouteResDto(v.licencePlate, r.numberRoute) " +
            "FROM DriverModel d " +
            "JOIN VehicleAssignmentModel va ON d.id = va.driver.id AND va.assignmentStatus = 'ACTIVE' " +

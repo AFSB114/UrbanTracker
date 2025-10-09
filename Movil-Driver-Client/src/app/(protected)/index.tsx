@@ -14,9 +14,9 @@ export default function Home() {
     endTime,
     isTracking,
     connectionStatus,
-    vehicleData,
+    assignedData,
     tripHistory,
-    isLoadingVehicle,
+    isLoadingAssigned,
     isLoadingHistory,
     setModalVisible,
     setAsunto,
@@ -121,26 +121,26 @@ export default function Home() {
           </View>
         </View>
 
-        {/* --- Información del vehículo --- */}
-        <Text className="mb-3 text-sm font-bold text-zinc-300">Información del vehículo</Text>
+        {/* --- Información del vehículo y ruta asignada --- */}
+        <Text className="mb-3 text-sm font-bold text-zinc-300">Información asignada</Text>
         <View className="mb-6 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-          {isLoadingVehicle ? (
-            <Text className="text-zinc-400">Cargando información del vehículo...</Text>
-          ) : vehicleData ? (
+          {isLoadingAssigned ? (
+            <Text className="text-zinc-400">Cargando información asignada...</Text>
+          ) : assignedData ? (
             <>
               <View className="mb-3 border-b border-zinc-700 pb-3">
-                <Text className="text-zinc-400">Placas</Text>
-                <Text className="text-base font-semibold text-zinc-100">{vehicleData.vehiclePlate}</Text>
+                <Text className="text-zinc-400">Placas del vehículo</Text>
+                <Text className="text-base font-semibold text-zinc-100">{assignedData.licencePlate}</Text>
               </View>
               <View>
-                <Text className="text-zinc-400">Vehículo</Text>
+                <Text className="text-zinc-400">Número de ruta</Text>
                 <Text className="text-base font-semibold text-zinc-100">
-                  {vehicleData.vehicleName}
+                  {assignedData.numberRoute}
                 </Text>
               </View>
             </>
           ) : (
-            <Text className="text-zinc-400">No se pudo cargar la información del vehículo</Text>
+            <Text className="text-zinc-400">No se pudo cargar la información asignada</Text>
           )}
         </View>
 

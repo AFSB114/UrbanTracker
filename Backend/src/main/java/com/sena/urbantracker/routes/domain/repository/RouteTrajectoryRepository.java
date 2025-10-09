@@ -16,4 +16,6 @@ public interface RouteTrajectoryRepository {
     void deleteById(Long id);
 
     boolean existsById(Long id);
+
+    List<RouteTrajectoryDomain> findByDriverId(Long driverId);
 }

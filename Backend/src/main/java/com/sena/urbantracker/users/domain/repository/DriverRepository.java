@@ -20,5 +20,7 @@ public interface DriverRepository {
 
     boolean existsByUserId(Long userId);
 
+    Optional<DriverDomain> findByUserId(Long userId);
+
     Optional<DriverAssignedVehicleRouteResDto> findAssignedVehicleAndRouteByDriverId(Long driverId);
 }

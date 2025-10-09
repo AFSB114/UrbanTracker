@@ -17,11 +17,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/tracking")
 public class TrackingController extends BaseController<TrackingReqDto, TrackingResDto, Long> {
 
-    private final TrackingService trackingService;
 
     public TrackingController(ServiceFactory serviceFactory, TrackingService trackingService) {
         super(serviceFactory, EntityType.TRACKING, TrackingReqDto.class, TrackingResDto.class);
-        this.trackingService = trackingService;
     }
 
     // Additional endpoints if needed
