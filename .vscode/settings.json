@@ -2,5 +2,6 @@
     "java.dependency.syncWithFolderExplorer": false,
     "java.dependency.packagePresentation": "hierarchical",
     "java.configuration.updateBuildConfiguration": "automatic",
-    "svg.preview.background": "dark-transparent"
+    "svg.preview.background": "dark-transparent",
+    "java.compile.nullAnalysis.mode": "automatic"
 }

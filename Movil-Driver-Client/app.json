@@ -5,19 +5,14 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "urbantracker",
-    "userInterfaceStyle": "auto",
-    "icon": "./assets/Logotipo.png",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/Isotipo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff",
-      "tabletImage": "./assets/Isotipo.png",
-      "tabletResizeMode": "contain",
-      "tabletBackgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "web": {
       "favicon": "./assets/favicon.png"
     },
@@ -35,10 +30,6 @@
         "projectId": "425ae1a2-e353-4305-b0ed-13c6dc9b4b41"
       }
     },
-    "permissions": [
-      "ACCESS_COARSE_LOCATION",
-      "ACCESS_FINE_LOCATION"
-    ],
     "plugins": [
       [
         "expo-location",
@@ -51,7 +42,8 @@
         {
           "root": "./src/app"
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "ios": {
       "supportsTablet": true,
@@ -59,40 +51,28 @@
       "splash": {
         "image": "./assets/Isotipo.png",
         "resizeMode": "contain",
-        "backgroundColor": "#ffffff",
-        "tabletImage": "./assets/Isotipo.png",
-        "tabletResizeMode": "contain",
-        "tabletBackgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff"
+      },
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Esta aplicación necesita acceso a tu ubicación para mostrarte conductores cercanos y calcular rutas."
       }
     },
     "android": {
       "package": "com.anonymous.UrbanTracker",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/Logotipo.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#000000"
       },
       "splash": {
         "image": "./assets/Isotipo.png",
         "resizeMode": "contain",
-        "backgroundColor": "#000"
-      },
-      "statusBar": {
-        "translucent": true,
-        "backgroundColor": "#000000",
-        "barStyle": "dark-content"
-      },
-      "networkSecurityConfig": {
-        "domainConfig": {
-          "domain": [
-            "*"
-          ],
-          "cleartextTrafficPermitted": true
-        }
+        "backgroundColor": "#000000"
       },
       "permissions": [
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION"
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
       ]
     }
   }
 }
+
