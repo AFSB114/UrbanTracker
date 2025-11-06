@@ -6,27 +6,84 @@ import { AuthService } from '@/services/api/authService';
 import { LocationService } from '@/services/api/locationService';
 import { TrackingService } from '@/services/api/trackingService';
 import { ReportService } from '@/services/api/reportService';
+import { DriverService, DriverAssignedVehicleRoute } from '@/services/api/driverService';
+import { TripService } from '@/services/api/tripService';
+import { RouteTrajectorieService } from '@/services/api/routeTrajectorieService';
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
+import * as ExpoLocation from 'expo-location';
 
 export const useHome = () => {
+  console.log('🏠 [useHome] Hook inicializado');
   const { logout, user } = useAuth();
   const { isRecorridoActive, startTime, endTime, startRecorrido, endRecorrido } = useTracking();
   const { location, isTracking, toggleTracking } = useLocation();
   const { connectionStatus } = useMqtt();
   const { publishSafely } = useMqttPublish();
 
+  console.log('👤 [useHome] User actual:', user);
+
   // Estados para la modal
   const [modalVisible, setModalVisible] = useState(false);
   const [asunto, setAsunto] = useState('');
   const [description, setDescription] = useState('');
 
-  const handleToggleTrayecto = () => {
+  // Estados para datos dinámicos
+  const [assignedData, setAssignedData] = useState<DriverAssignedVehicleRoute | null>(null);
+  const [vehicleData, setVehicleData] = useState<{ vehicleId: number } | null>(null);
+  const [tripHistory, setTripHistory] = useState<Array<{
+    id: string;
+    fecha: string;
+    inicio: string;
+    fin: string;
+  }>>([]);
+  const [isLoadingAssigned, setIsLoadingAssigned] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+
+  // Estado para controlar la alerta de GPS
+  const [gpsAlertVisible, setGpsAlertVisible] = useState(false);
+
+  const handleToggleTrayecto = async () => {
     if (!isRecorridoActive) {
+      // Verificar si el GPS está habilitado antes de iniciar el recorrido
+      const gpsEnabled = await checkGpsEnabled();
+      if (!gpsEnabled) {
+        console.log('❌ GPS no está habilitado, mostrando alerta...');
+        showGpsRequiredAlert();
+        return;
+      }
+
       // Iniciar trayecto directamente sin alerta de confirmación
       console.log('🚚 Iniciando trayecto completo...');
-      // Iniciar el recorrido primero
+
+      // Crear trayectoria en el backend primero
+      if (vehicleData?.vehicleId && user?.id) {
+        console.log('📡 Creando trayectoria en backend...');
+        const trajectoryData = {
+          driverId: user.id,
+          vehicleId: vehicleData.vehicleId,
+          routeId: user.routeId || null,
+          startTime: new Date().toISOString(),
+          trajectoryStatus: 'ACTIVE',
+        };
+
+        const createResult = await RouteTrajectorieService.create(trajectoryData);
+        if (createResult.success) {
+          console.log('✅ Trayectoria creada en backend correctamente:', createResult.data?.id);
+        } else {
+          console.error('❌ Error creando trayectoria en backend:', createResult.error);
+          Alert.alert('Error', 'No se pudo iniciar el viaje en el servidor. Inténtalo de nuevo.');
+          return;
+        }
+      } else {
+        console.log('⚠️ No hay vehicleId o userId disponible para crear trayectoria');
+        Alert.alert('Error', 'No se puede iniciar el viaje. Datos del vehículo no disponibles.');
+        return;
+      }
+
+      // Iniciar el recorrido localmente
       startRecorrido();
+
       // Activar el tracking automáticamente después de un breve delay
       setTimeout(() => {
         if (!isTracking) {
@@ -37,7 +94,7 @@ export const useHome = () => {
     } else {
       Alert.alert(
         'Finalizar Trayecto',
-        '¿Estás seguro de que quieres finalizar el trayecto? Esto detendrá el tracking y desconectará del servidor.',
+        '¿Estás seguro de que quieres finalizar el trayecto? Esto detendrá el tracking y finalizará el viaje.',
         [
           {
             text: 'Cancelar',
@@ -46,13 +103,32 @@ export const useHome = () => {
           {
             text: 'Finalizar',
             style: 'destructive',
-            onPress: () => {
+            onPress: async () => {
               console.log('🏁 Finalizando trayecto completo...');
-              // Desactivar el tracking primero
+
+              // Finalizar la trayectoria en el backend primero
+              if (vehicleData?.vehicleId) {
+                console.log('📡 Finalizando trayectoria en backend para vehicleId:', vehicleData.vehicleId);
+                const result = await TripService.finishActiveTrajectory(vehicleData.vehicleId);
+                if (result.success) {
+                  console.log('✅ Trayectoria finalizada en backend correctamente');
+                  // Actualizar el historial después de finalizar
+                  await fetchTripHistory();
+                } else {
+                  console.error('❌ Error finalizando trayectoria en backend:', result.error);
+                  console.error('❌ Detalles del error:', result);
+                  Alert.alert('Error', `No se pudo finalizar el viaje en el servidor: ${result.error}\n\nSe detendrá localmente.`);
+                }
+              } else {
+                console.log('⚠️ No hay vehicleId disponible para finalizar trayectoria');
+              }
+
+              // Desactivar el tracking
               if (isTracking) {
                 toggleTracking();
               }
-              // Finalizar el recorrido
+
+              // Finalizar el recorrido localmente
               endRecorrido();
             },
           },
@@ -99,6 +175,104 @@ export const useHome = () => {
     } else {
       Alert.alert('Error', result.error || 'No se pudo enviar el reporte.');
     }
+  };
+
+  // Función para obtener datos del vehículo asignado
+  const fetchVehicleData = async () => {
+    if (!user?.vehicleId) {
+      console.log('⚠️ [useHome.fetchVehicleData] User no tiene vehicleId asignado');
+      setVehicleData(null);
+      return;
+    }
+
+    console.log('✅ [useHome.fetchVehicleData] VehicleId obtenido del user:', user.vehicleId);
+    setVehicleData({ vehicleId: parseInt(user.vehicleId) });
+  };
+
+  // Función para obtener datos del vehículo y ruta asignados
+  const fetchAssignedData = async () => {
+    if (!user?.id) return;
+
+    setIsLoadingAssigned(true);
+    try {
+      const result = await DriverService.getAssignedVehicleAndRoute(user.id);
+      if (result.success && result.data) {
+        setAssignedData(result.data);
+      } else {
+        console.warn('No se pudo obtener datos asignados:', result.error);
+        setAssignedData(null);
+      }
+    } catch (error) {
+      console.error('Error obteniendo datos asignados:', error);
+      setAssignedData(null);
+    } finally {
+      setIsLoadingAssigned(false);
+    }
+  };
+
+  // Función para obtener historial de viajes
+  const fetchTripHistory = async () => {
+    if (!vehicleData?.vehicleId) {
+      console.log('⚠️ [useHome.fetchTripHistory] No hay vehicleId disponible');
+      return;
+    }
+
+    console.log('🔍 [useHome.fetchTripHistory] Iniciando consulta para vehicleId:', vehicleData.vehicleId);
+    setIsLoadingHistory(true);
+    try {
+      const result = await TripService.getTripHistory(vehicleData.vehicleId);
+      console.log('📊 [useHome.fetchTripHistory] Resultado del servicio:', result);
+      if (result.success && result.data) {
+        const formattedHistory = TripService.formatTripHistoryForDisplay(result.data);
+        console.log('✅ [useHome.fetchTripHistory] Historial formateado:', formattedHistory);
+        setTripHistory(formattedHistory);
+      } else {
+        console.warn('⚠️ [useHome.fetchTripHistory] No se pudo obtener historial de viajes:', result.error);
+        setTripHistory([]);
+      }
+    } catch (error) {
+      console.error('❌ [useHome.fetchTripHistory] Error obteniendo historial de viajes:', error);
+      setTripHistory([]);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
+  // Función para verificar si el GPS está habilitado
+  const checkGpsEnabled = async (): Promise<boolean> => {
+    try {
+      const enabled = await ExpoLocation.hasServicesEnabledAsync();
+      return enabled;
+    } catch (error) {
+      console.error('Error verificando estado del GPS:', error);
+      return false;
+    }
+  };
+
+  // Función para mostrar alerta persistente de GPS
+  const showGpsRequiredAlert = () => {
+    setGpsAlertVisible(true);
+    Alert.alert(
+      'GPS Requerido',
+      'El GPS debe estar activado para iniciar el recorrido. Por favor, activa el GPS en la configuración de tu dispositivo.',
+      [
+        {
+          text: 'Verificar GPS',
+          onPress: async () => {
+            const isEnabled = await checkGpsEnabled();
+            if (isEnabled) {
+              setGpsAlertVisible(false);
+              // Reintentar iniciar el recorrido
+              handleToggleTrayecto();
+            } else {
+              // Mantener la alerta visible
+              showGpsRequiredAlert();
+            }
+          },
+        },
+      ],
+      { cancelable: false } // Hace que la alerta no se pueda cerrar tocando fuera
+    );
   };
 
   // Publicación de ubicación vía servicios
@@ -150,6 +324,56 @@ export const useHome = () => {
     }
   }, [isRecorridoActive, startTime, endTime, connectionStatus, publishSafely]);
 
+  // Obtener datos asignados cuando el usuario esté disponible
+  useEffect(() => {
+    console.log('🔄 [useHome.useEffect] Ejecutando useEffect inicial');
+    if (user?.id) {
+      console.log('✅ [useHome.useEffect] User disponible, llamando fetchAssignedData y fetchVehicleData');
+      fetchAssignedData();
+      fetchVehicleData();
+    } else {
+      console.log('⚠️ [useHome.useEffect] User no disponible aún');
+    }
+  }, []); // Solo ejecutar una vez al montar
+
+  // Obtener historial de viajes cuando tengamos los datos del vehículo
+  useEffect(() => {
+    console.log('🔄 [useHome.useEffect] Ejecutando useEffect para vehicleData:', vehicleData);
+    if (vehicleData?.vehicleId) {
+      console.log('✅ [useHome.useEffect] VehicleData disponible, llamando fetchTripHistory');
+      fetchTripHistory();
+    } else {
+      console.log('⚠️ [useHome.useEffect] VehicleData no disponible aún');
+    }
+  }, [vehicleData?.vehicleId]);
+
+  // Listener para verificar GPS cuando la alerta está visible
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+
+    if (gpsAlertVisible) {
+      // Verificar cada 2 segundos si el GPS se activó
+      intervalId = setInterval(async () => {
+        const isEnabled = await checkGpsEnabled();
+        if (isEnabled) {
+          console.log('✅ GPS activado automáticamente, cerrando alerta...');
+          setGpsAlertVisible(false);
+          // Limpiar el intervalo
+          if (intervalId) {
+            clearInterval(intervalId);
+          }
+        }
+      }, 2000);
+    }
+
+    // Cleanup
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [gpsAlertVisible]);
+
   return {
     // Estados
     modalVisible,
@@ -160,6 +384,12 @@ export const useHome = () => {
     endTime,
     isTracking,
     connectionStatus,
+    assignedData,
+    vehicleData,
+    tripHistory,
+    isLoadingAssigned,
+    isLoadingHistory,
+    gpsAlertVisible,
 
     // Setters
     setModalVisible,
@@ -171,5 +401,8 @@ export const useHome = () => {
     handleClearSession,
     handleLogout,
     handleEnviarReporte,
+    fetchAssignedData,
+    fetchVehicleData,
+    fetchTripHistory,
   };
 };

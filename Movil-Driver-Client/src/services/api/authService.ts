@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LoginCredentials, User } from '@/types/auth';
 import { LOGIN_ENDPOINT } from '@Config/endPoints';
 
@@ -8,6 +7,9 @@ const USER_KEY = 'auth_user';
 
 // Simular delay de red
 const mockDelay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Helper para obtener AsyncStorage
+const getAsyncStorage = () => require('@react-native-async-storage/async-storage').default;
 
 export class AuthService {
   /**
@@ -72,9 +74,14 @@ export class AuthService {
         };
       }
 
+      console.log('💾 [AuthService.login] Guardando token en AsyncStorage...');
+      const AsyncStorage = getAsyncStorage();
       await AsyncStorage.setItem(TOKEN_KEY, String(token));
+      console.log('✅ [AuthService.login] Token guardado en AsyncStorage');
+
       if (user) {
         await AsyncStorage.setItem(USER_KEY, JSON.stringify(user));
+        console.log('✅ [AuthService.login] Usuario guardado en AsyncStorage');
       }
 
       return { success: true, token: String(token), user: user || undefined };
@@ -92,6 +99,7 @@ export class AuthService {
    */
   static async logout(): Promise<void> {
     try {
+      const AsyncStorage = getAsyncStorage();
       await AsyncStorage.multiRemove([TOKEN_KEY, USER_KEY]);
     } catch (error) {
       console.error('Error en logout:', error);
@@ -103,6 +111,7 @@ export class AuthService {
    */
   static async getToken(): Promise<string | null> {
     try {
+      const AsyncStorage = getAsyncStorage();
       return await AsyncStorage.getItem(TOKEN_KEY);
     } catch (error) {
       console.error('Error obteniendo token:', error);
@@ -115,6 +124,7 @@ export class AuthService {
    */
   static async getUser(): Promise<User | null> {
     try {
+      const AsyncStorage = getAsyncStorage();
       const userString = await AsyncStorage.getItem(USER_KEY);
       if (!userString) return null;
 
@@ -190,6 +200,7 @@ export class AuthService {
   static async clearSession(): Promise<void> {
     try {
       console.log('🧼 Limpiando sesión completa...');
+      const AsyncStorage = getAsyncStorage();
       await AsyncStorage.multiRemove([TOKEN_KEY, USER_KEY]);
       console.log('✅ Sesión limpiada exitosamente');
     } catch (error) {

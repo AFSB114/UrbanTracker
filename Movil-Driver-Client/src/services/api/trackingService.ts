@@ -85,7 +85,7 @@ export class TrackingService {
   /**
    * Calcula duración del recorrido en minutos
    */
-  static calculateRecorridoDuration(startTime?: string, endTime?: string): number {
+  static calculateRouteDuration(startTime?: string, endTime?: string): number {
     if (!startTime) return 0;
 
     const start = new Date(startTime).getTime();

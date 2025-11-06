@@ -200,7 +200,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             );
 
             // Actualizar el estado con la información del conductor
-            const updatePayload = { vehicleId, routeId };
+            const updatePayload = { vehicleId: vehicleId.toString(), routeId: routeId.toString() };
             console.log(
               '🔄 [AuthProvider.fetchDriverInfoAfterLogin] Actualizando estado del usuario:',
               updatePayload
@@ -214,8 +214,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // Guardar el usuario actualizado en AsyncStorage
             const updatedUser = {
               ...state.user,
-              vehicleId,
-              routeId,
+              vehicleId: vehicleId.toString(),
+              routeId: routeId.toString(),
             };
             await AsyncStorage.setItem('auth_user', JSON.stringify(updatedUser));
 
@@ -236,7 +236,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             );
             console.log('   - Actualizando solo con vehicleId');
 
-            const updatePayload = { vehicleId };
+            const updatePayload = { vehicleId: vehicleId.toString() };
             dispatch({
               type: 'UPDATE_DRIVER_INFO',
               payload: updatePayload,
@@ -245,7 +245,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // Guardar el usuario actualizado en AsyncStorage
             const updatedUser = {
               ...state.user,
-              vehicleId,
+              vehicleId: vehicleId.toString(),
             };
             await AsyncStorage.setItem('auth_user', JSON.stringify(updatedUser));
 

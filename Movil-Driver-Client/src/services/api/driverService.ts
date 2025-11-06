@@ -1,241 +1,167 @@
-import { API_ENDPOINTS, getCommonHeaders } from '@/config/api';
+import { API_BASE_URL } from '@/config/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export interface VehicleAssignmentResponse {
-  id: string;
-  vehicleId: string;
-  driverId: string;
+export interface VehicleAssignment {
+  id: number;
+  vehicleId: number;
+  vehiclePlate: string;
+  vehicleName: string;
+  driverId: number;
+  driverName: string;
+  note?: string;
   assignmentStatus: string;
-  vehicle?: {
-    id: string;
-    licensePlate: string;
-    model: string;
-    // otros campos del vehículo
-  };
-  driver?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    // otros campos del conductor
-  };
+  active: boolean;
 }
 
-export interface RouteAssignmentResponse {
-  id: string;
-  routeId: string;
-  vehicleId: string;
-  route?: {
-    id: string;
-    name: string;
-    description?: string;
-    // otros campos de la ruta
-  };
+export interface RouteAssignment {
+  id: number;
+  routeId: number;
+  routeNumber: string;
+  vehicleId: number;
+  vehiclePlate: string;
+  assignmentStatus: string;
+  note?: string;
+}
+
+export interface DriverAssignedVehicleRoute {
+  licencePlate: string;
+  numberRoute: number;
 }
 
 export class DriverService {
   /**
-   * Obtiene la asignación activa de vehículo para un usuario (conductor)
+   * Obtiene la asignación de vehículo activa para un conductor
    */
-  static async getVehicleAssignment(
-    userId: number
-  ): Promise<{ success: boolean; data?: VehicleAssignmentResponse; error?: string }> {
+  static async getVehicleAssignment(driverId: number): Promise<{ success: boolean; data?: VehicleAssignment; error?: string }> {
     try {
-      console.log('🔍 [DriverService.getVehicleAssignment] Iniciando consulta...');
-      console.log(
-        '👤 [DriverService.getVehicleAssignment] userId:',
-        userId,
-        'tipo:',
-        typeof userId
-      );
-
-      const token = await this.getToken();
+      const token = await this.getAuthToken();
       if (!token) {
-        console.log('❌ [DriverService.getVehicleAssignment] No hay token de autenticación');
-        return { success: false, error: 'No hay token de autenticación' };
+        return { success: false, error: 'No autenticado' };
       }
 
-      console.log(
-        '🔑 [DriverService.getVehicleAssignment] Token obtenido, longitud:',
-        token.length
-      );
-
-      const url = API_ENDPOINTS.VEHICLE_ASSIGNMENT.GET_BY_USER(userId);
-      console.log('🌐 [DriverService.getVehicleAssignment] URL:', url);
-
-      const response = await fetch(url, {
+      const response = await fetch(`${API_BASE_URL}/vehicle-assigment/user/${driverId}`, {
         method: 'GET',
-        headers: getCommonHeaders(token),
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
-      console.log(
-        '📡 [DriverService.getVehicleAssignment] Respuesta HTTP:',
-        response.status,
-        response.statusText
-      );
-      console.log(
-        '📡 [DriverService.getVehicleAssignment] Headers de respuesta:',
-        Object.fromEntries(response.headers.entries())
-      );
-
       if (!response.ok) {
-        const errorText = await response.text().catch(() => 'Error desconocido');
-        console.error(
-          '❌ [DriverService.getVehicleAssignment] Error HTTP:',
-          response.status,
-          errorText
-        );
-        return { success: false, error: `Error ${response.status}: ${errorText}` };
+        throw new Error(`Error HTTP: ${response.status}`);
       }
 
       const result = await response.json();
-      console.log(
-        '📦 [DriverService.getVehicleAssignment] Respuesta JSON completa:',
-        JSON.stringify(result, null, 2)
-      );
-      console.log('📦 [DriverService.getVehicleAssignment] result.data:', result.data);
-      console.log('📦 [DriverService.getVehicleAssignment] result.success:', result.success);
 
-      if (result.data) {
-        console.log('🚗 [DriverService.getVehicleAssignment] Vehículo asignado encontrado:');
-        console.log('   - ID:', result.data.id);
-        console.log('   - vehicleId:', result.data.vehicleId);
-        console.log('   - driverId:', result.data.driverId);
-        console.log('   - assignmentStatus:', result.data.assignmentStatus);
-        if (result.data.vehicle) {
-          console.log(
-            '   - Vehículo:',
-            result.data.vehicle.licensePlate,
-            result.data.vehicle.model
-          );
-        }
+      if (result.success && result.data) {
+        return { success: true, data: result.data };
       } else {
-        console.log(
-          '⚠️ [DriverService.getVehicleAssignment] No se encontró asignación de vehículo'
-        );
+        return { success: false, error: result.message || 'No se pudo obtener la asignación de vehículo' };
       }
-
-      return { success: true, data: result.data };
     } catch (error) {
-      console.error('❌ [DriverService.getVehicleAssignment] Error en la consulta:', error);
-      console.error(
-        '❌ [DriverService.getVehicleAssignment] Stack trace:',
-        error instanceof Error ? error.stack : 'No stack trace'
-      );
+      console.error('Error obteniendo asignación de vehículo:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
 
   /**
-   * Obtiene las rutas asignadas a un vehículo
-   */
-  static async getRouteAssignments(
-    vehicleId: string
-  ): Promise<{ success: boolean; data?: RouteAssignmentResponse[]; error?: string }> {
-    try {
-      console.log('🔍 [DriverService.getRouteAssignments] Iniciando consulta...');
-      console.log(
-        '🚗 [DriverService.getRouteAssignments] vehicleId:',
-        vehicleId,
-        'tipo:',
-        typeof vehicleId
-      );
+    * Obtiene las asignaciones de rutas para un vehículo
+    */
+   static async getRouteAssignments(vehicleId: number): Promise<{ success: boolean; data?: RouteAssignment[]; error?: string }> {
+     try {
+       const token = await this.getAuthToken();
+       if (!token) {
+         return { success: false, error: 'No autenticado' };
+       }
 
-      const token = await this.getToken();
-      if (!token) {
-        console.log('❌ [DriverService.getRouteAssignments] No hay token de autenticación');
-        return { success: false, error: 'No hay token de autenticación' };
-      }
+       const response = await fetch(`${API_BASE_URL}/route-assignment/vehicle/${vehicleId}`, {
+         method: 'GET',
+         headers: {
+           'Authorization': `Bearer ${token}`,
+           'Content-Type': 'application/json',
+         },
+       });
 
-      console.log('🔑 [DriverService.getRouteAssignments] Token obtenido, longitud:', token.length);
+       if (!response.ok) {
+         throw new Error(`Error HTTP: ${response.status}`);
+       }
 
-      const url = API_ENDPOINTS.ROUTE_ASSIGNMENT.GET_BY_VEHICLE(vehicleId);
-      console.log('🌐 [DriverService.getRouteAssignments] URL:', url);
+       const result = await response.json();
 
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: getCommonHeaders(token),
-      });
-
-      console.log(
-        '📡 [DriverService.getRouteAssignments] Respuesta HTTP:',
-        response.status,
-        response.statusText
-      );
-      console.log(
-        '📡 [DriverService.getRouteAssignments] Headers de respuesta:',
-        Object.fromEntries(response.headers.entries())
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text().catch(() => 'Error desconocido');
-        console.error(
-          '❌ [DriverService.getRouteAssignments] Error HTTP:',
-          response.status,
-          errorText
-        );
-        return { success: false, error: `Error ${response.status}: ${errorText}` };
-      }
-
-      const result = await response.json();
-      console.log(
-        '📦 [DriverService.getRouteAssignments] Respuesta JSON completa:',
-        JSON.stringify(result, null, 2)
-      );
-      console.log('📦 [DriverService.getRouteAssignments] result.data:', result.data);
-      console.log('📦 [DriverService.getRouteAssignments] result.success:', result.success);
-
-      if (result.data && result.data.length > 0) {
-        console.log(
-          '🛣️ [DriverService.getRouteAssignments] Rutas asignadas encontradas:',
-          result.data.length
-        );
-        result.data.forEach((route: RouteAssignmentResponse, index: number) => {
-          console.log(`   - Ruta ${index + 1}:`);
-          console.log('     - ID:', route.id);
-          console.log('     - routeId:', route.routeId);
-          console.log('     - vehicleId:', route.vehicleId);
-          if (route.route) {
-            console.log('     - Ruta info:', route.route.name, route.route.description);
-          }
-        });
-      } else {
-        console.log(
-          '⚠️ [DriverService.getRouteAssignments] No se encontraron rutas asignadas al vehículo'
-        );
-      }
-
-      return { success: true, data: result.data || [] };
-    } catch (error) {
-      console.error('❌ [DriverService.getRouteAssignments] Error en la consulta:', error);
-      console.error(
-        '❌ [DriverService.getRouteAssignments] Stack trace:',
-        error instanceof Error ? error.stack : 'No stack trace'
-      );
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Error desconocido',
-      };
-    }
-  }
+       if (result.success && result.data) {
+         return { success: true, data: result.data };
+       } else {
+         return { success: false, error: result.message || 'No se pudo obtener las asignaciones de rutas' };
+       }
+     } catch (error) {
+       console.error('Error obteniendo asignaciones de rutas:', error);
+       return {
+         success: false,
+         error: error instanceof Error ? error.message : 'Error desconocido'
+       };
+     }
+   }
 
   /**
-   * Obtiene el token de autenticación
+    * Obtiene la placa del vehículo y el número de ruta asignados para un conductor
+    */
+   static async getAssignedVehicleAndRoute(driverId: number): Promise<{ success: boolean; data?: DriverAssignedVehicleRoute; error?: string }> {
+     try {
+       console.log('🚗 [DriverService.getAssignedVehicleAndRoute] Iniciando consulta para driverId:', driverId);
+       const token = await this.getAuthToken();
+       if (!token) {
+         console.log('❌ [DriverService.getAssignedVehicleAndRoute] No hay token disponible');
+         return { success: false, error: 'No autenticado' };
+       }
+
+       console.log('📡 [DriverService.getAssignedVehicleAndRoute] Enviando petición con token');
+       const response = await fetch(`${API_BASE_URL}/driver/assigned-vehicle-route/${driverId}`, {
+         method: 'GET',
+         headers: {
+           Authorization: `Bearer ${token}`,
+           'Content-Type': 'application/json',
+         },
+       });
+
+       console.log('📡 [DriverService.getAssignedVehicleAndRoute] Respuesta HTTP:', response.status);
+
+       if (!response.ok) {
+         console.log('❌ [DriverService.getAssignedVehicleAndRoute] Error HTTP:', response.status);
+         throw new Error(`Error HTTP: ${response.status}`);
+       }
+
+       const result = await response.json();
+       console.log('📊 [DriverService.getAssignedVehicleAndRoute] Resultado:', result);
+
+       if (result.success && result.data) {
+         console.log('✅ [DriverService.getAssignedVehicleAndRoute] Datos obtenidos:', result.data);
+         return { success: true, data: result.data };
+       } else {
+         console.log('⚠️ [DriverService.getAssignedVehicleAndRoute] Respuesta sin éxito:', result);
+         return { success: false, error: result.message || 'No se pudo obtener la información del vehículo y ruta' };
+       }
+     } catch (error) {
+       console.error('❌ [DriverService.getAssignedVehicleAndRoute] Error:', error);
+       return {
+         success: false,
+         error: error instanceof Error ? error.message : 'Error desconocido'
+       };
+     }
+   }
+
+  /**
+   * Obtiene el token de autenticación almacenado
    */
-  private static async getToken(): Promise<string | null> {
+  private static async getAuthToken(): Promise<string | null> {
     try {
-      console.log('🔑 [DriverService.getToken] Obteniendo token de AsyncStorage...');
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
       const token = await AsyncStorage.getItem('auth_token');
-      console.log(
-        '🔑 [DriverService.getToken] Token obtenido:',
-        token ? 'Presente' : 'Nulo',
-        token ? `(${token.length} chars)` : ''
-      );
+      console.log('🔑 [DriverService.getAuthToken] Token obtenido:', token ? 'presente' : 'null');
       return token;
     } catch (error) {
-      console.error('❌ [DriverService.getToken] Error obteniendo token:', error);
+      console.error('❌ [DriverService.getAuthToken] Error obteniendo token:', error);
       return null;
     }
   }
