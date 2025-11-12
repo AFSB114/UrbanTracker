@@ -189,6 +189,44 @@ export const useHome = () => {
     setVehicleData({ vehicleId: parseInt(user.vehicleId) });
   };
 
+  // ✅ NUEVA FUNCIÓN: Verificar si puede hacer tracking con datos disponibles
+  const canStartTracking = (): boolean => {
+    const hasVehicle = !!user?.vehicleId;
+    const hasLocationPermission = true; // Asumimos que ya se validó en LocationProvider
+    const hasMqttConnection = connectionStatus === 'Conectado';
+    const hasRouteOrVehicle = hasVehicle || !!assignedData;
+
+    console.log('🔍 [useHome.canStartTracking] Validaciones:', {
+      hasVehicle,
+      hasLocationPermission,
+      hasMqttConnection,
+      hasRouteOrVehicle,
+      assignedData
+    });
+
+    return hasVehicle && hasLocationPermission && hasMqttConnection;
+  };
+
+  // Obtener información para tracking (ruta o vehículo)
+  const getTrackingInfo = () => {
+    const hasAssignedRoute = !!user?.routeId && assignedData?.numberRoute;
+    const vehicleId = user?.vehicleId || 'default-vehicle';
+    const routeId = user?.routeId;
+    const driverId = user?.id?.toString();
+    const trackingType = hasAssignedRoute ? 'assigned_route' : 'free_tracking';
+
+    return {
+      hasAssignedRoute,
+      vehicleId,
+      routeId,
+      driverId,
+      trackingType, // ✅ AGREGAR trackingType
+      displayText: hasAssignedRoute
+        ? `Ruta ${assignedData?.numberRoute || routeId}`
+        : `Vehículo ${vehicleId}`
+    };
+  };
+
   // Función para obtener datos del vehículo y ruta asignados
   const fetchAssignedData = async () => {
     if (!user?.id) return;
@@ -278,33 +316,36 @@ export const useHome = () => {
   // Publicación de ubicación vía servicios
   useEffect(() => {
     if (location && connectionStatus === 'Conectado' && isRecorridoActive) {
-      // Obtener routeId del usuario autenticado
-      const routeId = user?.routeId;
-      const vehicleId = user?.vehicleId || 'default-vehicle';
-
-      console.log('📍 Publicando ubicación con datos del usuario:', {
-        routeId,
-        vehicleId,
-        userId: user?.id,
+      ///  Manejar ambos casos - con y sin ruta asignada
+      const trackingInfo = getTrackingInfo();
+      
+      console.log('📍 Publicando ubicación - Tipo de tracking:', trackingInfo.trackingType);
+      console.log('📊 Datos de tracking:', {
+        hasAssignedRoute: trackingInfo.hasAssignedRoute,
+        vehicleId: trackingInfo.vehicleId,
+        routeId: trackingInfo.routeId,
+        driverId: trackingInfo.driverId,
       });
 
       const success = LocationService.publishLocationData(
         location,
         publishSafely,
-        routeId,
-        vehicleId
+        trackingInfo.routeId,
+        trackingInfo.vehicleId,
+        trackingInfo.driverId
       );
       if (success) {
         console.log('📍 Nueva ubicación publicada:', {
           latitude: location.latitude,
           longitude: location.longitude,
           timestamp: new Date(location.timestamp).toISOString(),
-          routeId,
-          vehicleId,
+          trackingType: trackingInfo.trackingType,
+          routeId: trackingInfo.routeId,
+          vehicleId: trackingInfo.vehicleId,
         });
       }
     }
-  }, [location, connectionStatus, isRecorridoActive, publishSafely, user]);
+  }, [location, connectionStatus, isRecorridoActive, publishSafely, user, assignedData]);
 
   // Publicar estado cuando cambie el recorrido
   useEffect(() => {
@@ -390,6 +431,9 @@ export const useHome = () => {
     isLoadingAssigned,
     isLoadingHistory,
     gpsAlertVisible,
+
+    canStartTracking,
+    getTrackingInfo,
 
     // Setters
     setModalVisible,

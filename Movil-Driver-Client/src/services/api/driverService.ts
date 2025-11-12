@@ -109,48 +109,100 @@ export class DriverService {
     * Obtiene la placa del vehículo y el número de ruta asignados para un conductor
     */
    static async getAssignedVehicleAndRoute(driverId: number): Promise<{ success: boolean; data?: DriverAssignedVehicleRoute; error?: string }> {
-     try {
-       console.log('🚗 [DriverService.getAssignedVehicleAndRoute] Iniciando consulta para driverId:', driverId);
-       const token = await this.getAuthToken();
-       if (!token) {
-         console.log('❌ [DriverService.getAssignedVehicleAndRoute] No hay token disponible');
-         return { success: false, error: 'No autenticado' };
-       }
+  try {
+    console.log('🚗 [DriverService.getAssignedVehicleAndRoute] Iniciando consulta para driverId:', driverId);
+    const token = await this.getAuthToken();
+    if (!token) {
+      console.log('❌ [DriverService.getAssignedVehicleAndRoute] No hay token disponible');
+      return { success: false, error: 'No autenticado' };
+    }
+    // ✅ PASO 1: Obtener asignación del vehículo usando el endpoint REAL
+    console.log('📡 [DriverService.getAssignedVehicleAndRoute] Consultando vehículo asignado...');
+    const vehicleResponse = await fetch(`${API_BASE_URL}/vehicle-assigment/user/${driverId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
 
-       console.log('📡 [DriverService.getAssignedVehicleAndRoute] Enviando petición con token');
-       const response = await fetch(`${API_BASE_URL}/driver/assigned-vehicle-route/${driverId}`, {
-         method: 'GET',
-         headers: {
-           Authorization: `Bearer ${token}`,
-           'Content-Type': 'application/json',
-         },
-       });
+    console.log('📡 [DriverService.getAssignedVehicleAndRoute] Respuesta vehículo HTTP:', vehicleResponse.status);
 
-       console.log('📡 [DriverService.getAssignedVehicleAndRoute] Respuesta HTTP:', response.status);
+    if (!vehicleResponse.ok) {
+      console.log('❌ [DriverService.getAssignedVehicleAndRoute] Error obteniendo vehículo:', vehicleResponse.status);
+      throw new Error(`Error obteniendo vehículo: ${vehicleResponse.status}`);
+    }
 
-       if (!response.ok) {
-         console.log('❌ [DriverService.getAssignedVehicleAndRoute] Error HTTP:', response.status);
-         throw new Error(`Error HTTP: ${response.status}`);
-       }
+    const vehicleResult = await vehicleResponse.json();
+    console.log('📊 [DriverService.getAssignedVehicleAndRoute] Resultado vehículo:', vehicleResult);
 
-       const result = await response.json();
-       console.log('📊 [DriverService.getAssignedVehicleAndRoute] Resultado:', result);
+    if (!vehicleResult.success || !vehicleResult.data) {
+      console.log('⚠️ [DriverService.getAssignedVehicleAndRoute] No se encontró asignación de vehículo');
+      return { success: false, error: vehicleResult.message || 'No se encontró asignación de vehículo' };
+    }
 
-       if (result.success && result.data) {
-         console.log('✅ [DriverService.getAssignedVehicleAndRoute] Datos obtenidos:', result.data);
-         return { success: true, data: result.data };
-       } else {
-         console.log('⚠️ [DriverService.getAssignedVehicleAndRoute] Respuesta sin éxito:', result);
-         return { success: false, error: result.message || 'No se pudo obtener la información del vehículo y ruta' };
-       }
-     } catch (error) {
-       console.error('❌ [DriverService.getAssignedVehicleAndRoute] Error:', error);
-       return {
-         success: false,
-         error: error instanceof Error ? error.message : 'Error desconocido'
-       };
-     }
-   }
+    const vehicleData = vehicleResult.data;
+    const vehicleId = vehicleData.vehicle?.id;
+
+    if (!vehicleId) {
+      console.log('⚠️ [DriverService.getAssignedVehicleAndRoute] No se encontró ID del vehículo');
+      return { success: false, error: 'Datos del vehículo incompletos' };
+    }
+
+    // ✅ PASO 2: Obtener asignación de ruta usando el endpoint REAL
+    console.log('🛣️ [DriverService.getAssignedVehicleAndRoute] Consultando ruta asignada para vehicleId:', vehicleId);
+    let routeNumber = 0;
+    let routeData = null;
+
+    try {
+      const routeResponse = await fetch(`${API_BASE_URL}/route-assignment/vehicle/${vehicleId}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('📡 [DriverService.getAssignedVehicleAndRoute] Respuesta ruta HTTP:', routeResponse.status);
+
+      if (routeResponse.ok) {
+        const routeResult = await routeResponse.json();
+        console.log('📊 [DriverService.getAssignedVehicleAndRoute] Resultado ruta:', routeResult);
+
+        if (routeResult.success && routeResult.data && routeResult.data.length > 0) {
+          routeData = routeResult.data[0];
+          routeNumber = routeData.routeId || routeData.route?.id || 0;
+          console.log('✅ [DriverService.getAssignedVehicleAndRoute] Ruta encontrada:', routeNumber);
+        } else {
+          console.log('⚠️ [DriverService.getAssignedVehicleAndRoute] No se encontró ruta asignada');
+        }
+      } else {
+        console.log('⚠️ [DriverService.getAssignedVehicleAndRoute] Error consultando ruta:', routeResponse.status);
+      }
+    } catch (routeError) {
+      console.warn('⚠️ [DriverService.getAssignedVehicleAndRoute] Error consultando ruta:', routeError);
+    }
+
+    // ✅ PASO 3: Combinar datos en el formato esperado
+    const combinedData: DriverAssignedVehicleRoute = {
+      licencePlate: vehicleData.vehicle?.licensePlate || 'Sin placa',
+      numberRoute: routeNumber
+    };
+
+    console.log('✅ [DriverService.getAssignedVehicleAndRoute] Datos finales combinados:', combinedData);
+    return { 
+      success: true, 
+      data: combinedData
+    };
+
+  } catch (error) {
+    console.error('❌ [DriverService.getAssignedVehicleAndRoute] Error general:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Error desconocido'
+    };
+  }
+}
 
   /**
    * Obtiene el token de autenticación almacenado

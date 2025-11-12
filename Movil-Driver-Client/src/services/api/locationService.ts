@@ -9,7 +9,8 @@ export class LocationService {
     location: Location,
     publishFunction?: (topic: string, data: any) => boolean,
     routeId?: string,
-    vehicleId: string = '123-456'
+    vehicleId: string = '123-456',
+    driverId?: string
   ): boolean {
     try {
       // Validar datos de ubicación
@@ -18,30 +19,57 @@ export class LocationService {
         return false;
       }
 
-      // Generar topic dinámico basado en routeId
-      const topic = generateLocationTopic(routeId || 'default');
-      console.log('📍 Publicando ubicación en topic:', topic);
+      //  Generar topic dinámico - con routeId o fallback
+      let topic: string;
+      let actualRouteId: string | null;
+
+      if (routeId) {
+        // Ruta asignada - usar topic específico de la ruta
+        topic = generateLocationTopic(routeId);
+        actualRouteId = routeId;
+        console.log('🛣️ Publicando en ruta asignada - Topic:', topic);
+      } else {
+        //  Sin ruta asignada - usar topic por vehículo y conductor
+        const vehicleTopic = `vehicles/${vehicleId}/telemetry`;
+        const driverTopic = `drivers/${driverId || 'unknown'}/telemetry`;
+        
+        // Priorizar topic por vehículo, fallback por conductor
+        topic = vehicleTopic;
+        actualRouteId = null;
+        console.log('🚗 Publicando sin ruta asignada - Topic:', topic);
+      }
 
       const message = {
         vehicleId,
-        routeId: routeId || null,
+        routeId: actualRouteId,
         timestamp: new Date(location.timestamp).toISOString(),
         latitude: location.latitude,
         longitude: location.longitude,
         source: 'MOVILE',
+        
+        hasAssignedRoute: !!routeId,
+        trackingType: routeId ? 'assigned_route' : 'free_tracking'
       };
 
       // Si se proporciona función de publicación, usarla
       if (publishFunction) {
         const success = publishFunction(topic, message);
         if (success) {
-          console.log('📍 Ubicación publicada exitosamente en topic:', topic, message);
+          console.log('✅ Ubicación publicada exitosamente:', {
+            topic,
+            message,
+            trackingType: routeId ? 'ruta_asignada' : 'libre'
+          });
         }
         return success;
       }
 
       // Si no hay función de publicación, simular éxito para compatibilidad
-      console.log('📍 Ubicación preparada para publicación (sin MQTT) en topic:', topic, message);
+      console.log('📍 Ubicación preparada para publicación:', {
+        topic,
+        message,
+        trackingType: routeId ? 'ruta_asignada' : 'libre'
+      });
       return true;
     } catch (error) {
       console.error('❌ Error publicando ubicación:', error);

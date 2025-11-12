@@ -32,7 +32,7 @@ export const API_ENDPOINTS = {
     GET_BY_USER: (userId: number) => `${API_CONFIG.BASE_URL}/vehicle-assigment/user/${userId}`,
   },
   ROUTE_ASSIGNMENT: {
-    GET_BY_VEHICLE: (vehicleId: string) =>
+    GET_BY_VEHICLE: (vehicleId: number) =>
       `${API_CONFIG.BASE_URL}/route-assignment/vehicle/${vehicleId}`,
   },
 } as const;
