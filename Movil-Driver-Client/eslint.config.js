@@ -19,7 +19,7 @@ module.exports = defineConfig([
           map: [
             ['@', './src'], // o './app' si usas Expo Router
             ['@App', './src/app'],
-            ['@Assets', './assets'],
+            ['@Assets', './src/assets'],
             ['@Components', './src/components'],
             ['@Config', './src/config'],
             ['@Contexts', './src/contexts'],

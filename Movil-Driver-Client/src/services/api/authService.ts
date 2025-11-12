@@ -1,5 +1,6 @@
 import { LoginCredentials, User } from '@/types/auth';
 import { LOGIN_ENDPOINT } from '@Config/endPoints';
+import { API_CONFIG, fetchWithRetry, getErrorMessage } from '@Config/api';
 
 // Constantes para AsyncStorage
 const TOKEN_KEY = 'auth_token';
@@ -26,11 +27,20 @@ export class AuthService {
         payload: { ...payload, password: '***' },
       });
 
-      const resp = await fetch(LOGIN_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      // Create a timeout promise using configured timeout
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Network request timed out')), API_CONFIG.TIMEOUT)
+      );
+
+      // Race between fetch and timeout
+      const resp = await Promise.race([
+        fetch(LOGIN_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload),
+        }),
+        timeoutPromise
+      ]) as Response;
 
       const isJson = resp.headers.get('content-type')?.includes('application/json');
       console.log('🔐 AuthService.login <- respuesta', {
@@ -87,9 +97,20 @@ export class AuthService {
       return { success: true, token: String(token), user: user || undefined };
     } catch (error) {
       console.error('Error en login:', error);
+      
+      // Provide more specific error messages
+      let errorMessage = 'Error de conexión';
+      if (error instanceof Error) {
+        if (error.message.includes('timed out')) {
+          errorMessage = 'Tiempo de espera agotado. Verifica tu conexión a internet.';
+        } else if (error.message.includes('Network Error')) {
+          errorMessage = 'Error de red. Verifica tu conexión a internet.';
+        }
+      }
+      
       return {
         success: false,
-        error: 'Error de conexión',
+        error: errorMessage,
       };
     }
   }
