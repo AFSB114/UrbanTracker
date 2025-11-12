@@ -18,6 +18,8 @@ export default function Home() {
     tripHistory,
     isLoadingAssigned,
     isLoadingHistory,
+    canStartTracking, 
+    getTrackingInfo, 
     setModalVisible,
     setAsunto,
     setDescription,
@@ -25,6 +27,12 @@ export default function Home() {
     handleLogout,
     handleEnviarReporte,
   } = useHome();
+
+  // ✅ NUEVA LÓGICA: Determinar estado de tracking
+  const trackingInfo = getTrackingInfo();
+  const canTrack = canStartTracking();
+  const trackingStatus = isRecorridoActive ? 'En Recorrido' : 'Detenido';
+  const trackingType = trackingInfo.hasAssignedRoute ? 'Ruta Asignada' : 'Tracking Libre';
 
   console.log('📱 [Home] Componente renderizado');
   console.log('📊 [Home] tripHistory actual:', tripHistory);
@@ -86,15 +94,24 @@ export default function Home() {
             <View className="flex-row items-center">
               <View
                 className={`mr-2 h-3 w-3 rounded-full ${
-                  isRecorridoActive ? 'bg-blue-500' : 'bg-zinc-600'
+                  isRecorridoActive
+                    ? (trackingInfo.hasAssignedRoute ? 'bg-green-500' : 'bg-blue-500')
+                    : 'bg-zinc-600'
                 }`}
               />
-              <Text
-                className={`font-semibold ${
-                  isRecorridoActive ? 'text-blue-400' : 'text-zinc-400'
-                }`}>
-                {isRecorridoActive ? 'En Recorrido' : 'Detenido'}
-              </Text>
+              <View className="flex-col items-end">
+                <Text
+                  className={`font-semibold ${
+                    isRecorridoActive
+                      ? (trackingInfo.hasAssignedRoute ? 'text-green-400' : 'text-blue-400')
+                      : 'text-zinc-400'
+                  }`}>
+                  {trackingStatus}
+                </Text>
+                <Text className="text-xs text-zinc-500">
+                  {trackingType}
+                </Text>
+              </View>
             </View>
           </View>
         </View>
@@ -126,12 +143,17 @@ export default function Home() {
         </View>
 
         {/* --- Información del vehículo y ruta asignada --- */}
-        <Text className="mb-3 text-sm font-bold text-zinc-300">Información asignada</Text>
+        <Text className="mb-3 text-sm font-bold text-zinc-300">Información de Tracking</Text>
         <View className="mb-6 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
           {isLoadingAssigned ? (
-            <Text className="text-zinc-400">Cargando información asignada...</Text>
-          ) : assignedData ? (
+            <Text className="text-zinc-400">Cargando información de tracking...</Text>
+          ) : trackingInfo.hasAssignedRoute && assignedData ? (
+            // CASO 1: TRACKING CON RUTA ASIGNADA
             <>
+              <View className="mb-2 flex-row items-center justify-between">
+                <Text className="text-sm font-semibold text-green-400">✅ Ruta Asignada</Text>
+                <Icon name="map-marker-check" size={16} color="#10b981" />
+              </View>
               <View className="mb-3 border-b border-zinc-700 pb-3">
                 <Text className="text-zinc-400">Placas del vehículo</Text>
                 <Text className="text-base font-semibold text-zinc-100">{assignedData.licencePlate}</Text>
@@ -143,8 +165,40 @@ export default function Home() {
                 </Text>
               </View>
             </>
+          ) : canTrack ? (
+            // CASO 2: TRACKING LIBRE SIN RUTA ASIGNADA
+            <>
+              <View className="mb-2 flex-row items-center justify-between">
+                <Text className="text-sm font-semibold text-blue-400">🚗 Tracking Libre</Text>
+                <Icon name="car" size={16} color="#3b82f6" />
+              </View>
+              <View className="mb-3 border-b border-zinc-700 pb-3">
+                <Text className="text-zinc-400">ID del vehículo</Text>
+                <Text className="text-base font-semibold text-zinc-100">
+                  {trackingInfo.vehicleId}
+                </Text>
+              </View>
+              <View>
+                <Text className="text-zinc-400">Tipo de tracking</Text>
+                <Text className="text-base font-semibold text-blue-400">
+                  Coordenadas sin ruta específica
+                </Text>
+              </View>
+            </>
           ) : (
-            <Text className="text-zinc-400">No se pudo cargar la información asignada</Text>
+            // CASO 3: NO PUEDE HACER TRACKING
+            <>
+              <View className="mb-2 flex-row items-center justify-between">
+                <Text className="text-sm font-semibold text-yellow-400">⚠️ Configuración Incompleta</Text>
+                <Icon name="alert" size={16} color="#f59e0b" />
+              </View>
+              <View>
+                <Text className="text-zinc-400">Estado</Text>
+                <Text className="text-base font-semibold text-yellow-400">
+                  Verificar conexión MQTT y permisos
+                </Text>
+              </View>
+            </>
           )}
         </View>
 
