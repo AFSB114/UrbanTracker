@@ -20,8 +20,8 @@
       "tsconfigPaths": true
     },
     "extra": {
-      "apiUrl": "http://192.168.0.110:8080/api/v1",
-      "mqttHost": "192.168.0.110",
+      "apiUrl": "http://10.3.234.142:8080/api/v1",
+      "mqttHost": "10.3.234.142",
       "mqttPort": 9001,
       "router": {
         "root": "./src/app"
