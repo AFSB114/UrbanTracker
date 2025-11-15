@@ -38,10 +38,6 @@ public class RecoveryService {
     private final PasswordEncoder passwordEncoder;
     private final RecoveryRequestRepositoryImpl recoveryRequestRepositoryImpl;
 
-    public String newMethodo(){
-        return recoveryRequestRepositoryImpl.newMethodo();
-    }
-
     @Transactional
     public ResponseEntity<ForgotPasswordResponseDTO> generateRecoveryCode(ForgotPassword forgot) {
 

@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
 import { useLogin } from "./hooks/useLogin"
-import { newMethodo } from "./services/api/loginApi"
 
 export default function LoginPage() {
     const { userName, setUserName, password, setPassword, isLoading, error, handleLogin, router } = useLogin()
@@ -89,13 +88,7 @@ export default function LoginPage() {
                                 </button>
                             </div>
                         </form>
-                    </CardContent>
-                    {/* //nuevo metodo */}
-                    <div>
-                        <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={newMethodo}>
-                            nuevo metodo
-                        </Button>
-                    </div>
+                    </CardContent>  
                 </Card>
             </div>
         </div>

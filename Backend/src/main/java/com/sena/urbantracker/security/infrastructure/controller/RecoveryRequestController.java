@@ -19,8 +19,4 @@ public class RecoveryRequestController extends BaseController<RecoveryRequestReq
         this.recoveryService = recoveryService;
     }
 
-    @GetMapping("/new")
-    public String newMetho() {
-        return recoveryService.newMethodo();
-    }
 }
